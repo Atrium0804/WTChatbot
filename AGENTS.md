@@ -4,6 +4,10 @@
 
 Issues are tracked in GitHub Issues on this repo (Atrium0804/WTChatbot) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
 ### Domain docs
 
 Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

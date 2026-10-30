@@ -1,3 +1,7 @@
+## Conventions
+
+Follow [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md) for all code and [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
+
 ## Agent skills
 
 ### Issue tracker

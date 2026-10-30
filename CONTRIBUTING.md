@@ -15,6 +15,7 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 
 ## Documentatie
 
+- **Ontwikkelaarsdocumentatie** → Diátaxis-map in `docs/` volgens [docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md).
 - **Architectuurbesluiten** → nieuwe ADR in [docs/adr/](docs/adr/) volgens [TEMPLATE.md](docs/adr/TEMPLATE.md), oplopend genummerd.
 - **Nieuwe of gewijzigde domeintermen** → [GLOSSARY.md](GLOSSARY.md).
 - **Domeinkennis voor de chatbot** → [docs/knowledge/](docs/knowledge/).

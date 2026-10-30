@@ -1,6 +1,6 @@
 ## Conventions
 
-Follow [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md) for all code and [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
+Follow [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md) for all code and [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow. Write documentation per [docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md) (Diátaxis).
 
 ## Agent skills
 

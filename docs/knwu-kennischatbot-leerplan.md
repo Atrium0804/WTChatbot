@@ -26,6 +26,30 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 
 ---
 
+# 0. Roadmap
+
+## MVP's
+
+## KNWU-kennis
+
+- Beantwoorden van vragen over KNWU-zaken: zoals wedstrijden, licenties, jeugdcategorieen en (veranderingen) in regelgeving met betrekking tot de wielersport. Primair gericht op wegwielrennen en veldrijden voor de jeugd.  Informatie die hiervoor gebruikt wordt is enkel informatie afkomstig van de KNWU-site: Kenniscentrum, PDF's met regelgeving en besluiten. Deze informatie kan voor performance opgeslagen zijn in een RAG-bibliotheek waarbij (periodiek) gecontroleerd wordt of de bestanden nog actueel zijn. Web-search op KNWU.nl wordt als fall-back gebruikt als er geen (sluitend) antwoord gegeven kan worden op basis van de beschikbare documenten in de bibliotheek
+
+## Club- en regiokennis
+
+- Beantwoorden van vragen over regionale wedstrijden en competities met behulp van documenten in de bilbiohteek (regelgeving van regionale wedstrijden)
+- Beantwoorden van vragen over WTC Woerden op basis van de website-teksten van de jeugd (opgeslagen in een github-repo), activiteiten gepubliceerd in de kalender op de site
+
+## Advies over fietstechniek:
+
+- advies over jeugdverzetten en mogelijke aanpassingen om tot een passend verzet te komen, gebruik makend van de actuele maximale verzetten van de KNWU, beschikbare informatie over bandenmaten en wielomtrekken, en een lijst van op de markt verkrijgbare kettingbladen en (jeugd)cassettes
+
+## Technisch
+
+- documenten zijn opgeslagen in RAG en er wordt periodiek gecontroleerd of deze nog acuteel zijn. Als deze niet actueel zijn dan wordt er een bericht via ntfy verstuurd. 
+- 
+
+
+
 ## 🎓 1. Tutorial — van nul tot werkend prototype (dag 1–3)
 
 *Learning-oriented: elke stap heeft één gegarandeerd resultaat. Niet afwijken, eerst laten werken, dan verbeteren.*
@@ -41,7 +65,7 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 
 ### Stap 2 — Eerste API-request vanuit VS Code (±30 min)
 
-1. Maak een projectmap, `python -m venv .venv`, activeer.
+1. Maak een projectmap, `python -m venv .venv`, activeer: `.venv/Scripts/activate`
 2. `pip install mistralai` — SDK-overzicht: [Mistral SDK's](https://docs.mistral.ai/resources/sdks).
 3. Schrijf een script `hello.py` dat één chat-completion-request doet. Volg: [Send your first API request](https://docs.mistral.ai/getting-started/quickstarts/developer/first-api-request).
 4. Start klein en goedkoop: kies een fast/flash-model uit de [Model selection guide](https://docs.mistral.ai/inference/model-selection-guide).

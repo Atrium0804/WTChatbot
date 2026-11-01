@@ -11,6 +11,7 @@ Deze principes gelden voor alle Python-code in deze repo (chatbot, tools, ingest
 ## Code
 
 - **Plat en expliciet boven abstracties.** Geen klassenhiërarchieën, metaprogramming of slimme trucs als een functie volstaat.
+- **Leesbaarheid boven beknoptheid.** Kies de vorm die intentie en control flow het duidelijkst maakt. Gebruik compactere syntax alleen wanneer die minstens zo goed leesbaar blijft.
 - **Lineaire control flow, kleine functies** (richtlijn 10–50 regels) met één duidelijk doel.
 - **Expliciete state.** Geef parameters mee; geen globals of verborgen module-state.
 - **Type hints** op publieke functies en tool-signatures.

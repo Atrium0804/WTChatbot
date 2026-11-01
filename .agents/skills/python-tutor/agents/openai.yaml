@@ -1,0 +1,6 @@
+interface:
+  display_name: "Python Tutor"
+  short_description: "Guided Python learning with a per-topic mastery tracker"
+
+policy:
+  allow_implicit_invocation: false

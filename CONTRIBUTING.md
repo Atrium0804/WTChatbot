@@ -19,7 +19,7 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 - **Architectuurbesluiten** → nieuwe ADR in [docs/adr/](docs/adr/) volgens [TEMPLATE.md](docs/adr/TEMPLATE.md), oplopend genummerd.
 - **Nieuwe of gewijzigde domeintermen** → [GLOSSARY.md](GLOSSARY.md).
 - **Domeinkennis voor de chatbot** → [docs/knowledge/](docs/knowledge/).
-- **Brondocumenten voor de bibliotheken** → `knowledge-documents/`, alleen actuele versies ([ADR-0005](docs/adr/0005-library-bevat-alleen-actuele-versies.md)).
+- **Brondocumenten voor de bibliotheken** → `knowledge-documents/`, alleen actuele versies.
 
 ## Checklist vóór merge
 

@@ -26,9 +26,9 @@ def calculate_gear_development(chainring: int, sprocket: int, wheel_circumferenc
 
 ## Chatbot-specifiek
 
-- **Tools zijn pure functies** met getypeerde in- en output en zonder netwerk- of LLM-afhankelijkheid waar mogelijk. Zo zijn ze los te testen (zie de calculator uit [ADR-0006](docs/adr/0006-verzettenadvies-hybride-rag-plus-calculator.md)).
+- **Tools zijn pure functies** met getypeerde in- en output en zonder netwerk- of LLM-afhankelijkheid waar mogelijk. Zo zijn ze los te testen.
 - **LLM- en API-aanroepen achter één dunne laag**, zodat tests die laag kunnen mocken en de provider vervangbaar blijft.
-- **Retrieval is altijd per bibliotheek gescoped** ([ADR-0003](docs/adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md)).
+- **Retrieval is altijd per bibliotheek gescoped**.
 - **Antwoorden dragen bron + versiedatum.** Code die antwoorden opbouwt mag die metadata niet laten vallen.
 - **Prompts staan in aparte bestanden**, niet als lange strings verspreid door de code.
 

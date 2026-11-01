@@ -1,6 +1,6 @@
 # KNWU-kennischatbot voor de website van WTC Woerden — bijgewerkt ontwerp
 
-**Project:** een publieke chatbot op de clubwebsite die vragen over KNWU-regelgeving, licenties, MNC/ZMC-wedstrijden en jeugdwielrennen beantwoordt op basis van de eigen documenten (RAG), met het KNWU Kenniscentrum als online autoriteit. Andere wielrenclubs mogen de bot **as-is** gebruiken (ADR-0001).
+**Project:** een publieke chatbot op de clubwebsite die vragen over KNWU-regelgeving, licenties, MNC/ZMC-wedstrijden en jeugdwielrennen beantwoordt op basis van de eigen documenten (RAG), met het KNWU Kenniscentrum als online autoriteit. Andere wielrenclubs mogen de bot **as-is** gebruiken.
 
 **Doel van dit document:** je bouwt het zelf in VS Code, van nul tot productie, en doet onderweg de kennis op. De documentatie is ingedeeld volgens het **Diataxis**-model:
 
@@ -11,8 +11,6 @@
 | 📚 **Reference** | weet wat hij doet | *"Ik wil dit even opzoeken"* |
 | 💡 **Explanation** | wil het begrijpen | *"Waarom is het zo ontworpen?"* |
 
-**Vastgelegde beslissingen:** zie `docs/adr/0001` t/m `0006`. **Begrippen:** zie `GLOSSARY.md` (Kenniscentrum, bibliotheken, bronvolgorde, zichtbare revisies, wijzigingsmemo, taalniveau B1/B2, Ontwicklung, eval-set, beheerder).
-
 **Architectuur in één oogopslag**
 
 ```
@@ -20,8 +18,8 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
   → VPS (Hetzner CX22) — Caddy (HTTPS) + FastAPI-proxy in Docker (API-key server-side, rate limiting, logging)
   → Mistral Conversations API → Agent (system prompt = wtc-knwu-kennisroutering + taalniveau)
   → Library (RAG): alleen ACTUELE documenten — WTC/Regio-bibliotheek + KNWU-bibliotheek
-  → websearch-tool: AAN, scope beperkt tot kenniscentrum.knwu.nl (ADR-0004)
-  → (post-MVP) calculator-tool voor verzettenadvies (ADR-0006)
+  → websearch-tool: AAN, scope beperkt tot kenniscentrum.knwu.nl
+  → (post-MVP) calculator-tool voor verzettenadvies
 ```
 
 ---
@@ -74,7 +72,7 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 
 ### Stap 3 — Documenten uploaden en RAG bevragen (±1 uur)
 
-1. Maak **twee** Libraries in Studio aan: **"WTC en regio kennis"** (ZMC, MNC Veldrijden 2025, MNC 2026 Hans vd Hengel, NRC-artikel) en **"KNWU-kennis"** (Titel 20 Jeugdwielrennen, Nationale Besluiten, Handboek Veldrijden Jeugd). Upload alleen de **actuele** versies (ADR-0005); oude versies horen in het repo-archief `knowledge-documents/archive/`, nooit in de Library.
+1. Maak **twee** Libraries in Studio aan: **"WTC en regio kennis"** (ZMC, MNC Veldrijden 2025, MNC 2026 Hans vd Hengel, NRC-artikel) en **"KNWU-kennis"** (Titel 20 Jeugdwielrennen, Nationale Besluiten, Handboek Veldrijden Jeugd). Upload alleen de **actuele** versies; oude versies horen in het repo-archief `knowledge-documents/archive/`, nooit in de Library.
 2. Volg: [Set up RAG with document search](https://docs.mistral.ai/getting-started/quickstarts/developer/rag-document-search).
 3. Test met vragen waarvan je het antwoord al kent ("Wat is de minimale leeftijd voor categorie U13?") — controleer of retrieval het juiste document pakt.
 
@@ -85,8 +83,8 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 1. Maak een agent (server-side) met de [Agents & Conversations API](https://docs.mistral.ai/studio/agents/agents-api).
 2. System prompt = de skills uit `WebsiteWTCjeugd/.vibe/skills/` — **`wtc-knwu-kennisroutering`** (bronvolgorde, versiecontrole, zichtbare revisies, licentie-/NK-/verzekeringsregels, verhelderingsvragen, "verzin niets") en **`taalniveau`** (B1 standaard, B2 op verzoek, B1-aanbod bij B2, controleronde). Neem ze integraal over.
 3. Zet de RAG-koppeling aan, **per bibliotheek gescoped** (nooit ongescopeerd over beide).
-4. Zet de **websearch-tool aan met domain-restriction op `kenniscentrum.knwu.nl`** (ADR-0004).
-5. De ontwerpbeslissingen (ADR-0001–0005) die niet in de skills staan, voeg je toe aan de system prompt:
+4. Zet de **websearch-tool aan met domain-restriction op `kenniscentrum.knwu.nl`**.
+5. De ontwerpbeslissingen die niet in de skills staan, voeg je toe aan de system prompt:
    - Publiek & anoniem; off-topic (geen wielrennen/KNWU/club) → beleefd weigeren en doorverwijzen.
    - Altijd bron + versiedatum vermelden; bij conflicten/onzekerheid expliciet signaleren + KNWU-contact (+31 (0)85 070 1900, di–vr 8.30–12.00).
    - Nederlands; standaard B1, B2 via UI-toggle of verzoek; bij elk B2-antwoord aanbieden om (deel) naar B1 om te zetten.
@@ -160,10 +158,10 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 ### How-to: documenten verversen bij seizoenwissel (beheerder)
 
 1. Nieuw KNWU-document (bijv. nieuwe Nationale Besluiten) gedetecteerd via de cron-versioncheck of ntfy-melding.
-2. Vervang het document in de **Library** (oud PDF eruit, nieuw erin — de Library bevat nóóit oude versies, ADR-0005).
+2. Vervang het document in de **Library** (oud PDF eruit, nieuw erin — de Library bevat nóóit oude versies).
 3. Archiveer de oude versie in `knowledge-documents/archive/` in de repo, met datum in de bestandsnaam.
 4. Werk `versions.json` bij (documentnaam → versiedatum).
-5. **Re-run de eval-set** (launch-gate ≥90% ook hier, ADR-0005); noteer in `LEARNINGS.md`.
+5. **Re-run de eval-set** (launch-gate ≥90% ook hier); noteer in `LEARNINGS.md`.
 6. "Wat is er veranderd?"-vragen beantwoordt de bot uit de **wijzigingsmemo op het Kenniscentrum** — niet door lokale PDF's te diffen.
 
 ### How-to: versiecheck tegen het Kenniscentrum (cron + ntfy)
@@ -178,14 +176,14 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
 
 **Laag 2 — in-chat detectie (function calling):** tool `report_outdated_document(document, library_versie, kenniscentrum_versie)`; de proxy vangt de call af, logt en notify't; de vraagsteller krijgt gewoon antwoord.
 
-### How-to: websearch-tool configureren (ADR-0004)
+### How-to: websearch-tool configureren
 
 1. Zet de [Websearch-tool](https://docs.mistral.ai/studio/agents/agent-tools/websearch) aan op de agent.
 2. Beperk de scope in de toolconfig/instructies tot `kenniscentrum.knwu.nl` (en KNWU-eigen pagina's). Open web is bewust UIT.
 3. System prompt: licentievragen raadpleegt **altijd óók** het Kenniscentrum (pakketten/tarieven staan niet in de documenten); verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
 4. Let op: websearch kost extra per vraag — houd het spend-limiet in de gaten.
 
-### How-to: privacy & retentie (ADR uit round 2, Q8)
+### How-to: privacy & retentie
 
 1. Feedback- en chatlogs (vraag, antwoord, bronnen, `conversation_id`, timestamp) in SQLite op de VPS: **retentie 90 dagen**, daarna automatische purge.
 2. IP's alleen als salted hash ten behoeve van de rate limiter; nooit plain in logs die geback-upt worden.
@@ -230,7 +228,7 @@ knwu-chatbot/
 
 **Deployment — twee fasen:** fase 1 = na groene CI via SSH `git pull && docker compose up -d --build` (deploy-key als GitHub secret; `.env` alleen op de server); fase 2 = image build → ghcr.io, VPS pullt de geteste image. Tag releases (`v0.1.0`) bij live.
 
-### How-to F (post-MVP): verzettenadvies (ADR-0006)
+### How-to F (post-MVP): verzettenadvies
 
 **Doel:** advies welk verzet geschikt is voor een renner, gegeven **geboortejaar** en **fiets** (bandenmaat); op verzoek check of een verzet daadwerkelijk in de handel is.
 
@@ -239,7 +237,7 @@ knwu-chatbot/
 1. **RAG-laag:** de KNWU-regel (max. **verzet** in meters per omwenteling, per leeftijdscategorie/discipline — wisselt per seizoen) komt uit de KNWU-bibliotheek — nooit hardcoded in de tool.
 2. **Calculator-tool (function calling, deterministisch):** berekent alle combinaties kettingblad × cassette × bandenmaat en filtert op het toegestane max. Verzet:
    `verzet (m) = (tanden voor / tanden achter) × wielomtrek (mm) / 1000`.
-3. **Data:** `docs/knowledge/bandenmaat-wielomtrek.csv` en `cassette-overzicht.csv` als versie beheerde tool-data in het repo (MD-versies in de Library ter uitleg); jaarlijks gereviewd door de beheerder.
+3. **Data:** `bandenmaat-wielomtrek.csv` en `cassette-overzicht.csv` als versie beheerde tool-data in het repo (MD-versies in de Library ter uitleg); jaarlijks gereviewd door de beheerder.
 4. **Wielomtrek bepalen:** flow = wielmaat (24/26/28") → banddikte (25/28/30mm) → lookup in `bandenmaat-wielomtrek.csv`. De tabel is compleet voor deze gangbare combinaties (ontbrekende waarden zijn vooraf uitgerekend met `omtrek ≈ π × (velgdiameter + 2 × banddikte)`, gemarkeerd met * in de MD; geen runtime-fallback nodig). Elke (wielmaat, banddikte) heeft een `standaard`-rij (24"→507, 26"→559, 28"→622), dus de lookup is deterministisch — voor 24" volstaat de standaard op bandenmaat (zeldzame fietsjes, niet vooraf op te meten). Staat de ETRTO-code op de bandenzijkant (bijv. 28-622), dan pakt de bot de exacte ETRTO-rij.
 5. **Beschikbaarheidscheck (op verzoek):** lookup in cassette-/kettingblad-tabellen (incl. freehub-compatibiliteit). Een kettingblad dat niet op de crank past (boutsteek/BCD) → expliciete onzekerheidsmelding, geen feit.
 6. **Verhelderingsvragen:** max. 4 tegelijk, in één bericht (geboortejaar, wielmaat/banddikte, voorblad, cassette).
@@ -248,16 +246,6 @@ knwu-chatbot/
 ---
 
 ## 📚 3. Reference — naslagwerk
-
-### Beslissingen en termen
-
-- `docs/adr/0001` — enkele publieke instance, as-is, geen multi-tenancy
-- `docs/adr/0002` — VPS + eigen proxy, API-key server-side
-- `docs/adr/0003` — RAG over eigen documenten; Kenniscentrum = autoriteit
-- `docs/adr/0004` — websearch aan, scope = kenniscentrum.knwu.nl
-- `docs/adr/0005` — Library alleen actuele versies; wijzigingen via Kenniscentrum-memo; eval-gate
-- `docs/adr/0006` — verzettenadvies hybride (RAG + calculator)
-- `GLOSSARY.md` — alle Domeinbegrippen
 
 ### Kern-API's
 
@@ -291,23 +279,23 @@ knwu-chatbot/
 
 ## 💡 4. Explanation — het waarom
 
-### Waarom een publieke instance as-is (ADR-0001)?
+### Waarom een publieke instance as-is?
 
 De bot is een clubdienst; de onderliggende documenten (KNWU-reglementen, clubreglementen) zijn sowieso publiek. Inloggen voegt een auth-laag toe zonder winst, en multi-tenancy/per-club config is ballast voor deze schaal. Andere clubs gebruiken de bot as-is met de WTC/KNWU-informatie die erin zit.
 
-### Waarom een VPS en geen NAS of PaaS? (ADR-0002)
+### Waarom een VPS en geen NAS of PaaS?
 
 24/7-clubdienst voor < € 4 p/m. Een NAS hangt aan je thuisnetwerk (stroomuitval, dynamische IP, security-risico); PaaS-free-tiers slapen in (~15 min) waardoor de eerste vraag 10–30 s duurt.
 
-### Waarom RAG en geen fine-tuning? (ADR-0003)
+### Waarom RAG en geen fine-tuning?
 
 Regelgeving wisselt elk seizoen; fine-tuning is duur, traag en stilstaand. RAG: nieuw document uploaden = direct bijgewerkt. Het Kenniscentrum blijft de autoriteit voor versies, tarieven en verzekeringen.
 
-### Waarom de websearch-tool aan, maar gescoped? (ADR-0004)
+### Waarom de websearch-tool aan, maar gescoped?
 
 Sommige info (licentiepakketten/tarieven, verzekeringen, wijzigingsmemo's) staat alleen op kenniscentrum.knwu.nl. Open web zou de "eigen documenten + Kenniscentrum"-belofte breken, kosten opdrijven en de eval-set non-deterministisch maken.
 
-### Waarom alleen actuele documenten in de Library? (ADR-0005)
+### Waarom alleen actuele documenten in de Library?
 
 Oude versies in de Library kunnen door retrieval als "huidige regel" geciteerd worden — het strikethrough-probleem vermenigvuldigd. Daarom: Library = actueel alleen, archief in repo, "wat is er veranderd" via de officiële Kenniscentrum-memo.
 

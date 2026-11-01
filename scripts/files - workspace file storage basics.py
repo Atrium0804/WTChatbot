@@ -51,6 +51,7 @@ for f in client.files.list().data:
 
 
 # verwijder alle bestanden - paginated, all pages
+# page= is depreacted, should use page_token, next_page_token instead (see libraries.py)
 print(f"deleting files...")
 page = 0
 while True:

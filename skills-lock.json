@@ -97,6 +97,12 @@
       "skillPath": "skills/in-progress/loop-me/SKILL.md",
       "computedHash": "d7fbcf41b5af203a6f2a7937afaaaebdd9941b0aa4cc3654b52daec01d3fb564"
     },
+    "markdown-to-epub-converter": {
+      "source": "smerchek/claude-epub-skill",
+      "sourceType": "github",
+      "skillPath": "markdown-to-epub/SKILL.md",
+      "computedHash": "8a7bf1b9c3ca597fd7531aaa740167d6365436da97dbbcfc5c41dca2e263fa34"
+    },
     "migrate-to-shoehorn": {
       "source": "mattpocock/skills",
       "sourceType": "github",

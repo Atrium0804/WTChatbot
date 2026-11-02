@@ -1,5 +1,6 @@
 # kennisdocumenten voor de agent
-knowledge-documents/
+knowledge-documents/KNWU-kennis/*.pdf
+knowledge-documents/WTC en regio kennis/*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

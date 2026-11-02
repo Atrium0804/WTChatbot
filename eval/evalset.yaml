@@ -1,0 +1,14 @@
+# Eval-set: launch-gate van de MVP (>= 90% correct met correcte bron,
+# re-run na elke Library-update). Zie wayfinder-map #2.
+#
+# Schema per entry:
+#   id:                unieke code (bijv. knwu-licentie-01)
+#   categorie:         knwu | regio | club
+#   vraag:             typische clubvraag
+#   verwacht_antwoord: correct antwoord (B2-standaard)
+#   bron:              Verwachte bron (URL of documentnaam)
+#
+# Minstens 2 websearch-eligible vragen (licentie/verzekering) met bron =
+# Kenniscentrum. De content wordt gespecificeerd in het ticket
+# "Grilling: eval-set specificeren".
+evalset: []

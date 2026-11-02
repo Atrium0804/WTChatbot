@@ -9,17 +9,20 @@ Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor de 
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
-De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er drie: de WTC/Regio-bibliotheek, de KNWU-bibliotheek en een archief-library met oude versies (alleen voor wijzigingsvragen).
+De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vier: de KNWU-bibliotheek, de Regio-library, de Club-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
-**WTC/Regio-bibliotheek**:
-De club- en regiodocumenten (MNC, ZMC, Hans van den Hengel, clubreglementen). Eerste bron voor vragen over regionale wedstrijden.
+**Regio-library**:
+De regiodocumenten (MNC, Hans van den Hengel-competitie). Eerste bron voor vragen over regionale wedstrijden in regio Midden; bij MNC/HvH-vragen met expliciete fallback naar de KNWU-bibliotheek.
+
+**Club-library**:
+De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen, samen met wtcwoerden.nl via websearch; geen fallback naar de KNWU-bibliotheek.
 
 **KNWU-bibliotheek**:
 De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor nationale/KNWU-vragen.
 
 **Bronvolgorde**:
-Vaste routering per vraagtype: regionale wedstrijdvragen eerst WTC/Regio-bibliotheek (met expliciete fallback naar KNWU), nationale/KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum.
+Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen Club-library + wtcwoerden.nl.
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
 **Wijzigingsmemo**:

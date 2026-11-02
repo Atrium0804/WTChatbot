@@ -4,7 +4,7 @@ status: accepted
 
 # Library bevat alleen de meest recente documentversies; oude versies in een aparte archief-library; wijzigingen via Kenniscentrum-memo
 
-Antwoorden over de geldende regels komen alleen uit de actuele documenten in de KNWU- en WTC/Regio-library. Daarnaast is er een aparte archief-library met oude versies, die de router ALLEEN raadpleegt bij "wat is er veranderd?"-vragen — zo kan retrieval nooit per ongeluk een superseded regel citeren uit de actuele library's. Oude versies staan óók in het repo-archief (`knowledge-documents/archive/`, met datum in de bestandsnaam).
+Antwoorden over de geldende regels komen alleen uit de actuele documenten in de KNWU-, Regio- en Club-library's. Daarnaast is er een aparte archief-library met oude versies, die de router ALLEEN raadpleegt bij "wat is er veranderd?"-vragen — zo kan retrieval nooit per ongeluk een superseded regel citeren uit de actuele library's. Oude versies staan óók in het repo-archief (`knowledge-documents/archive/`, met datum in de bestandsnaam).
 
 "Wat is er veranderd?" heeft een vaste bronvolgorde: (1) de officiële wijzigingsmemo's op het Kenniscentrum per documentversie, (2) de rode zichtbare revisies in het actuele document zelf, (3) als laatste fallback een vergelijking van oude vs nieuwe versie uit de archief-library / het repo-archief. Géén geautomatiseerde lokale PDF-diff (onbetrouwbaar door rode revisies en OCR-ruis) en géén handmatige changelog. Als post-MVP optimalisatie kan bij ingestie de gällende tekst + diffs geëxtraheerd worden naar TXT.
 

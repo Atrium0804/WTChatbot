@@ -9,7 +9,7 @@ Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor de 
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
-De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er twee: de WTC/Regio-bibliotheek en de KNWU-bibliotheek.
+De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er drie: de WTC/Regio-bibliotheek, de KNWU-bibliotheek en een archief-library met oude versies (alleen voor wijzigingsvragen).
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
 **WTC/Regio-bibliotheek**:
@@ -23,7 +23,7 @@ Vaste routering per vraagtype: regionale wedstrijdvragen eerst WTC/Regio-bibliot
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
 **Wijzigingsmemo**:
-De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Bron voor "wat is er veranderd"-vragen; oude documentversies blijven alleen in het repo-archief, nooit in de Library.
+De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Eerste bron voor "wat is er veranderd"-vragen; daarna de rode revisies in het actuele document, dan een vergelijking met de oude versie uit de archief-library / het repo-archief (`knowledge-documents/archive/`).
 
 **Zichtbare revisies**:
 Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd.

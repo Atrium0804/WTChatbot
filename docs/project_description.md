@@ -86,9 +86,9 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 - Benoem als je geen informatie hebt in de gezaghebbende bronnen om de vraag te beantwoorden.
 - Benoem als je tegenstrijdige informatie tegenkomt in de gezaghebbende bronnen en vermeld dan het KNWU-contact: +31 (0)85 070 1900 (di-vr 8.30-12.00 uur).
 - De bronnen van de KNWU bevatten documenten die inmiddels vervangen zijn door recentere versies. Controleer altijd of de informatie die je gebruikt de geldende versie is.
-- Documenten in de RAG-documentbibliotheken zijn de actuele versies. Periodiek wordt gecontroleerd of de objecten in de bibliotheek actueel zijn. Verouderde documenten worden gerapporteerd aan de beheerder.
+- Documenten in de KNWU- en WTC/Regio-bibliotheken zijn de actuele versies; oude versies staan in een aparte archief-library (alleen voor wijzigingsvragen) en in `knowledge-documents/archive/`. Verouderde documenten worden gesignaleerd aan de beheerder.
 - Documenten van de KNWU bevatten zichtbare revisies met rode doorgehaalde tekst. Doorgehaalde rode tekst is niet meer geldig en moet uitgesloten worden. Niet-doorgehaalde rode tekst is de vervangende, actuele tekst. Gebruik nooit doorgehaalde tekst.
-- Vragen over wijzigingen ("wat is er veranderd?") beantwoord je op basis van de wijzigingsmemo van het betreffende document en de rood gemarkeerde revisies in het document; als fallback: vergelijk de leidende (niet-doorgehaalde) teksten van de PDF's.
+- Vragen over wijzigingen ("wat is er veranderd?") beantwoord je in bronvolgorde: (1) de officiële wijzigingsmemo van het Kenniscentrum bij het betreffende document, (2) de rood gemarkeerde revisies in het actuele document, (3) als laatste fallback: vergelijk de oude en nieuwe versie uit de archief-library / het repo-archief (`knowledge-documents/archive/`).
 - Als meerdere bronnen informatie leveren, dan is de gezaghebbende hiërarchie: KNWU-informatie, Regio-informatie, club-informatie.
 - Verzin niets. Benoem als er onvoldoende informatie is om een goed antwoord te geven.
 - Doe geen aannames. Stel maximaal 4 verhelderingsvragen tegelijk, in één bericht, en alleen als het antwoord daardoor verandert.
@@ -101,7 +101,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 - Delivery: bij MVP live op het tijdelijke domein wtchat.famstieltjes.nl (definitief: chat.wtcwoerden.nl), ingebed op de clubsite via een iframe (artikel/pagina). In de ClubApp via de Website-module (webview) is post-MVP. Mobiel/responsive ontwerp is een vereiste. CORS en Content-Security-Policy (frame-ancestors) zijn beperkt tot de clubsite-origin.
 - Beveiliging en misbruik: rate limiting (bijvoorbeeld 10 vragen per uur per IP-hash) en een maximale vraaglengte.
 - Privacy en retentie: chatlogs (vraag, antwoord, bronnen, conversation_id, timestamp) worden 90 dagen bewaard (SQLite op de VPS) en daarna automatisch gepurge. IP's worden alleen als salted hash opgeslagen. Geen geheugen tussen sessies: elke bezoeker start een nieuwe conversatie. Er staat een korte privacy-notitie in de chat-UI.
-- Periodiek wordt gecontroleerd of de documenten in de bibliotheken nog actueel zijn (cron-versiecheck tegen het Kenniscentrum). Verouderde documenten worden via ntfy gemeld aan de beheerder en gelogd.
+- Bij MVP controleer je handmatig of de documenten in de bibliotheken nog actueel zijn: bij elke library-update vervang je het document, archiveer je de oude versie, werk je versions.json bij en re-run je de eval-set; verouderde documenten signaleert de chatbot in-chat. Post-MVP: periodieke cron-versiecheck tegen het Kenniscentrum, met ntfy-melding aan de beheerder.
 - Documentbeheer bij updates: vervang het document in de bibliotheek, archiveer de oude versie in het repo-archief (knowledge-documents/archive/, met datum in de bestandsnaam), werk versions.json bij (documentnaam → versiedatum) en re-run de eval-set.
 - De chatbot moet signaleren en vastleggen:
   - Verouderde documenten

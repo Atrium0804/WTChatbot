@@ -30,6 +30,13 @@ prototype/chat-ui/
 
 State is expres alleen in-memory (geen DB, geen logging naar productie) — dit is een prototype.
 
+**Privacy-afspraak (HITL-beslissing na #14):** er worden geen IP-adressen gelogd. Rate limiting werkt
+in-memory per anonieme client-ID (random UUID in `sessionStorage`). De vraag + het antwoord worden
+**alleen** opgeslagen bij een duim-omlaag (`POST /feedback` met `rating=negative` koppelt de laatste
+uitwisseling aan de `conversation_id`); bij een duim-omhoog slaan we alleen een teller op (timestamp +
+rating, geen tekst). In productie: retentie 30 dagen met automatische purge; learnings geanonimiseerd
+permanent in `LEARNINGS.md`; out-of-scope/missende vragen alleen als categorie zonder vraagtekst.
+
 ## Lokaal draaien
 
 ```bash
@@ -72,5 +79,8 @@ aanroep als `eval/run_eval.py`). De key staat in `.env` op de server, nooit in g
   requests zonder browser-User-Agent, maar met een browser-UA zijn pagina's 200).
   → Parent-side blokkeert niets; iframe-embed zou moeten werken zodra onze eigen origin
   `frame-ancestors` (clubsite) toestaat en geen `X-Frame-Options` stuurt. Dit is hier geïmplementeerd.
+- Privacy (HITL-review): zie de privacy-afspraak hierboven — `app.py` logt geen IP, `/feedback` slaat
+  content alleen op bij `negative`. Geverifieerd: positive feedback = alleen `{timestamp, rating}` in
+  `feedback.log`; negative feedback = inclusief `question` + `answer`.
 - Nog te verifiëren in een echt AllUnited-artikel: console-melding `Refused to frame ...`
   (echte artikel-pagina's kunnen afwijken van de geteste pagina's).

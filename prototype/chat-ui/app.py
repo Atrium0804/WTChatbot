@@ -11,7 +11,6 @@ Run:  uvicorn app:app --reload --port 8000   (vanuit deze map)
 Env:  MISTRAL_API_KEY + MISTRAL_AGENT_ID (optioneel; zonder = stub-answers)
 """
 
-import hashlib
 import json
 import os
 import time
@@ -39,7 +38,8 @@ MISTRAL_CONVERSATIONS_URL = "https://api.mistral.ai/v1/conversations"
 MAX_QUESTION_LENGTH = 1000
 RATE_LIMIT_PER_HOUR = 10
 RATE_WINDOW_SECONDS = 3600
-IP_SALT = os.environ.get("IP_SALT", "prototype-salt-wtchat")  # prototype: vaste salt
+# Privacy-beslissing (HITL na #14): er worden GEEN IP-adressen gelogd.
+# Rate limiting werkt in-memory per anonieme client-ID (random UUID, client-side).
 
 # Clubsite-origins die ons mogen framen (zie ook Caddyfile in deze map).
 FRAME_ANCESTORS = "'self' https://wtcwoerden.nl https://www.wtcwoerden.nl"
@@ -48,7 +48,8 @@ app = FastAPI(title="WTChatbot prototype (wegwerp, #14)")
 
 # Alleen in-memory: een prototype persist niet (state rule van de prototype-skill).
 conversations: dict[str, str] = {}  # eigen conversation_id -> Mistral conversation_id
-rate_limit_buckets: dict[str, list[float]] = {}
+last_exchange: dict[str, dict] = {}  # conversation_id -> {"question", "answer"} — alleen nodig om feedback te koppelen
+rate_limit_buckets: dict[str, list[float]] = {}  # client_id -> timestamps
 
 
 @app.middleware("http")
@@ -69,18 +70,13 @@ async def security_headers(request: Request, call_next):
 class ChatRequest(BaseModel):
     message: str = Field(default="", max_length=100_000)  # harde limiet checkt /chat zelf
     conversation_id: str = ""
+    client_id: str = ""  # anonieme client-ID (random UUID), puur voor de rate limiter
 
 
 class FeedbackRequest(BaseModel):
     conversation_id: str = ""
     rating: str  # "positive" | "negative"
     text: str = ""
-
-
-def ip_hash(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for")
-    ip = forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
-    return hashlib.sha256(f"{IP_SALT}:{ip}".encode()).hexdigest()
 
 
 def rate_limit_ok(key: str) -> bool:
@@ -148,7 +144,7 @@ async def chat(request: Request, payload: ChatRequest):
             {"error": f"Je vraag is te lang (maximaal {MAX_QUESTION_LENGTH} tekens)."},
             status_code=413,
         )
-    if not rate_limit_ok(ip_hash(request)):
+    if not rate_limit_ok(payload.client_id.strip() or "unknown"):
         return JSONResponse(
             {"error": "Te veel vragen in één uur. Probeer het later opnieuw."},
             status_code=429,
@@ -161,19 +157,29 @@ async def chat(request: Request, payload: ChatRequest):
             {"error": f"Er ging iets mis bij het ophalen van het antwoord ({exc}). Probeer het opnieuw."},
             status_code=502,
         )
+    last_exchange[conversation_id] = {"question": message, "answer": answer}
     return {"conversation_id": conversation_id, "answer": answer}
 
 
 @app.post("/feedback")
 async def feedback(payload: FeedbackRequest):
+    """Privacy-beslissing (HITL na #14): content wordt ALLEEN opgeslagen bij
+    duim-omlaag. Bij duim-omhoog slaan we alleen een teller op (geen tekst)."""
     if payload.rating not in ("positive", "negative"):
         return JSONResponse({"error": "rating moet 'positive' of 'negative' zijn."}, status_code=400)
-    entry = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "conversation_id": payload.conversation_id,
-        "rating": payload.rating,
-        "text": payload.text[:2000],
-    }
+    timestamp = datetime.now(timezone.utc).isoformat()
+    if payload.rating == "negative":
+        exchange = last_exchange.get(payload.conversation_id, {})
+        entry = {
+            "timestamp": timestamp,
+            "conversation_id": payload.conversation_id,
+            "rating": payload.rating,
+            "question": exchange.get("question", ""),
+            "answer": exchange.get("answer", ""),
+            "text": payload.text[:2000],
+        }
+    else:
+        entry = {"timestamp": timestamp, "rating": payload.rating}
     with FEEDBACK_LOG.open("a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
     return {"ok": True}

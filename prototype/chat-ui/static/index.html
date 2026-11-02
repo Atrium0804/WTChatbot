@@ -166,9 +166,10 @@
 <div id="privacy">
   <details>
     <summary>Privacy-notitie</summary>
-    <p>Je chatgesprek wordt 90 dagen bewaard (vraag, antwoord, bronnen) en daarna automatisch verwijderd.
-    Je IP-adres wordt alleen als versleutelde hash opgeslagen. Elke bezoeker start een nieuwe conversatie:
-    de chatbot onthoudt niets tussen sessies. Feedback die je geeft wordt gebruikt om de chatbot te verbeteren.</p>
+    <p>We slaan je vraag en het door de chatbot gegeven antwoord alleen op als je aangeeft dat het antwoord
+    niet klopt (duim omlaag), maximaal 30 dagen. Bij een duim omhoog slaan we alleen een teller op.
+    Er worden geen IP-adressen opgeslagen. Elke bezoeker start een nieuwe conversatie: de chatbot onthoudt
+    niets tussen sessies. Opgeslagen feedback gebruiken we om de chatbot te verbeteren.</p>
   </details>
 </div>
 <main id="messages" aria-live="polite">
@@ -188,6 +189,19 @@
   "use strict";
   // Geen geheugen tussen sessies: elke paginalading start een nieuwe conversatie.
   var conversationId = null;
+  // Anonieme client-ID (random UUID, bevat geen persoonsgegevens) — puur voor de rate limiter.
+  var clientId = (function () {
+    try {
+      var id = sessionStorage.getItem("wtchat_client_id");
+      if (!id) {
+        id = crypto.randomUUID();
+        sessionStorage.setItem("wtchat_client_id", id);
+      }
+      return id;
+    } catch (e) {
+      return crypto.randomUUID();
+    }
+  })();
   var messagesEl = document.getElementById("messages");
   var form = document.getElementById("composer");
   var input = document.getElementById("question");
@@ -276,7 +290,7 @@
     fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: question, conversation_id: conversationId || "" })
+      body: JSON.stringify({ message: question, conversation_id: conversationId || "", client_id: clientId })
     })
       .then(function (resp) {
         return resp.json().then(function (body) {

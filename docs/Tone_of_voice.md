@@ -26,7 +26,9 @@ Let op: clubteksten voor leden en ouders zijn volgens de communicatieafspraken s
 
 **B1 zonder bron, niet zonder zorgvuldigheid**: in een B1-antwoord valt de bronvermelding weg, maar de inhoud komt nog steeds uitsluitend uit de documenten — de "verzin niets"-regel geldt onverkort. Alleen de vermelding verdwijnt, niet de betrouwbaarheid. Bied de bron vanzelfsprekend wél aan zodra de gebruiker ernaar vraagt of kritisch doorvraagt.
 
-### 2.1 Persistente taalniveaukeuze (mechanisme)
+### 2.1 Persistente taalniveaukeuze (mechanisme) — post-MVP
+
+_Beslist in wayfinder-ticket #12 (map #2): in de MVP is er geen geheugen tussen sessies — de keuzevraag staat één keer per conversatie in-chat en geldt binnen die conversatie. De onderstaande persistente opslag is post-MVP._
 
 De keuze van een gebruiker wordt één keer gevraagd en daarna vastgehouden, ook in nieuwe chats. Kern: **de keuze woont in de app-laag, niet in het model** — de Conversations API onthoudt context alleen binnen één conversatie, dus "over chats heen" vereist eigen opslag.
 
@@ -86,14 +88,14 @@ Lengte uitgangspunt: zo kort als het antwoord toelaat, zo lang als de vraag vraa
 > Hoi! Leuk dat je dit vraagt! 🚴 Ja hoor, voor de MNC-wedstrijdjes moet je zeker een licentie hebben haha. Succes ermee!!
 
 **Goed** (zakelijk, direct, bron):
-> Ja. Voor deelname aan een MNC-wegrit heb je een nationale licentie nodig. Die vraag je aan via de KNWU (mijnwtc) of via de club. Voor jeugdrenners tot en met de categorie waar je startrecht hebt gelden aparte regels; zie het wedstrijdbepalingen-dossier.
+> Ja. Voor deelname aan een MNC-wegrit heb je een nationale licentie nodig. Die vraag je aan via de KNWU (mijnknwu) of via de club. Voor jeugdrenners tot en met de categorie waar je startrecht hebt gelden aparte regels; zie het wedstrijdbepalingen-dossier.
 > Bron: KNWU Titel 20, hoofdstuk 2.
 
 **Fout** (onzekerheid wegschuiven):
 > Ik denk dat het wel goed zal komen, meestal regelen ze dat soort dingen wel. Succes!
 
 **Goed** (onzekerheid eerlijk):
-> Hier heb ik geen zeker antwoord op. In mijn documenten staat niet vermeld hoe de club dit hanteert. Vraag dit na bij het clubsecretariaat of de wedstrijdcommissaris.
+> Hier heb ik geen zeker antwoord op. In mijn documenten staat niet vermeld hoe de club dit hanteert. Vraag dit na bij het clubsecretariaat of de wedstrijdcommissaris.	
 
 **Aanbod deelversie (slot van een B2-antwoord)**:
 > …Bron: KNWU Titel 20, hoofdstuk 2.
@@ -160,11 +162,19 @@ Voorkeur vragen en onthouden:
   alles in begrijpelijk Nederlands"), roep dan de tool set_language_level
   aan met de waarde "B1" of "B2" en bevestig dit in één korte zin. Bij een
   eenmalige wens ("leg dit kort uit") roep je de tool niet aan.
+  (Post-MVP: in de MVP is er geen persistente opslag; de keuzevraag stel je
+  één keer per conversatie en de keuze geldt binnen die conversatie.)
 ```
 
-## 8. Openstaande keuzes (nog niet beslist)
+## 8. Beslist en openstaand
 
-- Standaardniveau **beslist: B2-standaard, B1 op verzoek** — heroverweging na twee maanden feedbackdata (feedbackknoppen positief/negatief + tekstveld): als blijkt dat gebruikers B2-antwoorden vaak niet begrijpen of herhaard om uitleg vragen, draai de default om naar B1.
-- Vraagmoment taalniveau: in-chat keuzevraag bij de eerste inhoudelijke vraag, of een keuze-schermpje in de webapp vóór de eerste chat (sneller en meteen persistent, maar één scherm extra).
-- Foutmeldingsformulering in de UI (bijv. bij retrieval-miss) dezelfde toon laten volgen: kort, zakelijk, met een concrete vervolgstap.
-- In het leerplan is een "misbruikbeperking"-how-to gepland: de toon bij afwijkend gedrag ("ik ga hier niet op in") hoort in dezelfde stijl geformuleerd te worden.
+**Beslist** (wayfinder-map #2, tickets #9/#12):
+
+- Standaardniveau: **B2-standaard, B1 op verzoek** — heroverweging na twee maanden feedbackdata (feedbackknoppen positief/negatief + tekstveld): als blijkt dat gebruikers B2-antwoorden vaak niet begrijpen of herhaard om uitleg vragen, draai de default om naar B1.
+- Vraagmoment taalniveau: in-chat keuzevraag bij de eerste inhoudelijke vraag, één keer per conversatie; géén persistente opslag over sessies in de MVP (§2.1 is post-MVP).
+
+**Nog open**:
+
+- Foutmeldingsformulering in de UI (bijv. bij retrieval-miss): dezelfde toon volgen — kort, zakelijk, met een concrete vervolgstap. Te konkretiseren bij wayfinder-ticket #14 (chat-UI-prototype).
+
+**Out of scope**: de toon bij afwijkend gedrag ("ik ga hier niet op in") — het leerplan is geen autoriteit (map #2).

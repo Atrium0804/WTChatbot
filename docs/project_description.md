@@ -64,7 +64,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
     - https://kenniscentrum.knwu.nl/algemeen - gezaghebbende bron voor regio-indeling en tarieven
     - https://kenniscentrum.knwu.nl/toekomstcup - gezaghebbende bron voor U17-wedstrijden van de Toekomstclub
     - https://mijn.knwu.nl/calendar/ - gezaghebbende bron voor nationale wedstrijden
-  - Websearch-fallback (ADR-0004): als de documenten in de bibliotheken geen (sluitend) antwoord geven, wordt de websearch-tool ingezet met scope beperkt tot kenniscentrum.knwu.nl (en KNWU-eigen pagina's) - nooit het open web. Licentievragen raadplegen altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
+  - Websearch-fallback (ADR-0004): als de documenten in de bibliotheken geen (sluitend) antwoord geven, wordt de websearch-tool ingezet met scope beperkt tot een allowlist van de gezaghebbende domeinen: knwu.nl (incl. kenniscentrum.knwu.nl), knwumidden.nl en wtcwoerden.nl - nooit het open web. Licentievragen raadplegen altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
   - Vragen over regionale wedstrijden worden alleen beantwoord voor de regio Midden. Vragen over andere regio's worden vriendelijk geweigerd.
     - https://www.knwumidden.nl/competities - gezaghebbende bron voor wedstrijdreglementen van de Midden Nederland Competitie/Hans van den Hengelcompetitie en de wedstrijdkalender van deze competities
   - Vragen over clubzaken:

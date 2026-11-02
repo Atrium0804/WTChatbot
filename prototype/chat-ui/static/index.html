@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WTC Woerden chatbot — prototype</title>
+<style>
+  :root {
+    --accent: #0b6e4f;
+    --accent-dark: #084d37;
+    --bg: #f4f6f5;
+    --bubble-user: #0b6e4f;
+    --bubble-bot: #ffffff;
+    --text: #1c2420;
+    --muted: #5b6b63;
+    --border: #d8e0dc;
+    --danger: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.6rem 1rem;
+  }
+  header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
+  header .sub { font-size: 0.75rem; opacity: 0.85; }
+  #privacy {
+    background: #e7f0ec;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0.4rem 1rem;
+  }
+  #privacy summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); }
+  #privacy p { margin: 0.35rem 0 0.2rem; }
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .msg {
+    max-width: 85%;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.9rem;
+    line-height: 1.45;
+    font-size: 0.92rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--bubble-user);
+    color: #fff;
+    border-bottom-right-radius: 0.2rem;
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--bubble-bot);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 0.2rem;
+  }
+  .msg.error {
+    align-self: flex-start;
+    background: #fdecea;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+  }
+  .msg .bron {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 0.3rem;
+  }
+  .feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
+    flex-wrap: wrap;
+  }
+  .feedback button {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--muted);
+  }
+  .feedback button:hover { border-color: var(--accent); color: var(--accent-dark); }
+  .feedback button.sent { border-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+  .feedback textarea {
+    width: 100%;
+    min-height: 3rem;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+  .feedback .thanks { font-size: 0.75rem; color: var(--accent-dark); }
+  footer {
+    border-top: 1px solid var(--border);
+    background: #fff;
+    padding: 0.5rem;
+  }
+  #composer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+  #question {
+    flex: 1;
+    resize: none;
+    max-height: 8rem;
+    min-height: 2.4rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  #send {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 0.7rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  #send:disabled { opacity: 0.5; cursor: default; }
+  .typing { font-style: italic; color: var(--muted); }
+  @media (min-width: 720px) {
+    main { max-width: 44rem; margin: 0 auto; width: 100%; }
+    footer { display: flex; justify-content: center; }
+    #composer { width: 44rem; }
+    .msg { max-width: 75%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>WTC Woerden chatbot</h1>
+  <div class="sub">PROTOTYPE (issue #14) — wegwerpversie, nog niet live</div>
+</header>
+<div id="privacy">
+  <details>
+    <summary>Privacy-notitie</summary>
+    <p>Je chatgesprek wordt 90 dagen bewaard (vraag, antwoord, bronnen) en daarna automatisch verwijderd.
+    Je IP-adres wordt alleen als versleutelde hash opgeslagen. Elke bezoeker start een nieuwe conversatie:
+    de chatbot onthoudt niets tussen sessies. Feedback die je geeft wordt gebruikt om de chatbot te verbeteren.</p>
+  </details>
+</div>
+<main id="messages" aria-live="polite">
+  <div class="msg bot">Hoi! Ik ben de chatbot van WTC Woerden (prototype). Stel me een vraag over KNWU-zaken,
+  regionale wedstrijden in regio Midden of clubzaken — bijvoorbeeld "Wanneer is de volgende veldritwedstrijd?"</div>
+</main>
+<footer>
+  <form id="composer">
+    <textarea id="question" rows="1" maxlength="1000"
+      placeholder="Stel je vraag…" aria-label="Je vraag"></textarea>
+    <button id="send" type="submit">Verstuur</button>
+  </form>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  // Geen geheugen tussen sessies: elke paginalading start een nieuwe conversatie.
+  var conversationId = null;
+  var messagesEl = document.getElementById("messages");
+  var form = document.getElementById("composer");
+  var input = document.getElementById("question");
+  var send = document.getElementById("send");
+
+  function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+  function addMessage(kind, text) {
+    var div = document.createElement("div");
+    div.className = "msg " + kind;
+    if (kind === "bot") {
+      // "Bron: ..." op de laatste regel apart stylen
+      var parts = text.split(/\n(?=Bron:)/);
+      div.textContent = parts[0];
+      if (parts[1]) {
+        var bron = document.createElement("span");
+        bron.className = "bron";
+        bron.textContent = parts[1];
+        div.appendChild(bron);
+      }
+    } else {
+      div.textContent = text;
+    }
+    messagesEl.appendChild(div);
+    scrollDown();
+    return div;
+  }
+
+  var THUMB_UP = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h3zm0 0l4.2-7.1a2 2 0 0 1 3.8 1.1L14 9h6a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 18.6 20H7"/></svg>';
+  var THUMB_DOWN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 14V3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-3zm0 0l-4.2 7.1a2 2 0 0 1-3.8-1.1L10 15H4a2 2 0 0 1-2-2.4l1.4-7A2 2 0 0 1 5.4 4H17"/></svg>';
+
+  function addFeedback(div, answerText) {
+    var row = document.createElement("div");
+    row.className = "feedback";
+    var sent = false;
+    function sendFeedback(rating, text) {
+      if (sent) return;
+      sent = true;
+      fetch("/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversation_id: conversationId, rating: rating, text: text || "" })
+      }).catch(function () {}).then(function () {
+        row.innerHTML = "";
+        var thanks = document.createElement("span");
+        thanks.className = "thanks";
+        thanks.textContent = "Bedankt voor je feedback.";
+        row.appendChild(thanks);
+      });
+    }
+    var up = document.createElement("button");
+    up.type = "button";
+    up.innerHTML = THUMB_UP + " Goed antwoord";
+    up.onclick = function () { sendFeedback("positive", ""); };
+    var down = document.createElement("button");
+    down.type = "button";
+    down.innerHTML = THUMB_DOWN + " Niet goed";
+    var extra = document.createElement("div");
+    extra.style.display = "none";
+    extra.style.width = "100%";
+    var ta = document.createElement("textarea");
+    ta.placeholder = "Wat ging er mis? (optioneel)";
+    var sendNeg = document.createElement("button");
+    sendNeg.type = "button";
+    sendNeg.textContent = "Verstuur feedback";
+    sendNeg.onclick = function () { sendFeedback("negative", ta.value); };
+    down.onclick = function () {
+      extra.style.display = extra.style.display === "none" ? "block" : "none";
+    };
+    extra.appendChild(ta);
+    extra.appendChild(sendNeg);
+    row.appendChild(up);
+    row.appendChild(down);
+    row.appendChild(extra);
+    div.appendChild(row);
+  }
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var question = input.value.trim();
+    if (!question) return;
+    input.value = "";
+    send.disabled = true;
+    addMessage("user", question);
+    var typing = addMessage("bot typing", "…");
+    fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: question, conversation_id: conversationId || "" })
+    })
+      .then(function (resp) {
+        return resp.json().then(function (body) {
+          if (!resp.ok) throw new Error(body.error || "Onbekende fout");
+          return body;
+        });
+      })
+      .then(function (body) {
+        conversationId = body.conversation_id;
+        typing.className = "msg bot";
+        typing.textContent = "";
+        typing.textContent = body.answer.split(/\n(?=Bron:)/)[0];
+        var rest = body.answer.split(/\n(?=Bron:)/);
+        if (rest[1]) {
+          var bron = document.createElement("span");
+          bron.className = "bron";
+          bron.textContent = rest[1];
+          typing.appendChild(bron);
+        }
+        addFeedback(typing, body.answer);
+        scrollDown();
+      })
+      .catch(function (err) {
+        typing.className = "msg error";
+        typing.textContent = err.message || "Er ging iets mis. Probeer het opnieuw.";
+        scrollDown();
+      })
+      .finally(function () {
+        send.disabled = false;
+        input.focus();
+      });
+  });
+
+  input.focus();
+})();
+</script>
+</body>
+</html>

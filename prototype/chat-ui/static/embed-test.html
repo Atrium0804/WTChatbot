@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embed-test — WTChatbot prototype (#14)</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 1rem; color: #1c2420; }
+  iframe { width: 100%; height: 600px; border: 1px solid #999; border-radius: 8px; }
+  code { background: #eee; padding: 0.1rem 0.3rem; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>Embed-test (prototype #14)</h1>
+<p>Deze pagina embedt de chat-UI in een iframe, zoals een artikel op wtcwoerden.nl dat zou doen.
+Zonder CSP-beperking van de parent-pagina zie je hieronder de werkende chat.</p>
+<p>Plak in een AllUnited-artikel (via het <code>&lt;&gt;</code>-icoon in het intro-/detailblok):</p>
+<pre><code>&lt;iframe src="https://wtchat.famstieltjes.nl/" width="100%" height="600" title="WTC Woerden chatbot"&gt;&lt;/iframe&gt;</code></pre>
+<p>Let op: de parent-pagina kan de hoogte niet dynamisch aanpassen (externe scripts worden door
+AllUnited gestript), dus de chat scrollt intern bij een vaste hoogte.</p>
+<iframe src="/" title="WTChatbot prototype in iframe"></iframe>
+</body>
+</html>

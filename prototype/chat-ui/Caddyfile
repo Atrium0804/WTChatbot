@@ -1,0 +1,12 @@
+# PROTOTYPE (issue #14) — Caddy-config voor wtchat.famstieltjes.nl (wegwerp).
+# De app.py zet dezelfde headers zelf al, dit is voor de productie-achtige setup via Caddy.
+
+wtchat.famstieltjes.nl {
+    reverse_proxy localhost:8000
+
+    header {
+        # Let op: expres GEEN X-Frame-Options — de clubsite moet ons mogen framen.
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self' https://wtcwoerden.nl https://www.wtcwoerden.nl; base-uri 'self'; form-action 'self'"
+        X-Content-Type-Options "nosniff"
+    }
+}

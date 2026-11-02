@@ -11,8 +11,8 @@ De **beheerder** is de benoemde eindverantwoordelijke voor ntfy-alerts, feedback
 
 | Rol | Naam en rol binnen WTC Woerden |
 | --- | --- |
-| Beheerder | _In te vullen door de eigenaar_ |
-| Vervanger | _In te vullen door de eigenaar_ |
+| Beheerder | Botty mc Botface — botbeheerder |
+| Vervanger | _Vacant — nog te benoemen_ |
 
 ## ntfy versiecheck-meldingen (post-MVP)
 

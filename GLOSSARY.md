@@ -32,11 +32,11 @@ _Avoid_: "de schone versie" (die bestaat niet)
 ## Taal
 
 **Taalniveau B1**:
-Standaardniveau van alle antwoorden (gem. zinslengte 10-15 woorden, max 20). Op verzoek kan de gebruiker B2 krijgen.
+Niveau op verzoek (gem. zinslengte 10-15 woorden, max 20).
 _Avoid_: "makkelijke taal", "eenvoudig Nederlands"
 
 **Taalniveau B2**:
-Uitgebreider niveau op verzoek (max 20 woorden gem., max 25). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
+Standaardniveau van alle antwoorden (max 20 woorden gem., max 25; heroverweging na 2 maanden feedbackdata). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
 
 ## Kwaliteit en beheer
 

@@ -164,7 +164,7 @@ Voorkeur vragen en onthouden:
 
 ## 8. Openstaande keuzes (nog niet beslist)
 
-- Standaardniveau B2 of B1 — monitoring: kijk na twee maanden feedbackdata (👍/👎 + tekstveld) of gebruikers B2-antwoorden begrijpen of herhaard om uitleg vragen.
+- Standaardniveau **beslist: B2-standaard, B1 op verzoek** — heroverweging na twee maanden feedbackdata (feedbackknoppen positief/negatief + tekstveld): als blijkt dat gebruikers B2-antwoorden vaak niet begrijpen of herhaard om uitleg vragen, draai de default om naar B1.
 - Vraagmoment taalniveau: in-chat keuzevraag bij de eerste inhoudelijke vraag, of een keuze-schermpje in de webapp vóór de eerste chat (sneller en meteen persistent, maar één scherm extra).
 - Foutmeldingsformulering in de UI (bijv. bij retrieval-miss) dezelfde toon laten volgen: kort, zakelijk, met een concrete vervolgstap.
 - In het leerplan is een "misbruikbeperking"-how-to gepland: de toon bij afwijkend gedrag ("ik ga hier niet op in") hoort in dezelfde stijl geformuleerd te worden.

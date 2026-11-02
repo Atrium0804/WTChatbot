@@ -2,6 +2,8 @@
 
 Je schrijft een chatbot voor een wielrenvereniging. De chatbot wordt gebruikt door trainers om vragen van ouders te beantwoorden en door ouders en leden die rechtstreeks met de chatbot chatten. De chatbot haalt informatie uit gezaghebbende bronnen, zodat alleen juiste informatie wordt verstrekt.
 
+De ADR's in `docs/adr/` zijn gegenereerde, ongereviewde drafts — aanpasbaar als dat een beter product oplevert (zie wayfinder-map #2).
+
 ## Onderwerpen
 
 De chatbot beantwoordt vragen over de volgende gebieden:
@@ -9,10 +11,10 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 - KNWU-zaken: vragen over landelijke wielersportzaken rond regelgeving, competities en nationale wedstrijden en -kampioenschappen, licentiezaken en verzekeringen, en hieraan gerelateerde procedures.
 - Vragen over regionale wedstrijden en competities
 - Vragen over clubzaken en -activiteiten van WTC Woerden
-- Vragen over technische (verzet)aanpassingen, fietsafstelling en -onderhoud
-- Verzetadvies
+- Vragen over technische (verzet)aanpassingen, fietsafstelling en -onderhoud (post-MVP)
+- Verzetadvies (post-MVP)
 
-### Verzetadvies
+### Verzetadvies (post-MVP)
 
 - De chatbot kan adviseren over toegestane verzetten bij het jeugdwielrennen en over mogelijke aanpassingen:
 
@@ -53,7 +55,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 ## Tone of Voice
 
 - Zie het aparte document `docs/Tone_of_voice.md`.
-- Taalniveau: standaard B1, B2 op verzoek. Bij elk B2-antwoord biedt de chatbot aan om (een deel van) het antwoord naar B1 om te zetten.
+- Taalniveau: standaard B2, B1 op verzoek (heroverweging na 2 maanden feedbackdata). Bij elk B2-antwoord biedt de chatbot aan om (een deel van) het antwoord naar B1 om te zetten.
 
 ## Bronnen
 
@@ -96,7 +98,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 ## Implementatie
 
 - Hosting: de chatbot wordt gehost op een VPS (Docker + Caddy voor automatische HTTPS) met een FastAPI-proxy. De chatbot gebruikt LLM's van Mistral AI. De API-key staat server-side in een .env-bestand op de server, nooit in de code of in git.
-- Delivery: chat.wtcwoerden.nl, ingebed op de clubsite via een iframe (artikel/pagina) en in de ClubApp via de Website-module (webview). Mobiel/responsive ontwerp is een vereiste. CORS en Content-Security-Policy (frame-ancestors) zijn beperkt tot de clubsite- en ClubApp-origins.
+- Delivery: bij MVP live op het tijdelijke domein wtchat.famstieltjes.nl (definitief: chat.wtcwoerden.nl), ingebed op de clubsite via een iframe (artikel/pagina). In de ClubApp via de Website-module (webview) is post-MVP. Mobiel/responsive ontwerp is een vereiste. CORS en Content-Security-Policy (frame-ancestors) zijn beperkt tot de clubsite-origin.
 - Beveiliging en misbruik: rate limiting (bijvoorbeeld 10 vragen per uur per IP-hash) en een maximale vraaglengte.
 - Privacy en retentie: chatlogs (vraag, antwoord, bronnen, conversation_id, timestamp) worden 90 dagen bewaard (SQLite op de VPS) en daarna automatisch gepurge. IP's worden alleen als salted hash opgeslagen. Geen geheugen tussen sessies: elke bezoeker start een nieuwe conversatie. Er staat een korte privacy-notitie in de chat-UI.
 - Periodiek wordt gecontroleerd of de documenten in de bibliotheken nog actueel zijn (cron-versiecheck tegen het Kenniscentrum). Verouderde documenten worden via ntfy gemeld aan de beheerder en gelogd.

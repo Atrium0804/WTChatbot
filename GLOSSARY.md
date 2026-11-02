@@ -9,21 +9,24 @@ Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor de 
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
-De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er twee: de WTC/Regio-bibliotheek en de KNWU-bibliotheek.
+De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vier: de KNWU-bibliotheek, de Regio-library, de Club-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
-**WTC/Regio-bibliotheek**:
-De club- en regiodocumenten (MNC, ZMC, Hans van den Hengel, clubreglementen). Eerste bron voor vragen over regionale wedstrijden.
+**Regio-library**:
+De regiodocumenten (MNC, Hans van den Hengel-competitie). Eerste bron voor vragen over regionale wedstrijden in regio Midden; bij MNC/HvH-vragen met expliciete fallback naar de KNWU-bibliotheek.
+
+**Club-library**:
+De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen, samen met wtcwoerden.nl via websearch; geen fallback naar de KNWU-bibliotheek.
 
 **KNWU-bibliotheek**:
 De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor nationale/KNWU-vragen.
 
 **Bronvolgorde**:
-Vaste routering per vraagtype: regionale wedstrijdvragen eerst WTC/Regio-bibliotheek (met expliciete fallback naar KNWU), nationale/KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum.
+Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen Club-library + wtcwoerden.nl.
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
 **Wijzigingsmemo**:
-De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Bron voor "wat is er veranderd"-vragen; oude documentversies blijven alleen in het repo-archief, nooit in de Library.
+De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Eerste bron voor "wat is er veranderd"-vragen; daarna de rode revisies in het actuele document, dan een vergelijking met de oude versie uit de archief-library / het repo-archief (`knowledge-documents/archive/`).
 
 **Zichtbare revisies**:
 Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd.
@@ -32,11 +35,11 @@ _Avoid_: "de schone versie" (die bestaat niet)
 ## Taal
 
 **Taalniveau B1**:
-Standaardniveau van alle antwoorden (gem. zinslengte 10-15 woorden, max 20). Op verzoek kan de gebruiker B2 krijgen.
+Niveau op verzoek (gem. zinslengte 10-15 woorden, max 20).
 _Avoid_: "makkelijke taal", "eenvoudig Nederlands"
 
 **Taalniveau B2**:
-Uitgebreider niveau op verzoek (max 20 woorden gem., max 25). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
+Standaardniveau van alle antwoorden (max 20 woorden gem., max 25; heroverweging na 2 maanden feedbackdata). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
 
 ## Kwaliteit en beheer
 

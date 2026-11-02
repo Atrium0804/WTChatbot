@@ -4,7 +4,7 @@ status: accepted
 
 # Enkele publieke instance, as-is — geen multi-tenancy
 
-De chatbot is één publieke, anonieme instance op chat.wtcwoerden.nl met de documenten die erin zitten (WTC/Regio-bibliotheek + KNWU-bibliotheek). Andere wielrenclubs mogen de bot as-is gebruiken met diezelfde informatie. Er is geen multi-tenancy, geen club-selector, geen per-club configuratie, en WTC host/onderhoudt geen instances voor andere clubs.
+De chatbot is één publieke, anonieme instance op chat.wtcwoerden.nl met de documenten die erin zitten (KNWU-bibliotheek, Regio-library en Club-library). Andere wielrenclubs mogen de bot as-is gebruiken met diezelfde informatie. Er is geen multi-tenancy, geen club-selector, geen per-club configuratie, en WTC host/onderhoudt geen instances voor andere clubs.
 
 ## Considered options
 
@@ -14,5 +14,5 @@ De chatbot is één publieke, anonieme instance op chat.wtcwoerden.nl met de doc
 
 ## Consequences
 
-- De WTC/Regio-documenten zijn in principe zichtbaar voor elke bezoeker. Dit is bewust geaccepteerd: het zijn club- en regiodocumenten die sowieso publiek zijn.
+- De club- en regiodocumenten zijn in principe zichtbaar voor elke bezoeker. Dit is bewust geaccepteerd: het zijn club- en regiodocumenten die sowieso publiek zijn.
 - Er is geen manier om per-club/personalisatie toe te voegen zonder deze ADR te herzien.

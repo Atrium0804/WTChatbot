@@ -6,6 +6,8 @@ status: accepted
 
 De chatbot antwoordt uit de eigen documenten — twee Libraries in Mistral Studio: de WTC/Regio-bibliotheek (club-/regiowedstrijden) en de KNWU-bibliotheek (Titel 20, Nationale Besluiten, Handboek Veldrijden) — met strikte bronvolgorde per vraagtype (regionaal eerst, nationaal alleen KNWU) en altijd bron + versiedatum in het antwoord. Het online KNWU Kenniscentrum (kenniscentrum.knwu.nl) is de autoritatieve bron voor de nieuwste versies, licentiepakketten/tarieven, verzekeringen en wijzigingsmemo's. De system prompt is geport uit de skills `wtc-knwu-kennisroutering` en `taalniveau` (repo WebsiteWTCjeugd).
 
+_Amendment 2026-11-02 (wayfinder-ticket "Grilling: MVP system prompt / routeringsregels specificeren", map #2 issue #12): de WTC/Regio-bibliotheek is gesplitst in een Regio-library (MNC, Hans van den Hengel) en een Club-library (ZMC, clubreglementen, WTC-jeugddocumenten); de routering is drie-wegs (KNWU / regio / club) met één agent per library (plus archief-agent, ADR-0005); fallback naar KNWU alléén bij MNC/HvH-vragen; de system prompt is gespecificeerd in `docs/system-prompt.md`._
+
 ## Considered options
 
 - **Fine-tuning in plaats van RAG** — verworpen: duur, traag en stilstaand; de regelgeving wisselt elk seizoen (nieuwe Nationale Besluiten, reglementen), en bij RAG is een nieuw document uploaden direct bijgewerkt.

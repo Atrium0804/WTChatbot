@@ -1,0 +1,25 @@
+{
+  "rag_folder": "../knowledge-documents",
+  "libraries": [
+    {
+      "name": "knwu",
+      "description": "KNWU-bibliotheek: nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden)"
+    },
+    {
+      "name": "regio",
+      "description": "Regio-library: regiodocumenten (MNC, Hans van den Hengel-competitie)"
+    },
+    {
+      "name": "club",
+      "description": "Club-library: clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten)"
+    },
+    {
+      "name": "archive",
+      "description": "Archief-library: oude documentversies, alleen voor wijzigingsvragen"
+    },
+    {
+      "name": "algemeen",
+      "description": "Algemeen-library: algemene kennisdocumenten (bijv. trainingsleer, het motiveren van kinderen), voor algemene vragen die geen KNWU-, regio- of clubvraag zijn"
+    }
+  ]
+}

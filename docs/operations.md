@@ -49,10 +49,9 @@ De websearch-tool van de agent is server-side beperkt tot een org-level allowlis
 
 Seizoenwissel is een kritieke operatie (zie [ADR-0005](adr/0005-library-bevat-alleen-actuele-versies.md) en [project_description.md](project_description.md)):
 
-1. Vervang het document in de actuele library (KNWU-bibliotheek, Regio-library of Club-library).
-2. Archiveer de oude versie in de archief-library én in het repo-archief `knowledge-documents/archive/` (met datum in de bestandsnaam).
-3. Werk `knowledge-documents/versions.json` bij (documentnaam → versiedatum).
-4. Re-run de eval-set (`eval/run_eval.py`); launch-gate is ≥90% correct mét correcte bron.
-5. Noteer wat er gewijzigd is in [LEARNINGS.md](../LEARNINGS.md).
+1. Vervang het document in de lokale bronmap: oude versie naar `knowledge-documents/archive/` (met datum in de bestandsnaam), nieuwe versie in `knowledge-documents/<library>/`. Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
+2. Werk `knowledge-documents/versions.json` bij (documentnaam → versiedatum).
+3. Re-run de eval-set (`eval/run_eval.py`); launch-gate is ≥90% correct mét correcte bron.
+4. Noteer wat er gewijzigd is in [LEARNINGS.md](../LEARNINGS.md).
 
 In de MVP is de versiecheck handmatig (bij elke library-update); de automatische cron-check via ntfy is post-MVP (zie boven).

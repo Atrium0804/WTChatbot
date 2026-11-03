@@ -9,7 +9,7 @@ Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor de 
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
-De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vier: de KNWU-bibliotheek, de Regio-library, de Club-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
+De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vijf: de KNWU-bibliotheek, de Regio-library, de Club-library, de Algemeen-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
 **Regio-library**:
@@ -17,6 +17,9 @@ De regiodocumenten (MNC, Hans van den Hengel-competitie). Eerste bron voor vrage
 
 **Club-library**:
 De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen, samen met wtcwoerden.nl via websearch; geen fallback naar de KNWU-bibliotheek.
+
+**Algemeen-library**:
+De algemene kennisdocumenten (bijv. trainingsleer, het motiveren van kinderen). Te raadplegen bij algemene vragen die geen KNWU-, regio- of clubvraag zijn.
 
 **KNWU-bibliotheek**:
 De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor nationale/KNWU-vragen.
@@ -31,6 +34,13 @@ De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opso
 **Zichtbare revisies**:
 Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd.
 _Avoid_: "de schone versie" (die bestaat niet)
+
+**Knowledge-documents**:
+De lokale bronmap (`knowledge-documents/`) met per library één submap (`knwu/`, `regio/`, `club/`, `archive/`). Bron van waarheid voor de sync naar de Mistral-libraries.
+_Avoid_: "kennismap", "documentenmap"
+
+**Sync**:
+Het local → remote synchroniseren van `knowledge-documents/` met de bijbehorende Mistral-libraries: de submapnaam is gelijk aan de librarynaam, en remote documenten zonder lokale tegenhanger worden uit de actieve library verwijderd. Archiveren van oude versies gebeurt handmatig (zie ADR-0005).
 
 ## Taal
 

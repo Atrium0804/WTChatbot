@@ -2,4 +2,4 @@
 
 Stappenplannen voor concrete taken. Zie de [documentatiegids](../DOCUMENTATION_GUIDE.md).
 
-_Nog geen pagina's._
+- [Libraries synchroniseren met knowledge-documents](sync-libraries.md) — dry-run/`--apply` van de sync tussen `knowledge-documents/` en de Mistral-libraries (`scripts/sync_libraries.py`)

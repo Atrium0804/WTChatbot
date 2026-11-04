@@ -1,0 +1,15 @@
+# WTChatbot MVP — Caddy met automatische HTTPS voor wtchat.famstieltjes.nl.
+# DNS: A-record wtchat.famstieltjes.nl -> VPS-IP.
+#
+# Post-MVP iframe-embed op de clubsite (#14): FRAME_ANCESTORS verbreden naar
+# "frame-ancestors 'self' https://wtcwoerden.nl https://www.wtcwoerden.nl"
+# en géén X-Frame-Options sturen (wij sturen die sowieso niet).
+
+wtchat.famstieltjes.nl {
+    reverse_proxy app:8000
+
+    header {
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+        X-Content-Type-Options "nosniff"
+    }
+}

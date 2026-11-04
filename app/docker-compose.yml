@@ -1,0 +1,24 @@
+# WTChatbot MVP — app + Caddy (automatische HTTPS) op de VPS.
+# Deploy: docker compose up -d --build   (met .env in deze map; .env staat NOOIT in git)
+services:
+  app:
+    build: .
+    env_file: .env
+    volumes:
+      - ./data:/srv/app/data
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

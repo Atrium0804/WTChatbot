@@ -41,15 +41,15 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
-    verwacht_antwoord: "6,30 meter; U15; Titel 20 artikel 20.1.007"
+    verwacht_antwoord: "6,70 meter; U15; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
-    doorhaal_waarde: "6,14"
+    doorhaal_waarde: "6,55"
   - id: knwu-verzet-u11
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?"
-    verwacht_antwoord: "5,90 meter; U11; Titel 20 artikel 20.1.007"
+    verwacht_antwoord: "5,90 meter; U11; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "5,78"
@@ -57,7 +57,7 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?"
-    verwacht_antwoord: "7,68 meter; U17 nieuwelingen; Titel 20 artikel 20.1.007"
+    verwacht_antwoord: "7,68 meter; U17 nieuwelingen; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "7,01"

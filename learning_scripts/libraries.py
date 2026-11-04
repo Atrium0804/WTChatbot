@@ -21,6 +21,7 @@ rag_libraries = [
 # connect to Mistral API
 load_dotenv()
 started = perf_counter()
+
 mistral = Mistral(api_key=os.getenv("MISTRAL_API_KEY"))  # client blift hele script bestaan
 print(f"Request: {perf_counter() - started:.2f}s;")
 

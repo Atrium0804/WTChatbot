@@ -7,6 +7,8 @@ Hoe je de domeinen beperkt die de `web_search`-tool mag raadplegen. De beslissin
 
 Mistral domeinfiltering is een **org-level** governance-control, geconfigureerd via de REST-endpoints onder `https://api.mistral.ai/v1/web-filters`. Er is (nog) geen Admin Panel-pagina voor — API-only — en de endpoints zitten (nog) niet in de `mistralai`-SDK (getest met 3.6.0), dus gebruik `curl` of `httpx` uit de project-venv.
 
+> De web-filters zijn **org-breed**: één setting en twee lijsten per Organization, toegepast op álle keys en applicaties in die org — niet per workspace of agent. Schakel de allowlist daarom alleen in als deze Mistral-Organization exclusief voor de WTChatbot is gereserveerd; in een gedeelde org niet gebruiken en de scope via het system prompt afdwingen. Zie [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md) (amendment 2026-11-04).
+
 ## Voorwaarden
 
 - `MISTRAL_API_KEY` in `.env` in de repo-root. De key moet bij de Organization horen; bij een user-key heeft die user de Organization admin-rol nodig. Geverifieerd met de project-key: `GET /v1/web-filters/config` geeft `200`.

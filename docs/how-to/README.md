@@ -4,3 +4,4 @@ Stappenplannen voor concrete taken. Zie de [documentatiegids](../DOCUMENTATION_G
 
 - [Libraries synchroniseren met knowledge-documents](sync-libraries.md) — dry-run/`--apply` van de sync tussen `knowledge-documents/` en de Mistral-libraries (`scripts/sync_libraries.py`)
 - [Websearch-allowlist configureren](websearch-allowlist.md) — org-level domeinfilter via `/v1/web-filters` (`knwu.nl`, `knwumidden.nl`, `wtcwoerden.nl`), zie ADR-0004
+- [Productie-agents aanmaken of updaten](create-agents.md) — dry-run/`--apply` van de vijf MVP-agents vanuit `scripts/agents_config.json` + `scripts/prompts/` (`scripts/create_agents.py`)

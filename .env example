@@ -1,1 +1,6 @@
 MISTRAL_API_KEY=<your mistral studio api key>
+MISTRAL_AGENT_ID=<id van de router-agent, zie scripts/create_agents.py>
+MISTRAL_AGENT_ID_KNWU=
+MISTRAL_AGENT_ID_REGIO=
+MISTRAL_AGENT_ID_CLUB=
+MISTRAL_AGENT_ID_ARCHIEF=

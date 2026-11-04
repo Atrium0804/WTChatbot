@@ -1,0 +1,45 @@
+{
+  "model": "mistral-large-4",
+  "completion_args": {
+    "temperature": 0,
+    "top_p": 1,
+    "response_format": { "type": "text" }
+  },
+  "prompts_folder": "prompts",
+  "agents": [
+    {
+      "name": "knwu-agent",
+      "description": "KNWU-agent: nationale/KNWU-vragen (Titel 20, Nationale Besluiten, licenties, verzekeringen, NK's)",
+      "prompt_files": ["_shared.md", "knwu-agent.md"],
+      "library": "knwu",
+      "websearch": true
+    },
+    {
+      "name": "regio-agent",
+      "description": "Regio-agent: MNC / Hans van den Hengel-vragen regio Midden, fallback naar knwu-agent",
+      "prompt_files": ["_shared.md", "regio-agent.md"],
+      "library": "regio",
+      "websearch": true
+    },
+    {
+      "name": "club-agent",
+      "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, wtcwoerden.nl), nooit fallback naar KNWU",
+      "prompt_files": ["_shared.md", "club-agent.md"],
+      "library": "club",
+      "websearch": true
+    },
+    {
+      "name": "archief-agent",
+      "description": "Archief-agent: alleen voor \"wat is er veranderd?\"-vragen (vergelijking oude/nieuwe versie)",
+      "prompt_files": ["_shared.md", "archief-agent.md"],
+      "library": "archive",
+      "websearch": false
+    },
+    {
+      "name": "router-agent",
+      "description": "Router-agent: bepaalt het vraagtype (KNWU/regio/club) en doet de handoff",
+      "prompt_files": ["router-agent.md"],
+      "handoffs": ["knwu-agent", "regio-agent", "club-agent"]
+    }
+  ]
+}

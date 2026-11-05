@@ -19,7 +19,8 @@
       "description": "Regio-agent: MNC / Hans van den Hengel-vragen regio Midden, fallback naar knwu-agent",
       "prompt_files": ["_shared.md", "regio-agent.md"],
       "library": "regio",
-      "websearch": true
+      "websearch": true,
+      "handoffs": ["knwu-agent"]
     },
     {
       "name": "club-agent",

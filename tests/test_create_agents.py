@@ -268,6 +268,31 @@ class RunCreateTests(unittest.TestCase):
         self.assertEqual(create_agents.env_var_for("knwu-agent"), "MISTRAL_AGENT_ID_KNWU")
         self.assertEqual(create_agents.env_var_for("archief-agent"), "MISTRAL_AGENT_ID_ARCHIEF")
 
+    def test_handoff_keten_wordt_opgelost_ongeacht_volgorde_in_config(self) -> None:
+        # router -> regio -> knwu: de regio-agent heeft zelf ook een handoff.
+        (self.root / "prompts" / "regio-agent.md").write_text("REGIO ADDENDUM", encoding="utf-8")
+        regio = {
+            "name": "regio-agent",
+            "description": "Regio-agent",
+            "prompt_files": ["_shared.md", "regio-agent.md"],
+            "handoffs": ["knwu-agent"],
+        }
+        router = self.router_agent()
+        router["handoffs"] = ["regio-agent"]
+        config_path = self.make_config([router, regio, self.knwu_agent()])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(report["errors"], [])
+        self.assertEqual(rc, 0)
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(calls["regio-agent"]["handoffs"], ["agent-knwu-agent"])
+        self.assertEqual(calls["router-agent"]["handoffs"], ["agent-regio-agent"])
+
     def test_unknown_handoff_target_is_error(self) -> None:
         router = self.router_agent()
         router["handoffs"] = ["bestaat-niet"]

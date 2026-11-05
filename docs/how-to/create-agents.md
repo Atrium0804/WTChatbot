@@ -24,7 +24,7 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 ## Controle dat het gelukt is
 
 - De summary print per agent naam → id en de bijbehorende env-var.
-- In Mistral Studio: 5 agents; per content-agent precies één `document_library`-tool met de juiste library; `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` alleen op de router-agent.
+- In Mistral Studio: 5 agents; per content-agent precies één `document_library`-tool met de juiste library; `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club) en op de regio-agent (naar de knwu-agent, de fallback uit [system-prompt.md](../system-prompt.md) regel 3).
 - Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](websearch-allowlist.md).
 - Model is `mistral-large-4` met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0).
 

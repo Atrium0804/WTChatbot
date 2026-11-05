@@ -2,7 +2,7 @@
 
 ## Twijfelgevallen
 
-- [ ] Pagina 6, doorgehaald maar niet rood: categorie, tenzij anders bepaald. ~~U+F0B7~~ Als je je hebt
+Geen.
 
 ## Weggehaalde stukken (14 op 7 pagina's)
 

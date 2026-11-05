@@ -43,7 +43,7 @@ _Avoid_: "schone versie", "gecleande PDF"
 Het rapport dat `scripts/clean_pdf.py` naast elke opgeschoonde versie schrijft (`knowledge-documents/review/`): bovenaan de twijfelgevallen die een mens afvinkt, daaronder alle weggehaalde stukken per pagina met context.
 
 **Twijfelgeval**:
-Een plek in het opschoonrapport waar het script mogelijk iets mist of te veel weghaalt: doorgehaalde tekst die niet rood is, een bijna-doorhaling (rode tekst met een lijn net buiten de doorhaalband, blijft staan), of rode tekst in een document zonder enige gevonden doorhaling.
+Een plek in het opschoonrapport waar het script mogelijk iets mist of te veel weghaalt: doorgehaalde letters of cijfers die niet rood zijn (een los doorgehaald opsommingsteken telt niet), een bijna-doorhaling (rode tekst met een lijn net buiten de doorhaalband, blijft staan), of rode tekst in een document zonder enige gevonden doorhaling.
 
 **Knowledge-documents**:
 De lokale bronmap (`knowledge-documents/`) met per library één submap (`knwu/`, `regio/`, `club/`, `archive/`). Bron van waarheid voor de sync naar de Mistral-libraries. Uitzondering: `review/` bevat opschoonrapporten en wordt nooit gesynct.

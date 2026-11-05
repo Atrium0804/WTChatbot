@@ -79,6 +79,15 @@ class RapportTests(unittest.TestCase):
         twijfels = self.twijfels(self.rapport(teken))
         self.assertIn("- [ ] Pagina 1, doorgehaald maar niet rood: Leeftijd ~~12~~ jaar", twijfels)
 
+    def test_doorgehaald_teken_zonder_letters_of_cijfers_is_geen_twijfelgeval(self) -> None:
+        def teken(page: pymupdf.Page) -> None:
+            page.insert_text((72, 100), "* Als je je hebt", fontsize=11)
+            page.draw_line((72, 96.5), (76, 96.5))
+
+        rapport = self.rapport(teken)
+        self.assertIn("Geen.", self.twijfels(rapport))
+        self.assertIn("~~*~~ Als je je", rapport.split("## Weggehaalde stukken")[1])
+
     def test_rode_tekst_met_lijn_net_buiten_de_band_is_bijna_doorhaling(self) -> None:
         def teken(page: pymupdf.Page) -> None:
             page.insert_text((72, 100), "Leeftijd", fontsize=11)
@@ -156,12 +165,13 @@ class TitelTwintigTests(unittest.TestCase):
 
 
 class HandboekRapportTests(unittest.TestCase):
-    def test_doorgehaald_opsommingsteken_is_zichtbaar_in_rapport(self) -> None:
+    def test_doorgehaald_opsommingsteken_is_zichtbaar_maar_geen_twijfelgeval(self) -> None:
         kandidaten = sorted((ROOT / "knowledge-documents").glob("*/Handboek Veldrijden Jeugd 2026-2027*.pdf"))
         if not kandidaten:
             self.skipTest("Handboek Veldrijden Jeugd 2026-2027.pdf niet lokaal aanwezig")
-        rapport = clean_pdf.opschonen(kandidaten[0])[1]
-        self.assertIn("doorgehaald maar niet rood: categorie, tenzij anders bepaald. ~~U+F0B7~~", rapport)
+        twijfels, weggehaald = clean_pdf.opschonen(kandidaten[0])[1].split("## Weggehaalde stukken")
+        self.assertIn("Geen.", twijfels)
+        self.assertIn("categorie, tenzij anders bepaald. ~~U+F0B7~~", weggehaald)
 
 
 if __name__ == "__main__":

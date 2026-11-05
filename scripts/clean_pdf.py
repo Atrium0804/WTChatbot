@@ -186,7 +186,9 @@ def opschonen(path: Path) -> tuple[str, str]:
             for start, eind in _stukken(tekens, lambda t: t.weg):
                 stuk = _context(tekens, start, eind)
                 weggehaald.setdefault(pagina, []).append(stuk)
-                if any(t.weg and t.c.strip() and not t.rood for t in tekens[start:eind]):
+                # Alleen tekens met letters of cijfers: een doorgehaald opsommingsteken
+                # (Word-export, doorhaling op de alinea-markering) is geen gemiste revisie.
+                if any(t.weg and t.c.isalnum() and not t.rood for t in tekens[start:eind]):
                     twijfels.append(f"Pagina {pagina}, doorgehaald maar niet rood: {stuk}")
             for start, eind in _stukken(tekens, lambda t: t.bijna):
                 twijfels.append(f"Pagina {pagina}, bijna-doorhaling (blijft staan): {_context(tekens, start, eind)}")

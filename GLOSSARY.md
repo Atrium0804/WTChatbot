@@ -39,8 +39,14 @@ _Avoid_: "de schone versie" (die bestaat niet; bedoel je onze eigen afgeleide te
 De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
 _Avoid_: "schone versie", "gecleande PDF"
 
+**Opschoonrapport**:
+Het rapport dat `scripts/clean_pdf.py` naast elke opgeschoonde versie schrijft (`knowledge-documents/review/`): bovenaan de twijfelgevallen die een mens afvinkt, daaronder alle weggehaalde stukken per pagina met context.
+
+**Twijfelgeval**:
+Een plek in het opschoonrapport waar het script mogelijk iets mist of te veel weghaalt: doorgehaalde tekst die niet rood is, een bijna-doorhaling (rode tekst met een lijn net buiten de doorhaalband, blijft staan), of rode tekst in een document zonder enige gevonden doorhaling.
+
 **Knowledge-documents**:
-De lokale bronmap (`knowledge-documents/`) met per library één submap (`knwu/`, `regio/`, `club/`, `archive/`). Bron van waarheid voor de sync naar de Mistral-libraries.
+De lokale bronmap (`knowledge-documents/`) met per library één submap (`knwu/`, `regio/`, `club/`, `archive/`). Bron van waarheid voor de sync naar de Mistral-libraries. Uitzondering: `review/` bevat opschoonrapporten en wordt nooit gesynct.
 _Avoid_: "kennismap", "documentenmap"
 
 **Sync**:

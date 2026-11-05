@@ -14,4 +14,6 @@ Regels:
   PDF staat hier, ook als het de actuele versie is (ADR-0005, amendment
   2026-11-05).
 - PDF's en gegenereerde markdown in de librarymappen worden niet getrackt
-  (zie `.gitignore`); deze README en `versions.json` wel.
+  (zie `.gitignore`); deze README en `versions.json` wel, net als de
+  opgeschoonde KNWU-versies (`knwu/*.md`) en hun opschoonrapporten
+  (`review/*.md`).

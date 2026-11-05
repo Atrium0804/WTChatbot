@@ -40,7 +40,7 @@ Python-omgeving: gebruik de project-venv (`.venv`); zonder venv geeft het script
 - Identiteit van een document = bestandsnaam + bestandsgrootte. Bij een mismatch worden alle remote documenten met die naam verwijderd en wordt er één nieuwe geüpload (de API dedupliceert niet zelf).
 - Remote documenten zonder lokale tegenhanger worden uit de library verwijderd.
 - Lege (of ontbrekende) lokale map = lege library: alle remote documenten worden verwijderd.
-- Lokale mappen die niet in de config staan: warning, worden overgeslagen.
+- Lokale mappen die niet in de config staan: warning, worden overgeslagen. Uitzondering: `review/` (opschoonrapporten van `scripts/clean_pdf.py`) wordt zonder warning overgeslagen.
 - Na upload is een document asynchroon in processing (`process_status`); het script wacht hier niet op.
 - `versions.json` wordt niet aangeraakt (handmatig beheer, ADR-0005).
 

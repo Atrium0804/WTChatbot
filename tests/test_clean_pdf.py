@@ -46,6 +46,89 @@ class CleanPdfTests(unittest.TestCase):
         self.assertNotRegex(self.tekst, r"(?<!/)\[GEWIJZIGD\]\s*Gewone")
 
 
+class RapportTests(unittest.TestCase):
+    """Twijfelrapport (#30): weggehaalde stukken met context, twijfelgevallen bovenaan."""
+
+    def setUp(self) -> None:
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.map = Path(tmp.name)
+
+    def rapport(self, teken) -> str:
+        pdf = self.map / "doc.pdf"
+        doc = pymupdf.open()
+        teken(doc.new_page())
+        doc.save(pdf)
+        return clean_pdf.opschonen(pdf)[1]
+
+    def twijfels(self, rapport: str) -> str:
+        return rapport.split("## Weggehaalde stukken")[0]
+
+    def test_weggehaald_stuk_staat_per_pagina_met_context(self) -> None:
+        rapport = self.rapport(lambda p: maak_pdf_pagina(p))
+        weggehaald = rapport.split("## Weggehaalde stukken")[1]
+        self.assertIn("Pagina 1", weggehaald)
+        self.assertIn("U11 ~~5,78~~ 5,90 meter", weggehaald)
+        self.assertIn("Geen.", self.twijfels(rapport))
+
+    def test_doorgehaald_maar_niet_rood_is_twijfelgeval(self) -> None:
+        def teken(page: pymupdf.Page) -> None:
+            page.insert_text((72, 100), "Leeftijd 12 jaar", fontsize=11)
+            page.draw_line((110, 96.5), (123, 96.5))
+
+        twijfels = self.twijfels(self.rapport(teken))
+        self.assertIn("- [ ] Pagina 1, doorgehaald maar niet rood: Leeftijd ~~12~~ jaar", twijfels)
+
+    def test_rode_tekst_met_lijn_net_buiten_de_band_is_bijna_doorhaling(self) -> None:
+        def teken(page: pymupdf.Page) -> None:
+            page.insert_text((72, 100), "Leeftijd", fontsize=11)
+            page.insert_text((110.5, 100), "12", fontsize=11, color=(1, 0, 0))
+            page.insert_text((125.8, 100), "jaar", fontsize=11)
+            page.draw_line((110, 91.2), (123, 91.2))  # 20% van de tekenhoogte: boven de band
+
+        rapport = self.rapport(teken)
+        self.assertIn("- [ ] Pagina 1, bijna-doorhaling (blijft staan): Leeftijd ~~12~~ jaar", self.twijfels(rapport))
+        self.assertIn("12", clean_pdf.clean_pdf(self.map / "doc.pdf"))
+
+    def test_rode_tekst_zonder_enige_doorhaling_is_twijfelgeval(self) -> None:
+        def teken(page: pymupdf.Page) -> None:
+            page.insert_text((72, 100), "Nieuwe regel per 2026.", fontsize=11, color=(1, 0, 0))
+
+        self.assertIn("- [ ] Rode tekst maar geen enkele doorhaling", self.twijfels(self.rapport(teken)))
+
+    def test_document_zonder_rood_en_zonder_doorhaling_heeft_geen_twijfels(self) -> None:
+        def teken(page: pymupdf.Page) -> None:
+            page.insert_text((72, 100), "Gewone tekst.", fontsize=11)
+
+        self.assertIn("Geen.", self.twijfels(self.rapport(teken)))
+
+
+class CliTests(unittest.TestCase):
+    def test_schrijft_opgeschoonde_versie_en_rapport(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            map_ = Path(tmp)
+            pdf = map_ / "Titel.pdf"
+            maak_pdf(pdf)
+
+            code = clean_pdf.main([str(pdf), "--out", str(map_ / "knwu"), "--review", str(map_ / "review")])
+
+            self.assertEqual(code, 0)
+            self.assertNotIn("5,78", (map_ / "knwu" / "Titel.md").read_text(encoding="utf-8"))
+            rapport = (map_ / "review" / "Titel.md").read_text(encoding="utf-8")
+            self.assertIn("# Opschoonrapport: Titel.pdf", rapport)
+            self.assertIn("~~5,78~~", rapport)
+
+    def test_rapport_standaard_in_knowledge_documents_review(self) -> None:
+        self.assertEqual(clean_pdf.DEFAULT_REVIEW_DIR, ROOT / "knowledge-documents" / "review")
+
+
+def maak_pdf_pagina(page: pymupdf.Page) -> None:
+    page.insert_text((72, 100), "U11", fontsize=11)
+    page.insert_text((120, 100), "5,78", fontsize=11, color=(1, 0, 0))
+    page.insert_text((160, 100), "5,90 meter", fontsize=11)
+    page.draw_line((118, 96.5), (146, 96.5))
+
+
 GEW, GEW_SLUIT = clean_pdf.GEWIJZIGD_OPEN, clean_pdf.GEWIJZIGD_SLUIT
 
 

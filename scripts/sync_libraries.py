@@ -32,6 +32,8 @@ except ModuleNotFoundError:
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONFIG_PATH = SCRIPT_DIR / "libraries_config.json"
+# Twijfelrapporten van clean_pdf.py (#30): nooit een library, dus zonder waarschuwing overslaan.
+REVIEW_FOLDER = "review"
 
 
 class LibraryConfig(TypedDict):
@@ -237,7 +239,7 @@ def run_sync(
         return 2
     configured_names = {c["name"] for c in configured}
     for entry in sorted(rag_folder.iterdir()):
-        if entry.is_dir() and entry.name not in configured_names:
+        if entry.is_dir() and entry.name not in configured_names and entry.name != REVIEW_FOLDER:
             print(f"warning: local folder '{entry.name}' is not configured, skipping")
 
     existing = list_all_libraries(client)

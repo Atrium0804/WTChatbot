@@ -80,6 +80,16 @@ def create_app(db_path: Optional[str] = None) -> FastAPI:
             "base-uri 'self'; form-action 'self'"
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
+        # Cache-Control: API-antwoorden nooit cachen; html/manifest/sw.js altijd
+        # revalideren (no-cache); statische assets (icons, afbeeldingen) kort cachen.
+        path = request.url.path
+        if request.method == "GET":
+            if path in ("/", "/sw.js", "/manifest.webmanifest") or path.endswith(".html"):
+                response.headers["Cache-Control"] = "no-cache"
+            elif path.startswith("/icons/") or path.rsplit(".", 1)[-1].lower() in (
+                "png", "jpg", "jpeg", "webp", "svg", "ico", "gif",
+            ):
+                response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
     @app.post("/chat")

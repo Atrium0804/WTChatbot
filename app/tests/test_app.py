@@ -246,3 +246,28 @@ def test_csp_allows_service_worker_and_manifest(tmp_path):
     csp = client.get("/").headers["content-security-policy"]
     assert "worker-src 'self'" in csp
     assert "manifest-src 'self'" in csp
+
+
+def test_cache_control_headers(tmp_path):
+    client = make_client(tmp_path)
+    # html, sw.js en manifest altijd revalideren
+    assert client.get("/").headers["cache-control"] == "no-cache"
+    assert client.get("/sw.js").headers["cache-control"] == "no-cache"
+    assert client.get("/manifest.webmanifest").headers["cache-control"] == "no-cache"
+    # statische assets kort cachen
+    assert client.get("/icons/icon-192.png").headers["cache-control"] == "public, max-age=3600"
+    assert client.get("/Achtergrond%2016-9.jpg").headers["cache-control"] == "public, max-age=3600"
+    # API-antwoorden krijgen géén Cache-Control
+    resp = client.post("/chat", json={"message": "hoi", "client_id": "cc-test"})
+    assert "cache-control" not in resp.headers
+
+
+def test_mistral_timeout_default_60():
+    import mistral_client
+
+    assert mistral_client.DEFAULT_TIMEOUT == 60
+
+
+def test_index_shows_thinking_message(tmp_path):
+    client = make_client(tmp_path)
+    assert "Wheely denkt na…" in client.get("/").text

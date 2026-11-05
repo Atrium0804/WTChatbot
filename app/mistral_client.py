@@ -6,7 +6,7 @@ provider vervangbaar blijft (CODING_PRINCIPLES.md).
 
 import requests
 
-DEFAULT_TIMEOUT = 180
+DEFAULT_TIMEOUT = 60  # kortere worst-case: bij timeout direct een 502 met melding
 
 
 def extract_text(outputs: list) -> str:
@@ -42,20 +42,23 @@ def answer_question(
 ) -> tuple[str, str]:
     """Stuur een bericht naar de agent; geef (mistral_conversation_id, antwoordtekst)."""
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-    if conversation_id:
-        resp = requests.post(
-            f"{base_url}/{conversation_id}",
-            headers=headers,
-            json={"inputs": message},
-            timeout=timeout,
-        )
-    else:
-        resp = requests.post(
-            base_url,
-            headers=headers,
-            json={"agent_id": agent_id, "inputs": message},
-            timeout=timeout,
-        )
+    try:
+        if conversation_id:
+            resp = requests.post(
+                f"{base_url}/{conversation_id}",
+                headers=headers,
+                json={"inputs": message},
+                timeout=timeout,
+            )
+        else:
+            resp = requests.post(
+                base_url,
+                headers=headers,
+                json={"agent_id": agent_id, "inputs": message},
+                timeout=timeout,
+            )
+    except requests.Timeout as exc:
+        raise RuntimeError(f"Mistral API timeout na {timeout}s — probeer het opnieuw") from exc
     try:
         resp.raise_for_status()
     except requests.HTTPError as exc:

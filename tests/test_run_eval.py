@@ -62,7 +62,7 @@ class AskWithRetryTests(unittest.TestCase):
 
         calls = {"n": 0}
 
-        def fake_call(vraag, agent_id, api_key):
+        def fake_call(vraag, agent_id, api_key, timeout=None):
             calls["n"] += 1
             if calls["n"] == 1:
                 raise requests.ReadTimeout("read timed out")
@@ -84,6 +84,26 @@ class AskWithRetryTests(unittest.TestCase):
             antwoord, error = run_eval.ask_with_retry("vraag", "agent", "key", attempts=2)
         self.assertEqual(antwoord, "")
         self.assertIn("ReadTimeout", error)
+
+    def timeouts_per_poging(self, vraagtype: str) -> list:
+        import requests
+        from unittest.mock import patch
+
+        timeouts = []
+
+        def fake_call(vraag, agent_id, api_key, timeout):
+            timeouts.append(timeout)
+            raise requests.ReadTimeout("read timed out")
+
+        with patch.object(run_eval, "call_agent", side_effect=fake_call):
+            run_eval.ask_with_retry("vraag", "agent", "key", vraagtype=vraagtype)
+        return timeouts
+
+    def test_websearch_krijgt_ruimere_timeout_en_extra_poging(self) -> None:
+        self.assertEqual(self.timeouts_per_poging("websearch"), [300, 300, 300])
+
+    def test_standaard_houdt_gewone_timeout(self) -> None:
+        self.assertEqual(self.timeouts_per_poging("standaard"), [180, 180])
 
 
 class NormalizeTests(unittest.TestCase):
@@ -120,6 +140,14 @@ class BronMatchTests(unittest.TestCase):
         self.assertFalse(run_eval.bron_match("knwumidden.nl/competities", "wtcwoerden.nl?page=607"))
         self.assertFalse(run_eval.bron_match("", "iets"))
 
+    def test_sessie_parameter_en_index_php_tellen_niet_mee(self) -> None:
+        line = "https://www.wtcwoerden.nl/index.php?page=674&sid=1, geraadpleegd op 2026-11-05."
+        self.assertTrue(run_eval.bron_match("wtcwoerden.nl?page=674", line))
+
+    def test_andere_pagina_matcht_niet(self) -> None:
+        line = "https://www.wtcwoerden.nl/index.php?page=607&sid=1"
+        self.assertFalse(run_eval.bron_match("wtcwoerden.nl?page=674", line))
+
 
 class ResultTraceTests(unittest.TestCase):
     def test_result_bevat_verwachting_en_antwoord(self) -> None:
@@ -138,6 +166,107 @@ class ResultTraceTests(unittest.TestCase):
         result = run_eval.check_entry(entry, "antwoord\n\nBron: doc.pdf, versie 2026-09-21")
         for key in ("vraag", "verwacht_antwoord", "verwachte_bron", "versiedatum", "doorhaal_waarde", "antwoord"):
             self.assertIn(key, result)
+
+    def test_lang_antwoord_wordt_volledig_bewaard(self) -> None:
+        lang = "x" * 3000 + "\n\nBron: doc.pdf"
+        result = run_eval.check_entry(entry("x-y", "x", "doc.pdf"), lang)
+        self.assertEqual(result["antwoord"], lang)
+
+
+import json
+
+# Echte antwoorden uit eval run 3, per vraag handmatig beoordeeld (#28).
+RUN3 = json.loads(
+    (Path(__file__).parent / "fixtures" / "eval_run3_antwoorden.json").read_text(encoding="utf-8")
+)["antwoorden"]
+
+
+def entry(id: str, verwacht: str, bron: str, type: str = "standaard", doorhaal: str = "") -> dict:
+    return {
+        "id": id,
+        "categorie": id.split("-")[0],
+        "type": type,
+        "vraag": "?",
+        "verwacht_antwoord": verwacht,
+        "bron": bron,
+        "doorhaal_waarde": doorhaal,
+    }
+
+
+class CheckEntryRun3Tests(unittest.TestCase):
+    """Fixtures: gecorrigeerde evalset-entry + echt run-3-antwoord + reviewoordeel."""
+
+    def assertOk(self, e: dict) -> None:
+        result = run_eval.check_entry(e, RUN3[e["id"]])
+        self.assertTrue(result["ok"], result)
+
+    def test_tijd_met_punt_matcht_tijd_met_dubbele_punt(self) -> None:
+        self.assertOk(
+            entry(
+                "regio-mnc-veldrijden-starttijden",
+                "2026-2027; 11:05; 11:30",
+                "knwumidden.nl/competities",
+            )
+        )
+
+
+# Oordeel per vraag uit de handmatige review van run 3 (#28): True = het
+# antwoord is inhoudelijk goed mét juiste bron. De entries zelf komen uit
+# eval/evalset.yaml, zodat evalset en test niet uit elkaar lopen.
+RUN3_OORDEEL = {
+    # false negatives van de oude matcher/evalset
+    "club-zmc-wanneer": True,
+    "knwu-licentie-pakketten": True,
+    "knwu-verzekering-dekking": True,
+    "knwu-inschrijfgeld-jeugd": True,
+    "knwu-nk-dispensatie-u10": True,
+    "knwu-actuele-versie-titel20": True,
+    "knwu-wijziging-nationale-besluiten": True,
+    "regio-mnc-veldrijden-starttijden": True,
+    "regio-hvh-kalender-2026": True,
+    "regio-juiste-knwu-regio": True,
+    "regio-techniekwedstrijden-2026": True,
+    # true positives
+    "club-zmc-kosten": True,
+    "knwu-verzet-u15": True,
+    "knwu-verzet-u17": True,
+    # true negatives: moeten blijven falen
+    "knwu-contact": False,  # inhoud goed, maar bron verkeerd toegeschreven
+    "club-contributie-jeugd-2026": False,
+    "club-vertrouwenspersoon": False,
+    "club-gedragscode": False,
+    "knwu-verzet-u11": False,
+    "regio-nk-kwalificatie": False,
+}
+
+
+class Run3ReviewTests(unittest.TestCase):
+    def test_evalset_oordeel_matcht_handmatige_review(self) -> None:
+        evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        self.assertEqual({e["id"] for e in evalset}, set(RUN3_OORDEEL))
+        for e in evalset:
+            with self.subTest(id=e["id"]):
+                result = run_eval.check_entry(e, RUN3[e["id"]])
+                self.assertEqual(result["ok"], RUN3_OORDEEL[e["id"]], result)
+
+
+class KernfeitGrenzenTests(unittest.TestCase):
+    def missing(self, verwacht: str, antwoord: str) -> list:
+        return run_eval.check_entry(entry("x-y", verwacht, "doc.pdf"), antwoord + "\n\nBron: doc.pdf")[
+            "missende_kernfeiten"
+        ]
+
+    def test_getal_matcht_niet_binnen_een_groter_getal(self) -> None:
+        self.assertEqual(self.missing("5", "Er zijn 15 wedstrijden."), ["5"])
+
+    def test_kort_woord_matcht_niet_binnen_een_langer_woord(self) -> None:
+        self.assertEqual(self.missing("ja", "Dit jaar niet."), ["ja"])
+
+    def test_bedrag_met_nullen_matcht_bedrag_met_streepje(self) -> None:
+        self.assertEqual(self.missing("10,00", "maximaal € 10,- extra"), [])
+
+    def test_tijd_met_voorloopnul_matcht_tijd_zonder(self) -> None:
+        self.assertEqual(self.missing("08:30", "tussen 8.30 en 12.00 uur"), [])
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ tussen [GEWIJZIGD] en [/GEWIJZIGD] staat.
 Gebruik:
     python scripts/clean_pdf.py <pdf> [<pdf> ...] --out <map> [--review <map>]
 
-Per PDF ontstaat <map>/<bestandsnaam zonder .pdf>.md, plus een twijfelrapport
+Per PDF ontstaat <map>/<bestandsnaam zonder .pdf>.md, plus een opschoonrapport
 met dezelfde naam in de reviewmap (standaard knowledge-documents/review/).
 Het rapport somt per pagina alle weggehaalde stukken op en zet bovenaan de
 twijfelgevallen die een mens moet nalopen (issue #30).
@@ -18,6 +18,7 @@ twijfelgevallen die een mens moet nalopen (issue #30).
 import argparse
 import re
 import sys
+import unicodedata
 from pathlib import Path
 from typing import NamedTuple
 
@@ -121,8 +122,14 @@ def _context(tekens: list[_Teken], start: int, eind: int) -> str:
 
     voor = geldend(tekens[:start]).split(" ")[-CONTEXT_WOORDEN - 1 :]
     na = geldend(tekens[eind:]).split(" ")[: CONTEXT_WOORDEN + 1]
-    stuk = re.sub(r"\s+", " ", "".join(t.c for t in tekens[start:eind])).strip()
+    stuk = re.sub(r"\s+", " ", "".join(_zichtbaar(t.c) for t in tekens[start:eind])).strip()
     return f"{' '.join(voor)}~~{stuk}~~{' '.join(na)}".strip()
+
+
+def _zichtbaar(teken: str) -> str:
+    """Glyphs uit een private-use-lettertype (bijv. opsommingstekens) als U+XXXX,
+    anders staat er een leeg ~~~~ in het rapport."""
+    return f"U+{ord(teken):04X}" if unicodedata.category(teken) in ("Co", "Cn") else teken
 
 
 def _stukken(tekens: list[_Teken], kenmerk) -> list[tuple[int, int]]:
@@ -153,7 +160,7 @@ def _rapport(naam: str, twijfels: list[str], weggehaald: dict[int, list[str]]) -
 
 
 def opschonen(path: Path) -> tuple[str, str]:
-    """(opgeschoonde markdown, twijfelrapport in markdown) voor één PDF."""
+    """(opgeschoonde markdown, opschoonrapport in markdown) voor één PDF."""
     doc = pymupdf.open(path)
     paginas = []
     weggehaald: dict[int, list[str]] = {}
@@ -210,7 +217,7 @@ def main(argv: list[str] | None = None) -> int:
         "--review",
         type=Path,
         default=DEFAULT_REVIEW_DIR,
-        help=f"map voor de twijfelrapporten (standaard: {DEFAULT_REVIEW_DIR})",
+        help=f"map voor de opschoonrapporten (standaard: {DEFAULT_REVIEW_DIR})",
     )
     args = parser.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)

@@ -51,7 +51,7 @@ Seizoenwissel is een kritieke operatie (zie [ADR-0005](adr/0005-library-bevat-al
 
 1. Vervang het document in de lokale bronmap: oude versie naar `knowledge-documents/archive/` (met datum in de bestandsnaam), nieuwe versie in `knowledge-documents/<library>/`. Bevat de nieuwe PDF doorhalingen of rode revisies (KNWU-reglementen), zet dan niet de PDF maar de opgeschoonde markdown in de library en het originele PDF in het archief (ADR-0005, amendment 2026-11-05):
    `.venv/Scripts/python scripts/clean_pdf.py knowledge-documents/knwu/<document>.pdf --out knowledge-documents/knwu`
-   Het script schrijft ook een opschoonrapport naar `knowledge-documents/review/<document>.md` (andere map: `--review <map>`): bovenaan de twijfelgevallen (doorgehaald maar niet rood, bijna-doorhaling, rode tekst zonder enige doorhaling), daaronder alle weggehaalde stukken per pagina. Een mens vinkt de twijfelgevallen af vóór de sync; rapport en opgeschoonde versie gaan samen in één commit.
+   Het script schrijft ook een [opschoonrapport](../GLOSSARY.md) naar `knowledge-documents/review/<document>.md` (andere map: `--review <map>`), met bovenaan de twijfelgevallen. Een mens vinkt die af vóór de sync; rapport en opgeschoonde versie gaan samen in één commit (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)).
    Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
 2. Werk `knowledge-documents/versions.json` bij (documentnaam → versiedatum).
 3. Re-run de eval-set (`eval/run_eval.py`); launch-gate is ≥90% correct mét correcte bron.

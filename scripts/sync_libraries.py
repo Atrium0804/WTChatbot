@@ -32,7 +32,7 @@ except ModuleNotFoundError:
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONFIG_PATH = SCRIPT_DIR / "libraries_config.json"
-# Twijfelrapporten van clean_pdf.py (#30): nooit een library, dus zonder waarschuwing overslaan.
+# Opschoonrapporten van clean_pdf.py (#30): nooit een library, dus zonder waarschuwing overslaan.
 REVIEW_FOLDER = "review"
 
 

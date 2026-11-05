@@ -47,7 +47,7 @@ class CleanPdfTests(unittest.TestCase):
 
 
 class RapportTests(unittest.TestCase):
-    """Twijfelrapport (#30): weggehaalde stukken met context, twijfelgevallen bovenaan."""
+    """Opschoonrapport (#30): weggehaalde stukken met context, twijfelgevallen bovenaan."""
 
     def setUp(self) -> None:
         tmp = tempfile.TemporaryDirectory()
@@ -153,6 +153,15 @@ class TitelTwintigTests(unittest.TestCase):
 
     def test_verzet_u11_weg_590_baan_578_veld_vrij(self) -> None:
         self.assertIn("U11 U12 5,90 meter 5,78 meter vrij", self.tekst)
+
+
+class HandboekRapportTests(unittest.TestCase):
+    def test_doorgehaald_opsommingsteken_is_zichtbaar_in_rapport(self) -> None:
+        kandidaten = sorted((ROOT / "knowledge-documents").glob("*/Handboek Veldrijden Jeugd 2026-2027*.pdf"))
+        if not kandidaten:
+            self.skipTest("Handboek Veldrijden Jeugd 2026-2027.pdf niet lokaal aanwezig")
+        rapport = clean_pdf.opschonen(kandidaten[0])[1]
+        self.assertIn("doorgehaald maar niet rood: categorie, tenzij anders bepaald. ~~U+F0B7~~", rapport)
 
 
 if __name__ == "__main__":

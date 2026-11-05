@@ -63,7 +63,7 @@ Geen.
 ### Pagina 50
 
 - ~~REGIOKAMPIOENSCHAPPEN MOUNTAINBIKEN OP BASIS VAN WOONPLAATS Per 2025 zijn de Regiokampioenschappen komen te vervallen.~~ {gewijzigd per 11.03.26} 4.2
-- halen bij de LJC. ~~ De startopstelling bij het NK 2026 zal per (samengevoegde) categorie gebeuren. Uit analyse is gebleken dat het wedstrijdverloop van het NK 2024 veiliger en eerlijker is verlopen, echter hebben we aan de hand van de uitput van de enquête besloten om dit in 2025 niet door te voeren.~~ JEUGD Aanmelden Voor dit
+- halen bij de LJC. ~~U+F0B7 De startopstelling bij het NK 2026 zal per (samengevoegde) categorie gebeuren. Uit analyse is gebleken dat het wedstrijdverloop van het NK 2024 veiliger en eerlijker is verlopen, echter hebben we aan de hand van de uitput van de enquête besloten om dit in 2025 niet door te voeren.~~ JEUGD Aanmelden Voor dit
 
 ### Pagina 53
 

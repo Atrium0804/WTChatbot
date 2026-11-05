@@ -2,14 +2,14 @@
 
 ## Twijfelgevallen
 
-- [ ] Pagina 6, doorgehaald maar niet rood: categorie, tenzij anders bepaald. ~~~~ Als je je hebt
+- [ ] Pagina 6, doorgehaald maar niet rood: categorie, tenzij anders bepaald. ~~U+F0B7~~ Als je je hebt
 
 ## Weggehaalde stukken (14 op 7 pagina's)
 
 ### Pagina 6
 
-- categorie, tenzij anders bepaald. ~~~~ Als je je hebt
-- bijgeschreven start je achteraan ~~~~ Voor bijschrijven wordt een
+- categorie, tenzij anders bepaald. ~~U+F0B7~~ Als je je hebt
+- bijgeschreven start je achteraan ~~U+F0B7~~ Voor bijschrijven wordt een
 
 ### Pagina 7
 

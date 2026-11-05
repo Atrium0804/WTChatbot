@@ -63,6 +63,27 @@ def agent_id_for(categorie: str) -> str:
     return key
 
 
+def extract_text(outputs: list[dict]) -> str:
+    """Plak de tekst-chunks van een Conversations-antwoord aan elkaar.
+
+    Shape van POST /v1/conversations: outputs[]-entries met
+    type == "message.output" en top-level "content" (string of list of
+    chunks; alleen chunks met type == "text" zijn antwoordtekst).
+    """
+    texts = []
+    for out in outputs:
+        if out.get("type") != "message.output":
+            continue
+        content = out.get("content", "")
+        if isinstance(content, str):
+            texts.append(content)
+        elif isinstance(content, list):
+            for chunk in content:
+                if isinstance(chunk, dict) and chunk.get("type") == "text":
+                    texts.append(chunk.get("text", ""))
+    return "\n".join(texts)
+
+
 def call_agent(vraag: str, agent_id: str, api_key: str, timeout: int = 180) -> str:
     """Stuur de vraag naar een nieuwe conversation en geef de antwoordtekst."""
     resp = requests.post(
@@ -75,17 +96,18 @@ def call_agent(vraag: str, agent_id: str, api_key: str, timeout: int = 180) -> s
         timeout=timeout,
     )
     resp.raise_for_status()
-    outputs = resp.json().get("outputs", [])
-    texts = []
-    for out in outputs:
-        content = out.get("message", {}).get("content", "")
-        if isinstance(content, str):
-            texts.append(content)
-        elif isinstance(content, list):
-            for chunk in content:
-                if isinstance(chunk, dict) and chunk.get("type") == "text":
-                    texts.append(chunk.get("text", ""))
-    return "\n".join(texts)
+    return extract_text(resp.json().get("outputs", []))
+
+
+def ask_with_retry(vraag: str, agent_id: str, api_key: str, attempts: int = 2) -> tuple[str, str]:
+    """Stel de vraag (met 1 retry bij netwerk-timeout); geef (antwoord, error)."""
+    error = ""
+    for _ in range(attempts):
+        try:
+            return call_agent(vraag, agent_id, api_key), ""
+        except requests.RequestException as exc:
+            error = f"{type(exc).__name__}: {str(exc)[:200]}"
+    return "", error
 
 
 def extract_bron(antwoord: str) -> str:
@@ -138,9 +160,13 @@ def main() -> int:
     entries = load_evalset(EVAL_DIR / "evalset.yaml")
     results = []
     for entry in entries:
-        antwoord = call_agent(entry["vraag"], agent_id_for(entry["categorie"]), api_key)
-        results.append(check_entry(entry, antwoord))
-        print(f"[{'OK ' if results[-1]['ok'] else 'FAIL'}] {entry['id']}")
+        antwoord, error = ask_with_retry(entry["vraag"], agent_id_for(entry["categorie"]), api_key)
+        result = check_entry(entry, antwoord)
+        if error:
+            result["ok"] = False
+            result["error"] = error
+        results.append(result)
+        print(f"[{'OK ' if result['ok'] else 'FAIL'}] {entry['id']}")
 
     total = len(results)
     ok = sum(1 for r in results if r["ok"])

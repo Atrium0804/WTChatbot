@@ -10,10 +10,18 @@ DEFAULT_TIMEOUT = 180
 
 
 def extract_text(outputs: list) -> str:
-    """Plak de tekst-chunks van een Conversations-antwoord aan elkaar."""
+    """Plak de tekst-chunks van een Conversations-antwoord aan elkaar.
+
+    Shape van POST /v1/conversations: outputs[]-entries met
+    type == "message.output" en top-level "content" (string of list of
+    chunks; alleen chunks met type == "text" zijn antwoordtekst,
+    "thinking"-chunks niet meenemen).
+    """
     texts = []
     for out in outputs:
-        content = out.get("message", {}).get("content", "")
+        if out.get("type") != "message.output":
+            continue
+        content = out.get("content", "")
         if isinstance(content, str):
             texts.append(content)
         elif isinstance(content, list):

@@ -73,6 +73,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
     - github-repo met website-teksten - gezaghebbende bron voor WTC Woerden Jeugd
     - website WTCwoerden.nl - gezaghebbende bron voor clubzaken, te weten:
       - https://www.wtcwoerden.nl/index.php?page=Agenda&sid=1 - clubactiviteiten
+        - post-MVP op te halen via de AllUnited-iCal-feed van de agenda (zie #34); de feed-URL is nog niet ingeregeld en wtcwoerden.nl blokkeert direct ophalen via websearch (CloudFront-403, zie #29)
       - https://www.wtcwoerden.nl/index.php?page=674&sid=1 - contributietarieven
       - https://www.wtcwoerden.nl/index.php?page=956&sid=1 - Gedragscode
       - https://www.wtcwoerden.nl/index.php?page=607&sid=1 - vertrouwenspersoon

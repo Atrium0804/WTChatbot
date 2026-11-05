@@ -185,57 +185,30 @@ https://kenniscentrum.knwu.nl/competities4/kalender-veldrijden-2026-2027
 
 DE INSCHRIJVING
 
-[GEWIJZIGD]CATEGORIE-INDELING 2026-2027 [/GEWIJZIGD]
+[GEWIJZIGD]CATEGORIE-INDELING 2026-2027[/GEWIJZIGD]
 
-[GEWIJZIGD]CAT
-MU9/ VU9/
-VU10 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2019 en meisjes geboren in 2018 en 2019
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 8-jarige leeftijd en
-meisjes de 8- of 9-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU10/VU11 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2018 en meisjes geboren in 2017
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 9-jarige en meisjes
-de 10-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU11/V12 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2017 en meisjes geboren in 2016
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 10-jarige en
-meisjes de 11-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU12/VU13 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2016 en meisjes geboren in 2015
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 11-jarige en
-meisjes de 12-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU13/VU14 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2015 en meisjes geboren in 2014
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 12-jarige en
-meisjes de 13-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU14/VU15 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2014 en meisjes geboren in 2013
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 13-jarige en
-meisjes de 14-jarige leeftijd bereiken. [/GEWIJZIGD]
-
-[GEWIJZIGD]CAT
-MU15 [/GEWIJZIGD]
-
-[GEWIJZIGD]Jongens geboren in 2013
-Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 14-jarige leeftijd
-bereiken. [/GEWIJZIGD]
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2019 en meisjes geboren in 2018 en 2019[/GEWIJZIGD] |
+| --- | --- |
+| [GEWIJZIGD]MU9/ VU9/[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 8-jarige leeftijd en[/GEWIJZIGD] |
+| [GEWIJZIGD]VU10[/GEWIJZIGD] | [GEWIJZIGD]meisjes de 8- of 9-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2018 en meisjes geboren in 2017[/GEWIJZIGD] |
+| [GEWIJZIGD]MU10/VU11[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 9-jarige en meisjes[/GEWIJZIGD] |
+|  | [GEWIJZIGD]de 10-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2017 en meisjes geboren in 2016[/GEWIJZIGD] |
+| [GEWIJZIGD]MU11/V12[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 10-jarige en[/GEWIJZIGD] |
+|  | [GEWIJZIGD]meisjes de 11-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2016 en meisjes geboren in 2015[/GEWIJZIGD] |
+| [GEWIJZIGD]MU12/VU13[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 11-jarige en[/GEWIJZIGD] |
+|  | [GEWIJZIGD]meisjes de 12-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2015 en meisjes geboren in 2014[/GEWIJZIGD] |
+| [GEWIJZIGD]MU13/VU14[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 12-jarige en[/GEWIJZIGD] |
+|  | [GEWIJZIGD]meisjes de 13-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2014 en meisjes geboren in 2013[/GEWIJZIGD] |
+| [GEWIJZIGD]MU14/VU15[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 13-jarige en[/GEWIJZIGD] |
+|  | [GEWIJZIGD]meisjes de 14-jarige leeftijd bereiken.[/GEWIJZIGD] |
+| [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2013[/GEWIJZIGD] |
+| [GEWIJZIGD]MU15[/GEWIJZIGD] | [GEWIJZIGD]Vanaf 1 januari tot en met 31 december van het jaar waarin jongens de 14-jarige leeftijd[/GEWIJZIGD] |
+|  | [GEWIJZIGD]bereiken.[/GEWIJZIGD] |
 
 De categorie, waartoe de licentiehouder voor baan- en veldritwedstrijden op de nationale of regionale
 kalender het gehele baan- en veldritseizoen (september – maart) behoort, is de categorie waarop hij/zij
@@ -274,7 +247,7 @@ de betreffende categorie, tenzij anders bepaald.
 
 Als je je hebt bijgeschreven start je achteraan
 
-[GEWIJZIGD]Voor bijschrijven wordt een bedrag van €5,= betaald. [/GEWIJZIGD]
+[GEWIJZIGD]Voor bijschrijven wordt een bedrag van €5,= betaald.[/GEWIJZIGD]
 
 PUBLICATIE DEELNEMERSLIJST
 De deelnemerslijsten zijn te vinden op MijnKNWU onder de desbetreffende wedstrijden.
@@ -331,7 +304,7 @@ HANDBOEK JEUGD VELDRIJDEN 2026-2027
 7 VAN 22
 
 VERZETCONTROLE
-[GEWIJZIGD]De verzetcontrole is vanaf seizoen 2026-2027 afgeschaft. [/GEWIJZIGD]
+[GEWIJZIGD]De verzetcontrole is vanaf seizoen 2026-2027 afgeschaft.[/GEWIJZIGD]
 
 STARTOPSTELLING
 De startvolgorde voor de wedstrijden in 2026-2027 als volgt plaats:
@@ -481,7 +454,7 @@ De punten voor het regelmatigheidsklassement zijn als volgt:
 10e plaats 21 punten
 20e plaats 11 punten
 
-[GEWIJZIGD]vanaf 30e plaats 1 punt [/GEWIJZIGD]
+[GEWIJZIGD]vanaf 30e plaats 1 punt[/GEWIJZIGD]
 
 Buitenlandse renners/rensters ontvangen wel de door hen behaalde punten, maar mogen niet deelnemen
 aan het NK.
@@ -500,9 +473,9 @@ Ingeval men toestemming van de Wedstrijdcoördinator heeft om een categorie hoge
 ook in deze (hogere) categorie tijdens het NK te worden deelgenomen.
 
 Ingeval men toestemming van de wedstrijdcoördinator heeft om een categorie lager te rijden, dan is
-deelname aan het NK [GEWIJZIGD] mogelijk in de categorie waarin men dat seizoen heeft gereden.
+deelname aan het NK [GEWIJZIGD]mogelijk in de categorie waarin men dat seizoen heeft gereden.
 
-Om deel te nemen aan het NK dient men minimaal 1 nationale wedstrijd gereden hebben. [/GEWIJZIGD]
+Om deel te nemen aan het NK dient men minimaal 1 nationale wedstrijd gereden hebben.[/GEWIJZIGD]
 
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 11 VAN 22
@@ -557,29 +530,22 @@ per categorie.
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 12 VAN 22
 
-Wedstrijdduur (minuten)
-Categorie MU9/VU9/VU10
-indicatie wedstrijdduur ca. 13 min
-Categorie MU10/VU11
-indicatie wedstrijdduur ca. 16 min
-Categorie MU11/VU12
-indicatie wedstrijdduur ca. 19 min
-Categorie MU12/VU13
-indicatie wedstrijdduur ca. 21 min
-Categorie MU13/VU14
-indicatie wedstrijdduur ca. 24 min
-Categorie MU14/VU15
-indicatie wedstrijdduur ca. 26 min
-Categorie MU15
-indicatie wedstrijdduur ca. 29 min
-
+| Wedstrijdduur (minuten) |  |
+| --- | --- |
+| Categorie MU9/VU9/VU10 | indicatie wedstrijdduur ca. 13 min |
+| Categorie MU10/VU11 | indicatie wedstrijdduur ca. 16 min |
+| Categorie MU11/VU12 | indicatie wedstrijdduur ca. 19 min |
+| Categorie MU12/VU13 | indicatie wedstrijdduur ca. 21 min |
+| Categorie MU13/VU14 | indicatie wedstrijdduur ca. 24 min |
+| Categorie MU14/VU15 | indicatie wedstrijdduur ca. 26 min |
+| Categorie MU15 | indicatie wedstrijdduur ca. 29 min |
 
 [GEWIJZIGD]Het parkoers dient dusdanig te zijn ingericht dat de Jongens U9 t/m U12 en Meisjes U10 t/m U13 één keer
 af moeten stappen; de Jongens U13 t/m U15 en Meisjes U14 t/m U15 en U17 (nieuwelingen) moeten het
 parkoers voor ten minste drie-vierde deel fietsend af kunnen leggen. Hindernissen die de renners dwingen
 het rijwiel op te tillen, mogen niet voorkomen bij wedstrijden voor de Jongens U9 t/m U11 en Meisjes U9
 t/m U12, en mogen tot en met U15 niet hoger zijn dan 20 cm. Voor de U17 renners geldt dat zij op
-hetzelfde parcours met dezelfde reglementen als de junioren en hoger rijden. [/GEWIJZIGD]
+hetzelfde parcours met dezelfde reglementen als de junioren en hoger rijden.[/GEWIJZIGD]
 
 
 
@@ -629,7 +595,7 @@ Het parcours moet bij de start voldoende breed zijn (ca. 5 à 6 meter) en ca. 10
 houden. Daarna mag het parcours langzaam smaller worden. Om een goede en eerlijke start voor elke
 deelnemer te bewerkstelligen dienen de startvakken op een egale en gelijksoortige ondergrond gesitueerd
 te worden (let bijvoorbeeld op zanderige stukken, hobbels etc.). [GEWIJZIGD]Belangrijk is dat er geen obstakels in het
-startlijn zitten. [/GEWIJZIGD]
+startlijn zitten.[/GEWIJZIGD]
 
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 14 VAN 22
@@ -788,7 +754,7 @@ ingediende protesten worden eerst behandeld alvorens de uitslag officieel wordt.
 Een protest op de uitslag na vertrek op het wedstrijdterrein zal niet in behandeling genomen worden.
 
 De organisatie (of officials) draagt er zorg voor dat de uitslag, na goedkeuring van de officials,
-[GEWIJZIGD]zo spoedig mogelijk [/GEWIJZIGD]na afloop van de wedstrijd opgeladen of is doorgestuurd aan de KNWU.
+[GEWIJZIGD]zo spoedig mogelijk[/GEWIJZIGD] na afloop van de wedstrijd opgeladen of is doorgestuurd aan de KNWU.
 
 De officials, met name de voorzitter, aankomstrechter en commissaris computerverwerking dienen minimaal
 gedurende de protesttijd (30 minuten) na de wedstrijd aanwezig te blijven.

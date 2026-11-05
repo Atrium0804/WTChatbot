@@ -4,7 +4,8 @@ KNWU-PDF's (Titel 20, Nationale Besluiten) markeren vervallen tekst met een
 getekende doorhaallijn en gewijzigde tekst in rood. Tekstextractie verliest
 beide, waardoor de agent doorgehaalde waarden als geldend leest. Dit script
 maakt er markdown van waarin doorgehaalde tekst ontbreekt en rode tekst
-tussen [GEWIJZIGD] en [/GEWIJZIGD] staat.
+tussen [GEWIJZIGD] en [/GEWIJZIGD] staat. Tabellen worden markdown-tabellen,
+zodat de kolombetekenis blijft (#33).
 
 Gebruik:
     python scripts/clean_pdf.py <pdf> [<pdf> ...] --out <map> [--review <map>]
@@ -114,6 +115,85 @@ class _Teken(NamedTuple):
     bijna: bool = False
 
 
+# pymupdf zet naast tabelranden smalle opvulcellen (~5pt); echte cellen zijn breder.
+MIN_CELBREEDTE = 8.0
+KOLOMRAND_MARGE = 8.0
+
+
+class _Cel(NamedTuple):
+    bbox: tuple[float, float, float, float]
+    rij: int
+    kolommen: tuple[int, ...]
+
+
+class _Tabel:
+    """Een door pymupdf herkende tabel; tekens worden per cel verzameld."""
+
+    def __init__(self, tabel) -> None:
+        self.bbox = tuple(tabel.bbox)
+        echte = [
+            (rij, tuple(cel))
+            for rij, r in enumerate(tabel.rows)
+            for cel in r.cells
+            if cel is not None and cel[2] - cel[0] >= MIN_CELBREEDTE
+        ]
+        randen = sorted(x for _, (x0, _, x1, _) in echte for x in (x0, x1))
+        clusters: list[list[float]] = []
+        for x in randen:
+            if clusters and x - clusters[-1][-1] <= KOLOMRAND_MARGE:
+                clusters[-1].append(x)
+            else:
+                clusters.append([x])
+        grenzen = [sum(c) / len(c) for c in clusters]
+        midden = [(a + b) / 2 for a, b in zip(grenzen, grenzen[1:])]
+        self.aantal_kolommen = len(midden)
+        self.aantal_rijen = len(tabel.rows)
+        self.cellen = [
+            _Cel(bbox, rij, tuple(k for k, m in enumerate(midden) if bbox[0] <= m <= bbox[2]))
+            for rij, bbox in echte
+        ]
+        self.segmenten: dict[_Cel, list[tuple[str, bool]]] = {c: [] for c in self.cellen}
+
+    def cel_voor(self, bbox: tuple) -> "_Cel | None":
+        x, y = (bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2
+        return next(
+            (c for c in self.cellen if c.bbox[0] <= x <= c.bbox[2] and c.bbox[1] <= y <= c.bbox[3]),
+            None,
+        )
+
+    def markdown(self) -> str:
+        rijen = [[""] * self.aantal_kolommen for _ in range(self.aantal_rijen)]
+        for cel, segmenten in self.segmenten.items():
+            tekst = _blok_naar_tekst(segmenten).replace("\n", " ").replace("|", "\\|")
+            # Een cel over de volle breedte (titel- of notitierij) één keer, niet per kolom.
+            kolommen = cel.kolommen[:1] if len(cel.kolommen) == self.aantal_kolommen > 1 else cel.kolommen
+            for k in kolommen:
+                rijen[cel.rij][k] = tekst
+        rijen = [r for r in rijen if any(r)]
+        if not rijen or not self.aantal_kolommen:
+            return ""
+        regels = ["| " + " | ".join(r) + " |" for r in rijen]
+        regels.insert(1, "| " + " | ".join(["---"] * self.aantal_kolommen) + " |")
+        return "\n".join(regels)
+
+
+def _tabellen(page: pymupdf.Page) -> list[_Tabel]:
+    # lines_strict: alleen getekende randen, geen opvulvlakken; geeft in de KNWU-PDF's
+    # evenveel tabellen als de standaard, maar zonder smalle schijnkolommen.
+    return [_Tabel(t) for t in page.find_tables(strategy="lines_strict").tables]
+
+
+def _cel_in_tabellen(tabellen: list[_Tabel], bbox: tuple) -> tuple["_Tabel | None", "_Cel | None"]:
+    x, y = (bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2
+    for tabel in tabellen:
+        tx0, ty0, tx1, ty1 = tabel.bbox
+        if tx0 <= x <= tx1 and ty0 <= y <= ty1:
+            cel = tabel.cel_voor(bbox)
+            if cel is not None:
+                return tabel, cel
+    return None, None
+
+
 def _context(tekens: list[_Teken], start: int, eind: int) -> str:
     """Het weggehaalde stuk tussen ~~ met een paar woorden geldende tekst eromheen."""
 
@@ -167,20 +247,31 @@ def opschonen(path: Path) -> tuple[str, str]:
     twijfels: list[str] = []
     for page in doc:
         lijnen = _doorhaallijnen(page)
-        blokken = []
+        tabellen = _tabellen(page)
+        blokken: list[str | _Tabel] = []
         for blok in page.get_text("rawdict")["blocks"]:
             segmenten: list[tuple[str, bool]] = []
             tekens: list[_Teken] = []
             for regel in blok.get("lines", []):
+                geraakte_cellen: set[tuple[_Tabel, _Cel]] = set()
                 for span in regel["spans"]:
                     rood = _rood(span["color"])
                     for c in span["chars"]:
                         weg = _doorgehaald(c["bbox"], lijnen)
                         bijna = rood and not weg and _bijna_doorgehaald(c["bbox"], lijnen)
                         tekens.append(_Teken(c["c"], weg, rood, bijna))
-                    span_tekens = tekens[len(tekens) - len(span["chars"]) :]
-                    segmenten.append(("".join(t.c for t in span_tekens if not t.weg), rood))
+                        tabel, cel = _cel_in_tabellen(tabellen, c["bbox"])
+                        if tabel is not None:
+                            if tabel not in blokken:
+                                blokken.append(tabel)
+                            geraakte_cellen.add((tabel, cel))
+                            if not weg:
+                                tabel.segmenten[cel].append((c["c"], rood))
+                        elif not weg:
+                            segmenten.append((c["c"], rood))
                 segmenten.append(("\n", False))
+                for tabel, cel in geraakte_cellen:
+                    tabel.segmenten[cel].append(("\n", False))
                 tekens.append(_Teken(" ", False, False))
             pagina = page.number + 1
             for start, eind in _stukken(tekens, lambda t: t.weg):
@@ -195,7 +286,8 @@ def opschonen(path: Path) -> tuple[str, str]:
             tekst = _blok_naar_tekst(segmenten)
             if tekst:
                 blokken.append(tekst)
-        paginas.append("\n\n".join(blokken))
+        delen = [b.markdown() if isinstance(b, _Tabel) else b for b in blokken]
+        paginas.append("\n\n".join(d for d in delen if d))
     tekst = "\n\n".join(p for p in paginas if p) + "\n"
     if GEWIJZIGD_OPEN in tekst and not weggehaald:
         twijfels.insert(

@@ -12,167 +12,78 @@ VERSIE 20260918
 
 INHOUDSOPGAVE
 
-1.
-ALGEMEEN .................................................................................................................................. 4
-1.1
-PROCEDURE VASTSTELLEN KALENDERS ....................................................................................................... 4
-
-1.2
-KALENDERS ................................................................................................................................................... 4
-
-1.3
-KNWU-LIDMAATSCHAP ................................................................................................................................ 4
-
-1.4
-LICENTIE ....................................................................................................................................................... 5
-
-1.5
-DIVERSE MEDEDELINGEN ............................................................................................................................. 7
-
-1.6
-INSCHRIJVEN / BIJSCHRIJVEN / AFMELDEN ................................................................................................ 14
-
-2.
-WEGWIELRENNEN .................................................................................................................... 15
-2.1
-ALGEMEEN ................................................................................................................................................. 15
-
-2.2
-VOERTUIGEN IN DE KARAVAAN ................................................................................................................. 24
-
-2.3
-SAMENWERKINGSVERBANDEN .................................................................................................................. 27
-
-2.4
-NATIONALE KAMPIOENSCHAPPEN WEGWIELRENNEN .............................................................................. 28
-
-2.5
-PUNTENTELLING REGELMATIGHEIDSKLASSEMENT ................................................................................... 40
-
-2.6
-COMPETITIES .............................................................................................................................................. 43
-
-2.7
-CRITERIUMS................................................................................................................................................ 44
-
-3.
-BAANWIELRENNEN ................................................................................................................... 47
-3.1
-CATEGORIE-INDELING BAAN SEIZOEN ....................................................................................................... 47
-
-3.2
-KAMPIOENSCHAPPEN ................................................................................................................................ 47
-
-3.3
-KLEDING ..................................................................................................................................................... 48
-
-4.
-MOUNTAINBIKE ........................................................................................................................ 49
-4.1
-ALGEMEEN ................................................................................................................................................. 49
-
-4.2
-NATIONALE KAMPIOENSCHAPPEN............................................................................................................. 50
-
-4.3
-KNWU COMPETITIES MOUNTAINBIKE ....................................................................................................... 52
-
-5.
-VELDRIJDEN .............................................................................................................................. 53
-5.1 NATIONALE CATEGORIE-INDELING VELD SEIZOEN .......................................................................................... 53
-
-5.2 7-JARIGEN IN HET VELDSEIZOEN ..................................................................................................................... 53
-
-5.3 BUITENLANDTOESTEMMING ........................................................................................................................... 53
-
-5.4 MATERIAAL ...................................................................................................................................................... 53
-
-5.5 MATERIAALPOST ............................................................................................................................................. 54
-
-5.6 80% REGEL VOOR NATIONALE CATEGORIEËN ................................................................................................. 54
-
-5.7 NATIONALE EN INTERNATIONALE KAMPIOENSCHAPPEN VELDRIJDEN........................................................... 54
-
-5.8 WEDSTRIJDEN .................................................................................................................................................. 54
-
-5.10 STARTVOLGORDE........................................................................................................................................... 56
-
-5.11 JEUGDWEDSTRIJDEN ..................................................................................................................................... 57
-
-5.12 PRIJZENSCHEMA’S VELDRIT WEDSTRIJDEN ................................................................................................... 57
-
-6.
-BMX RACING ............................................................................................................................. 59
-6.1 GELDENDE REGLEMENTEN .............................................................................................................................. 59
+| 1. | ALGEMEEN .................................................................................................................................. 4 |
+| --- | --- |
+|  | 1.1 PROCEDURE VASTSTELLEN KALENDERS ....................................................................................................... 4 |
+|  | 1.2 KALENDERS ................................................................................................................................................... 4 |
+|  | 1.3 KNWU-LIDMAATSCHAP ................................................................................................................................ 4 |
+|  | 1.4 LICENTIE ....................................................................................................................................................... 5 |
+|  | 1.5 DIVERSE MEDEDELINGEN ............................................................................................................................. 7 |
+|  | 1.6 INSCHRIJVEN / BIJSCHRIJVEN / AFMELDEN ................................................................................................ 14 |
+| 2. | WEGWIELRENNEN .................................................................................................................... 15 |
+|  | 2.1 ALGEMEEN ................................................................................................................................................. 15 |
+|  | 2.2 VOERTUIGEN IN DE KARAVAAN ................................................................................................................. 24 |
+|  | 2.3 SAMENWERKINGSVERBANDEN .................................................................................................................. 27 |
+|  | 2.4 NATIONALE KAMPIOENSCHAPPEN WEGWIELRENNEN .............................................................................. 28 |
+|  | 2.5 PUNTENTELLING REGELMATIGHEIDSKLASSEMENT ................................................................................... 40 |
+|  | 2.6 COMPETITIES .............................................................................................................................................. 43 |
+|  | 2.7 CRITERIUMS................................................................................................................................................ 44 |
+| 3. | BAANWIELRENNEN ................................................................................................................... 47 |
+|  | 3.1 CATEGORIE-INDELING BAAN SEIZOEN ....................................................................................................... 47 |
+|  | 3.2 KAMPIOENSCHAPPEN ................................................................................................................................ 47 |
+|  | 3.3 KLEDING ..................................................................................................................................................... 48 |
+| 4. | MOUNTAINBIKE ........................................................................................................................ 49 |
+|  | 4.1 ALGEMEEN ................................................................................................................................................. 49 |
+|  | 4.2 NATIONALE KAMPIOENSCHAPPEN............................................................................................................. 50 |
+|  | 4.3 KNWU COMPETITIES MOUNTAINBIKE ....................................................................................................... 52 |
+| 5. | VELDRIJDEN .............................................................................................................................. 53 |
+|  | 5.1 NATIONALE CATEGORIE-INDELING VELD SEIZOEN .......................................................................................... 53 |
+|  | 5.2 7-JARIGEN IN HET VELDSEIZOEN ..................................................................................................................... 53 |
+|  | 5.3 BUITENLANDTOESTEMMING ........................................................................................................................... 53 |
+|  | 5.4 MATERIAAL ...................................................................................................................................................... 53 |
+|  | 5.5 MATERIAALPOST ............................................................................................................................................. 54 |
+|  | 5.6 80% REGEL VOOR NATIONALE CATEGORIEËN ................................................................................................. 54 |
+|  | 5.7 NATIONALE EN INTERNATIONALE KAMPIOENSCHAPPEN VELDRIJDEN........................................................... 54 |
+|  | 5.8 WEDSTRIJDEN .................................................................................................................................................. 54 |
+|  | 5.10 STARTVOLGORDE........................................................................................................................................... 56 |
+|  | 5.11 JEUGDWEDSTRIJDEN ..................................................................................................................................... 57 |
+|  | 5.12 PRIJZENSCHEMA’S VELDRIT WEDSTRIJDEN ................................................................................................... 57 |
+| 6. | BMX RACING ............................................................................................................................. 59 |
+|  | 6.1 GELDENDE REGLEMENTEN .............................................................................................................................. 59 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 3 VAN 98
 
-6.2 NATIONALE WEDSTRIJDEN .............................................................................................................................. 59
-
-6.3 BMX REGLEMENTEN/DOCUMENTEN .............................................................................................................. 59
-
-6.4 WEDSTRIJDEN .................................................................................................................................................. 59
-
-6.5 CLUBSHIRTS ..................................................................................................................................................... 59
-
-6.7 BELANGRIJKE KNWU NATIONALE REGLEMENTSWIJZIGINGEN ....................................................................... 61
-
-6.8 BELANGRIJKE UCI REGLEMENTSWIJZIGINGEN ................................................................................................ 61
-
-7.
-TRIALS ....................................................................................................................................... 62
-
-8.
-INDOOR CYCLING ...................................................................................................................... 62
-
-9.
-UCI WERELDKAMPIOENSCHAPPEN .......................................................................................... 62
-
-10.
-CONTINENTALE KAMPIOENSCHAPPEN .................................................................................... 62
-
-11.
-OLYMPISCHE SPELEN ................................................................................................................ 62
-
-12.
-OVERTREDINGEN, STRAFFEN EN PROCEDURES ....................................................................... 63
-
-13.
-MEDISCHE REGELS .................................................................................................................... 84
-
-14.
-ANTI DOPING ............................................................................................................................ 84
-
-15.
-CYCLING 4-ALL .......................................................................................................................... 85
-15.1 STRANDRACES ............................................................................................................................................ 85
-
-15.2 GRAVEL ....................................................................................................................................................... 86
-
-15.3 GRAN FONDO ............................................................................................................................................. 87
-
-16.
-PARA-CYCLING .......................................................................................................................... 88
-16.1 TERMINOLOGIE .......................................................................................................................................... 88
-
-16.2 HELMKLEUREN ........................................................................................................................................... 88
-
-16.3 ALGEMEEN ................................................................................................................................................. 88
-
-REGLEMENT NATIONALE HANDBIKE COMPETITIE ................................................................................................ 89
-
-17.
-ID CYCLING ................................................................................................................................ 90
-
-18.
-TARIEVEN, VERGOEDINGEN, PRIJZENSCHEMA’S ...................................................................... 92
-18.1 TARIEVEN ................................................................................................................................................... 92
-
-18.2 PRIJZENSCHEMA’S ...................................................................................................................................... 92
-
-18.3 JURYVERGOEDINGEN ................................................................................................................................. 97
+|  | 6.2 NATIONALE WEDSTRIJDEN .............................................................................................................................. 59 |
+| --- | --- |
+|  | 6.3 BMX REGLEMENTEN/DOCUMENTEN .............................................................................................................. 59 |
+|  | 6.4 WEDSTRIJDEN .................................................................................................................................................. 59 |
+|  | 6.5 CLUBSHIRTS ..................................................................................................................................................... 59 |
+|  | 6.7 BELANGRIJKE KNWU NATIONALE REGLEMENTSWIJZIGINGEN ....................................................................... 61 |
+|  | 6.8 BELANGRIJKE UCI REGLEMENTSWIJZIGINGEN ................................................................................................ 61 |
+| 7. | TRIALS ....................................................................................................................................... 62 |
+| 8. | INDOOR CYCLING ...................................................................................................................... 62 |
+| 9. | UCI WERELDKAMPIOENSCHAPPEN .......................................................................................... 62 |
+| 10. | CONTINENTALE KAMPIOENSCHAPPEN .................................................................................... 62 |
+| 11. | OLYMPISCHE SPELEN ................................................................................................................ 62 |
+| 12. | OVERTREDINGEN, STRAFFEN EN PROCEDURES ....................................................................... 63 |
+| 13. | MEDISCHE REGELS .................................................................................................................... 84 |
+| 14. | ANTI DOPING ............................................................................................................................ 84 |
+| 15. | CYCLING 4-ALL .......................................................................................................................... 85 |
+|  | 15.1 STRANDRACES ............................................................................................................................................ 85 |
+|  | 15.2 GRAVEL ....................................................................................................................................................... 86 |
+|  | 15.3 GRAN FONDO ............................................................................................................................................. 87 |
+| 16. | PARA-CYCLING .......................................................................................................................... 88 |
+|  | 16.1 TERMINOLOGIE .......................................................................................................................................... 88 |
+|  | 16.2 HELMKLEUREN ........................................................................................................................................... 88 |
+|  | 16.3 ALGEMEEN ................................................................................................................................................. 88 |
+|  | REGLEMENT NATIONALE HANDBIKE COMPETITIE ................................................................................................ 89 |
+| 17. | ID CYCLING ................................................................................................................................ 90 |
+| 18. | TARIEVEN, VERGOEDINGEN, PRIJZENSCHEMA’S ...................................................................... 92 |
+|  | 18.1 TARIEVEN ................................................................................................................................................... 92 |
+|  | 18.2 PRIJZENSCHEMA’S ...................................................................................................................................... 92 |
+|  | 18.3 JURYVERGOEDINGEN ................................................................................................................................. 97 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -215,7 +126,7 @@ Meer informatie over de licenties vind je op: https://kenniscentrum.knwu.nl/knwu
 [GEWIJZIGD]Bij wedstrijden voor Basis- en Plus licentiehouders is deelname met een KNWU dag-licentie mogelijk. Dit
 proces verloopt geheel digitaal via MijnKNWU inclusief iDEAL betaling en kan voor de wedstrijd via de
 KNWU-site geregeld worden. Met een KNWU dag-licentie ben je net als met een reguliere licentie
-verzekerd voor aansprakelijkheid. [/GEWIJZIGD]
+verzekerd voor aansprakelijkheid.[/GEWIJZIGD]
 
 GEEN FYSIEKE KNWU-LIDMAATSCHAPPAS
 De KNWU-lidmaatschapspassen zijn enkel nog maar digitaal te zien. Er worden geen fysieke
@@ -277,21 +188,12 @@ PROF A/B LICENTIE
 Alle renners/rensters die geregistreerd staan bij een UCI Team-zijn verplicht om een Prof licentie af te
 nemen. (uitgezonderd renners met een stagecontract).
 
-Prof-A
-Prof-B
-Prof-B U23
-
-UCI WorldTeam
-UCI Women’s Pro Team
-UCI Women’s Pro Team
-UCI Women’s WorldTeam
-UCI Continental Team
-UCI Continental Team
-UCI Pro Team
-UCI Women’s Continental Team
-UCI Women’s Continental Team
-UCI CX Pro Cycling Team
-UCI CX Pro Cycling Team
+| Prof-A | Prof-B | Prof-B U23 |
+| --- | --- | --- |
+| UCI WorldTeam | UCI Women’s Pro Team | UCI Women’s Pro Team |
+| UCI Women’s WorldTeam | UCI Continental Team | UCI Continental Team |
+| UCI Pro Team | UCI Women’s Continental Team | UCI Women’s Continental Team |
+|  | UCI CX Pro Cycling Team | UCI CX Pro Cycling Team |
 
 Wij zijn hiertoe gekomen om problemen te voorkomen rond deelname NK met en zonder contract en de
 verplichting van de UCI om onderscheid te maken bij criteriums voor renners met en zonder contract.
@@ -314,14 +216,14 @@ kampioenschap.
 aangevuld met een dag-licentie plus. Dit dient altijd vermeld te staan in de technische gids van het
 betreffende kampioenschappen.
 
-{gewijzigd 13.01.26} [/GEWIJZIGD]
+{gewijzigd 13.01.26}[/GEWIJZIGD]
 
 VANAF 17 JAAR KNWU WEDSTRIJDLICENTIE 17+ MOGELIJK
 Jongens en meisjes van 17-18 jaar zijn niet meer verplicht om een licentie als junior of junior-vrouw aan
 te vragen.
 [GEWIJZIGD]In plaats daarvan kunnen ze ook een KNWU wedstrijdlicentie 17+ aanschaffen en in een de bijbehorende
 klasse wedstrijden rijden. Ze kunnen dan niet deelnemen aan wedstrijden specifiek voor junioren, zoals
-bijvoorbeeld de toekomst cup of topcompetitie en het NK. [/GEWIJZIGD]
+bijvoorbeeld de toekomst cup of topcompetitie en het NK.[/GEWIJZIGD]
 
 Renners in de leeftijd 17/18 jaar zijn uitgesloten van deelname aan combinatie wedstrijden met Elite en/of
 Belofte.
@@ -344,7 +246,7 @@ direct aan te passen.)
 [GEWIJZIGD]Een renner die in de periode van 1 maart t/m 30 september wordt overgeschreven naar een andere club,
 voor dezelfde discipline, mag voor het resterende deel van het seizoen uitkomen voor de nieuwe club in
 zowel individuele wedstrijden als wedstrijden in ploegverband binnen die specifieke discipline.
-Echter moet hierbij aan onderstaande voorwaarden voldaan worden: [/GEWIJZIGD]
+Echter moet hierbij aan onderstaande voorwaarden voldaan worden:[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -352,7 +254,7 @@ VERSIE 20260918
 
 
 [GEWIJZIGD]Zowel de oorspronkelijk als de nieuwe club gaan akkoord met een tussentijdse overstap, dit
-dient door beide clubs schriftelijk bevestigd te worden aan wegsport@knwu.nl [/GEWIJZIGD]
+dient door beide clubs schriftelijk bevestigd te worden aan wegsport@knwu.nl[/GEWIJZIGD]
 
 
 [GEWIJZIGD]In geval van een conflict tussen renner en de oude club beslist de Commissie Wegsport, dit op
@@ -365,14 +267,14 @@ door de KNWU (& KBWB) ingestelde competitie. De renner behoud na clubwissel even
 punten voor betreffende competitie, echter voor de nieuwe club kunnen er geen punten behaald worden
 voor een ploegenklassement als de renner reeds is uitgekomen voor de oude club tijdens die competitie.
 
-{gewijzigd 01.09.25} [/GEWIJZIGD]
+{gewijzigd 01.09.25}[/GEWIJZIGD]
 
 1.4.2 PROMOTIE- EN DEGRADATIEREGELING
 De promotie/degradatieregeling is ontworpen om in elke klasse het juiste niveau te kunnen hanteren.
 Sporters die consistent goede prestaties leveren worden bevorderd naar een hogere klasse. Omgekeerd
 kunnen sporters die herhaaldelijk onderpresteren vrijwillig degraderen naar een lagere klasse. De
 promotie/degradatieregeling geldt momenteel alleen voor het wegwielrennen in klasse 1 t/m 5.
-Voor alle info zie het kenniscentrum[GEWIJZIGD]. [/GEWIJZIGD]
+Voor alle info zie het kenniscentrum[GEWIJZIGD].[/GEWIJZIGD]
 
 1.5 DIVERSE MEDEDELINGEN
 
@@ -419,7 +321,7 @@ straffenbarema[/GEWIJZIGD] onder punt [GEWIJZIGD]101.1[/GEWIJZIGD] wordt de stra
 
 .
 
-[GEWIJZIGD]{gewijzigd per 13.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 13.03.26}[/GEWIJZIGD]
 
 1.5.4 DUBBELCONTRACT
 Het starten in een andere dan de oorspronkelijk ingeschreven wedstrijd (na al dan niet voor de laatste te
@@ -530,7 +432,7 @@ aan b.v. de junioren.
 Extra en/of eenmalige uitzonderingen hierop zullen in de nationale besluiten
 alsmede eventuele andere officiële mededelingen worden gepubliceerd.
 
-[GEWIJZIGD]{gewijzigd per 13.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 13.03.26}[/GEWIJZIGD]
 
 1.5.10 MATERIAAL JEUGD[GEWIJZIGD]CATEGORIEËN[/GEWIJZIGD]
 
@@ -538,7 +440,7 @@ VERZETTEN
 [GEWIJZIGD]Een overzicht van de maximale verzetten per discipline per jeugdcategorie is opgenomen in Titel 20 –
 Jeugdwielrennen , onder artikel 20.1.007
 
-{gewijzigd per 06.02.26, 13.03.26} [/GEWIJZIGD]
+{gewijzigd per 06.02.26, 13.03.26}[/GEWIJZIGD]
 
 TOEGESTANE VERZET BIJ COMBINATIEWEDSTRIJDEN
 Wanneer een combinatiewedstrijd wordt verreden waar verschillende leeftijdscategorieën aan deelnemen,
@@ -567,7 +469,7 @@ In tijdritten worden alle soorten goedgekeurde helmen toegestaan, dus ook een z.
 ) [GEWIJZIGD]welke vallen onder Titel 20 Jeugdwielrennen[/GEWIJZIGD]. Zie voor de
 goedkeuringsnorm artikel 1.3.031.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 TIJDRITFIETSEN
 Een specifieke tijdritfiets is niet toegestaan. Ingevolge artikel 20.2.010 mag uitsluitend op een
@@ -630,7 +532,7 @@ niet meer is terug te draaien.
 Uitgesproken voorkeuren voor microfonisten (of andere specifieke juryleden) worden niet langer
 gehonoreerd.
 
-{gewijzigd per 01.01.26} [/GEWIJZIGD]
+{gewijzigd per 01.01.26}[/GEWIJZIGD]
 
 [GEWIJZIGD]1.5.14 INZET EIGEN LEVERANCIER I.P.V. KNWU APPARATUUR EN -OPERATOR
 Het is een organisator op de kalender van één- en meerdaagse wedstrijden toegestaan voor faciliteiten als
@@ -642,7 +544,7 @@ automatisch de verantwoordelijkheid van de organisator. Er wordt dan geen KNWU o
 apparatuur te bedienen. Indien door de leverancier iemand wordt ingezet die ook in het bezit is van een
 KNWU jurylicentie, dan behoort deze persoon in zo’n situatie niet tot de juryopstelling.
 
-{geïntroduceerd per 01.01.26} [/GEWIJZIGD]
+{geïntroduceerd per 01.01.26}[/GEWIJZIGD]
 
 1.5.15 PLAATSING CAMERA
 Camera’s zijn toegestaan conform UCI artikel 1.3.006 bis. Wel zullen we als KNWU-organisatie optreden
@@ -667,7 +569,7 @@ VERSIE 20260918
 disciplinaire commissie om wordt gevraagd. Ook is men verplicht om camerabeelden af te staan ten
 behoeve van opleiding en promotionele doeleinden wanneer de KNWU hiertoe een verzoek doet.
 
-[GEWIJZIGD]{gewijzigd per 18.09.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 18.09.26}[/GEWIJZIGD]
 
 1.5.16 LICENTIEVOORWAARDEN DEELNAME NK MASTERS
 In afwijking op de reguliere licentievoorwaarden voor deelname aan een KNWU NK, is het voor masters 60+
@@ -755,8 +657,8 @@ na betaling is deze direct te downloaden.
 [GEWIJZIGD]Voor de renners onder de 19 jaar blijft de regel zoals voorheen. Dat betekent dat je de brief bij de regionale
 wedstrijdcoördinator aanvraagt voor de disciplines wegwielrennen, mountainbiken en veldrijden.
 Ben je onder de 19 en doe je aan baanwielrennen, BMX Racing, gravel, para-cycling of strandrace, dan
-vraag je de brief wel via MijnKNWU aan. [/GEWIJZIGD]
-Zie voor alle informatie omtrent buitenland toestemming [GEWIJZIGD]ook ons kenniscentrum, klik [/GEWIJZIGD]hier.
+vraag je de brief wel via MijnKNWU aan.[/GEWIJZIGD]
+Zie voor alle informatie omtrent buitenland toestemming [GEWIJZIGD]ook ons kenniscentrum, klik[/GEWIJZIGD] hier.
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -774,51 +676,16 @@ adviesvorm de inschrijfgelden staan vermeld.
 
 Tabel adviserende inschrijfgelden bij wegwedstrijden (inclusief de afdracht aan de KNWU).
 
-CATEGORIEËN
-INDIVIDUELE
-
-CRITERIUMS
-
-INDIVIDUELE
-
-TIJDRITTEN
-
-ÉÉN EN MEERDAAGSE WEGWEDSTRIJDEN
-
-ZIJNDE GEEN COMPETITIE (PER RENNER)
-
-[GEWIJZIGD]U17 (NIEUWELING[/GEWIJZIGD]) -M/J
-€ 3,50
-€ 3,50
-€ 10,-
-
-JUNIOR-M/V
-€ 5,-
-€ 5,-
-€ 12,50
-
-ELITE-M/V
-€ 7,50
-€ 7,50
-€ 12,50
-
-BELOFTE-M/V
-€ 7,50
-€ 7,50
-€ 12,50
-
-MASTERS-M/V
-€ 5,-
-€ 5,-
-€ 10,-
-
-KLASSE 1-5
-€ 5,-
-€ 5,-
-€ 10,-
-
-[GEWIJZIGD]JEUGD U7-U15 M/V[/GEWIJZIGD]
-Nihil Let op ! Vakantiekampen: € 5-
+| CATEGORIEËN | INDIVIDUELE | INDIVIDUELE | ÉÉN EN MEERDAAGSE WEGWEDSTRIJDEN |
+| --- | --- | --- | --- |
+|  | CRITERIUMS | TIJDRITTEN | ZIJNDE GEEN COMPETITIE (PER RENNER) |
+| [GEWIJZIGD]U17 (NIEUWELING[/GEWIJZIGD]) -M/J | € 3,50 | € 3,50 | € 10,- |
+| JUNIOR-M/V | € 5,- | € 5,- | € 12,50 |
+| ELITE-M/V | € 7,50 | € 7,50 | € 12,50 |
+| BELOFTE-M/V | € 7,50 | € 7,50 | € 12,50 |
+| MASTERS-M/V | € 5,- | € 5,- | € 10,- |
+| KLASSE 1-5 | € 5,- | € 5,- | € 10,- |
+| [GEWIJZIGD]JEUGD U7-U15 M/V[/GEWIJZIGD] | Nihil Let op ! Vakantiekampen: € 5- | Nihil Let op ! Vakantiekampen: € 5- |  |
 
 Alle genoemde bedragen zijn per renner/renster per dag/wedstrijdonderdeel.
 Organisatoren zijn vrij in de hoogte van het inschrijfgeld, maar worden geadviseerd om bovenstaand
@@ -843,7 +710,7 @@ restitutie voorwaarden bij afmelden tot het sluiten van de inschrijving.
 Bij afmelden na de sluiting van de inschrijving tot de dag van de koers vervalt het inschrijfgeld aan
 de organisatie. Indien er niet wordt afgemeld wordt een boete opgelegd.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 2.1.2 INVITATIEWEDSTRIJDEN
 In het nieuwe reglement Matchfixing van de KNWU wordt o.m. gesproken over “invitatiewedstrijden”.
@@ -961,7 +828,7 @@ VERSIE 20260918
 18 VAN 98
 
 [GEWIJZIGD]2.1.7 RONDE VERGOEDING BIJ CRITERIUMS
-(verplaatst naar 2.7.4, per 26.05.26) [/GEWIJZIGD]
+(verplaatst naar 2.7.4, per 26.05.26)[/GEWIJZIGD]
 
 2.1.8 SCHIJFREMMEN EN MATERIAAL AFGIFTE T.B.V. NEUTRALE WAGENS
 Het is toegestaan om wielen met schijfremmen af te geven voor de neutrale wagens in koers. Voor wat
@@ -1043,21 +910,13 @@ Er wordt gebruik gemaakt van MyLaps voor het opmaken van de uitslag
 
 Hieronder de richtlijnen voor de maximale peloton grootte op basis van de lengte van het parcours.
 
-lengte parcours
-max aantal renners totaal
-max aantal groepen
-<750m*
-75
-1
-750-1249m*
-80
-2
-1249-2500m*
-120
-3
->2500m
-150
-3
+| lengte parcours | max aantal renners totaal | max aantal groepen |
+| --- | --- | --- |
+| <750m* | 75 | 1 |
+| 750-1249m* | 80 | 2 |
+| 1249-2500m* | 120 | 3 |
+| >2500m | 150 | 3 |
+
 *Op een zeer smal of bochtig parcours kan de maximale groepsgrootte naar beneden worden bijgesteld, ter boordeling aan de
 
 wedstrijd coördinator.
@@ -1241,7 +1100,7 @@ sanctie ingevolge het nationale straffenbarema
 Renners die uitvallen bij een meerdaagse wegwedstrijd mogen gedurende die meerdaagse wedstrijd niet
 deelnemen aan een andere wedstrijd.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -1256,7 +1115,7 @@ Tijdens internationale wedstrijden blijft conform (UCI) artikel 1.3.073 twee (2)
 Het aanbrengen van de verstrekte kaderplaatjes blijft normaal van kracht. Het is niet toegestaan het
 rugnummer te verkleinen of op andere wijze aan te passen.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 ATTENTIE U17 (NIEUWELINGEN) / JUNIOREN (M)
 
@@ -1455,7 +1314,7 @@ KNWU Kampioenschappen zijn niet toegankelijk voor WFN licentiehouders. WFN licen
 niet voorinschrijven via de site, dit kan door een mail naar de organisatie ovv het KNWU ID.
 
 [GEWIJZIGD]KNWU licentiehouders 17+ (Plus en Premium)) kunnen deelnemen aan de wedstrijden van de andere WFN
-bonden. Basislicentiehouders zijn uitgesloten van deelname aan WFN wedstrijden. [/GEWIJZIGD]
+bonden. Basislicentiehouders zijn uitgesloten van deelname aan WFN wedstrijden.[/GEWIJZIGD]
 
 Na goedkeuring van WFN en KNWU wedstrijd coördinator kunnen, onder strikte voorwaarden, ook
 junioren (M/V) deelnemen aan WFN wedstrijden. Renners die een licentie bij een vrije bond hebben
@@ -1475,7 +1334,7 @@ VERSIE 20260918
 2.4 NATIONALE KAMPIOENSCHAPPEN WEGWIELRENNEN
 
 2.4.1 ALGEMEEN
-In [GEWIJZIGD]2026 [/GEWIJZIGD]zullen de volgende nationale kampioenschappen worden verreden:
+In [GEWIJZIGD]2026[/GEWIJZIGD] zullen de volgende nationale kampioenschappen worden verreden:
 NK WEG PROF-A/PROF-B ELITE WOMEN, PROF-B U23 WOMEN (gezamenlijk NK geen aparte trui/huldiging)
 NK WEG PROF ELITE MEN
 NK WEG U23 MEN (Belofte en Belofte Prof-B)
@@ -1484,8 +1343,8 @@ NK WEG CLUBVROUWEN (ELITE- & BELOFTE VROUWEN ZONDER CONTRACT)
 NK WEG CLUBMANNEN (ELITE MANNEN ZONDER CONTRACT)
 NK WEG JUNIOR WOMEN
 NK WEG JUNIOR MEN
-NK WEG [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) MEISJES
-NK WEG [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) JONGENS
+NK WEG [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) MEISJES
+NK WEG [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) JONGENS
 NK WEG MASTERS
 
 NK WEG JEUGD
@@ -1521,7 +1380,7 @@ reservelijst.
 2.4.3 SELECTIEPROCEDURES NK WEG
 [GEWIJZIGD]Indien er wordt gesproken van een selectiecommissie betreft dat in eerste instantie de bondscoach, evt in
 overleg met de technisch directeur en/of de commissie wegsport. In alle gevallen zal de commissie
-wegsport worden ingelicht over gemaakte selecties. [/GEWIJZIGD]
+wegsport worden ingelicht over gemaakte selecties.[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -1535,9 +1394,9 @@ Alle onderstaande licentiehouders worden op de deelnemerslijst geplaatst:
 1. Alle licentiehouders met de internationale classificatie “UCI Elite Men” welke onder contract staan van
 een UCI World Team, Pro Team, Continental team, UCI MTB team of UCI Professional Cyclo Cross team
 worden uitgenodigd.
-2. KNWU Licentiehouders Professional-A met de belofteleeftijd ([GEWIJZIGD]19 - 22 [/GEWIJZIGD]jaar, [GEWIJZIGD]op basis van huidig
+2. KNWU Licentiehouders Professional-A met de belofteleeftijd ([GEWIJZIGD]19 - 22[/GEWIJZIGD] jaar, [GEWIJZIGD]op basis van huidig
 jaar-geboortejaar[/GEWIJZIGD]) dienen deel te nemen aan deze categorie (ongeacht hun internationale classificatie).
-3. KNWU Licentiehouders Professional-B[GEWIJZIGD], welke dit jaar minimaal de leeftijd van 23 bereiken [/GEWIJZIGD]
+3. KNWU Licentiehouders Professional-B[GEWIJZIGD], welke dit jaar minimaal de leeftijd van 23 bereiken[/GEWIJZIGD]
 .
 Bijzonderheden
 
@@ -1556,7 +1415,7 @@ De selectie voor dit NK vindt als volgt plaats.
 1. Alle rensters die onder contract staan bij een UCI Women’s WorldTeam, UCI Women Proteam of UCI
 Women’s Continental Team of UCI Pro Cyclocross team worden op de concept-uitnodigingenlijst
 geplaatst.
-2. KNWU Licentiehouders Professional-A met de belofteleeftijd ([GEWIJZIGD]19 - 22 [/GEWIJZIGD]jaar, [GEWIJZIGD]op basis van huidig
+2. KNWU Licentiehouders Professional-A met de belofteleeftijd ([GEWIJZIGD]19 - 22[/GEWIJZIGD] jaar, [GEWIJZIGD]op basis van huidig
 jaar-geboortejaar[/GEWIJZIGD]) dienen deel te nemen aan deze categorie (ongeacht hun internationale classificatie).
 
 NK WEG “CLUBVROUWEN”
@@ -1604,7 +1463,7 @@ gezet.
 NK WEG U23 MEN (BELOFTEN EN BELOFTE PROF-B)
 Aanmelden
 Voor dit kampioenschap kan niet worden aangemeld. Dit kampioenschap wordt gelijktijdig verreden met
-het NK Prof Elite-Men met een gelimiteerd [GEWIJZIGD]totaal [/GEWIJZIGD]aantal deelnemers (168)
+het NK Prof Elite-Men met een gelimiteerd [GEWIJZIGD]totaal[/GEWIJZIGD] aantal deelnemers (168)
 Selectie
 De selectie voor dit NK vindt als volgt plaats:
 1. Renners met een Prof-B U23 licentie zijn automatisch geplaatst.
@@ -1663,12 +1522,12 @@ De startvolgorde wordt bepaald door de stand in het regelmatigheidsklassement
 De selectiecommissie heeft de mogelijkheid renners toe te voegen indien de maximale peloton grootte nog
 niet is bereikt.
 
-NK WEG [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) MEISJES
+NK WEG [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) MEISJES
 Aanmelden
 Voor dit kampioenschap kan niet worden aangemeld.
 Selectie
 De selectie voor dit NK vindt als volgt plaats:
-1. Uit het KNWU Regelmatigheidsklassement [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuweling) Meisjes worden de eerste 125 renners op
+1. Uit het KNWU Regelmatigheidsklassement [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuweling) Meisjes worden de eerste 125 renners op
 de concept-uitnodigingenlijst geplaatst (aantal afhankelijk van het parkoers).
 
 Bijzonderheden
@@ -1681,24 +1540,24 @@ reglement, met de uitzondering dat alle wedstrijden na het sluiten van de select
 het resterende (weg)seizoen worden meegeteld voor het volgend jaar, en max. de 5 beste
 resultaten zijn bepalend voor het klassement.
 Per 1 april zal de verdeling bekend zijn aan de hand van het aantal licenties van dat moment per
-leeftijdscategorie en regio, en zal vóór 15 april aan de regio`s bekend worden gemaakt. [/GEWIJZIGD]
+leeftijdscategorie en regio, en zal vóór 15 april aan de regio`s bekend worden gemaakt.[/GEWIJZIGD]
 
 [GEWIJZIGD]Waar rijdt je de Selectie procedure
 Alle nationale wedstrijden in Nederland tellen mee. De wedstrijden worden bijgehouden middels
-een klassement in “mijn KNWU” waar de puntenverdeling vaststaat voor alle regio`s. De regio [/GEWIJZIGD]
+een klassement in “mijn KNWU” waar de puntenverdeling vaststaat voor alle regio`s. De regio[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 32 VAN 98
 
 [GEWIJZIGD]clubsupport kan per leeftijdscategorie(geboortejaar) de deelnemers filteren in het “mijn KNWU”
-systeem volgens de vestigingsplaats van de vereniging van de regio waarvan ze lid zijn. [/GEWIJZIGD]
+systeem volgens de vestigingsplaats van de vereniging van de regio waarvan ze lid zijn.[/GEWIJZIGD]
 
 [GEWIJZIGD]Wie mag er deelnemen aan de Selectie procedure, LJT en NK
 De selectieprocedure en LJT is voor deelnemers uit de categorieën: , MU9-VU9-VU10, MU10-
 VU11, MU11-VU12, MU12-VU13, MU13-VU14, MU14-VU15 en MU15. Voor de selectieprocedure
 en het LJT rijden de meisjes 1 U-categorie lager dan hun leeftijd(geboortejaar). U6 t/m U8 zijn
-uitgesloten van deelname aan het NK, zij kunnen ook geen dispensatie hiervoor aanvragen. [/GEWIJZIGD]
+uitgesloten van deelname aan het NK, zij kunnen ook geen dispensatie hiervoor aanvragen.[/GEWIJZIGD]
 
 [GEWIJZIGD]Iedereen die de Nederlandse nationaliteit heeft in combinatie met een UCI licentie(ongeacht of er
 een buitenlandse vereniging op staat) en lid is van de KNWU mag deelnemen aan de
@@ -1729,7 +1588,7 @@ deelnemen in dit weekend
 In dit weekend mogen alleen de LJT wedstrijden worden georganiseerd, autorisaties voor het
 buitenland worden eveneens niet afgegeven voor dit weekend.
 Op zaterdag 30 mei en zondag 31 mei zal er geen enkele andere Landelijke of regio jeugdwedstrijd
-op de kalender geplaatst mogen worden, clubwedstrijden zijn wel toegestaan. [/GEWIJZIGD]
+op de kalender geplaatst mogen worden, clubwedstrijden zijn wel toegestaan.[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -1738,11 +1597,11 @@ VERSIE 20260918
 [GEWIJZIGD]In welke regio rijdt je het LJT
 Je rijdt het LJT wat bij voorkeur de kortste afstand is vanaf je woonplaats, je mag ook op grotere
 afstand van je woonplaats een LJT rijden. Je wordt uit de uitslag gefilterd door je eigen regio
-Clubsupport om te bepalen of er extra startplaatsen zijn behaald door een desbetreffende regio. [/GEWIJZIGD]
+Clubsupport om te bepalen of er extra startplaatsen zijn behaald door een desbetreffende regio.[/GEWIJZIGD]
 
 [GEWIJZIGD]Voor deelnemers die bij een buitenlandse club lid zijn maar een Nederlandse KNWU licentie en de
 Nederlandse nationaliteit hebben rijden hun wedstrijden volgens dezelfde procedure als
-deelnemers van een Nederlandse club. [/GEWIJZIGD]
+deelnemers van een Nederlandse club.[/GEWIJZIGD]
 
 [GEWIJZIGD]Procedure klassering LJT
 Indien een renner in de dag-uitslag van de regio bij de eerste 5 eindigt en zelf niet op een plaats in
@@ -1770,7 +1629,7 @@ of een U-categorie hoger te rijden, dan dient deze ook in de lagere of hogere ca
 nemen aan het NK. Zoals eerder vernoemd in de procedure zijn U6 t/m U8 hiervoor uitgesloten.
 
 Na het NK veldrijden zijn er 6 weken puntloze wedstrijden, deze tellen niet mee voor de
-kwalificatie van het NK Jeugd op de weg. [/GEWIJZIGD]
+kwalificatie van het NK Jeugd op de weg.[/GEWIJZIGD]
 
 [GEWIJZIGD]De regio`s krijgen vanuit het uniebureau bericht hoeveel renners/rensters in de diversen
 categorieën vanuit hun regio mogen deelnemen.
@@ -1785,11 +1644,11 @@ VERSIE 20260918
 
 [GEWIJZIGD]Afmeldingen lopen via de regio jeugdclubsupport, hierna kan er een reserve renner/renster
 worden toegevoegd uitsluitend door de landelijk jeugdclubsupport, dit kan tot donderdagavond
-11 juni 23.59 uur. [/GEWIJZIGD]
+11 juni 23.59 uur.[/GEWIJZIGD]
 
-[GEWIJZIGD]Als de geselecteerden bij het uniebureau bekend zijn, volgt er een uitnodiging via de mail. [/GEWIJZIGD]
+[GEWIJZIGD]Als de geselecteerden bij het uniebureau bekend zijn, volgt er een uitnodiging via de mail.[/GEWIJZIGD]
 
-[GEWIJZIGD]{gewijzigd per 10.02.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 10.02.26}[/GEWIJZIGD]
 
 NK WEG MASTERS
 Aanmelden
@@ -1858,16 +1717,16 @@ wanneer en op welke plaats(en) verzorging wel is toegestaan.
 2.4.4 NATIONALE KAMPIOENSCHAPPEN TIJDRIJDEN
 
 ALGEMEEN
-In [GEWIJZIGD]2026 [/GEWIJZIGD]zullen de volgende kampioenschappen tijdrijden worden verreden:
-NK TIJDRIJDEN ELITE MEN, [GEWIJZIGD]deelname voor Prof-A en Prof-B [/GEWIJZIGD]
+In [GEWIJZIGD]2026[/GEWIJZIGD] zullen de volgende kampioenschappen tijdrijden worden verreden:
+NK TIJDRIJDEN ELITE MEN, [GEWIJZIGD]deelname voor Prof-A en Prof-B[/GEWIJZIGD]
 NK TIJDRIJDEN ELITE WOMEN[GEWIJZIGD], deelname voor Prof-A, Prof-B, Prof-B U23, Elite, Belofte
 (Extra huldiging voor Prof B U-23/ Belofte en huldiging voor Elite/Belofte (clubrenster))[/GEWIJZIGD]
-NK TIJDRIJDEN U23 MEN[GEWIJZIGD], deelname voor Prof-B U23, Belofte [/GEWIJZIGD](met en zonder contract)
+NK TIJDRIJDEN U23 MEN[GEWIJZIGD], deelname voor Prof-B U23, Belofte[/GEWIJZIGD] (met en zonder contract)
 NK TIJDRIJDEN JUNIOR MEN
 NK TIJDRIJDEN JUNIOR WOMEN
 NK TIJDRIJDEN CLUBMANNEN (ELITE-MANNEN Z/C)
-NK TIJDRIJDEN [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) JONGENS
-NK TIJDRIJDEN [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) MEISJES
+NK TIJDRIJDEN [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) JONGENS
+NK TIJDRIJDEN [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) MEISJES
 NK TIJDRIJDEN MASTERS
 
 Aan het NK Wegwielrennen Tijdrijden kan alleen worden deelgenomen door renners die:
@@ -1879,7 +1738,7 @@ de UCI aangesloten buitenlandse federatie; in het bezit zijn van een geldig lidm
 [GEWIJZIGD]Indien de licentie uitgegeven is door een buitenlandse federatie en deze kennen geen onderscheid
 tussen een Prof-A en Prof-B licentie, dan zullen renners welke geregistreerd zijn als lid van en UCI
 WorldTeam, UCI Women’s WorldTeam of UCI ProTeam(M) gelijk wordt beschouwd als een Prof-A
-licentiehouder [/GEWIJZIGD]
+licentiehouder[/GEWIJZIGD]
 
 op grond van de hierna bepaalde selectiecriteria, startgerechtigd zijn in één van bovenstaande
 categorieën.
@@ -1936,7 +1795,7 @@ Voor de plaatsingslijst tellen de beste 5 resultaten mee.
 Overige plekken zijn aanwijsplekken voor de selectiecommissie.
 Bijzonderheden
 
-Licentiehouders Professional-A, in de leeftijd ([GEWIJZIGD]19 - 22 [/GEWIJZIGD]jaar, [GEWIJZIGD]op basis van huidig jaar-
+Licentiehouders Professional-A, in de leeftijd ([GEWIJZIGD]19 - 22[/GEWIJZIGD] jaar, [GEWIJZIGD]op basis van huidig jaar-
 geboortejaar[/GEWIJZIGD]), worden ingedeeld bij het NK Tijdrijden UCI ELITE-MEN.
 
 NK TIJDRIJDEN CLUBMANNEN (ELITE-MANNEN Z/C)
@@ -1945,7 +1804,7 @@ Voor dit kampioenschap moet tijdig persoonlijk worden aangemeld via mijn KNWU.
 Selectie
 
 Er zijn 10 startplekken gereserveerd voor Elite Clubmannen, indien er minder dan 30 [GEWIJZIGD]deelnemers voor
-de Elite-Men [/GEWIJZIGD] zich aanmelden worden de overgebleven plekken opgevuld door Elite Clubmannen.
+de Elite-Men[/GEWIJZIGD] zich aanmelden worden de overgebleven plekken opgevuld door Elite Clubmannen.
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -1980,12 +1839,12 @@ Bijzonderheden
 [GEWIJZIGD]
 Licentiehouders Professional-A, in de leeftijd 19 – 22 jaar (op basis van huidig jaar-geboortejaar),
 worden ingedeeld bij het NK Tijdrijden UCI ELITE-WOMEN en komen derhalve niet in aanmerking
-voor de U23 titel [/GEWIJZIGD]
+voor de U23 titel[/GEWIJZIGD]
 
 Alleen rensters die zich persoonlijk hebben aangemeld via mijn KNWU komen in aanmerking voor
 selectie.
 
-NK TIJDRIJDEN [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) JONGENS (40 STARTPLEKKEN)
+NK TIJDRIJDEN [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) JONGENS (40 STARTPLEKKEN)
 Aanmelden
 Voor dit kampioenschap hoeft niet te worden aangemeld via mijn KNWU.
 Selectie
@@ -2001,7 +1860,7 @@ Selectie
 -Minimaal 6 aanwijsplekken selectiecommissie.
 -Voor de plaatsingslijst tellen de beste 5 resultaten mee.
 
-NK TIJDRIJDEN [GEWIJZIGD]U17 [/GEWIJZIGD](NIEUWELING) MEISJES (30 STARTPLEKKEN)
+NK TIJDRIJDEN [GEWIJZIGD]U17[/GEWIJZIGD] (NIEUWELING) MEISJES (30 STARTPLEKKEN)
 Aanmelden
 Voor dit kampioenschap hoeft niet te worden aangemeld via mijn KNWU.
 Selectie
@@ -2061,8 +1920,8 @@ aan het NCK in de juiste categorie.
 
 CATEGORIEËN
 A. Professional-A en -B, Elite-man, Belofte-man, Klasse 1, Elite-vrouw, Belofte-vrouw1
-B. Junior-man, [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuweling) jongen, Junior- vrouw en [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuweling)-meisje2
-C. Elite-vrouw, Belofte-vrouw, Klasse 1-5-vrouw, Junior-vrouw en [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuweling) meisje
+B. Junior-man, [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuweling) jongen, Junior- vrouw en [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuweling)-meisje2
+C. Elite-vrouw, Belofte-vrouw, Klasse 1-5-vrouw, Junior-vrouw en [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuweling) meisje
 D. Jeugdrenners, vanaf categorie 5 jongens en vanaf categorie 4 meisjes
 
 AANTAL RENNERS/RENSTERS PER PLOEG
@@ -2076,17 +1935,17 @@ mogen rijden. Hieronder volgt het overzicht met de maximale verzetten per licent
 A. Vrij
 B. Vrij
 C. Vrij
-D. [GEWIJZIGD] 6,70[/GEWIJZIGD] m (max. verzet [GEWIJZIGD]U15 [/GEWIJZIGD])
+D. [GEWIJZIGD]6,70[/GEWIJZIGD] m (max. verzet [GEWIJZIGD]U15[/GEWIJZIGD] )
 
 VOLGAUTO
 Iedere deelnemende ploeg is verplicht om door één auto van de betreffende ploeg te worden gevolgd.
 (Alleen personenwagens, busjes zijn niet toegestaan). [GEWIJZIGD]De chauffeur van deze auto dient te beschikken over
-een geldige ploegleiderslicentie of een volgerslicentie. [/GEWIJZIGD]
+een geldige ploegleiderslicentie of een volgerslicentie.[/GEWIJZIGD]
 
 MATERIAAL
 De KNWU-reglementen m.b.t. de fiets zijn van toepassing (artikel 1.3.021 en 1.3.023). Het gebruik van
 aerodynamisch materiaal is toegestaan.
-Voor [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen) geldt dat zij (uitsluitend) in deze wedstrijd, anders dan
+Voor [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) geldt dat zij (uitsluitend) in deze wedstrijd, anders dan
 normaal, mogen deelnemen met aerodynamisch materiaal gelijk aan de andere renners/rensters uit de B-
 of C-categorie.
 
@@ -2113,316 +1972,79 @@ voeren op de broek en de helm. Snelle pakken zijn toegestaan in uniforme clubkle
 
 2.5 PUNTENTELLING REGELMATIGHEIDSKLASSEMENT
 
-PLAATS
-SCHEMA 1
-SCHEMA 2
-SCHEMA 3
-SCHEMA 4
-SCHEMA 5
-
-1
-150
-100
-50
-35
-20
-
-2
-130
-85
-40
-30
-15
-
-3
-115
-75
-36
-25
-13
-
-4
-105
-70
-34
-20
-12
-
-5
-95
-65
-32
-18
-11
-
-6
-85
-61
-30
-16
-10
-
-7
-80
-57
-28
-14
-9
-
-8
-75
-54
-26
-13
-8
-
-9
-70
-51
-24
-12
-7
-
-10
-67
-49
-22
-11
-6
-
-11
-64
-47
-20
-10
-5
-
-12
-61
-45
-19
-9
-4
-
-13
-58
-43
-18
-8
-3
-
-14
-55
-41
-17
-7
-2
-
-15
-52
-39
-16
-6
-1
-
-16
-50
-37
-15
-5
-
-17
-48
-35
-14
-4
-
-18
-46
-33
-13
-3
-
-19
-44
-32
-12
-2
-
-20
-42
-31
-11
-1
-
-21
-40
-30
-10
-
-22
-38
-29
-9
-
-23
-36
-28
-8
-
-24
-34
-27
-7
-
-25
-32
-26
-6
-
-26
-30
-25
-5
-
-27
-28
-24
-4
-
-28
-26
-23
-3
-
-29
-24
-22
-2
-
-30
-22
-21
-1
-
-31
-20
-20
-
-32
-19
-19
-
-33
-18
-18
-
-34
-17
-17
+| PLAATS | SCHEMA 1 | SCHEMA 2 | SCHEMA 3 | SCHEMA 4 | SCHEMA 5 |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 150 | 100 | 50 | 35 | 20 |
+| 2 | 130 | 85 | 40 | 30 | 15 |
+| 3 | 115 | 75 | 36 | 25 | 13 |
+| 4 | 105 | 70 | 34 | 20 | 12 |
+| 5 | 95 | 65 | 32 | 18 | 11 |
+| 6 | 85 | 61 | 30 | 16 | 10 |
+| 7 | 80 | 57 | 28 | 14 | 9 |
+| 8 | 75 | 54 | 26 | 13 | 8 |
+| 9 | 70 | 51 | 24 | 12 | 7 |
+| 10 | 67 | 49 | 22 | 11 | 6 |
+| 11 | 64 | 47 | 20 | 10 | 5 |
+| 12 | 61 | 45 | 19 | 9 | 4 |
+| 13 | 58 | 43 | 18 | 8 | 3 |
+| 14 | 55 | 41 | 17 | 7 | 2 |
+| 15 | 52 | 39 | 16 | 6 | 1 |
+| 16 | 50 | 37 | 15 | 5 |  |
+| 17 | 48 | 35 | 14 | 4 |  |
+| 18 | 46 | 33 | 13 | 3 |  |
+| 19 | 44 | 32 | 12 | 2 |  |
+| 20 | 42 | 31 | 11 | 1 |  |
+| 21 | 40 | 30 | 10 |  |  |
+| 22 | 38 | 29 | 9 |  |  |
+| 23 | 36 | 28 | 8 |  |  |
+| 24 | 34 | 27 | 7 |  |  |
+| 25 | 32 | 26 | 6 |  |  |
+| 26 | 30 | 25 | 5 |  |  |
+| 27 | 28 | 24 | 4 |  |  |
+| 28 | 26 | 23 | 3 |  |  |
+| 29 | 24 | 22 | 2 |  |  |
+| 30 | 22 | 21 | 1 |  |  |
+| 31 | 20 | 20 |  |  |  |
+| 32 | 19 | 19 |  |  |  |
+| 33 | 18 | 18 |  |  |  |
+| 34 | 17 | 17 |  |  |  |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 41 VAN 98
 
-35
-16
-16
-
-36
-15
-15
-
-37
-14
-14
-
-38
-13
-13
-
-39
-12
-12
-
-40
-11
-11
-
-41
-10
-10
-
-42
-9
-9
-
-43
-8
-8
-
-44
-7
-7
-
-45
-6
-6
-
-46
-5
-5
-
-47
-4
-4
-
-48
-3
-3
-
-49
-2
-2
-
-50
-1
-1
+| 35 | 16 | 16 |
+| --- | --- | --- |
+| 36 | 15 | 15 |
+| 37 | 14 | 14 |
+| 38 | 13 | 13 |
+| 39 | 12 | 12 |
+| 40 | 11 | 11 |
+| 41 | 10 | 10 |
+| 42 | 9 | 9 |
+| 43 | 8 | 8 |
+| 44 | 7 | 7 |
+| 45 | 6 | 6 |
+| 46 | 5 | 5 |
+| 47 | 4 | 4 |
+| 48 | 3 | 3 |
+| 49 | 2 | 2 |
+| 50 | 1 | 1 |
 
 2.5.1 SCHEMA’S PUNTENTELLING
 
-ELITE/BELOFTE WEDSTRIJDEN IN NEDERLAND
-SCHEMA
-
-Internationale eendaagse
-1
-
-Internationale meerdaagse – Etappe (excl. TTT = Ploegentijdrit)
-1
-
-Internationale meerdaagse – Eindklassement
-1
-
-U-23 Road Serie (in Nederland) + Topcompetitie & Vrije wedstrijd eendaagse
-2
-
-U-23 Road Serie (in Nederland) + Topcompetitie & Vrij wedstrijd meerdaagse – Etappe (excl. TTT)
-2
-
-U-23 Road Serie (in Nederland) + Topcompetitie & Vrij wedstrijd meerdaagse – Eindklassement
-2
-
-Clubcompetitie eendaagse
-3
-
-Clubcompetitie meerdaagse – Etappe (Excl. TTT)
-3
-
-Clubcompetitie meerdaagse – Eindklassement
-3
-
-Criteriums *
-5
+| ELITE/BELOFTE WEDSTRIJDEN IN NEDERLAND | SCHEMA |
+| --- | --- |
+| Internationale eendaagse | 1 |
+| Internationale meerdaagse – Etappe (excl. TTT = Ploegentijdrit) | 1 |
+| Internationale meerdaagse – Eindklassement | 1 |
+| U-23 Road Serie (in Nederland) + Topcompetitie & Vrije wedstrijd eendaagse | 2 |
+| U-23 Road Serie (in Nederland) + Topcompetitie & Vrij wedstrijd meerdaagse – Etappe (excl. TTT) | 2 |
+| U-23 Road Serie (in Nederland) + Topcompetitie & Vrij wedstrijd meerdaagse – Eindklassement | 2 |
+| Clubcompetitie eendaagse | 3 |
+| Clubcompetitie meerdaagse – Etappe (Excl. TTT) | 3 |
+| Clubcompetitie meerdaagse – Eindklassement | 3 |
+| Criteriums * | 5 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -2436,97 +2058,43 @@ regelmatigheidsklassement.
 
 Noot: Omlopen welke niet als één of meerdaagse wegwedstrijd worden aangeduid, krijgen de puntentelling
 volgens het criterium (Schema 5).
-[GEWIJZIGD]{gewijzigd per 10.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 10.03.26}[/GEWIJZIGD]
 
-VROUWEN WEDSTRIJDEN IN NEDERLAND
-SCHEMA
+| VROUWEN WEDSTRIJDEN IN NEDERLAND | SCHEMA |
+| --- | --- |
+| Internationale eendaagse | 1 |
+| Internationale meerdaagse – Etappe (excl. TTT) | 1 |
+| Internationale meerdaagse – Eindklassement | 1 |
+| Topcompetitie eendaagse-Internationaal | 1 |
+| Topcompetitie eendaagse-Nationaal | 2 |
+| Vrije wedstrijd eendaagse | 2 |
+| Vrije wedstrijd meerdaagse – Etappe (excl. TTT) | 2 |
+| Vrije wedstrijd meerdaagse – Eindklassement | 2 |
+| Women Cycling Series eendaagse | 3 |
+| Women Cycling Series meerdaagse – Etappe (excl. TTT) | 3 |
+| Women Cycling Series meerdaagse – Eindklassement | 3 |
+| Criteriums * & ** | 5 |
 
-Internationale eendaagse
-1
+| U17 & JUNIOREN WEDSTRIJDEN IN NEDERLAND | SCHEMA |
+| --- | --- |
+| Internationale eendaagse | 2 |
+| Internationale meerdaagse – Etappe (excl. TTT) | 3 |
+| Internationale meerdaagse – Eindklassement | 1 |
+| Nationale vrije wedstrijd eendaagse | 3 |
+| Toekomst- Cup (zie hieronder) |  |
+| Nationale Topcompetitie wedstrijd eendaagse | [GEWIJZIGD]1[/GEWIJZIGD] |
+| Nationale wedstrijd meerdaagse – Etappe (excl. TTT) | 4 |
+| Nationale wedstrijd meerdaagse – Eindklassement | 2 |
+| Klimmerstrofee criteriums | 4 |
+| NK Weg | 2 |
+| NK Tijdrijden | 3 |
+| NK Veldrijden, NK MTB en NK Baan (achtervolging & puntenkoers) | 4 |
+| Criteriums * | 5 |
 
-Internationale meerdaagse – Etappe (excl. TTT)
-1
-
-Internationale meerdaagse – Eindklassement
-1
-
-Topcompetitie eendaagse-Internationaal
-1
-
-Topcompetitie eendaagse-Nationaal
-2
-
-Vrije wedstrijd eendaagse
-2
-
-Vrije wedstrijd meerdaagse – Etappe (excl. TTT)
-2
-
-Vrije wedstrijd meerdaagse – Eindklassement
-2
-
-Women Cycling Series eendaagse
-3
-
-Women Cycling Series meerdaagse – Etappe (excl. TTT)
-3
-
-Women Cycling Series meerdaagse – Eindklassement
-3
-
-Criteriums * & **
-5
-
-U17 & JUNIOREN WEDSTRIJDEN IN NEDERLAND
-
-SCHEMA
-
-Internationale eendaagse
-2
-
-Internationale meerdaagse – Etappe (excl. TTT)
-3
-
-Internationale meerdaagse – Eindklassement
-1
-
-Nationale vrije wedstrijd eendaagse
-3
-
-Toekomst- Cup (zie hieronder)
-
-Nationale Topcompetitie wedstrijd eendaagse
-[GEWIJZIGD] 1[/GEWIJZIGD]
-
-Nationale wedstrijd meerdaagse – Etappe (excl. TTT)
-4
-
-Nationale wedstrijd meerdaagse – Eindklassement
-2
-
-Klimmerstrofee criteriums
-4
-
-NK Weg
-2
-
-NK Tijdrijden
-3
-
-NK Veldrijden, NK MTB en NK Baan (achtervolging & puntenkoers)
-4
-
-Criteriums *
-5
-
-MASTERWEDSTRIJDEN IN NEDERLAND
-SCHEMA
-
-Vrije wedstrijd
-2
-
-Criteriums
-5
+| MASTERWEDSTRIJDEN IN NEDERLAND | SCHEMA |
+| --- | --- |
+| Vrije wedstrijd | 2 |
+| Criteriums | 5 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -2552,7 +2120,7 @@ De Women Cycling Series is opgezet voor de Elite-vrouwen die geen deel uitmaken 
 aangesloten team in samenwerking met de KBWB Belgian Cycling
 
 TOPCOMPETITIE MANNEN
-[GEWIJZIGD]De Topcompetitie Mannen wordt sinds 2025 niet meer verreden. [/GEWIJZIGD]
+[GEWIJZIGD]De Topcompetitie Mannen wordt sinds 2025 niet meer verreden.[/GEWIJZIGD]
 
 U-23 ROAD SERIES
 De U-23 Road Series zal wederom georganiseerd worden in samenwerking met de KBWB Belgian Cycling
@@ -2566,7 +2134,7 @@ KNWU TOPCOMPETITIE JUNIOREN MANNEN
 [GEWIJZIGD]Het maximaal aantal deelnemers is 168, op basis van het aantal ingeschreven ploegen zal de ploeggrootte
 bepaald worden. Met een minimum van 4 en een maximum van 6. Uitgangspunt is zoveel mogelijk renners
 aan de start. Dit betekend dat er tot en met 28 aangemelde teams 6 renners per ploeg mogen starten en
-vanaf 29 teams mogen er 5 renners per ploeg starten. [/GEWIJZIGD]
+vanaf 29 teams mogen er 5 renners per ploeg starten.[/GEWIJZIGD]
 
 TOEKOMSTCUP
 Vanwege het succes gaan we deze continueren. Info hier.
@@ -2575,78 +2143,78 @@ NATIONALE BESLUITEN
 VERSIE 20260918
 44 VAN 98
 
-[GEWIJZIGD]2.7 CRITERIUMS [/GEWIJZIGD]
+[GEWIJZIGD]2.7 CRITERIUMS[/GEWIJZIGD]
 
 [GEWIJZIGD]Veel criteriums worden verreden volgens de formule als rit in lijn, anders dan gespecificeerd in Titel 2
-Artikel 2.7.018 t/m 2.7.024. De wedstrijden worden verreden met individuele deelname. [/GEWIJZIGD]
+Artikel 2.7.018 t/m 2.7.024. De wedstrijden worden verreden met individuele deelname.[/GEWIJZIGD]
 
-[GEWIJZIGD]2.7.1 PREMIESPRINTS [/GEWIJZIGD]
+[GEWIJZIGD]2.7.1 PREMIESPRINTS[/GEWIJZIGD]
 
 [GEWIJZIGD]Premiesprints zullen steeds plaats vinden op de finishlijn, een premiesprint wordt via de aanwezige
 microfonist aangekondigd en zal middels het laten klinken van de bel aangeven dat de eerstvolgende
 passage van de finishlijn de aankomst van een premiesprint betreft. De aanwezige jury bepaald wanneer de
 premiesprints verreden zullen worden, hiervoor is geen vast schema. Een premiesprint mag niet plaats
 vinden met nog 1 ronde te gaan, dit omdat dit verwarrend kan werken met het laten klinken van de bel
-voor de laatste ronde. [/GEWIJZIGD]
+voor de laatste ronde.[/GEWIJZIGD]
 
 [GEWIJZIGD]Daar een premiesprint meestal gebruikt wordt om renners welke vooruit rijden te belonen is het mogelijk
 om maximaal 25% van het totale aantal premiesprints niet op de kopgroep maar op een andere groep in de
 wedstrijd te laten verrijden. Dit moet duidelijk kenbaar gemaakt worden via de microfonist, enkel voor de
 renners welke logischerwijs aanspraak kunnen maken op de betreffende premie zal de bel klinken.
 Een organisatie dient vooraf aan te geven of premiesprints op een andere groep dan de kop mogen worden
-verreden. [/GEWIJZIGD]
+verreden.[/GEWIJZIGD]
 
-[GEWIJZIGD]{geïntroduceerd 26.05.26} [/GEWIJZIGD]
+[GEWIJZIGD]{geïntroduceerd 26.05.26}[/GEWIJZIGD]
 
 [GEWIJZIGD]Het reglementair voltooien van de wedstrijd is niet noodzakelijk om aanspraak te maken op een gewonnen
 premie tijdens een premiesprint, tenzij dit nadrukkelijk is aangegeven tijdens de aankondiging van de
 betreffende premiesprint. Eventuele gewonnen premies komen wel te vervallen wanneer een sanctie
-wordt opgelegd welke dit beschrijft of wanneer een renner gediskwalificeerd wordt. [/GEWIJZIGD]
+wordt opgelegd welke dit beschrijft of wanneer een renner gediskwalificeerd wordt.[/GEWIJZIGD]
 
-[GEWIJZIGD]2.7.2 LEIDERSPRIJS [/GEWIJZIGD]
+[GEWIJZIGD]2.7.2 LEIDERSPRIJS[/GEWIJZIGD]
 
 [GEWIJZIGD]De leidersprijs is een formule waarbij iedere ronde dat de wedstrijd duurt er 1 punt gegeven wordt welke
 als eerste de finishlijn passeert. De renner welke aan het einde van de wedstrijd de meeste punten heeft
-verzameld wordt als winnaar uitgeroepen van de leidersprijs. [/GEWIJZIGD]
+verzameld wordt als winnaar uitgeroepen van de leidersprijs.[/GEWIJZIGD]
 
 [GEWIJZIGD]Om aanspraak te maken op de leidersprijs is het noodzakelijk dat de renner de wedstrijd reglementair
-voltooid. [/GEWIJZIGD]
+voltooid.[/GEWIJZIGD]
 
 [GEWIJZIGD]Indien een of meerdere renners een ronde voorsprong nemen dan wordt het punt voor de leidersprijs
 onder die betreffende renner(s) beslist. Een renner welke een of meerdere ronden achterstand heeft ten
 opzichten van de renner welke op dat moment het meeste aantal ronden heeft afgelegd kan geen
-aanspraak maken op het punt voor de leidersprijs. [/GEWIJZIGD]
+aanspraak maken op het punt voor de leidersprijs.[/GEWIJZIGD]
 
 [GEWIJZIGD]Indien meerdere renners een gelijk aantal punten hebben dan wordt onderstaande volgorde gebruikt om
-de renners te onderscheiden: [/GEWIJZIGD]
+de renners te onderscheiden:[/GEWIJZIGD]
 
 [GEWIJZIGD]
 Winnaar van de laatste sprint
 
-Klassering in de einduitslag van de wedstrijd [/GEWIJZIGD]
+Klassering in de einduitslag van de wedstrijd[/GEWIJZIGD]
 
-[GEWIJZIGD]{geïntroduceerd 26.05.26} [/GEWIJZIGD]
+[GEWIJZIGD]{geïntroduceerd 26.05.26}[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 45 VAN 98
 
-[GEWIJZIGD]2.7.3 3-RONDENKLASSEMENT [/GEWIJZIGD]
+[GEWIJZIGD]2.7.3 3-RONDENKLASSEMENT[/GEWIJZIGD]
 
 [GEWIJZIGD]Het 3-Rondenklassement is een vorm waarbij er 3 ronden gesprint wordt voor een eigen klassement. De
 sprints zijn in veel gevallen in 3 opvolgende ronden, echter is dit geen verplichting. Iedere keer dat er bij de
 volgende passage gesprint wordt voor punten voor het 3-rondenklassement wordt dit door de microfonist
-aangekondigd en wordt de bel geluid. [/GEWIJZIGD]
+aangekondigd en wordt de bel geluid.[/GEWIJZIGD]
 
 [GEWIJZIGD]De eerste 3 renners verdienen punten voor het 3-rondenklassement, de puntenverdeling is 3,2 en 1
 punt(en). De sprints van het 3-rondenklassement worden altijd op de kop van de wedstrijd verreden, een
 renner welke een of meerdere ronden achterstand heeft ten opzichten van de renner welke op dat
 moment het meeste aantal ronden heeft afgelegd kan geen punten verdienen voor het 3-
-rondenklassement. [/GEWIJZIGD]
+rondenklassement.[/GEWIJZIGD]
 
 [GEWIJZIGD]De winnaar van het 3-rondenklassement is die renner die de meeste punten verzameld in de 3 sprints,
 indien meerdere renners een gelijk aantal punten hebben dan wordt onderstaande volgorde gebruikt om
-de renners te onderscheiden: [/GEWIJZIGD]
+de renners te onderscheiden:[/GEWIJZIGD]
 
 [GEWIJZIGD]
 Het aantal 1e plaatsten welke behaald zijn in de 3 sprints
@@ -2662,13 +2230,13 @@ De klassering van de 2e sprint
 De klassering van de 1e sprint
 
 Het reglementair voltooien van de wedstrijd is niet noodzakelijk om aanspraak te maken op de premie
-behorende bij het 3-rondenklassement [/GEWIJZIGD]
+behorende bij het 3-rondenklassement[/GEWIJZIGD]
 
-[GEWIJZIGD]{geïntroduceerd 26.05.26} [/GEWIJZIGD]
+[GEWIJZIGD]{geïntroduceerd 26.05.26}[/GEWIJZIGD]
 
 [GEWIJZIGD]2.7.4 RONDE VERGOEDING
 Tijdens criteriums op een parcours van maximaal 2.8 km wordt tot 10 kilometer of 10 ronden voor de finish
-(afhankelijk welke later bereikt wordt), een ronde vergoeding gegeven in onderstaande 3 gevallen: [/GEWIJZIGD]
+(afhankelijk welke later bereikt wordt), een ronde vergoeding gegeven in onderstaande 3 gevallen:[/GEWIJZIGD]
 
 [GEWIJZIGD]
 Een legitieme val
@@ -2687,7 +2255,7 @@ wijten is aan achterstallig onderhoud zal de ronde vergoeding niet toegewezen wo
 
 Indien geconstateerd wordt dat een renner moedwillig een erkend defect gebruikt om een voordeel in de
 wedstrijd te behalen dan zal dit bestraft worden met diskwalificatie en vervallen eventuele gewonnen
-premies. [/GEWIJZIGD]
+premies.[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -2696,7 +2264,7 @@ VERSIE 20260918
 [GEWIJZIGD]Na het toekennen van een ronde vergoeding kan een renner niet meedingen naar prijzen in de
 eerstvolgende (premie)sprint.
 
-(introductie per 01.01.26; gewijzigd per 26.05.26) [/GEWIJZIGD]
+(introductie per 01.01.26; gewijzigd per 26.05.26)[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -2727,10 +2295,10 @@ Junioren
 De licentie-categorie loopt per kalenderjaar (1 januari t/m 31 december) Is van toepassing in het
 jaar waarin je 17 of 18 wordt 2e Jaars nieuwelingen (16 jaar) rijden vanaf 1 oktober al als junior
 U17 (Nieuwelingen)
-[GEWIJZIGD]Categorie U15[/GEWIJZIGD], rijdt vanaf 1 oktober al als [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuweling) 2e Jaars nieuwelingen rijden vanaf 1
+[GEWIJZIGD]Categorie U15[/GEWIJZIGD], rijdt vanaf 1 oktober al als [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuweling) 2e Jaars nieuwelingen rijden vanaf 1
 oktober niet als U17 (nieuweling) maar als junior
 Jeugd
-[GEWIJZIGD]Categorie U15[/GEWIJZIGD], rijdt vanaf 1 oktober als [GEWIJZIGD]U17 [/GEWIJZIGD](nieuweling)
+[GEWIJZIGD]Categorie U15[/GEWIJZIGD], rijdt vanaf 1 oktober als [GEWIJZIGD]U17[/GEWIJZIGD] (nieuweling)
 Tot en met [GEWIJZIGD]Categorie U14[/GEWIJZIGD], In de periode van 1 oktober t/m 31 december rijd je al in een categorie
 hoger dan vermeld op je licentie
 
@@ -2742,7 +2310,7 @@ Mocht je bij een wedstrijd niet in kunnen schrijven voor de licentie-categorie z
 vermeld, neem dan contact op met de KNWU. Er is dan een fout gemaakt bij het toewijzen van de
 correcte categorieën voor de wedstrijd.
 
-[GEWIJZIGD]{gewijzigd per 01.07.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 01.07.26}[/GEWIJZIGD]
 
 3.2 KAMPIOENSCHAPPEN
 
@@ -2811,9 +2379,9 @@ Klasse 2, in het verleden funklasse, mag verreden worden bij nationale en intern
 
 U17 (Nieuwelingen)
 De U17 (nieuwelingen) meisjes en jongens rijden in mountainbike nog in hun eigen categorie en niet samen
-met de klasse 1 renners. [GEWIJZIGD] Deze renners mogen ook niet starten in de klasse 1 wedstrijd.
+met de klasse 1 renners. [GEWIJZIGD]Deze renners mogen ook niet starten in de klasse 1 wedstrijd.
 
-{gewijzigd per 11.03.26} [/GEWIJZIGD]
+{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 4.1.2 INSCHRIJFGELD MOUNTAINBIKE
 Na voorinschrijving d.m.v. digitale inschrijving via de KNWU-site heeft de organisator de keus het
@@ -2828,7 +2396,7 @@ De verstrekking van de LJC/NL-cup stuurborden is gelijk aan eerdere jaren. De bo
 eerste wedstrijddeelname. Kosten van de borden zijn voor de KNWU. Vervangend stuurbord [GEWIJZIGD]dient de
 renners zelf te bekostigen.
 
-{gewijzigd per 11.03.26} [/GEWIJZIGD]
+{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 
 In de 3-nationscup wordt ook gereden met vaste stuurborden. De kosten van de borden zijn voor de
@@ -2846,7 +2414,7 @@ NATIONALE BESLUITEN
 VERSIE 20260918
 50 VAN 98
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 4.2 NATIONALE KAMPIOENSCHAPPEN
 
@@ -2976,7 +2544,7 @@ De belangrijkste wijziging bij de LJC zijn:
 
 
 Een renner kan alleen starten met een KNWU-jeugd wedstrijdlicentie. Wanneer er een
-wedstrijd bij de eigen club is kan een renner met een [GEWIJZIGD]daglicentie [/GEWIJZIGD]deelnemen.
+wedstrijd bij de eigen club is kan een renner met een [GEWIJZIGD]daglicentie[/GEWIJZIGD] deelnemen.
 
 De eerste 8 wedstrijden wordt er geloot voor de startopstelling. Vanaf wedstrijd 9 starten
 we op klassement.
@@ -2987,7 +2555,7 @@ Na sluiting van de inschrijving, krijg je het inschrijfgeld niet meer retour bij
 
 Wanneer je finisht bij de wedstrijd krijg je minimaal 1 punt voor het LJC klassement.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 4.3.2 MTB NL-CUP
 Informatie over de competitie, de kalender en reglementen zijn terug te vinden op het kenniscentrum.
@@ -3007,7 +2575,7 @@ regelmatigheidsklassement/NL-cup.
 
 Na sluiting van de inschrijving, krijg je het inschrijfgeld niet meer retour bij afmelding.
 
-[GEWIJZIGD]{gewijzigd per 11.03.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 11.03.26}[/GEWIJZIGD]
 
 4.3.3 3-NATIONS CUP MOUNTAINBIKE
 Reglementen en bijzonderheden zullen nader worden ingevuld en afzonderlijk door de KNWU
@@ -3041,10 +2609,10 @@ Alleen toegankelijk voor KNWU wedstrijdlicentie 17+ renners.
 
 Klasse 2: voorheen funklasse, +/- 30 minuten wedstrijd
 
-[GEWIJZIGD]U17 M/V [/GEWIJZIGD](Nieuwelingen): Voorheen nieuwelingen. Kunnen alleen starten in de specifieke
+[GEWIJZIGD]U17 M/V[/GEWIJZIGD] (Nieuwelingen): Voorheen nieuwelingen. Kunnen alleen starten in de specifieke
 nieuwelingen categorie. Deze groep mag niet deelnemen in de klasse 1 veldritwedstrijden.
 
-[GEWIJZIGD]{gewijzigd per 18-09-26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 18-09-26}[/GEWIJZIGD]
 
 5.2 7-JARIGEN IN HET VELDSEIZOEN
 In aansluiting op vorenstaande kunnen jeugdsporters vanaf 7 jaar vanaf de aanvang van het veldritseizoen
@@ -3053,9 +2621,9 @@ aangeschaft worden tegen gereduceerd tarief.
 
 5.3 BUITENLANDTOESTEMMING
 Indien een renner wil deelnemen aan een wedstrijd in het buitenland staat er een algemene
-toestemmingsbrief op de KNWU website[GEWIJZIGD]. [/GEWIJZIGD]
+toestemmingsbrief op de KNWU website[GEWIJZIGD].[/GEWIJZIGD]
 Deze toestemmingsbrieven zijn te vinden op de volgende pagina’s:
-[GEWIJZIGD]https://kenniscentrum.knwu.nl/wedstrijden-rijden/buitenland-toestemming?from_search=237650309 [/GEWIJZIGD]
+[GEWIJZIGD]https://kenniscentrum.knwu.nl/wedstrijden-rijden/buitenland-toestemming?from_search=237650309[/GEWIJZIGD]
 Op deze pagina’s staat ook meer informatie over de uitzonderingen, voorwaarden en aanvraagprocedure
 voor dispensatie.
 
@@ -3063,7 +2631,7 @@ voor dispensatie.
 Tijdens wedstrijden op de Internationale- en Nationale kalender (Categorie I & II) is het niet
 toegestaan om met mountainbikes deel te nemen (zie ook artikel 5.1.040.01).
 
-Het wisselen van fietsen bij het veldrijden bij de jeugd (uitgezonderd [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen) M/V is niet
+Het wisselen van fietsen bij het veldrijden bij de jeugd (uitgezonderd [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) M/V is niet
 toegestaan. Bij een defect mag men in de materiaalzone wel het defect herstellen respectievelijk van wiel
 wisselen.
 
@@ -3075,12 +2643,12 @@ VERSIE 20260918
 Dubbele materiaalposten zijn verplicht bij het veldrijden. Organisatoren die van mening zijn dat dit voor
 hun wedstrijd absoluut onmogelijk is dienen dit vroegtijdig kenbaar te maken aan de Commissie Offroad
 (veldrijden@knwu.nl).
-Vanaf 1 september 2023 moeten de [GEWIJZIGD] wedstrijdleider[/GEWIJZIGD] loting toepassen voor de
+Vanaf 1 september 2023 moeten de [GEWIJZIGD]wedstrijdleider[/GEWIJZIGD] loting toepassen voor de
 materiaalbox. Dit geldt alleen bij UCI C1 wedstrijden. Dus krijgt elke renner en renster een box toegewezen.
 
 5.6 80% REGEL VOOR NATIONALE CATEGORIEËN
 De in Titel V, artikel 5.1.052 genoemde 80 % regel dient tijdens internationale evenementen niet te worden
-toegepast voor de categorieën die niet als UCI-categorie (o.a. Jeugd, [GEWIJZIGD]U17 M/V [/GEWIJZIGD](Nieuwelingen),
+toegepast voor de categorieën die niet als UCI-categorie (o.a. Jeugd, [GEWIJZIGD]U17 M/V[/GEWIJZIGD] (Nieuwelingen),
 Wedstrijdlicentie 15+) worden aangemerkt. Bij Nederlandse kampioenschappen kan hiervan worden
 afgeweken. Het nationale artikel N 5.1.052.01 is hier wel van toepassing.
 
@@ -3114,69 +2682,80 @@ het hebben van een KNWU wedstrijdlicentie basis en/of daglicentie verplicht.
 
 Zie voor de wedstrijden: http://www.knwu.nl/veldrijden/wedstrijdkalender
 
+| Categorie: | Elite | 60 minuten |
+| --- | --- | --- |
+|  | Elite/Beloften | 60 Minuten |
+|  | Beloften | 50 Minuten |
+|  | Vrouwen | 50 Minuten |
+|  | Vrouwen/Junior-vrouwen | 45 Minuten |
+|  | Junioren | 40 Minuten |
+|  | Klasse 1 (amateurs/masters) | 40 Minuten |
+|  | Nieuwelingen | 30 Minuten |
+|  | Nieuwelinge-Meisjes | 30 Minuten |
+
 5.8.1 TIJDSDUUR WEDSTRIJDEN NATIONAAL
-Categorie:
-
-Elite
 
 
 
 
-60 minuten
 
 
 
-Elite/Beloften
-
-
-60 Minuten
 
 
 
-Beloften
 
 
 
-50 Minuten
 
 
 
-Vrouwen
 
 
 
-50 Minuten
 
 
 
-Vrouwen/Junior-vrouwen
-
-45 Minuten
 
 
 
-Junioren
 
 
 
-40 Minuten
 
 
 
-Klasse 1 (amateurs/masters)
-
-40 Minuten
-Nieuwelingen
-
-
-30 Minuten
 
 
 
-Nieuwelinge-Meisjes
 
 
-30 Minuten
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Deze tijden zijn minimale tijden. De huldiging is na de start van de volgende categorie, m.u.v. de laatste
 categorie en in geval van pauzes.
@@ -3204,7 +2783,7 @@ krijgen op het rekeningnummer dat bekend is in mijnKNWU. [GEWIJZIGD]Voor NL-cup 
 minimaal prijzenschema S.
 
 Met ingang van seizoen 2026-2027 zijn de categorieën Elite/Belofte (M), Masters 50+ (M) en Elite/Belofte
-(V) toegevoegd. [/GEWIJZIGD]
+(V) toegevoegd.[/GEWIJZIGD]
 Voor de NL Cup wedstrijden worden dit jaar ook leiderstruien verzorgd. De huidige leider in het NL Cup
 klassement moet de eerstvolgende NL Cup wedstrijd starten in de NL Cup leiderstrui. Deze trui gaat boven
 andere (kampioenschaps)truien.
@@ -3212,7 +2791,7 @@ andere (kampioenschaps)truien.
 De trui wordt na de huldiging van het dagklassement uitgereikt aan de huidige leider in de tussenstand.
 Blijft de leider in het algemeen klassement hetzelfde, wordt er geen nieuwe trui uitgereikt.
 
-[GEWIJZIGD]{gewijzigd per 18-09-26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 18-09-26}[/GEWIJZIGD]
 
 5.8.3 REGELMATIGHEIDSKLASSEMENT VELDRIJDEN
 Over alle nationale en internationale veldritwedstrijden die in Nederland worden verreden wordt
@@ -3220,17 +2799,17 @@ voor de navolgende categorieën een regelmatigheidsklassement bijgehouden.
 Mannen:
 
 Elite-mannen/Beloften
-[GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen)
+[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
 [GEWIJZIGD]U19[/GEWIJZIGD] (Junioren)
 Klasse 1
 Masters 40+/50+
 Vrouwen:
 
-Elite/Belofte/[GEWIJZIGD]Klasse 1[/GEWIJZIGD]/[GEWIJZIGD]U19 [/GEWIJZIGD](Junioren)
+Elite/Belofte/[GEWIJZIGD]Klasse 1[/GEWIJZIGD]/[GEWIJZIGD]U19[/GEWIJZIGD] (Junioren)
 
 
 
-[GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen)
+[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
 
 
 
@@ -3242,74 +2821,18 @@ NATIONALE BESLUITEN
 VERSIE 20260918
 56 VAN 98
 
-De punten voor het regelmatigheidsklassement zijn als volgt:
-1e plaats 30 punten
-
-11e plaats 20 punten
-
-21e plaats
-
-10 punten
-2e plaats 29 punten
-
-12e plaats 19 punten
-
-22e plaats
-
-9 punten
-3e plaats 28 punten
-
-13e plaats 18 punten
-
-23e plaats
-
-8 punten
-4e plaats 27 punten
-
-14e plaats 17 punten
-
-24e plaats
-
-7 punten
-5e plaats 26 punten
-
-15e plaats 16 punten
-
-25e plaats
-
-6 punten
-6e plaats 25 punten
-
-16e plaats 15 punten
-
-26e plaats
-
-5 punten
-7e plaats 24 punten
-
-17e plaats 14 punten
-
-27e plaats
-
-4 punten
-8e plaats 23 punten
-
-18e plaats 13 punten
-
-28e plaats
-
-3 punten
-9e plaats 22 punten
-
-19e plaats 12 punten
-
-29e plaats
-
-2 punten
-10e plaats 21 punten
-20e plaats 11 punten
-
-30e plaats en verder 1 punt
+| De punten voor het regelmatigheidsklassement zijn als volgt: | De punten voor het regelmatigheidsklassement zijn als volgt: |  |  |
+| --- | --- | --- | --- |
+| 1e plaats 30 punten | 11e plaats 20 punten | 21e plaats | 10 punten |
+| 2e plaats 29 punten | 12e plaats 19 punten | 22e plaats | 9 punten |
+| 3e plaats 28 punten | 13e plaats 18 punten | 23e plaats | 8 punten |
+| 4e plaats 27 punten | 14e plaats 17 punten | 24e plaats | 7 punten |
+| 5e plaats 26 punten | 15e plaats 16 punten | 25e plaats | 6 punten |
+| 6e plaats 25 punten | 16e plaats 15 punten | 26e plaats | 5 punten |
+| 7e plaats 24 punten | 17e plaats 14 punten | 27e plaats | 4 punten |
+| 8e plaats 23 punten | 18e plaats 13 punten | 28e plaats | 3 punten |
+| 9e plaats 22 punten | 19e plaats 12 punten | 29e plaats | 2 punten |
+| 10e plaats 21 punten | 20e plaats 11 punten | 30e plaats en verder 1 punt | 30e plaats en verder 1 punt |
 
 Na iedere wedstrijd zal een tussenklassement worden opgemaakt. De standen worden bijgehouden door
 (de software van) de KNWU; de tussen- en totaalstanden zullen na verwerking van de uitslag online staan
@@ -3320,7 +2843,7 @@ via mijnKNWU.
 5.10.1 NATIONALE WEDSTRIJDEN
 De eerste wedstrijd in Mechelen zal geloot worden.
 
-[GEWIJZIGD]Voor de daarop volgende wedstrijden geldt: [/GEWIJZIGD]
+[GEWIJZIGD]Voor de daarop volgende wedstrijden geldt:[/GEWIJZIGD]
 1. NL Cup klassement alleen bij NL Cup wedstrijden
 2. Nationaal regelmatigheid klassement 2026-2027
 3. Loting
@@ -3337,14 +2860,14 @@ VERSIE 20260918
 
 5.10.2 STARTVOLGORDE INTERNATIONALE WEDSTRIJDEN (UCI WEDSTRIJDEN)
 1. UCI Veldrit klassement
-[GEWIJZIGD]2. Regelmatigheidsklassement [/GEWIJZIGD]
+[GEWIJZIGD]2. Regelmatigheidsklassement[/GEWIJZIGD]
 3. loting
 
 De startlijsten worden elke dinsdag (net als bij de UCI) gemaakt naar aanleiding van de huidige stand van
-het regelmatigheidsklassement op dat moment. [GEWIJZIGD]Publicatie van de startlijsten volgt op woensdag. [/GEWIJZIGD]Dit
+het regelmatigheidsklassement op dat moment. [GEWIJZIGD]Publicatie van de startlijsten volgt op woensdag.[/GEWIJZIGD] Dit
 betekent dat de startopstelling van woensdag t/m dinsdag hetzelfde zal zijn.
 
-[GEWIJZIGD]{gewijzigd op 18-09-26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd op 18-09-26}[/GEWIJZIGD]
 
 5.10.3 STARTOPSTELLING BIJ HET NK VELDRIJDEN JEUGD
 De startopstelling voor het NK Veldrijden jeugd wordt bepaald door de tien beste behaalde resultaten van
@@ -3369,55 +2892,17 @@ meetelt.
 
 5.12 PRIJZENSCHEMA’S VELDRIT WEDSTRIJDEN
 
-Categorie
-Cat I
-(internationale
-kalender)
+| Categorie Junioren-Vrouwen | Cat I (internationale kalender) UCI-Schema | Cat II (nationale kalender)* L €270,00 | Cat IV (Interclub) - |
+| --- | --- | --- | --- |
+| Elite Belofte Mannen | UCI-Schema | H3 €575,00 | - |
+| Amateurs/Sportklasse | - | S €165,00 | - |
+| Masters | UCI-Schema | S €165,00 | - |
+| Junioren- Jongens | UCI-Schema | L €270,00 | - |
+| Nieuwelingen jongens – Nieuwelingen meisjes | - | S €165,00 | - |
+| Vrouwen | UCI- Schema | H2 €270,00 | - |
+| Junior V en vrouwen | UCI- Schema | H1 €460,00 | W Ereprijzen of V €105,00 |
 
-Cat II
-(nationale kalender)*
-
-Cat IV
-(Interclub)
-
-Junioren-Vrouwen
-UCI-Schema
-L €270,00
--
-
-Elite Belofte Mannen
-UCI-Schema
-H3 €575,00
--
-Amateurs/Sportklasse
--
-S €165,00
--
-Masters
-UCI-Schema
-S €165,00
--
-Junioren- Jongens
-UCI-Schema
-L €270,00
--
-Nieuwelingen jongens –
-Nieuwelingen meisjes
-
--
-S €165,00
--
-
-Vrouwen
-UCI- Schema
-H2 €270,00
--
-Junior V en vrouwen
-UCI- Schema
-H1 €460,00
-W Ereprijzen of V
-€105,00
-[GEWIJZIGD]*Voor NL-cup geldt voor alle categorieën minimaal prijzenschema S [/GEWIJZIGD]
+[GEWIJZIGD]*Voor NL-cup geldt voor alle categorieën minimaal prijzenschema S[/GEWIJZIGD]
 De organisatie van een veldrit heeft het recht om de prijzen uit te keren op basis van een verhouding
 tussen het aantal prijzen en deelnemers van 1 : 3
 
@@ -3426,150 +2911,35 @@ VERSIE 20260918
 58 VAN 98
 
 Ingeval er geen of niet compleet (totaal) prijzenschema wordt uitgekeerd, dan moet [GEWIJZIGD]uiterlijk 5
-dagen voorafgaande aan de wedstrijd [/GEWIJZIGD]aan de deelnemers kenbaar worden gemaakt.
+dagen voorafgaande aan de wedstrijd[/GEWIJZIGD] aan de deelnemers kenbaar worden gemaakt.
 * Let op ! Het aantal prijzen wijkt af met het navolgende schema.
 
-Algemene Prijzenschema's
-Schema
-H1
-Junior Vrouwen en
+| Algemene Prijzenschema's |  |  |  |  |  |  |  |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Schema | H1 Junior Vrouwen en Elite Vrouwen | H1 Junior Vrouwen en Elite Vrouwen | H2 Elite Vrouwen | H2 Elite Vrouwen | H3 Elite en belofte | H3 Elite en belofte |  |
+|  | € | totaal | € | totaal | € | totaal |  |
+| 1e pr. | 60,00 | 60,00 | 60,00 | 60,00 | 90,00 | 90,00 |  |
+| 2e pr. | 50,00 | 110,00 | 50,00 | 110,00 | 80,00 | 170,00 |  |
+| 3e pr. | 40,00 | 150,00 | 40,00 | 150,00 | 70,00 | 240,00 |  |
+| 4e pr. | 35,00 | 185,00 | 35,00 | 185,00 | 60,00 | 300,00 |  |
+| 5e pr. | 30,00 | 215,00 | 30,00 | 215,00 | 50,00 | 250,00 |  |
+| 6e pr. | 25,00 | 240,00 | 25,00 | 240,00 | 40,00 | 290,00 |  |
+| 7e pr. | 25,00 | 265,00 | 20,00 | 260,00 | 30,00 | 320,00 |  |
+| 8e pr. | 20,00 | 285,00 | 20,00 | 280,00 | 25,00 | 445,00 |  |
+| 9e pr. | 20,00 | 305,00 | 20,00 | 300,00 | 25,00 | 470,00 |  |
+| 10e pr. | 20,00 | 325,00 | 15,00 | 315,00 | 25,00 | 495,00 |  |
+| 11e pr. | 20,00 | 345,00 | 15,00 | 330,00 | 20,00 | 515,00 |  |
+| 12e pr. | 20,00 | 365,00 | 15,00 | 345,00 | 20,00 | 535,00 |  |
+| 13e pr. | 15,00 | 380,00 | 10,00 | 355,00 | 15,00 | 550,00 |  |
+| 14e pr. | 15,00 | 395,00 | 10,00 | 365,00 | 15,00 | 565,00 |  |
+| 15e pr. | 15,00 | 410,00 | 10,00 | 375,00 | 10,00 | 575,00 |  |
+| 16e pr. | 10,00 | 420,00 |  |  |  |  |  |
+| 17e pr. | 10,00 | 430,00 |  |  |  |  |  |
+| 18e pr. | 10,00 | 440,00 |  |  |  |  |  |
+| 19e pr. | 10,00 | 450,00 |  |  |  |  |  |
+| 20e pr. | 10,00 | 460,00 |  |  |  |  |  |
 
-Elite Vrouwen
-
-H2
-Elite Vrouwen
-
-H3
-Elite en belofte
-
-€
-totaal
-€
-totaal
-€
-totaal
-1e pr.
-60,00
-60,00
-60,00
-60,00
-90,00
-90,00
-2e pr.
-50,00
-110,00
-50,00
-110,00
-80,00
-170,00
-3e pr.
-40,00
-150,00
-40,00
-150,00
-70,00
-240,00
-4e pr.
-35,00
-185,00
-35,00
-185,00
-60,00
-300,00
-5e pr.
-30,00
-215,00
-30,00
-215,00
-50,00
-250,00
-6e pr.
-25,00
-240,00
-25,00
-240,00
-40,00
-290,00
-7e pr.
-25,00
-265,00
-20,00
-260,00
-30,00
-320,00
-8e pr.
-20,00
-285,00
-20,00
-280,00
-25,00
-445,00
-9e pr.
-20,00
-305,00
-20,00
-300,00
-25,00
-470,00
-10e pr.
-20,00
-325,00
-15,00
-315,00
-25,00
-495,00
-11e pr.
-20,00
-345,00
-15,00
-330,00
-20,00
-515,00
-12e pr.
-20,00
-365,00
-15,00
-345,00
-20,00
-535,00
-13e pr.
-15,00
-380,00
-10,00
-355,00
-15,00
-550,00
-14e pr.
-15,00
-395,00
-10,00
-365,00
-15,00
-565,00
-15e pr.
-15,00
-410,00
-10,00
-375,00
-10,00
-575,00
-16e pr.
-10,00
-420,00
-17e pr.
-10,00
-430,00
-18e pr.
-10,00
-440,00
-19e pr.
-10,00
-450,00
-20e pr.
-10,00
-460,00
-
-[GEWIJZIGD]{gewijzigd per 18-09-26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 18-09-26}[/GEWIJZIGD]
 
 
 -
@@ -3719,10 +3089,10 @@ De cruiser klasse is opnieuw ingedeeld na de uitkomst van de enquête.
 -
 Bij niet voldoende deelname van Championship vrouwen op een Nationale Competitie wedstrijd zal
 deze met Vrouwen 17+ worden samengevoegd. Daarbij zal het prijzengeld alleen aan de top 3 van
-de combineerde klasse worden uitgereikt. [/GEWIJZIGD]
+de combineerde klasse worden uitgereikt.[/GEWIJZIGD]
 -
 [GEWIJZIGD]Methode ‘2de route’ om te kwalificeren voor het NK via deelname op nationale en regiowedstrijden
-blijft gehandhaafd. [/GEWIJZIGD]Hierover is meer terug te vinden in het reglement kwalificatie NK-EK-WK
+blijft gehandhaafd.[/GEWIJZIGD] Hierover is meer terug te vinden in het reglement kwalificatie NK-EK-WK
 
 6.8 BELANGRIJKE UCI REGLEMENTSWIJZIGINGEN
 UCI reglement is terug te vinden op; https://kenniscentrum.knwu.nl/regelgeving/reglementen-en-
@@ -3766,489 +3136,76 @@ opgenomen, wedstrijden welke ook op de UCI kalender zijn opgenomen volgen het st
 uit het UCI-reglement.
 De boetes zoals aangegeven in kolom 3 zijn maximale bedragen.
 
-{gewijzigd per 01.07.26} [/GEWIJZIGD]
+{gewijzigd per 01.07.26}[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 64 VAN 98
 
-Kolom 1
-Kolom 2
-Kolom 3
-Nationale wedstrijden in ploegverband
-
--
-Prof A
--
-Prof B / Prof B-U23
--
-Elite
--
-Belofte
--
-Junioren
-
-Nationale wedstrijd individueel
-
--
-Prof A
--
-Prof B / Prof B-U23
--
-Elite
--
-Belofte
-
-
-Profcriteriums
-
-Paracycling
-
-Nationale wedstrijd in
-ploegverband
-
--
-U17 (Nieuwelingen)
-
-Nationale wedstrijd individueel
-
--
-Junioren
--
-U17 (Nieuwelingen)
--
-Klasse 1
--
-Klasse 2
--
-Masters
-
-Criteriums
-
-Nationale wedstrijd
-
--
-Klasse 3
--
-Klasse 4
--
-Klasse 5
--
-Jeugd Categorie U7-U15
-
-1. Procedures bij start en finish alsmede officiële huldigingen
-1.1 Starten zonder te tekenen, de
-volgorde of timing van het
-ondertekenen van het
-aanmeldingsformulier of de
-teampresentatie niet
-respecteren
-
-Renner. 50 boete per betrokken renner
-
-Ploegleider. 50 boete (ongeacht het
-aantal betrokken renners)
-
-Renner. 25 boete per betrokken
-renner
-
-Ploegleider. 50 boete (ongeacht het
-aantal betrokken renners)
-
-Waarschuwing + Toelichting
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren.
-
-
-1.2 Afwezigheid van een renner bij
-de start na bevestiging van de
-deelnemers zonder geldige reden
-
-Renner. 50 tot 200 boete
-Renner. 25 tot 100 boete
-Waarschuwing + Toelichting
-
-1.3 Niet aanwezig zijn bij officiële
-ceremonies (inclusief
-persconferentie, etc.) of bij het
-niet respecteren van de
-deadline van 10 minuten nadat
-de renner de finishlijn is
-
-Renner: 200 boete en verlies van prijzen
-verdiend tijdens de race of het podium.
-
-Ploegleider van dienst. 200 boete
-(ongeacht het aantal betrokken renners)
-
-Renner: 75 boete en verlies van
-prijzen verdiend tijdens de race of
-het podium.
-
-Ploegleider van dienst. 100 boete
-(ongeacht het aantal betrokken
-
-Waarschuwing + Toelichting
+|  | Kolom 1 | Kolom 2 | Kolom 3 |
+| --- | --- | --- | --- |
+|  | Nationale wedstrijden in ploegverband - Prof A - Prof B / Prof B-U23 - Elite - Belofte - Junioren  Nationale wedstrijd individueel - Prof A - Prof B / Prof B-U23 - Elite - Belofte   Profcriteriums  Paracycling | Nationale wedstrijd in ploegverband - U17 (Nieuwelingen)  Nationale wedstrijd individueel - Junioren - U17 (Nieuwelingen) - Klasse 1 - Klasse 2 - Masters  Criteriums | Nationale wedstrijd - Klasse 3 - Klasse 4 - Klasse 5 - Jeugd Categorie U7-U15 |
+| 1. Procedures bij start en finish alsmede officiële huldigingen |  |  |  |
+| 1.1 Starten zonder te tekenen, de volgorde of timing van het ondertekenen van het aanmeldingsformulier of de teampresentatie niet | Renner. 50 boete per betrokken renner  Ploegleider. 50 boete (ongeacht het aantal betrokken renners) | Renner. 25 boete per betrokken renner  Ploegleider. 50 boete (ongeacht het aantal betrokken renners) | Waarschuwing + Toelichting |
+| respecteren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. |
+| 1.2 Afwezigheid van een renner bij de start na bevestiging van de deelnemers zonder geldige reden | Renner. 50 tot 200 boete | Renner. 25 tot 100 boete | Waarschuwing + Toelichting |
+| 1.3 Niet aanwezig zijn bij officiële ceremonies (inclusief persconferentie, etc.) of bij het niet respecteren van de deadline van 10 minuten nadat de renner de finishlijn is | Renner: 200 boete en verlies van prijzen verdiend tijdens de race of het podium.  Ploegleider van dienst. 200 boete (ongeacht het aantal betrokken renners) | Renner: 75 boete en verlies van prijzen verdiend tijdens de race of het podium.  Ploegleider van dienst. 100 boete (ongeacht het aantal betrokken | Waarschuwing + Toelichting |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 65 VAN 98
 
-overgestoken
-renners)
-1.4 Niet conforme kleding tijdens
-podiumverplichtingen
-
-Renner. 100 en per betrokken renner
-
-Ploegleider van dienst. 100 boete
-(ongeacht het aantal betrokken renners)
-
-Renner. 50 en per betrokken renner
-
-Ploegleider van dienst. 50 boete
-(ongeacht het aantal betrokken
-renners)
-
-Waarschuwing + Toelichting
-
-1.5 Renner die, na opgave, de
-finishlijn passeert terwijl hij een
-rugnummer of framenummer
-draagt
-
-Renner. 50 tot 200 boete
-Renner. 25 tot 100 boete
-Waarschuwing + Toelichting
-
-1.6 Over de finishlijn rijden in
-tegenovergestelde richting van
-de wedstrijd terwijl het
-rugnummer of framenummer
-nog steeds wordt weergegeven
-
-Renner. 50 boete
-Renner. 50 boete
-Waarschuwing + Toelichting
-
-2 Uitrusting en innovatie
-2.1 Renner die probeert een
-wedstrijd of etappe te beginnen
-met een fiets die niet voldoet
-aan de voorschriften
-
-Renner. Start geweigerd
-Renner. Start geweigerd
-Renner. Start geweigerd + Toelichting
-
-2.2 Gebruik van een fiets die niet
-voldoet aan de voorschriften
-
-Renner. Eliminatie of diskwalificatie
-
-Team. 200 boete
-
-Renner. Eliminatie of diskwalificatie
-
-Team. 100 boete
-
-Renner. Eliminatie of diskwalificatie
-
-2.3 Gebruik of aanwezigheid van
-een fiets die niet voldoet aan
-artikel 1.3.010 (zie artikel
-12.4.003)
-
-Renner. Eliminatie of diskwalificatie
-
-Team. Eliminatie of diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
-
-Team. Eliminatie of diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
-
-2.4 Gebruik van een verboden
-extern communicatiesysteem
-door een renner
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ploegleider. Uitsluiting
-
-Ploegwagen. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ploegleider. Uitsluiting
-
-Ploegwagen. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
+| overgestoken |  | renners) |  |
+| --- | --- | --- | --- |
+| 1.4 Niet conforme kleding tijdens podiumverplichtingen | Renner. 100 en per betrokken renner  Ploegleider van dienst. 100 boete (ongeacht het aantal betrokken renners) | Renner. 50 en per betrokken renner  Ploegleider van dienst. 50 boete (ongeacht het aantal betrokken renners) | Waarschuwing + Toelichting |
+| 1.5 Renner die, na opgave, de finishlijn passeert terwijl hij een rugnummer of framenummer draagt | Renner. 50 tot 200 boete | Renner. 25 tot 100 boete | Waarschuwing + Toelichting |
+| 1.6 Over de finishlijn rijden in tegenovergestelde richting van de wedstrijd terwijl het rugnummer of framenummer nog steeds wordt weergegeven | Renner. 50 boete | Renner. 50 boete | Waarschuwing + Toelichting |
+| 2 Uitrusting en innovatie |  |  |  |
+| 2.1 Renner die probeert een wedstrijd of etappe te beginnen met een fiets die niet voldoet aan de voorschriften | Renner. Start geweigerd | Renner. Start geweigerd | Renner. Start geweigerd + Toelichting |
+| 2.2 Gebruik van een fiets die niet voldoet aan de voorschriften | Renner. Eliminatie of diskwalificatie  Team. 200 boete | Renner. Eliminatie of diskwalificatie  Team. 100 boete | Renner. Eliminatie of diskwalificatie |
+| 2.3 Gebruik of aanwezigheid van een fiets die niet voldoet aan artikel 1.3.010 (zie artikel 12.4.003) | Renner. Eliminatie of diskwalificatie  Team. Eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie  Team. Eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
+| 2.4 Gebruik van een verboden extern communicatiesysteem door een renner | Renner. Start geweigerd, eliminatie of diskwalificatie  Ploegleider. Uitsluiting  Ploegwagen. Uitsluiting | Renner. Start geweigerd, eliminatie of diskwalificatie  Ploegleider. Uitsluiting  Ploegwagen. Uitsluiting | Renner. Start geweigerd, eliminatie of diskwalificatie |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 66 VAN 98
 
-2.5 Gebruik van een technische
-innovatie, innovatieve kleding of
-uitrusting die nog niet is
-goedgekeurd door de UCI
-tijdens een evenement
+| 2.5 Gebruik van een technische innovatie, innovatieve kleding of uitrusting die nog niet is goedgekeurd door de UCI tijdens een evenement | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie |
+| --- | --- | --- | --- |
+| 2.6 Een [GEWIJZIGD]materiaalcontrole[/GEWIJZIGD] ontwijken, weigeren of | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie |
+| belemmeren | Ander teamlid. Uitsluiting | Ander teamlid. Uitsluiting |  |
+| 2.7 Gebruik van verboden technologische apparatuur[GEWIJZIGD]/materiaal[/GEWIJZIGD] | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie | Renner. Start geweigerd, eliminatie of diskwalificatie |
+|  | Ander teamlid. Uitsluiting | Ander teamlid. Uitsluiting |  |
+| [GEWIJZIGD]2.8 Opzettelijk misbruik van materiaal en/of gebruik van beschadigd of defect materiaal[/GEWIJZIGD] | [GEWIJZIGD]Renner: 50 boete en/of eliminatie of diskwalificatie[/GEWIJZIGD] | [GEWIJZIGD]Renner: 25 boete en/of eliminatie of diskwalificatie[/GEWIJZIGD] | [GEWIJZIGD]Renner: eliminatie of diskwalificatie[/GEWIJZIGD] |
+| [GEWIJZIGD]2.9 Gebruik van een niet reglementair[/GEWIJZIGD] | [GEWIJZIGD]fietsaccessoire of van een niet reglementaire of niet toegestane aanpassing aan een accessoire[/GEWIJZIGD] | [GEWIJZIGD]fietsaccessoire of van een niet reglementaire of niet toegestane aanpassing aan een accessoire[/GEWIJZIGD] | [GEWIJZIGD]fietsaccessoire of van een niet reglementaire of niet toegestane aanpassing aan een accessoire[/GEWIJZIGD] |
 
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-2.6 Een [GEWIJZIGD]materiaalcontrole [/GEWIJZIGD]
-ontwijken, weigeren of
-belemmeren
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-2.7 Gebruik van verboden
-technologische apparatuur[GEWIJZIGD]/materiaal[/GEWIJZIGD]
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-[GEWIJZIGD]2.8 Opzettelijk misbruik van
-materiaal en/of gebruik van
-beschadigd of defect materiaal[/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 50 boete en/of eliminatie of
-diskwalificatie[/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 25 boete en/of eliminatie of
-diskwalificatie[/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: eliminatie of diskwalificatie[/GEWIJZIGD]
-
-[GEWIJZIGD]2.9 Gebruik van een niet reglementair fietsaccessoire of van een niet reglementaire of niet toegestane aanpassing aan een accessoire [/GEWIJZIGD]
-
-[GEWIJZIGD] Eendaagse wedstrijd
-Renner: 50 boete en declassering van
-plaats 1
-
-Team: 150 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 25 boete en declassering
-van plaats 1
-
-Team: 75 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-[GEWIJZIGD] Meerdaagse wedstrijd
-Renner: 50 boete en: of 10 seconden
-tijdstraf of declassering van plaats 1 in
-de uitslag van de betreffende etappe
-
-
-Team: 150 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 25 100 boete en: 10
-seconden tijdstraf of declassering
-van plaats 1 in de uitslag van de
-betreffende etappe
-
-Team: 75 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-3. Identificatie Renner
-3.1 Het niet dragen van de
-leiderstrui of snel pak
-resp. onderscheidend teken
-
-Renner. 200 boete en start
-geweigerd, eliminatie of diskwalificatie
-
-Renner. 100 boete en start
-geweigerd, eliminatie of
-diskwalificatie
-
-Waarschuwing + Toelichting
-
-3.2 Dragen van niet-conforme
-kleding, helm of een ander soort
-item of accessoire gedragen door
-een renner
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie en 50 tot 200 boete
-
-Team: 250 tot 500 boete per betrokken
-renner
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie en 25 tot 100
-boete
-
-Team: 125 tot 250 boete per
-betrokken renner
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
+| [GEWIJZIGD]Eendaagse wedstrijd[/GEWIJZIGD] | [GEWIJZIGD]Renner: 50 boete en declassering van plaats 1[/GEWIJZIGD] | [GEWIJZIGD]Renner: 25 boete en declassering van plaats 1[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+| --- | --- | --- | --- |
+|  | [GEWIJZIGD]Team: 150 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Team: 75 boete per renner[/GEWIJZIGD] |  |
+| [GEWIJZIGD]Meerdaagse wedstrijd[/GEWIJZIGD] | [GEWIJZIGD]Renner: 50 boete en: of 10 seconden tijdstraf of declassering van plaats 1 in de uitslag van de betreffende etappe[/GEWIJZIGD] | [GEWIJZIGD]Renner: 25 100 boete en: 10 seconden tijdstraf of declassering van plaats 1 in de uitslag van de betreffende etappe[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+|  | [GEWIJZIGD]Team: 150 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Team: 75 boete per renner[/GEWIJZIGD] |  |
+| 3. Identificatie Renner |  |  |  |
+| 3.1 Het niet dragen van de leiderstrui of snel pak resp. onderscheidend teken | Renner. 200 boete en start geweigerd, eliminatie of diskwalificatie | Renner. 100 boete en start geweigerd, eliminatie of diskwalificatie | Waarschuwing + Toelichting |
+| 3.2 Dragen van niet-conforme kleding, helm of een ander soort item of accessoire gedragen door | Renner. Start geweigerd, eliminatie of diskwalificatie en 50 tot 200 boete | Renner. Start geweigerd, eliminatie of diskwalificatie en 25 tot 100 boete | Renner. Start geweigerd, eliminatie of diskwalificatie |
+| een renner | Team: 250 tot 500 boete per betrokken |  |  |
+|  | renner | Team: 125 tot 250 boete per betrokken renner |  |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 67 VAN 98
 
-[GEWIJZIGD]3.2.2 Gebruik van een niet reglementair fietsaccessoire(bv bril, sokken, overschoenen, een regenjack, armstukken, wielertrui, enz).dat door de renner wordt
-gedragen, of van een niet-reglementaire of niet-toegestane aanpassing van een accessoire [/GEWIJZIGD]
-
-[GEWIJZIGD] Eendaagse wedstrijd
-Renner: 50 boete en declassering van
-plaats 1
-
-Team: 150 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 25 boete en declassering
-van plaats 1
-
-Team: 75 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-[GEWIJZIGD] Meerdaagse wedstrijd
-Renner: 50 boete en: of 10 seconden
-tijdstraf of declassering van plaats 1 in
-de uitslag van de betreffende etappe
-
-
-Team: 150 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner: 25 100 boete en: 10
-seconden tijdstraf of declassering
-van plaats 1 in de uitslag van de
-betreffende etappe
-
-Team: 75 boete per renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-3.3 Renner aan de start zonder
-verplichte helm
-
-Renner. Start geweigerd
-Renner. Start geweigerd
-Renner. Start geweigerd
-
-3.4 Renner zonder helm tijdens de
-Wedstrijd
-
-Renner. 50 boete en/of eliminatie of
-Diskwalificatie
-
-Renner. 50 boete en/of eliminatie of
-Diskwalificatie
-
-Renner.Eliminatie of
-Diskwalificatie
-3.5 Identificatie renner
-
-
-
-3.5.1 Identificatienummer
-gerepliceerd op een ander
-medium dan het medium dat
-door de organisator is
-verstrekt
-
-Renner. Start geweigerd
-Renner. Start geweigerd
-Renner. Start geweigerd
-
-3.5.2 Identificatienummer
-(rugnummer of framenummer)
-ontbreekt, is niet zichtbaar,
-gewijzigd, verkeerd
-gepositioneerd of niet
-herkenbaar
-
-Renner. 50 tot 200 boete *
-
-Ploegleider. 50 boete per betrokken
-renner
-
-Renner. 25 tot 100 boete *
-
-Ploegleider. 25 boete per betrokken
-renner
-
-Renner: Waarschuwing + Toelichting
-
-3.5.3 Ontwijken, weigeren of
-belemmeren van timing of
-volgapparatuur
-
-Renner. Start geweigerd, eliminatie of
-diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie
-of diskwalificatie
-
-Ander teamlid. Uitsluiting
-
-Renner. Start geweigerd, eliminatie of
-diskwalificatie
-
-3.6 Het nalaten om
-een commissaris of de
-bezemwagen te informeren bij het
-verlaten van de wedstrijd
-
-Renner. 50 boete
-
-Ploegleider. 50 boete per betrokken
-renner
-
-Renner. 25 boete
-
-Ploegleider. 25 boete per betrokken
-renner
-
-Renner: Waarschuwing + Toelichting
-
-3.7 Kleding aantrekken of
-Renner. 50 boete
-Renner. 25 boete
-Renner: Waarschuwing + Toelichting
+| [GEWIJZIGD]3.2.2 Gebruik van een niet reglementair fietsaccessoire(bv bril, sokken, overschoenen, een regenjack, armstukken, wielertrui, enz).dat door de renner wordt gedragen, of van een niet-reglementaire of niet-toegestane aanpassing van een accessoire[/GEWIJZIGD] |  |  |  |
+| --- | --- | --- | --- |
+| [GEWIJZIGD]Eendaagse wedstrijd[/GEWIJZIGD] | [GEWIJZIGD]Renner: 50 boete en declassering van plaats 1  Team: 150 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Renner: 25 boete en declassering van plaats 1  Team: 75 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+| [GEWIJZIGD]Meerdaagse wedstrijd[/GEWIJZIGD] | [GEWIJZIGD]Renner: 50 boete en: of 10 seconden tijdstraf of declassering van plaats 1 in de uitslag van de betreffende etappe   Team: 150 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Renner: 25 100 boete en: 10 seconden tijdstraf of declassering van plaats 1 in de uitslag van de betreffende etappe  Team: 75 boete per renner[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+| 3.3 Renner aan de start zonder verplichte helm | Renner. Start geweigerd | Renner. Start geweigerd | Renner. Start geweigerd |
+| 3.4 Renner zonder helm tijdens de Wedstrijd | Renner. 50 boete en/of eliminatie of Diskwalificatie | Renner. 50 boete en/of eliminatie of Diskwalificatie | Renner.Eliminatie of Diskwalificatie |
+| 3.5 Identificatie renner |  |  |  |
+| 3.5.1 Identificatienummer gerepliceerd op een ander medium dan het medium dat door de organisator is verstrekt | Renner. Start geweigerd | Renner. Start geweigerd | Renner. Start geweigerd |
+| 3.5.2 Identificatienummer (rugnummer of framenummer) ontbreekt, is niet zichtbaar, gewijzigd, verkeerd gepositioneerd of niet herkenbaar | Renner. 50 tot 200 boete *  Ploegleider. 50 boete per betrokken renner | Renner. 25 tot 100 boete *  Ploegleider. 25 boete per betrokken renner | Renner: Waarschuwing + Toelichting |
+| 3.5.3 Ontwijken, weigeren of belemmeren van timing of volgapparatuur | Renner. Start geweigerd, eliminatie of diskwalificatie  Ander teamlid. Uitsluiting | Renner. Start geweigerd, eliminatie of diskwalificatie  Ander teamlid. Uitsluiting | Renner. Start geweigerd, eliminatie of diskwalificatie |
+| 3.6 Het nalaten om een commissaris of de bezemwagen te informeren bij het verlaten van de wedstrijd | Renner. 50 boete  Ploegleider. 50 boete per betrokken renner | Renner. 25 boete  Ploegleider. 25 boete per betrokken renner | Renner: Waarschuwing + Toelichting |
+| 3.7 Kleding aantrekken of | Renner. 50 boete | Renner. 25 boete | Renner: Waarschuwing + Toelichting |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -4288,1231 +3245,169 @@ aantal betrokken renners)
 
 Renner: Waarschuwing + Toelichting
 
-4 Onregelmatige hulp, reparaties of verzorging
-4.1 Onregelmatige mechanische hulp aan een renner van een ander team
-Eendaagse wedstrijden
-Renner. 100 boete en eliminatie of
-diskwalificatie van betrokken renners
-
-Renner. 50 boete en eliminatie of
-diskwalificatie van betrokken
-renners
-
-Etappe wedstrijden
-Renner. 100 boete en 2 tot 10 minuten
-straftijd * per overtreding per betrokken
-renner
-
-Andere licentiehouders. 100 boete
-
-Renner. 50 boete en 1 tot 5
-minuten straftijd * per overtreding
-per betrokken renner
-
-Andere licentiehouders. 50 boete
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners
-te elimineren of diskwalificeren en/ of een licentiehouder uit te sluiten
-
-4.2 Afduwen / handaflossing
-4.2.1 Tussen ploeggenoten
-Eendaagse wedstrijden
-
-Renner. 100 boete per betrokken
-renner per overtreding
-
-Renner. 50 boete per betrokken
-renner per overtreding
-
-Renner: Waarschuwing + Toelichting
-
-In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding aan het einde van een race, kunnen de betrokken
-renner (s) worden geëlimineerd of gediskwalificeerd door het college van Commissarissen.
-Etappe wedstrijden
-Renner. 100 boete, 10 seconden
-straftijd en 20 % ** in punten en/of
-bergklassement per overtreding
-
-Renner. 50 boete, 10 seconden
-straftijd en 20 % ** in punten en/of
-bergklassement per overtreding
-
-Renner: Waarschuwing + Toelichting
+| 4 Onregelmatige hulp, reparaties of verzorging |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| 4.1 Onregelmatige mechanische hulp aan een renner van een ander team |  |  |  |  |
+| Eendaagse wedstrijden | Renner. 100 boete en eliminatie of diskwalificatie van betrokken renners | Renner. 100 boete en eliminatie of diskwalificatie van betrokken renners | Renner. 50 boete en eliminatie of diskwalificatie van betrokken renners |  |
+| Etappe wedstrijden | Renner. 100 boete en 2 tot 10 minuten straftijd * per overtreding per betrokken renner  Andere licentiehouders. 100 boete | Renner. 100 boete en 2 tot 10 minuten straftijd * per overtreding per betrokken renner  Andere licentiehouders. 100 boete | Renner. 50 boete en 1 tot 5 minuten straftijd * per overtreding per betrokken renner  Andere licentiehouders. 50 boete |  |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te elimineren of diskwalificeren en/ of een licentiehouder uit te sluiten | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te elimineren of diskwalificeren en/ of een licentiehouder uit te sluiten | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te elimineren of diskwalificeren en/ of een licentiehouder uit te sluiten | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te elimineren of diskwalificeren en/ of een licentiehouder uit te sluiten |
+| 4.2 Afduwen / handaflossing |  |  |  |  |
+| 4.2.1 Tussen ploeggenoten |  |  |  |  |
+| Eendaagse wedstrijden | Renner. 100 boete per betrokken renner per overtreding | Renner. 50 boete per betrokken renner per overtreding | Renner. 50 boete per betrokken renner per overtreding | Renner: Waarschuwing + Toelichting |
+|  | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding aan het einde van een race, kunnen de betrokken renner (s) worden geëlimineerd of gediskwalificeerd door het college van Commissarissen. | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding aan het einde van een race, kunnen de betrokken renner (s) worden geëlimineerd of gediskwalificeerd door het college van Commissarissen. | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding aan het einde van een race, kunnen de betrokken renner (s) worden geëlimineerd of gediskwalificeerd door het college van Commissarissen. | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding aan het einde van een race, kunnen de betrokken renner (s) worden geëlimineerd of gediskwalificeerd door het college van Commissarissen. |
+| Etappe wedstrijden | Renner. 100 boete, 10 seconden straftijd en 20 % ** in punten en/of bergklassement per overtreding | Renner. 50 boete, 10 seconden straftijd en 20 % ** in punten en/of bergklassement per overtreding | Renner. 50 boete, 10 seconden straftijd en 20 % ** in punten en/of bergklassement per overtreding | Renner: Waarschuwing + Toelichting |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 69 VAN 98
 
-In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding in de laatste kilometer van de etappe, zal
-(zullen) de renner (s) worden bestraft met een extra straf van 20 seconden en een extra boete van 80% ** in de punten
-en berg klassement en teruggezet worden naar de laatste plaats in hun groep.
-
-4.2.2 Tussen renners van
-verschillende ploegen
-
-Renner. 100 boete per renner en
-eliminatie of diskwalificatie van de
-betrokken renners
-
-Renner. 50 boete per renner en
-eliminatie of diskwalificatie van de
-betrokken renners
-
-Renner: eliminatie of diskwalificatie
-van de betrokken renners
-
-4.3 Afzetten aan een auto, een motor, renner, renner die een andere renner duwt; herhaalde of verlengde duw (s) van toeschouwer (s)
-Eendaagse wedstrijd
-Renner(s). 50 boete per overtreding
-Renner(s). 25 boete per overtreding
-Renner: Waarschuwing
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners
-te diskwalificeren
-
-Etappe wedstrijd
-Renner(s). 50 boete, 20 % ** straf in
-punten en/of bergklassementen en 10
-seconden straftijd per overtreding
-
-Renner(s). 25 boete, 20 % ** straf in
-punten en/of bergklassementen en 10
-seconden straftijd per overtreding
-
-Renner(s): 20 % ** straf in punten
-en/of bergklassementen en 10
-seconden straftijd per overtreding
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners
-te diskwalificeren
-
-4.4 Verboden hulp tussen renners tijdens een circuitrace of een circuitfinish (renners niet op dezelfde afstand in de race)
-Eendaagse wedstrijd
-Renner. 100 boete per renner en
-eliminatie of diskwalificatie voor de
-betrokken renners
-
-Renner. 50 boete per renner en
-eliminatie of diskwalificatie voor de
-betrokken renners
-
-eliminatie of diskwalificatie voor de
-betrokken renners
-
-Etappe wedstrijd
-Renner. 50 boete per betrokken renner
-en terugzetten naar de laatste plaats in
-de etappe
-
-Renner. 25 boete per betrokken
-renner en terugzetten naar de laatste
-plaats in de etappe
-
-Renner: terugzetten naar de laatste
-plaats in de etappe
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners
-elimineren of diskwalificeren
-4.5 Renner die de wedstrijd niet
-volledig voltooit door zijn of
-haar eigen inspanningen en
-zonder de hulp van een andere
-persoon
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Renner. 50 boete, en eliminatie of
-diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
+|  | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding in de laatste kilometer van de etappe, zal (zullen) de renner (s) worden bestraft met een extra straf van 20 seconden en een extra boete van 80% ** in de punten en berg klassement en teruggezet worden naar de laatste plaats in hun groep. | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding in de laatste kilometer van de etappe, zal (zullen) de renner (s) worden bestraft met een extra straf van 20 seconden en een extra boete van 80% ** in de punten en berg klassement en teruggezet worden naar de laatste plaats in hun groep. | In aanvulling op de bovenstaande bepalingen, in het geval van een overtreding in de laatste kilometer van de etappe, zal (zullen) de renner (s) worden bestraft met een extra straf van 20 seconden en een extra boete van 80% ** in de punten en berg klassement en teruggezet worden naar de laatste plaats in hun groep. |
+| --- | --- | --- | --- |
+| 4.2.2 Tussen renners van verschillende ploegen | Renner. 100 boete per renner en eliminatie of diskwalificatie van de betrokken renners | Renner. 50 boete per renner en eliminatie of diskwalificatie van de betrokken renners | Renner: eliminatie of diskwalificatie van de betrokken renners |
+| 4.3 Afzetten aan een auto, een motor, renner, renner die een andere renner duwt; herhaalde of verlengde duw (s) van toeschouwer (s) |  |  |  |
+| Eendaagse wedstrijd | Renner(s). 50 boete per overtreding | Renner(s). 25 boete per overtreding | Renner: Waarschuwing |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren |
+| Etappe wedstrijd | Renner(s). 50 boete, 20 % ** straf in punten en/of bergklassementen en 10 seconden straftijd per overtreding | Renner(s). 25 boete, 20 % ** straf in punten en/of bergklassementen en 10 seconden straftijd per overtreding | Renner(s): 20 % ** straf in punten en/of bergklassementen en 10 seconden straftijd per overtreding |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners te diskwalificeren |
+| 4.4 Verboden hulp tussen renners tijdens een circuitrace of een circuitfinish (renners niet op dezelfde afstand in de race) |  |  |  |
+| Eendaagse wedstrijd | Renner. 100 boete per renner en eliminatie of diskwalificatie voor de betrokken renners | Renner. 50 boete per renner en eliminatie of diskwalificatie voor de betrokken renners | eliminatie of diskwalificatie voor de betrokken renners |
+| Etappe wedstrijd | Renner. 50 boete per betrokken renner en terugzetten naar de laatste plaats in de etappe | Renner. 25 boete per betrokken renner en terugzetten naar de laatste plaats in de etappe | Renner: terugzetten naar de laatste plaats in de etappe |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners elimineren of diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners elimineren of diskwalificeren | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen de betrokken renners elimineren of diskwalificeren |
+| 4.5 Renner die de wedstrijd niet volledig voltooit door zijn of haar eigen inspanningen en zonder de hulp van een andere persoon | Renner. 100 boete, en eliminatie of diskwalificatie | Renner. 50 boete, en eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 70 VAN 98
 
-4.6 vasthouden door renner aan
-eigen teamvoertuig, of voertuig
-van een ander team of ander
-motorvoertuig, of wordt
-geduwd/ gesleept /
-vastgehouden door een
-passagier van een voertuig, of
-een mechanische ingreep op
-de fiets van de renner van een
-bewegend voertuig
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Chauffeur. 100 boete en uitsluiting
-
-Ploegleider die verantwoordelijk is voor
-de auto. 100 boete en uitsluiting
-
-Andere betrokken licentiehouder: 100
-boete en uitsluiting
-
-Andere personen. Uitsluiting
-
-Voertuig: uitsluiting van de auto tot het
-einde van de wedstrijd zonder
-mogelijkheid tot vervanging
-
-Renner. 50 boete, en eliminatie of
-diskwalificatie
-
-Chauffeur. 100 boete en uitsluiting
-
-Ploegleider die verantwoordelijk is
-voor de auto. 100 boete en uitsluiting
-
-Andere betrokken licentiehouder: 100
-boete en uitsluiting
-
-Andere personen. Uitsluiting
-
-Voertuig: uitsluiting van de auto tot
-het einde van de wedstrijd zonder
-mogelijkheid tot vervanging
-
-Renner. eliminatie of diskwalificatie
-
-Chauffeur. 50 boete en uitsluiting
-
-Ploegleider die verantwoordelijk is
-voor de auto. 50 boete en uitsluiting
-
-Andere betrokken licentiehouder: 50
-boete en uitsluiting
-
-Andere personen. Uitsluiting
-
-Voertuig: uitsluiting van de auto tot
-het einde van de wedstrijd zonder
-mogelijkheid tot vervanging
-
-4.7 Schuilen achter of profiteren van de slipstream van een voertuig
-Eendaagse wedstrijden
-
-Renner. 50 boete
-
-Chauffeur 100 boete per overtreding
-
-
-Ploegleider verantwoordelijk voor de
-auto. 100 boete per overtreding
-
-Renner. 25 boete
-
-Chauffeur 50 boete per overtreding
-
-
-Ploegleider verantwoordelijk voor de
-auto. 50 boete per overtreding
-
-Renner. Waarschuwing
-
-Chauffeur 50 boete per overtreding
-
-In aanvulling op de bovenstaande bepalingen kan het college van commissarissen in ernstige gevallen, in geval van
-herhaalde overtreding of verzwarende omstandigheden, een renner elimineren of diskwalificeren en/ of een
-licentiehouder uitsluiten.
-Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van
-teamvoertuigen te verlagen
-Etappe wedstrijden
-Renner. 50 boete, 20 % ** straf in
-punten en berg klassement en/of 20
-seconden tot 5 minuten straftijd per
-overtreding
-
-Renner. 25 boete, 20 % ** straf in
-punten en berg klassement en/of 20
-seconden tot 5 minuten straftijd per
-overtreding
-
-Renner. 20 % ** straf in punten en
-berg klassement en/of 20 seconden
-tot 5 minuten straftijd per overtreding
+| 4.6 vasthouden door renner aan eigen teamvoertuig, of voertuig van een ander team of ander motorvoertuig, of wordt geduwd/ gesleept / vastgehouden door een passagier van een voertuig, of een mechanische ingreep op de fiets van de renner van een bewegend voertuig | Renner. 100 boete, en eliminatie of diskwalificatie  Chauffeur. 100 boete en uitsluiting  Ploegleider die verantwoordelijk is voor de auto. 100 boete en uitsluiting  Andere betrokken licentiehouder: 100 boete en uitsluiting  Andere personen. Uitsluiting  Voertuig: uitsluiting van de auto tot het einde van de wedstrijd zonder mogelijkheid tot vervanging | Renner. 50 boete, en eliminatie of diskwalificatie  Chauffeur. 100 boete en uitsluiting  Ploegleider die verantwoordelijk is voor de auto. 100 boete en uitsluiting  Andere betrokken licentiehouder: 100 boete en uitsluiting  Andere personen. Uitsluiting  Voertuig: uitsluiting van de auto tot het einde van de wedstrijd zonder mogelijkheid tot vervanging | Renner. eliminatie of diskwalificatie  Chauffeur. 50 boete en uitsluiting  Ploegleider die verantwoordelijk is voor de auto. 50 boete en uitsluiting  Andere betrokken licentiehouder: 50 boete en uitsluiting  Andere personen. Uitsluiting  Voertuig: uitsluiting van de auto tot het einde van de wedstrijd zonder mogelijkheid tot vervanging |
+| --- | --- | --- | --- |
+| 4.7 Schuilen achter of profiteren van de slipstream van een voertuig |  |  |  |
+| Eendaagse wedstrijden | Renner. 50 boete  Chauffeur 100 boete per overtreding   Ploegleider verantwoordelijk voor de auto. 100 boete per overtreding | Renner. 25 boete  Chauffeur 50 boete per overtreding   Ploegleider verantwoordelijk voor de auto. 50 boete per overtreding | Renner. Waarschuwing  Chauffeur 50 boete per overtreding |
+|  | In aanvulling op de bovenstaande bepalingen kan het college van commissarissen in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden, een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen kan het college van commissarissen in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden, een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen kan het college van commissarissen in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden, een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen |
+| Etappe wedstrijden | Renner. 50 boete, 20 % ** straf in punten en berg klassement en/of 20 seconden tot 5 minuten straftijd per overtreding | Renner. 25 boete, 20 % ** straf in punten en berg klassement en/of 20 seconden tot 5 minuten straftijd per overtreding | Renner. 20 % ** straf in punten en berg klassement en/of 20 seconden tot 5 minuten straftijd per overtreding |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 71 VAN 98
 
-Chauffeur. 100 boete
-
-Ploegleider verantwoordelijk voor de
-auto. 100 boete
-
-Chauffeur. 50 boete
-
-Ploegleider verantwoordelijk voor de
-auto. 50 boete
-
-Chauffeur. 50 boete
-
-Ploegleider verantwoordelijk voor de
-auto. 50 boete
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.
-
-Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van
-teamvoertuigen te verlagen
-4.8 Veranderen van een fiets
-anders dan van
-teamvoertuigen, neutrale
-service of de bezemwagen of
-buiten geautoriseerde zones
-
-Renner. 100 boete en eliminatie of
-diskwalificatie
-
-Ploegleider die verantwoordelijk is voor
-de auto. 500 boete
-
-Renner. 50 boete en eliminatie of
-diskwalificatie
-
-Ploegleider die verantwoordelijk is
-voor de auto. 250 boete
-
-Renner. eliminatie of diskwalificatie
-
-4.9 Personeelslid die uit een
-Voertuig leunt of apparatuur
-buiten een voertuig vasthoudt
-
-Onregelmatige hulp van een renner
-binnen hetzelfde team
-
-Chauffeur. 100 boete
-
-Ploegleider die verantwoordelijk is voor
-de auto. 200 tot 500 boete *
-
-Andere betrokken licentiehouders 50 tot
-200 boete *
-
-Chauffeur. 50 boete
-
-Ploegleider die verantwoordelijk is
-voor de auto. 100 tot 250 boete *
-
-Andere betrokken licentiehouders 50
-tot 100 boete *
-
-Chauffeur. 50 boete
-
-Ploegleider die verantwoordelijk is
-voor de auto. 100 tot 250 boete *
-
-Andere betrokken licentiehouders 50
-tot 100 boete *
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een
-vergunninghouder uitsluiten.
-
-Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van
-teamvoertuigen te verlagen
-
-4.10 Niet toegestane verzorging
-4.10.1 Eendaagse wedstrijden
-Tijdens de eerste 30 KM
-
-Renner. 50 boete
-
-Andere licentiehouder. 100 boete
-
-Renner. 25 boete
-
-Andere licentiehouder. 50 boete
-
-Renner. 25 boete
-
-Andere licentiehouder. 50 boete
+|  | Chauffeur. 100 boete  Ploegleider verantwoordelijk voor de auto. 100 boete | Chauffeur. 50 boete  Ploegleider verantwoordelijk voor de auto. 50 boete | Chauffeur. 50 boete  Ploegleider verantwoordelijk voor de auto. 50 boete |
+| --- | --- | --- | --- |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen |
+| 4.8 Veranderen van een fiets anders dan van teamvoertuigen, neutrale service of de bezemwagen of buiten geautoriseerde zones | Renner. 100 boete en eliminatie of diskwalificatie  Ploegleider die verantwoordelijk is voor de auto. 500 boete | Renner. 50 boete en eliminatie of diskwalificatie  Ploegleider die verantwoordelijk is voor de auto. 250 boete | Renner. eliminatie of diskwalificatie |
+| 4.9 Personeelslid die uit een Voertuig leunt of apparatuur buiten een voertuig vasthoudt  Onregelmatige hulp van een renner binnen hetzelfde team | Chauffeur. 100 boete  Ploegleider die verantwoordelijk is voor de auto. 200 tot 500 boete *  Andere betrokken licentiehouders 50 tot 200 boete * | Chauffeur. 50 boete  Ploegleider die verantwoordelijk is voor de auto. 100 tot 250 boete *  Andere betrokken licentiehouders 50 tot 100 boete * | Chauffeur. 50 boete  Ploegleider die verantwoordelijk is voor de auto. 100 tot 250 boete *  Andere betrokken licentiehouders 50 tot 100 boete * |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten.  Het panel van commissarissen behoudt zich ook het recht voor om de positie van het teamvoertuig in de opstelling van teamvoertuigen te verlagen |
+| 4.10 Niet toegestane verzorging |  |  |  |
+| 4.10.1 Eendaagse wedstrijden Tijdens de eerste 30 KM | Renner. 50 boete  Andere licentiehouder. 100 boete | Renner. 25 boete  Andere licentiehouder. 50 boete | Renner. 25 boete  Andere licentiehouder. 50 boete |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 72 VAN 98
 
-4.10.2 Eendaagse wedstrijden
-In de laatste 20 KM
-
-Renner. 200 boete
-
-Andere licentiehouder. 200 boete
-
-Renner. 100 boete
-
-Andere licentiehouder. 100 boete
-
-Renner. 100 boete
-
-Andere licentiehouder. 100 boete
-4.10.3 Etappe wedstrijden
-In de eerste 30 KM
-
-Renner. 50 boete
-
-
-Andere licentiehouder. 100 boete
-
-Renner. 25 boete
-
-
-Andere licentiehouder. 50 boete
-
-Renner. 25 boete
-
-
-Andere licentiehouder. 50 boete
-
-4.10.4 Etappe wedstrijden
-In de laatste 20 KM
-
-Renner. 50 boete en 20 seconden
-straftijd per overtreding en 20 % straf in
-punten en/of bergklassement
-
-
-
-Andere licentiehouder. 150 boete
-
-Renner. 25 boete en 20 seconden
-straftijd per overtreding en 20 % straf
-in punten en/of bergklassement
-
-
-
-Andere licentiehouder. 75 boete
-
-Renner. 25 boete en 20 seconden
-straftijd per overtreding en 20 % straf
-in punten en/of bergklassement
-
-
-
-Andere licentiehouder. 75 boete
-4.10.5 Eendaagse wedstrijd,
-Bevoorrading te voet buiten de
-voedingszone
-
-Renner: 100 boete
-
-
-Andere licentiehouder: 100 boete
-
-Renner: 50 boete
-
-
-Andere licentiehouder: 50 boete
-
-Andere licentiehouder: 50 boete
-
-4.10.6 Meerdaagse wedstrijd,
-Bevoorrading te voet buiten de
-voedingszone
-
-Renner: 50 boete en 20 seconden
-straftijd per overtreding en 20% straf in
-punten en/of bergklassement
-
-
-Andere licentiehouder: 100 boete
-
-Renner: 25 boete en 20 seconden
-straftijd per overtreding en 20% straf
-in punten en/of bergklassement
-
-
-Andere licentiehouder: 50 boete
-
-Renner: 20 seconden straftijd per
-overtreding en 20% straf in punten
-en/of bergklassement
-
-
-Andere licentiehouder: 50 boete
-4.11 Onregelmatige verzorging
-("bidon vasthouden" voor
-een korte afstand)
-
-Renner. 50 boete per overtreding
-
-Andere licentiehouder. 100 boete per
-overtreding
-
-Renner. 25 boete per overtreding
-
-Andere licentiehouder. 50 boete per
-overtreding
-
-Renner. Tijdstraf 30 seconden
-
-Andere licentiehouder. 50 boete per
-overtreding
-
-4.12 Niet-naleving van artikel
-2.3.025 door een team assistent/
-verzorger tijdens bevoorrading( bv
-onjuiste kleding of positie,
-overschrijden van maximum aantal
-staff-leden of ieder ander
-ongeoorloofd gedrag)
-
-Ploegleider die verantwoordelijk is voor
-het team. 50 boete
-
-Andere licentiehouder: 50 boete per
-overtreding
-
-Ploegleider die verantwoordelijk is
-voor het team. 25 boete
-
-Andere licentiehouder: 25 boete per
-overtreding
-
-Ploegleider die verantwoordelijk is
-voor het team. 25 boete
-
-Andere licentiehouder: 25 boete per
-overtreding
+| 4.10.2 Eendaagse wedstrijden In de laatste 20 KM | Renner. 200 boete  Andere licentiehouder. 200 boete | Renner. 100 boete  Andere licentiehouder. 100 boete | Renner. 100 boete  Andere licentiehouder. 100 boete |
+| --- | --- | --- | --- |
+| 4.10.3 Etappe wedstrijden In de eerste 30 KM | Renner. 50 boete   Andere licentiehouder. 100 boete | Renner. 25 boete   Andere licentiehouder. 50 boete | Renner. 25 boete   Andere licentiehouder. 50 boete |
+| 4.10.4 Etappe wedstrijden In de laatste 20 KM | Renner. 50 boete en 20 seconden straftijd per overtreding en 20 % straf in punten en/of bergklassement    Andere licentiehouder. 150 boete | Renner. 25 boete en 20 seconden straftijd per overtreding en 20 % straf in punten en/of bergklassement    Andere licentiehouder. 75 boete | Renner. 25 boete en 20 seconden straftijd per overtreding en 20 % straf in punten en/of bergklassement    Andere licentiehouder. 75 boete |
+| 4.10.5 Eendaagse wedstrijd, Bevoorrading te voet buiten de voedingszone | Renner: 100 boete   Andere licentiehouder: 100 boete | Renner: 50 boete   Andere licentiehouder: 50 boete | Andere licentiehouder: 50 boete |
+| 4.10.6 Meerdaagse wedstrijd, Bevoorrading te voet buiten de voedingszone | Renner: 50 boete en 20 seconden straftijd per overtreding en 20% straf in punten en/of bergklassement   Andere licentiehouder: 100 boete | Renner: 25 boete en 20 seconden straftijd per overtreding en 20% straf in punten en/of bergklassement   Andere licentiehouder: 50 boete | Renner: 20 seconden straftijd per overtreding en 20% straf in punten en/of bergklassement   Andere licentiehouder: 50 boete |
+| 4.11 Onregelmatige verzorging ("bidon vasthouden" voor een korte afstand) | Renner. 50 boete per overtreding  Andere licentiehouder. 100 boete per overtreding | Renner. 25 boete per overtreding  Andere licentiehouder. 50 boete per overtreding | Renner. Tijdstraf 30 seconden  Andere licentiehouder. 50 boete per overtreding |
+| 4.12 Niet-naleving van artikel 2.3.025 door een team assistent/ verzorger tijdens bevoorrading( bv onjuiste kleding of positie, overschrijden van maximum aantal staff-leden of ieder ander ongeoorloofd gedrag) | Ploegleider die verantwoordelijk is voor het team. 50 boete  Andere licentiehouder: 50 boete per overtreding | Ploegleider die verantwoordelijk is voor het team. 25 boete  Andere licentiehouder: 25 boete per overtreding | Ploegleider die verantwoordelijk is voor het team. 25 boete  Andere licentiehouder: 25 boete per overtreding |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 73 VAN 98
 
-5 Tussensprints en eindsprint
-5.1 Afwijking van de gekozen lijn of een onregelmatige sprint en daardoor een andere renner belemmert of in gevaar brengt (inclusief het trekken
-van de trui of het zadel van een andere renner, intimidatie of bedreiging, kopstoot, de knie, elle boog, schouder, hand, enz.).
-Eendaagse wedstrijden
-Renner. 100 boete en terug zetting naar
-de laatste plaats van de groep waar hij
-zich in bevond
-
-Renner. 50 boete en terug zetting
-naar de laatste plaats van de groep
-waar hij zich in bevond
-
-Renner. terug zetting naar de laatste
-plaats van de groep waar hij zich in
-bevond
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of
-verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een
-renner elimineren of diskwalificeren.
-Etappe wedstrijden
-Renner. 100 boete, 25 % ** aftrek in
-puntenklassement en/of
-bergklassement (1) en terug zetting
-naar de laatste plaats van de groep
-waar hij zich bevond
-
-Renner. 50 boete, 25 % ** aftrek in
-puntenklassement en/of
-bergklassement (1) en terug zetting
-naar de laatste plaats van de groep
-waar hij zich bevond
-
-Renner. 25 % ** aftrek in
-puntenklassement en/of
-bergklassement (1) en terug zetting
-naar de laatste plaats van de groep
-waar hij zich bevond
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of
-verzwarende omstandigheden en / of indien een overtreding een voordeel biedt, kan het college van commissarissen
-een boete opleggen van 10 seconden tot 1 minuut * of een renner elimineren of diskwalificeren.
-(1) respectievelijk voor een overtreding tijdens een sprint die punten toekent aan het puntenklassement en/ of tijdens een
-sprint die punten toekennen aan het bergklassement
-5.2 Renner die vertraagt tijdens een sprint en daarbij andere renners in gevaar brengt (bewust in de lijn blijven rijden van andere renners, vieren in het peloton,
-in je oortje praten of je handen van je stuur halen terwijl je in het peloton rijdt).
-
-Eendaagse wedstrijden
-
-Renner: 100 boete en terug zetting
-naar de laatste plaats van de groep
-waar hij zich bevond
-
-Renner: terug zetting naar de laatste
-plaats van de groep waar hij zich
-bevond
-
-Renner: terug zetting naar de laatste
-plaats van de groep waar hij zich
-bevond
-Etappe wedstrijden
-
-Renner: 100 boete, 25%** straf in het
-punten en/of bergklassement (1) en
-terug zetting naar de laatste plaats
-van de groep waar hij zich bevond
-
-Renner: 25%** straf in het punten
-en/of bergklassement (1) en terug
-zetting naar de laatste plaats van de
-groep waar hij zich bevond
-
-Renner: 25%** straf in het punten
-en/of bergklassement (1) en terug
-zetting naar de laatste plaats van de
-groep waar hij zich bevond
+| 5 Tussensprints en eindsprint |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| 5.1 Afwijking van de gekozen lijn of een onregelmatige sprint en daardoor een andere renner belemmert of in gevaar brengt (inclusief het trekken van de trui of het zadel van een andere renner, intimidatie of bedreiging, kopstoot, de knie, elle boog, schouder, hand, enz.). |  |  |  |  |
+| Eendaagse wedstrijden | Renner. 100 boete en terug zetting naar de laatste plaats van de groep waar hij zich in bevond | Renner. 100 boete en terug zetting naar de laatste plaats van de groep waar hij zich in bevond | Renner. 50 boete en terug zetting naar de laatste plaats van de groep waar hij zich in bevond | Renner. terug zetting naar de laatste plaats van de groep waar hij zich in bevond |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. |
+| Etappe wedstrijden | Renner. 100 boete, 25 % ** aftrek in puntenklassement en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner. 100 boete, 25 % ** aftrek in puntenklassement en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner. 50 boete, 25 % ** aftrek in puntenklassement en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner. 25 % ** aftrek in puntenklassement en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden en / of indien een overtreding een voordeel biedt, kan het college van commissarissen een boete opleggen van 10 seconden tot 1 minuut * of een renner elimineren of diskwalificeren. (1) respectievelijk voor een overtreding tijdens een sprint die punten toekent aan het puntenklassement en/ of tijdens een sprint die punten toekennen aan het bergklassement | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden en / of indien een overtreding een voordeel biedt, kan het college van commissarissen een boete opleggen van 10 seconden tot 1 minuut * of een renner elimineren of diskwalificeren. (1) respectievelijk voor een overtreding tijdens een sprint die punten toekent aan het puntenklassement en/ of tijdens een sprint die punten toekennen aan het bergklassement | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden en / of indien een overtreding een voordeel biedt, kan het college van commissarissen een boete opleggen van 10 seconden tot 1 minuut * of een renner elimineren of diskwalificeren. (1) respectievelijk voor een overtreding tijdens een sprint die punten toekent aan het puntenklassement en/ of tijdens een sprint die punten toekennen aan het bergklassement | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen en/ of in geval van herhaalde overtreding en / of verzwarende omstandigheden en / of indien een overtreding een voordeel biedt, kan het college van commissarissen een boete opleggen van 10 seconden tot 1 minuut * of een renner elimineren of diskwalificeren. (1) respectievelijk voor een overtreding tijdens een sprint die punten toekent aan het puntenklassement en/ of tijdens een sprint die punten toekennen aan het bergklassement |
+| 5.2 Renner die vertraagt tijdens een sprint en daarbij andere renners in gevaar brengt (bewust in de lijn blijven rijden van andere renners, vieren in het peloton, in je oortje praten of je handen van je stuur halen terwijl je in het peloton rijdt). |  |  |  |  |
+| Eendaagse wedstrijden | Eendaagse wedstrijden | Renner: 100 boete en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner: terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner: terug zetting naar de laatste plaats van de groep waar hij zich bevond |
+| Etappe wedstrijden | Etappe wedstrijden | Renner: 100 boete, 25%** straf in het punten en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner: 25%** straf in het punten en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond | Renner: 25%** straf in het punten en/of bergklassement (1) en terug zetting naar de laatste plaats van de groep waar hij zich bevond |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 74 VAN 98
 
-6 Circulatie van voertuigen (auto's en motoren) en renners in de wedstrijd
-
-6.1 Obstructie door een renner of voertuig met als doel de beweging van een andere renner of voertuig te voorkomen of te vertragen
-Eendaagse wedstrijden
-Renner. 100 boete en/of
-eliminatie of diskwalificatie
-
-Andere licentiehouders. 200 boete en
-uitsluiting
-
-Renner. 50 boete en/of
-eliminatie of diskwalificatie
-
-Andere licentiehouders. 100 boete en
-uitsluiting
-
-Renner. eliminatie of diskwalificatie
-
-Andere licentiehouders. 100 boete en
-uitsluiting
-
-Etappe wedstrijden
-Renner. 100 boete, 20 tot 100 % ** straf
-in punten en/of bergklassement en 10
-tot 30 seconden straftijd per overtreding
-
-Andere licentiehouders.200 boete per
-overtreding
-
-Renner. 50 boete, 20 tot 100 % **
-straf in punten en/of bergklassement
-en 10 tot 30 seconden straftijd per
-overtreding
-
-Andere licentiehouders.100 boete per
-overtreding
-
-Renner. 20 tot 100 % ** straf in
-punten en/of bergklassement en 10
-tot 30 seconden straftijd per
-overtreding
-
-Andere licentiehouders.100 boete per
-overtreding
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.
-
-6.2 Een renner besproeien vanuit
-een voertuig
-
-Chauffeur. 50 boete per overtreding
-
-
-Verantwoordelijke ploegleider van de
-auto. 50 boete per overtreding
-
-Chauffeur. 50 boete per overtreding
-
-
-Verantwoordelijke ploegleider van de
-auto. 50 boete per overtreding
-
-Chauffeur. 50 boete per overtreding
-
-
-Verantwoordelijke ploegleider van de
-auto. 50 boete per overtreding
-6.3 Overtreding van voorschriften
-of richtlijnen met betrekking
-tot voertuigbewegingen
-tijdens de wedstrijd of niet-
-naleving van de instructies
-van commissarissen en/ of
-de organisatie
-
-Chauffeur. 100 tot 500 boete
-
-Verantwoordelijke ploegleider van de
-auto. 100 tot 500 boete en/of terug
-zetting in het konvooi van ploegleiders,
-uitsluiting voor een of meer etappes of
-definitieve uitsluiting
-
-
-Andere auto. Uitsluiting voor een of
-meerdere etappes of definitieve
-uitsluiting
-
-Chauffeur. 50 tot 250 boete
-
-Verantwoordelijke ploegleider van de
-auto. 50 tot 250 boete en/of terug
-zetting in het konvooi van
-ploegleiders, uitsluiting voor een of
-meer etappes of definitieve uitsluiting
-
-
-Andere auto. Uitsluiting voor een of
-meerdere etappes of definitieve
-uitsluiting
-
-Chauffeur. 50 tot 250 boete
-
-Verantwoordelijke ploegleider van de
-auto. 50 tot 250 boete en/of terug
-zetting in het konvooi van
-ploegleiders, uitsluiting voor een of
-meer etappes of definitieve uitsluiting
-
-
-Andere auto. Uitsluiting voor een of
-meerdere etappes of definitieve
-uitsluiting
+| 6 Circulatie van voertuigen (auto's en motoren) en renners in de wedstrijd |  |  |  |
+| --- | --- | --- | --- |
+| 6.1 Obstructie door een renner of voertuig met als doel de beweging van een andere renner of voertuig te voorkomen of te vertragen |  |  |  |
+| Eendaagse wedstrijden | Renner. 100 boete en/of eliminatie of diskwalificatie  Andere licentiehouders. 200 boete en uitsluiting | Renner. 50 boete en/of eliminatie of diskwalificatie  Andere licentiehouders. 100 boete en uitsluiting | Renner. eliminatie of diskwalificatie  Andere licentiehouders. 100 boete en uitsluiting |
+| Etappe wedstrijden | Renner. 100 boete, 20 tot 100 % ** straf in punten en/of bergklassement en 10 tot 30 seconden straftijd per overtreding  Andere licentiehouders.200 boete per overtreding | Renner. 50 boete, 20 tot 100 % ** straf in punten en/of bergklassement en 10 tot 30 seconden straftijd per overtreding  Andere licentiehouders.100 boete per overtreding | Renner. 20 tot 100 % ** straf in punten en/of bergklassement en 10 tot 30 seconden straftijd per overtreding  Andere licentiehouders.100 boete per overtreding |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. |
+| 6.2 Een renner besproeien vanuit een voertuig | Chauffeur. 50 boete per overtreding   Verantwoordelijke ploegleider van de auto. 50 boete per overtreding | Chauffeur. 50 boete per overtreding   Verantwoordelijke ploegleider van de auto. 50 boete per overtreding | Chauffeur. 50 boete per overtreding   Verantwoordelijke ploegleider van de auto. 50 boete per overtreding |
+| 6.3 Overtreding van voorschriften of richtlijnen met betrekking tot voertuigbewegingen tijdens de wedstrijd of niet- naleving van de instructies van commissarissen en/ of de organisatie | Chauffeur. 100 tot 500 boete  Verantwoordelijke ploegleider van de auto. 100 tot 500 boete en/of terug zetting in het konvooi van ploegleiders, uitsluiting voor een of meer etappes of definitieve uitsluiting   Andere auto. Uitsluiting voor een of meerdere etappes of definitieve uitsluiting | Chauffeur. 50 tot 250 boete  Verantwoordelijke ploegleider van de auto. 50 tot 250 boete en/of terug zetting in het konvooi van ploegleiders, uitsluiting voor een of meer etappes of definitieve uitsluiting   Andere auto. Uitsluiting voor een of meerdere etappes of definitieve uitsluiting | Chauffeur. 50 tot 250 boete  Verantwoordelijke ploegleider van de auto. 50 tot 250 boete en/of terug zetting in het konvooi van ploegleiders, uitsluiting voor een of meer etappes of definitieve uitsluiting   Andere auto. Uitsluiting voor een of meerdere etappes of definitieve uitsluiting |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 75 VAN 98
 
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een
-vergunninghouder uitsluiten.
-6.4 Interviewen gedurende de
-Wedstrijd
-
-Chauffeur persauto. 100 boete en
-uitsluiting
-
-Journalist. Uitsluiting
-
-Perswagen: uitsluiting
-
-Chauffeur persauto. 100 boete en
-uitsluiting
-
-Journalist. Uitsluiting
-
-Perswagen: uitsluiting
-
-Chauffeur persauto. 100 boete en
-uitsluiting
-
-Journalist. Uitsluiting
-
-Perswagen: uitsluiting
-6.5 Een ploegleider interviewen
-tijdens de laatste 10 kilometer
-van een wedstrijd of het
-interview uitvoeren vanuit een
-auto in plaats van een motor.
-
-Ploegleider. 100 boete
-
-Chauffeur perswagen. Uitsluiting
-
-Journalist. Uitsluiting
-
-Perswagen. Uitsluiting
-
-Ploegleider. 100 boete en/of gele
-kaart
-
-Chauffeur perswagen. Uitsluiting
-en/of gele kaart
-
-Journalist. Uitsluiting en/of gele kaart
-
-Perswagen. Uitsluiting
-
-Ploegleider. 100 boete en/of gele
-kaart
-
-Chauffeur perswagen. Uitsluiting
-en/of gele kaart
-
-Journalist. Uitsluiting en/of gele kaart
-
-Perswagen. Uitsluiting
-7. Onregelmatig gedrag, met name gedrag dat een team of renner een sportvoordeel oplevert of dat gevaarlijk is.
-
-7.1 Afwijken van het parcours om
-voordeel te krijgen en
-vervolgens probeert geplaatst
-te worden zonder het hele
-parcours te hebben afgelegd
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Renner. 50 boete, en eliminatie of
-diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
-
-7.2 De wedstrijd hervatten na te
-zijn vervoerd met de auto of
-de motor
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Chauffeur. 100 tot 500 boete
-
-Ploegleider die verantwoordelijk is voor
-de auto. 100 tot 500 boete
-
-Teamwagen.
-Eendaagse wedstrijd: uitsluiting
-Etappe wedstrijd: definitieve uitsluiting
-
-Andere auto’s.
-Eendaagse wedstrijd: uitsluiting
-
-Renner. 50 boete, en eliminatie of
-diskwalificatie
-
-Chauffeur. 50 tot 250 boete
-
-Ploegleider die verantwoordelijk is
-voor de auto. 50 tot 250 boete
-
-Teamwagen.
-Eendaagse wedstrijd: uitsluiting
-Etappe wedstrijd: definitieve
-uitsluiting
-
-Andere auto’s.
-
-Renner. Eliminatie of diskwalificatie
-
-Chauffeur. 50 tot 250 boete
-
-Ploegleider die verantwoordelijk is
-voor de auto. 50 tot 250 boete
-
-Teamwagen.
-Eendaagse wedstrijd: uitsluiting
-Etappe wedstrijd: definitieve
-uitsluiting
-
-Andere auto’s.
-Eendaagse wedstrijd: uitsluiting
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een vergunninghouder uitsluiten. |
+| --- | --- | --- | --- |
+| 6.4 Interviewen gedurende de Wedstrijd | Chauffeur persauto. 100 boete en uitsluiting  Journalist. Uitsluiting  Perswagen: uitsluiting | Chauffeur persauto. 100 boete en uitsluiting  Journalist. Uitsluiting  Perswagen: uitsluiting | Chauffeur persauto. 100 boete en uitsluiting  Journalist. Uitsluiting  Perswagen: uitsluiting |
+| 6.5 Een ploegleider interviewen tijdens de laatste 10 kilometer van een wedstrijd of het interview uitvoeren vanuit een auto in plaats van een motor. | Ploegleider. 100 boete  Chauffeur perswagen. Uitsluiting  Journalist. Uitsluiting  Perswagen. Uitsluiting | Ploegleider. 100 boete en/of gele kaart  Chauffeur perswagen. Uitsluiting en/of gele kaart  Journalist. Uitsluiting en/of gele kaart  Perswagen. Uitsluiting | Ploegleider. 100 boete en/of gele kaart  Chauffeur perswagen. Uitsluiting en/of gele kaart  Journalist. Uitsluiting en/of gele kaart  Perswagen. Uitsluiting |
+| 7. Onregelmatig gedrag, met name gedrag dat een team of renner een sportvoordeel oplevert of dat gevaarlijk is. |  |  |  |
+| 7.1 Afwijken van het parcours om voordeel te krijgen en vervolgens probeert geplaatst te worden zonder het hele parcours te hebben afgelegd | Renner. 100 boete, en eliminatie of diskwalificatie | Renner. 50 boete, en eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
+| 7.2 De wedstrijd hervatten na te zijn vervoerd met de auto of de motor | Renner. 100 boete, en eliminatie of diskwalificatie  Chauffeur. 100 tot 500 boete  Ploegleider die verantwoordelijk is voor de auto. 100 tot 500 boete  Teamwagen. Eendaagse wedstrijd: uitsluiting Etappe wedstrijd: definitieve uitsluiting  Andere auto’s. Eendaagse wedstrijd: uitsluiting | Renner. 50 boete, en eliminatie of diskwalificatie  Chauffeur. 50 tot 250 boete  Ploegleider die verantwoordelijk is voor de auto. 50 tot 250 boete  Teamwagen. Eendaagse wedstrijd: uitsluiting Etappe wedstrijd: definitieve uitsluiting  Andere auto’s. | Renner. Eliminatie of diskwalificatie  Chauffeur. 50 tot 250 boete  Ploegleider die verantwoordelijk is voor de auto. 50 tot 250 boete  Teamwagen. Eendaagse wedstrijd: uitsluiting Etappe wedstrijd: definitieve uitsluiting  Andere auto’s. Eendaagse wedstrijd: uitsluiting |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 76 VAN 98
 
-Etappe wedstrijd: definitieve uitsluiting
-
-Eendaagse wedstrijd: uitsluiting
-Etappe wedstrijd: definitieve
-uitsluiting
-
-7.3 Houding of gedrag dat tot
-doel heeft eliminatie te
-vermijden
-
-Renner. 100 boete, en/of eliminatie of
-diskwalificatie
-
-Renner. 50 boete, en/of eliminatie of
-diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
-
-7.4 Renner die weigert de
-wedstrijd te verlaten na te zijn
-geëlimineerd door een
-commissaris
-
-Renner. 100 tot 500*
-Renner. 50 tot 250*
-Renner. Waarschwuing
-
-7.5 Renner die te voet een deel
-van het parcours aflegt of te
-voet over de finish gaat
-zonder zijn of haar fiets
-
-Renner. 100 boete en eliminatie of
-diskwalificatie
-
-Renner. 50 boete en eliminatie of
-diskwalificatie
-
-Renner. Waarschuwing
-
-7.6 Gebruik van trottoirs, paden
-of fietspaden die geen deel
-uitmaken van het parcours
-
-Renner. 50 tot 100 boete
-
-Verder, in etappe wedstrijden, 20
-seconden straftijd en 80 % ** aftrek in
-punten en bergklassement
-
-Renner. 25 boete
-
-Verder, in etappe wedstrijden, 20
-seconden straftijd en 80 % ** aftrek in
-punten en bergklassement
-
-Renner. Waarschuwing
-
-Verder, in etappe wedstrijden, 20
-seconden straftijd en 80 % ** aftrek in
-punten en bergklassement
-
-Naast de bovengenoemde bepalingen kan het panel van commissarissen, in ernstige gevallen van voordeel,
-gevaarzetting, herhaalde overtredingen of verzwarende omstandigheden, een tijd- en/of puntenstraf opleggen voor
-etappekoersen (20 seconden en/of 80%** straf in de puntenklassement en/of bergklassement), een renner degraderen
-naar de laatste plaats in de etappe, hem diskwalificeren of uit de race halen.
-
-Opmerking: De financiële boete wordt toegepast op het team als de licentiehouder niet specifiek kan worden
-geïdentificeerd.
-7.7 Het passeren van een
-overweg die gesloten is of
-zich sluit (knipperende lichten
-en/ of hoorbare
-waarschuwingen)
-
-Renner. 200 boete, en eliminatie of
-diskwalificatie
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
+|  | Etappe wedstrijd: definitieve uitsluiting | Eendaagse wedstrijd: uitsluiting Etappe wedstrijd: definitieve uitsluiting |  |
+| --- | --- | --- | --- |
+| 7.3 Houding of gedrag dat tot doel heeft eliminatie te vermijden | Renner. 100 boete, en/of eliminatie of diskwalificatie | Renner. 50 boete, en/of eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
+| 7.4 Renner die weigert de wedstrijd te verlaten na te zijn geëlimineerd door een commissaris | Renner. 100 tot 500* | Renner. 50 tot 250* | Renner. Waarschwuing |
+| 7.5 Renner die te voet een deel van het parcours aflegt of te voet over de finish gaat zonder zijn of haar fiets | Renner. 100 boete en eliminatie of diskwalificatie | Renner. 50 boete en eliminatie of diskwalificatie | Renner. Waarschuwing |
+| 7.6 Gebruik van trottoirs, paden of fietspaden die geen deel uitmaken van het parcours | Renner. 50 tot 100 boete  Verder, in etappe wedstrijden, 20 seconden straftijd en 80 % ** aftrek in punten en bergklassement | Renner. 25 boete  Verder, in etappe wedstrijden, 20 seconden straftijd en 80 % ** aftrek in punten en bergklassement | Renner. Waarschuwing  Verder, in etappe wedstrijden, 20 seconden straftijd en 80 % ** aftrek in punten en bergklassement |
+|  | Naast de bovengenoemde bepalingen kan het panel van commissarissen, in ernstige gevallen van voordeel, gevaarzetting, herhaalde overtredingen of verzwarende omstandigheden, een tijd- en/of puntenstraf opleggen voor etappekoersen (20 seconden en/of 80%** straf in de puntenklassement en/of bergklassement), een renner degraderen naar de laatste plaats in de etappe, hem diskwalificeren of uit de race halen.  Opmerking: De financiële boete wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd. | Naast de bovengenoemde bepalingen kan het panel van commissarissen, in ernstige gevallen van voordeel, gevaarzetting, herhaalde overtredingen of verzwarende omstandigheden, een tijd- en/of puntenstraf opleggen voor etappekoersen (20 seconden en/of 80%** straf in de puntenklassement en/of bergklassement), een renner degraderen naar de laatste plaats in de etappe, hem diskwalificeren of uit de race halen.  Opmerking: De financiële boete wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd. | Naast de bovengenoemde bepalingen kan het panel van commissarissen, in ernstige gevallen van voordeel, gevaarzetting, herhaalde overtredingen of verzwarende omstandigheden, een tijd- en/of puntenstraf opleggen voor etappekoersen (20 seconden en/of 80%** straf in de puntenklassement en/of bergklassement), een renner degraderen naar de laatste plaats in de etappe, hem diskwalificeren of uit de race halen.  Opmerking: De financiële boete wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd. |
+| 7.7 Het passeren van een overweg die gesloten is of zich sluit (knipperende lichten en/ of hoorbare waarschuwingen) | Renner. 200 boete, en eliminatie of diskwalificatie | Renner. 100 boete, en eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 77 VAN 98
 
-7.8 Bedrog, gepoogd vals spelen, samenspannen tussen renners van verschillende teams of andere licentiehouders die betrokken of
-medeplichtig zijn
-Eendaagse wedstrijd
-Renner. 100 boete en eliminatie of
-diskwalificatie
-
-Andere licentiehouder. 100 boete en
-uitsluiting
-
-Renner. 75 boete en eliminatie of
-diskwalificatie
-
-Andere licentiehouder. 75 boete en
-uitsluiting
-
-Renner. Eliminatie of diskwalificatie
-
-
-Andere licentiehouder. 75 boete en
-uitsluiting
-
-Etappe wedstrijd
-Renner. 100 boete en 100 % ** aftrek in
-punten en berg klassement en/of 10
-minuten straftijd per betrokken renner
-
-Andere licentiehouder. 100 boete
-
-Renner. 75 boete en 100 % ** aftrek
-in punten en berg klassement en/of
-10 minuten straftijd per betrokken
-renner
-
-Andere licentiehouder. 75 boete
-
-Renner. 100 % ** aftrek in punten en
-berg klassement en/of 10 minuten
-straftijd per betrokken renner
-
-Andere licentiehouder. 75 boete
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren en/ of een licentiehouder uitsluiten.
-
-7.9 Een niet-conforme positie
-gebruiken of steunpunt op de
-fiets dat een gevaar vormt
-voor de berijder of
-concurrenten
-
-Renner. 200 boete, en eliminatie of
-diskwalificatie
-
-Renner. 100 boete, en eliminatie of
-diskwalificatie
-
-Renner. Eliminatie of diskwalificatie
-
-8. Niet-naleving van instructies, ongepast, gevaarlijk of gewelddadig gedrag; schade aan het milieu of het imago van de sport
-
-8.1 Het niet respecteren van de
-instructies van de organisator
-of commissarissen
-
-Renner. 50 tot 100 * boete
-
-
-Andere licentiehouder. 50 tot 200*
-boete
-
-Renner. 25 tot 100 * boete
-
-
-Andere licentiehouder. 50 tot 200*
-boete
-
-Renner. Boete tot 25 * boete
-
-
-Andere licentiehouder. 50 tot 200*
-boete
-8.2 Slaan, intimidatie, misbruik, bedreigingen, ongepast gedrag (inclusief het trekken aan de trui of het zadel van een
-andere renner, raken met de helm, knie, eelboog, schouder, voet of hand, enz.), gedrag dat onfatsoenlijk
-is of anderen in gevaar brengen
-8.2.1 Tussen renner of gericht op
-een renner
-
-Renner. 50 tot 500 * boete per
-overtreding
-
-Andere licentiehouder. 500 boete
-
-Renner. 25 tot 500 * boete per
-overtreding
-
-Andere licentiehouder. 500 boete
-
-Renner. ot 50 * boete per overtreding
-
-Andere licentiehouder. 500 boete
+| 7.8 Bedrog, gepoogd vals spelen, samenspannen tussen renners van verschillende teams of andere licentiehouders die betrokken of medeplichtig zijn |  |  |  |
+| --- | --- | --- | --- |
+| Eendaagse wedstrijd | Renner. 100 boete en eliminatie of diskwalificatie  Andere licentiehouder. 100 boete en uitsluiting | Renner. 75 boete en eliminatie of diskwalificatie  Andere licentiehouder. 75 boete en uitsluiting | Renner. Eliminatie of diskwalificatie   Andere licentiehouder. 75 boete en uitsluiting |
+| Etappe wedstrijd | Renner. 100 boete en 100 % ** aftrek in punten en berg klassement en/of 10 minuten straftijd per betrokken renner  Andere licentiehouder. 100 boete | Renner. 75 boete en 100 % ** aftrek in punten en berg klassement en/of 10 minuten straftijd per betrokken renner  Andere licentiehouder. 75 boete | Renner. 100 % ** aftrek in punten en berg klassement en/of 10 minuten straftijd per betrokken renner  Andere licentiehouder. 75 boete |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en/ of een licentiehouder uitsluiten. |
+| 7.9 Een niet-conforme positie gebruiken of steunpunt op de fiets dat een gevaar vormt voor de berijder of concurrenten | Renner. 200 boete, en eliminatie of diskwalificatie | Renner. 100 boete, en eliminatie of diskwalificatie | Renner. Eliminatie of diskwalificatie |
+| 8. Niet-naleving van instructies, ongepast, gevaarlijk of gewelddadig gedrag; schade aan het milieu of het imago van de sport |  |  |  |
+| 8.1 Het niet respecteren van de instructies van de organisator of commissarissen | Renner. 50 tot 100 * boete   Andere licentiehouder. 50 tot 200* boete | Renner. 25 tot 100 * boete   Andere licentiehouder. 50 tot 200* boete | Renner. Boete tot 25 * boete   Andere licentiehouder. 50 tot 200* boete |
+| 8.2 Slaan, intimidatie, misbruik, bedreigingen, ongepast gedrag (inclusief het trekken aan de trui of het zadel van een andere renner, raken met de helm, knie, eelboog, schouder, voet of hand, enz.), gedrag dat onfatsoenlijk is of anderen in gevaar brengen |  |  |  |
+| 8.2.1 Tussen renner of gericht op een renner | Renner. 50 tot 500 * boete per overtreding  Andere licentiehouder. 500 boete | Renner. 25 tot 500 * boete per overtreding  Andere licentiehouder. 500 boete | Renner. ot 50 * boete per overtreding  Andere licentiehouder. 500 boete |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 78 VAN 98
 
-In aanvulling op bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren.
-8.2.2 Gericht op een ander
-persoon (inclusief
-toeschouwers)
-
-Renner. 50 tot 500 * boete per
-overtreding
-
-Andere licentiehouder. 1.000 boete
-
-Renner. 25 tot 500 * boete per
-overtreding
-
-Andere licentiehouder. 1.000 boete
-
-Renner. 25 tot 500 * boete per
-overtreding
-
-Andere licentiehouder. 1.000 boete
-
-In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende
-omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner
-elimineren of diskwalificeren en een licentiehouder uitsluiten.
-8.3 Renner of teampersoneel die afval of andere voorwerpen weggooit buiten de afvalzones, of niet teruggeeft aan team- of organisatiepersoneel, niet
-opgehaald door teampersoneel, naar een toeschouwer wordt gegooid. Afval of andere voorwerpen op een onzorgvuldige of gevaarlijke manier
-weggooien (bijv. Bidon of ander voorwerp dat achterblijft of terugkaatst op de weg, direct of met overmatige kracht naar de toeschouwer wordt
-geworpen, waardoor een gevaarlijke manoeuvre door een andere renner of voertuig wordt veroorzaakt, waardoor de toeschouwer de weg op gaat)
-
-
-
-
-Eendaagse wedstrijden:
-
-Renner of andere licentiehouder.
-
-1e overtreding: 100 boete
-
-2e overtreding: 200 boete en Eliminatie
-of diskwalificatie
-
-Renner of andere licentiehouder.
-
-1e overtreding: 50 boete
-
-2e overtreding: 100 boete en
-Eliminatie of diskwalificatie
-
-Renner of andere licentiehouder.
-
-1e overtreding: Waarschuwing
-
-2e overtreding: 25 boete
-
-3e overtreding 25 boete en/of
-Eliminatie of diskwalificatie
-
-Etappewedstrijden:
-1e overtreding: 100 boete
-
-2e overtreding: 200 boete en 1 minuut
-tijdstraf
-
-3e overtreding: 400 boete en eliminatie
-of diskwalificatie
-
-1e overtreding: 50 boete
-
-2e overtreding: 100 boete en 1 minuut
-tijdstraf
-
-3e overtreding: 200 boete en
-eliminatie of diskwalificatie
-
-1e overtreding: Waaschuwing
-
-2e overtreding: 25 boete en 1 minuut
-tijdstraf
-
-3e overtreding: 25 boete en eliminatie
-of diskwalificatie
+|  | In aanvulling op bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. | In aanvulling op bovenstaande bepalingen, in ernstige gevallen, in geval van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren. |
+| --- | --- | --- | --- |
+| 8.2.2 Gericht op een ander persoon (inclusief toeschouwers) | Renner. 50 tot 500 * boete per overtreding  Andere licentiehouder. 1.000 boete | Renner. 25 tot 500 * boete per overtreding  Andere licentiehouder. 1.000 boete | Renner. 25 tot 500 * boete per overtreding  Andere licentiehouder. 1.000 boete |
+|  | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en een licentiehouder uitsluiten. | In aanvulling op de bovenstaande bepalingen, in ernstige gevallen, in gevallen van herhaalde overtreding of verzwarende omstandigheden of indien een overtreding een voordeel biedt, kan het college van commissarissen een renner elimineren of diskwalificeren en een licentiehouder uitsluiten. |
+| 8.3 Renner of teampersoneel die afval of andere voorwerpen weggooit buiten de afvalzones, of niet teruggeeft aan team- of organisatiepersoneel, niet opgehaald door teampersoneel, naar een toeschouwer wordt gegooid. Afval of andere voorwerpen op een onzorgvuldige of gevaarlijke manier weggooien (bijv. Bidon of ander voorwerp dat achterblijft of terugkaatst op de weg, direct of met overmatige kracht naar de toeschouwer wordt geworpen, waardoor een gevaarlijke manoeuvre door een andere renner of voertuig wordt veroorzaakt, waardoor de toeschouwer de weg op gaat) |  |  |  |
+| Eendaagse wedstrijden: | Renner of andere licentiehouder.  1e overtreding: 100 boete  2e overtreding: 200 boete en Eliminatie of diskwalificatie | Renner of andere licentiehouder.  1e overtreding: 50 boete  2e overtreding: 100 boete en Eliminatie of diskwalificatie | Renner of andere licentiehouder.  1e overtreding: Waarschuwing  2e overtreding: 25 boete  3e overtreding 25 boete en/of Eliminatie of diskwalificatie |
+| Etappewedstrijden: | 1e overtreding: 100 boete  2e overtreding: 200 boete en 1 minuut tijdstraf  3e overtreding: 400 boete en eliminatie of diskwalificatie | 1e overtreding: 50 boete  2e overtreding: 100 boete en 1 minuut tijdstraf  3e overtreding: 200 boete en eliminatie of diskwalificatie | 1e overtreding: Waaschuwing  2e overtreding: 25 boete en 1 minuut tijdstraf  3e overtreding: 25 boete en eliminatie of diskwalificatie |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 79 VAN 98
 
-8.4 [Artikel vervallen].
-
-8.5 Een glazen voorwerp
-meevoeren of gebruiken
-
-Alle licentiehouder: 50 boete en
-uitsluiting
-
-Alle licentiehouder: 25 boete en
-uitsluiting
-
-Alle licentiehouder: Eliminatie of
-diskwalificatie
-8.6 Onbehoorlijk of ongepast
-gedrag (in het bijzonder
-uitkleden plassen in het
-openbaar aan het begin of
-einde of tijdens de wedstrijd)
-
-Renner of andere licentiehouder:
-1e overtreding 50 boete
-Volgende overtredingen 100 boete
-
-Renner of andere licentiehouder:
-1e overtreding 25 boete
-Volgende overtredingen 50 boete
-
-Renner of andere licentiehouder:
-Waarschuwing
-Volgende overtredingen 25 boete
-Opmerking: de sanctie wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd
-
-9. Specifieke sancties voor tijdritten
-
-9.1.1 Starten op een fiets die niet
-door de commissaris in een
-individuele tijdrit is
-gecontroleerd
-
-Renner. Eliminatie of diskwalificatie
-
-Team. 200 boete
-
-Renner. Eliminatie of diskwalificatie
-
-Team. 100 boete
-
-Renner. Eliminatie of diskwalificatie
-
-9.1.2 Starten op een fiets die niet
-door de commissaris is
-gecontroleerd in een
-ploegentijdrit
-
-Team. 200 boete en eliminatie of
-diskwalificatie
-
-Team. 100 boete en eliminatie of
-diskwalificatie
-
-Team. Eliminatie of diskwalificatie
-
-[GEWIJZIGD]9.1.3 Gebruik van een niet-
-reglementair fietsaccessoire of niet
--reglementaire of niet-
-goedgekeurde aanpassing aan een
-accessoire [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner, 50 en 10 seconden tijdstraf
-
-Team: 150 boete per betrokken renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner, 25 en 10 seconden tijdstraf
-
-Team: 75 boete per betrokken renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-[GEWIJZIGD]9.1.4 Gebruik van een niet-
-reglementair accessoire(bv brillen,
-sokken of overschoenen gedragen
-door een renner of niet -
-reglementaire of niet-goedgekeurde
-aanpassing aan een accessoire [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner, 50 en 10 seconden tijdstraf
-
-Team: 150 boete per betrokken renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Renner, 25 en 10 seconden tijdstraf
-
-Team: 75 boete per betrokken renner [/GEWIJZIGD]
-
-[GEWIJZIGD]Waarschuwing + Toelichting [/GEWIJZIGD]
-
-9.2 Fietsen en apparatuur niet ten
-minste [GEWIJZIGD]10 [/GEWIJZIGD]minuten voor
-de starttijd van een renner in een
-individuele tijdrit, [GEWIJZIGD]en 15 minuten
-voor de starttijd van een team in
-een ploegentijdrit aangeboden ter
-controle[/GEWIJZIGD]
-
-Renner, 50 boete per renner
-
-Ploegleider. 50 boete per betrokken
-renner
-
-Renner, 25 boete per renner
-
-Ploegleider. 25 boete per betrokken
-renner
-
-9.3 Renner of team die niet de
-reglementaire afstanden en
-
-Renner. 50 boete per overtreding
-
-Renner. 25 boete per overtreding
+| 8.4 [Artikel vervallen]. |  |  |  |
+| --- | --- | --- | --- |
+| 8.5 Een glazen voorwerp meevoeren of gebruiken | Alle licentiehouder: 50 boete en uitsluiting | Alle licentiehouder: 25 boete en uitsluiting | Alle licentiehouder: Eliminatie of diskwalificatie |
+| 8.6 Onbehoorlijk of ongepast gedrag (in het bijzonder uitkleden plassen in het openbaar aan het begin of einde of tijdens de wedstrijd) | Renner of andere licentiehouder: 1e overtreding 50 boete Volgende overtredingen 100 boete | Renner of andere licentiehouder: 1e overtreding 25 boete Volgende overtredingen 50 boete | Renner of andere licentiehouder: Waarschuwing Volgende overtredingen 25 boete |
+|  | Opmerking: de sanctie wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd | Opmerking: de sanctie wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd | Opmerking: de sanctie wordt toegepast op het team als de licentiehouder niet specifiek kan worden geïdentificeerd |
+| 9. Specifieke sancties voor tijdritten |  |  |  |
+| 9.1.1 Starten op een fiets die niet door de commissaris in een individuele tijdrit is gecontroleerd | Renner. Eliminatie of diskwalificatie  Team. 200 boete | Renner. Eliminatie of diskwalificatie  Team. 100 boete | Renner. Eliminatie of diskwalificatie |
+| 9.1.2 Starten op een fiets die niet door de commissaris is gecontroleerd in een ploegentijdrit | Team. 200 boete en eliminatie of diskwalificatie | Team. 100 boete en eliminatie of diskwalificatie | Team. Eliminatie of diskwalificatie |
+| [GEWIJZIGD]9.1.3 Gebruik van een niet- reglementair fietsaccessoire of niet -reglementaire of niet- goedgekeurde aanpassing aan een accessoire[/GEWIJZIGD] | [GEWIJZIGD]Renner, 50 en 10 seconden tijdstraf  Team: 150 boete per betrokken renner[/GEWIJZIGD] | [GEWIJZIGD]Renner, 25 en 10 seconden tijdstraf  Team: 75 boete per betrokken renner[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+| [GEWIJZIGD]9.1.4 Gebruik van een niet- reglementair accessoire(bv brillen, sokken of overschoenen gedragen door een renner of niet - reglementaire of niet-goedgekeurde aanpassing aan een accessoire[/GEWIJZIGD] | [GEWIJZIGD]Renner, 50 en 10 seconden tijdstraf  Team: 150 boete per betrokken renner[/GEWIJZIGD] | [GEWIJZIGD]Renner, 25 en 10 seconden tijdstraf  Team: 75 boete per betrokken renner[/GEWIJZIGD] | [GEWIJZIGD]Waarschuwing + Toelichting[/GEWIJZIGD] |
+| 9.2 Fietsen en apparatuur niet ten minste [GEWIJZIGD]10[/GEWIJZIGD] minuten voor de starttijd van een renner in een individuele tijdrit, [GEWIJZIGD]en 15 minuten voor de starttijd van een team in een ploegentijdrit aangeboden ter controle[/GEWIJZIGD] | Renner, 50 boete per renner  Ploegleider. 50 boete per betrokken renner | Renner, 25 boete per renner  Ploegleider. 25 boete per betrokken renner |  |
+| 9.3 Renner of team die niet de reglementaire afstanden en | Renner. 50 boete per overtreding | Renner. 25 boete per overtreding |  |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -5555,402 +3450,65 @@ Renner. Waarschwuing en tijdstraf in
 overeenstemming met de tabel in
 artikel 2.12.007 quarter
 
-9.4 Het volgen van een voertuig
-dat een afstand van 25 m niet
-respecteert tijdens een
-individuele tijdrit
-
-Renner. 20 seconden tijdstraf per
-overtreding
-
-Ploegleider. 100 boete per overtreding
-
-Renner. 20 seconden tijdstraf per
-overtreding
-
-Ploegleider. 50 boete per overtreding
-
-9.5 Bijstand van welke aard dan ook (aanstoten, begeleiden of duwen) bij renners van hetzelfde team tijdens een ploegentijdrit, behalve in
-ingeval van een dreigend gevaar
-Eendaagse wedstrijden
-Renner. 50 boete per renner
-
-Team. 1 minuut straftijd
-
-Renner. 25 boete per renner
-
-Team. 1 minuut straftijd
-
-Etappe wedstrijden
-Renner. 50 boete per overtreding en 1
-minuut straftijd in het etappe resultaat
-voor iedere renner van de ploeg
-
-Renner. 25 boete per overtreding en
-1 minuut straftijd in het etappe
-resultaat voor iedere renner van de
-ploeg
-
-9.6 Volgend voertuig dat een afstand van 25 m niet respecteert tijdens een ploegentijdrit
-
-Eendaagse wedstrijden
-Team. 20 seconden straftijd
-
-Ploegleider. 100 boete
-
-Team. 20 seconden straftijd
-
-Ploegleider. 50 boete
-
-Team. 20 seconden straftijd
-
-Ploegleider. 50 boete
-Etappe wedstrijden
-Renner. 20 seconden straftijd voor
-iedere renner van het team
-
-Ploegleider. 100 boete
-
-Renner. 20 seconden straftijd voor
-iedere renner van het team
-
-Ploegleider. 50 boete
-
-Renner. 20 seconden straftijd voor
-iedere renner van het team
-
-Ploegleider. 50 boete
-9.7 Valse start minder dan 3
-seconden tijdens een
-gemengde estafette
-ploegentijdrit
-
-Ploeg. 10 seconden tijdstraf
-Ploeg. 10 seconden tijdstraf
-Ploeg. 5 seconden tijdstraf
+| 9.4 Het volgen van een voertuig dat een afstand van 25 m niet respecteert tijdens een individuele tijdrit | Renner. 20 seconden tijdstraf per overtreding  Ploegleider. 100 boete per overtreding | Renner. 20 seconden tijdstraf per overtreding  Ploegleider. 50 boete per overtreding |  |
+| --- | --- | --- | --- |
+| 9.5 Bijstand van welke aard dan ook (aanstoten, begeleiden of duwen) bij renners van hetzelfde team tijdens een ploegentijdrit, behalve in ingeval van een dreigend gevaar |  |  |  |
+| Eendaagse wedstrijden | Renner. 50 boete per renner  Team. 1 minuut straftijd | Renner. 25 boete per renner  Team. 1 minuut straftijd |  |
+| Etappe wedstrijden | Renner. 50 boete per overtreding en 1 minuut straftijd in het etappe resultaat voor iedere renner van de ploeg | Renner. 25 boete per overtreding en 1 minuut straftijd in het etappe resultaat voor iedere renner van de ploeg |  |
+| 9.6 Volgend voertuig dat een afstand van 25 m niet respecteert tijdens een ploegentijdrit |  |  |  |
+| Eendaagse wedstrijden | Team. 20 seconden straftijd  Ploegleider. 100 boete | Team. 20 seconden straftijd  Ploegleider. 50 boete | Team. 20 seconden straftijd  Ploegleider. 50 boete |
+| Etappe wedstrijden | Renner. 20 seconden straftijd voor iedere renner van het team  Ploegleider. 100 boete | Renner. 20 seconden straftijd voor iedere renner van het team  Ploegleider. 50 boete | Renner. 20 seconden straftijd voor iedere renner van het team  Ploegleider. 50 boete |
+| 9.7 Valse start minder dan 3 seconden tijdens een gemengde estafette ploegentijdrit | Ploeg. 10 seconden tijdstraf | Ploeg. 10 seconden tijdstraf | Ploeg. 5 seconden tijdstraf |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 81 VAN 98
 
-9.8 Valse start van meer dan 3
-seconden tijdens een
-gemengde estafette
-ploegentijdrit
+| 9.8 Valse start van meer dan 3 seconden tijdens een gemengde estafette ploegentijdrit | Ploeg. Eliminatie of diskwalificatie | Ploeg. Eliminatie of diskwalificatie | Ploeg. 30 seconden tijdstraf+ tijd te vroeg gestart |
+| --- | --- | --- | --- |
 
-Ploeg. Eliminatie of diskwalificatie
-Ploeg. Eliminatie of diskwalificatie
-Ploeg. 30 seconden tijdstraf+ tijd te
-vroeg gestart
-
-Aanvullende bepalingen
-
-101 Licentie
-
-101.1 Deelname aan een wedstrijd
-voor een andere categorie
-licentiehouders of waaraan
-anderszins ingevolgde de
-reglementen niet mag worden
-deelgenomen
-
-Schorsing van 1 maand
-Schorsing van 1 maand
-Schorsing van 14 dagen
-
-101.2 Wijziging of vervalsing van
-de licentie
-
-Intrekken licentie
-Intrekken licentie
-Intrekken licentie
-
-101.3 Deelname aan een wedstrijd
-tijdens een lopende schorsing
-
-Verdubbeling van de lopende schorsing
-Verdubbeling van de lopende
-schorsing
-
-Verdubbeling van de lopende
-schorsing
-
-102 Organisatie
-
-102.1 Het laten deelnemen van
-meer dan het toegestane maximale
-aantal deelnemers
-
-Bij criterium, omloop, cyclocross of
-baanwedstrijd € 15 per deelnemer
-waarmee het maximum wordt
-overschreden
-
-Overige wedstrijden: boete van 2x het
-voor de betreffende wedstrijd geldende
-inschrijfgeld per deelnemer voor elke
-deelnemer waarmee het toegestane
-max. deelnemers wordt overschreden
-
-Bij criterium, omloop, cyclocross of
-baanwedstrijd € 15 per deelnemer
-waarmee het maximum wordt
-overschreden
-
-Overige wedstrijden: boete van 2x het
-voor de betreffende wedstrijd
-geldende inschrijfgeld per deelnemer
-voor elke deelnemer waarmee het
-toegestane max. deelnemers wordt
-overschreden
-
-Bij criterium, omloop, cyclocross of
-baanwedstrijd € 15 per deelnemer
-waarmee het maximum wordt
-overschreden
-
-Overige wedstrijden: boete van 2x het
-voor de betreffende wedstrijd
-geldende inschrijfgeld per deelnemer
-voor elke deelnemer waarmee het
-toegestane max. deelnemers wordt
-overschreden
-102.2 Het niet voldoen aan de door
-de KNWU gestelde eisen m.b.t.
-wedstrijden door de organisatie
-
-€ 150 c.q. weigering c.q. intrekking van
-de wedstrijdlicentie
-
-€ 100 c.q. weigering c.q. intrekking
-van de wedstrijdlicentie
-
-€ 75 c.q. weigering c.q. intrekking van
-de wedstrijdlicentie
-
-102.3 Het door de organisatie op
-enigerlei wijze voeren of (laten)
-
-Min € 150 tot max € 600 per
-overtreding
-
-Min € 150 tot max € 600 per
-overtreding
-
-Min € 150 tot max € 600 per
-overtreding
+| Aanvullende bepalingen |  |  |  |
+| --- | --- | --- | --- |
+| 101 Licentie |  |  |  |
+| 101.1 Deelname aan een wedstrijd voor een andere categorie licentiehouders of waaraan anderszins ingevolgde de reglementen niet mag worden deelgenomen | Schorsing van 1 maand | Schorsing van 1 maand | Schorsing van 14 dagen |
+| 101.2 Wijziging of vervalsing van de licentie | Intrekken licentie | Intrekken licentie | Intrekken licentie |
+| 101.3 Deelname aan een wedstrijd tijdens een lopende schorsing | Verdubbeling van de lopende schorsing | Verdubbeling van de lopende schorsing | Verdubbeling van de lopende schorsing |
+| 102 Organisatie |  |  |  |
+| 102.1 Het laten deelnemen van meer dan het toegestane maximale aantal deelnemers | Bij criterium, omloop, cyclocross of baanwedstrijd € 15 per deelnemer waarmee het maximum wordt overschreden  Overige wedstrijden: boete van 2x het voor de betreffende wedstrijd geldende inschrijfgeld per deelnemer voor elke deelnemer waarmee het toegestane max. deelnemers wordt overschreden | Bij criterium, omloop, cyclocross of baanwedstrijd € 15 per deelnemer waarmee het maximum wordt overschreden  Overige wedstrijden: boete van 2x het voor de betreffende wedstrijd geldende inschrijfgeld per deelnemer voor elke deelnemer waarmee het toegestane max. deelnemers wordt overschreden | Bij criterium, omloop, cyclocross of baanwedstrijd € 15 per deelnemer waarmee het maximum wordt overschreden  Overige wedstrijden: boete van 2x het voor de betreffende wedstrijd geldende inschrijfgeld per deelnemer voor elke deelnemer waarmee het toegestane max. deelnemers wordt overschreden |
+| 102.2 Het niet voldoen aan de door de KNWU gestelde eisen m.b.t. wedstrijden door de organisatie | € 150 c.q. weigering c.q. intrekking van de wedstrijdlicentie | € 100 c.q. weigering c.q. intrekking van de wedstrijdlicentie | € 75 c.q. weigering c.q. intrekking van de wedstrijdlicentie |
+| 102.3 Het door de organisatie op enigerlei wijze voeren of (laten) | Min € 150 tot max € 600 per overtreding | Min € 150 tot max € 600 per overtreding | Min € 150 tot max € 600 per overtreding |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 82 VAN 98
 
-uiten van reclame(boodschappen)
-welke niet zijn toegestaan
-102.4 Het door de organisatie
-uitreiken van niet toegestane of
-ondeugdelijke rugnummers c.q. het
-bij de uitreiking onvoldoende
-rugnummers ter beschikking
-hebben
-
-Max € 300
-Max € 150
-Max € 100
-
-103 Uitrusting
-
-103.1 De deelnemer waarvan blijkt
-dat voor aanvang van de start geen
-of een ondeugdelijke transponder
-heeft
-
-Startverbod
-Startverbod
-Waarschuwing en/of geen uitslag
-
-103.2 De deelnemer waarvan blijkt
-dat tijdens de wedstrijd gereden
-zonder of een ondeugdelijk
-transponder zonder dat van
-nalatigheid door de deelnemers
-sprake is
-
-1e overtreding € 25
-2e overtreding € 50
-1e overtreding € 25
-2e overtreding € 50
-Waarschuwing en/of geen uitslag
-
-104 Gedrag & Verantwoordelijkheden
-
-104.1 De deelnemer die zich op het
-parcours begeeft terwijl daarop een
-(andere) wedstrijd of activiteit aan
-de gang is of verwacht wordt
-
-1e overtreding: Waarschuwing
-2e overtreding: Startverbod
-1e overtreding: Waarschuwing
-2e overtreding: Startverbod
-1e ,2e overtreding: Waarschuwing
-3e overtreding: Startverbod
-
-104.2 De deelnemer die zich op het
-parcours begeeft terwijl daarop een
-(ploegen)tijdrit aan de gang is
-
-Startverbod
-Startverbod
-1e overtreding: Waarschuwing
-2e overtreding: Startverbod
-
-104.3 De deelnemer die zich op het
-parcours begeeft tijdens een
-etappewedstrijd door een
-deelnemer of ploeg
-
-15 seconden tijdstraf per deelnemer
-15 seconden tijdstraf per deelnemer
-15 seconden tijdstraf per deelnemer
-
-104.4 De deelnemer van wie de
-niet gelicentieerde begeleider of
-supporter zich misdraagt of
-schuldig maakt aan (een)
-overtreding(en) van de KNWU-
-reglementen
-
-Diskwalificatie tijden een lopende
-wedstrijd
-Min € 15 tot max € 150
-Schorsing tot max. 6 maanden
-Intrekken van licentie
-
-Diskwalificatie tijden een lopende
-wedstrijd
-Min € 15 tot max € 150
-Schorsing tot max. 6 maanden
-Intrekken van licentie
-
-Diskwalificatie tijden een lopende
-wedstrijd
-Min € 15 tot max € 150
-Schorsing tot max. 6 maanden
-Intrekken van licentie
+| uiten van reclame(boodschappen) welke niet zijn toegestaan |  |  |  |
+| --- | --- | --- | --- |
+| 102.4 Het door de organisatie uitreiken van niet toegestane of ondeugdelijke rugnummers c.q. het bij de uitreiking onvoldoende rugnummers ter beschikking hebben | Max € 300 | Max € 150 | Max € 100 |
+| 103 Uitrusting |  |  |  |
+| 103.1 De deelnemer waarvan blijkt dat voor aanvang van de start geen of een ondeugdelijke transponder heeft | Startverbod | Startverbod | Waarschuwing en/of geen uitslag |
+| 103.2 De deelnemer waarvan blijkt dat tijdens de wedstrijd gereden zonder of een ondeugdelijk transponder zonder dat van nalatigheid door de deelnemers sprake is | 1e overtreding € 25 2e overtreding € 50 | 1e overtreding € 25 2e overtreding € 50 | Waarschuwing en/of geen uitslag |
+| 104 Gedrag & Verantwoordelijkheden |  |  |  |
+| 104.1 De deelnemer die zich op het parcours begeeft terwijl daarop een (andere) wedstrijd of activiteit aan de gang is of verwacht wordt | 1e overtreding: Waarschuwing 2e overtreding: Startverbod | 1e overtreding: Waarschuwing 2e overtreding: Startverbod | 1e ,2e overtreding: Waarschuwing 3e overtreding: Startverbod |
+| 104.2 De deelnemer die zich op het parcours begeeft terwijl daarop een (ploegen)tijdrit aan de gang is | Startverbod | Startverbod | 1e overtreding: Waarschuwing 2e overtreding: Startverbod |
+| 104.3 De deelnemer die zich op het parcours begeeft tijdens een etappewedstrijd door een deelnemer of ploeg | 15 seconden tijdstraf per deelnemer | 15 seconden tijdstraf per deelnemer | 15 seconden tijdstraf per deelnemer |
+| 104.4 De deelnemer van wie de niet gelicentieerde begeleider of supporter zich misdraagt of schuldig maakt aan (een) overtreding(en) van de KNWU- reglementen | Diskwalificatie tijden een lopende wedstrijd Min € 15 tot max € 150 Schorsing tot max. 6 maanden Intrekken van licentie | Diskwalificatie tijden een lopende wedstrijd Min € 15 tot max € 150 Schorsing tot max. 6 maanden Intrekken van licentie | Diskwalificatie tijden een lopende wedstrijd Min € 15 tot max € 150 Schorsing tot max. 6 maanden Intrekken van licentie |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 83 VAN 98
 
-104.5 Een club of selectie welke
-niet tijdig inschrijft voor een
-wedstrijd waartoe deze zich
-middels een voorinschrijvng heeft
-verplicht
-
-€ 100 boete
-€ 50 boete
-€ 30 boete
-
-104.6 Een Club of Selectie welke
-niet deelneemt aan een wedstijd
-waartoe deze zich heeft verplicht
-
-€ 200 + het voor de wedstrijd geldende
-inschrijfgeld per voltallige ploeg
-
-€ 100 + het voor de wedstrijd
-geldende inschrijfgeld per voltallige
-ploeg
-
-€ 50 + het voor de wedstrijd geldende
-inschrijfgeld per voltallige ploeg
-
-104.7 De renner die, tijdens een
-ploegentijdrit, na aanvankelijk te
-hebben opgegeven, zijn plaats
-weer inneemt in de ploeg
-
-Verwijdering uit de wedstrijd van de
-ploeg
-
-Verwijdering uit de wedstrijd van de
-ploeg
-
-Verwijdering uit de wedstrijd van de
-ploeg
-
-104.8 De deelnemer die een
-meerdaagse of etappewedstrijd
-heeft gestaakt en tijdens die
-wedstrijd zonder de vereiste
-schriftelijke toestemming deelneemt
-aan (een) andere wedstrijd(en)
-
-Min € 30 tot max. € 300, vermeerderd
-met de in die wedstrijd(en) gewonnen
-prijzen en premies
-
-schorsing 14 dagen
-
-Min € 30 tot max. € 300, vermeerderd
-met de in die wedstrijd(en) gewonnen
-prijzen en premies
-
-schorsing 7 dagen
-
-Max. € 300, vermeerderd met de in
-die wedstrijd(en) gewonnen prijzen
-en premies
-
-105 Neutrale ondersteuning
-
-105.1 De neutrale materiaalwagen
-welke niet is uitgerust conform de
-eisen
-
-€ 100 + eventueel achteruitplaatsing in
-de volgerskaravaan
-
-€ 50 + eventueel achteruitplaatsing in
-de volgerskaravaan
-
-€ 50 + eventueel achteruitplaatsing in
-de volgerskaravaan
-
-105.2 Een club op selectie die haar
-toezegging/bevestiging om een
-(neutrale) materiaalwagen in te
-zetten voor een wedstrijd niet
-nakomt
-
-Max € 175
-Max € 175
-Max € 175
-
-106 Jeugd
-
-106.1 Jeugdrenner die op een dag
-aan twee wedstrijden deelneemt
-
-1e overtreding: 2 weken schorsing
-2e overtreding 1 maand schorsing
-1e overtreding: 2 weken schorsing
-2e overtreding 1 maand schorsing
-106.2 De Deelnemer die zich niet
-houdt aan de voor zijn/haar
-categorie voorgeschreven
-versnelling/verzet
-
-Voor de wedstrijd: startverbod
-Tijdens of na de wedstrijd:
-Verwijdering uit de uitslag + 1 week
-schorsing
-
-Voor de wedstrijd: startverbod
-Tijdens of na de wedstrijd:
-Verwijdering uit de uitslag + 1 week
-schorsing
+| 104.5 Een club of selectie welke niet tijdig inschrijft voor een wedstrijd waartoe deze zich middels een voorinschrijvng heeft verplicht | € 100 boete | € 50 boete | € 30 boete |
+| --- | --- | --- | --- |
+| 104.6 Een Club of Selectie welke niet deelneemt aan een wedstijd waartoe deze zich heeft verplicht | € 200 + het voor de wedstrijd geldende inschrijfgeld per voltallige ploeg | € 100 + het voor de wedstrijd geldende inschrijfgeld per voltallige ploeg | € 50 + het voor de wedstrijd geldende inschrijfgeld per voltallige ploeg |
+| 104.7 De renner die, tijdens een ploegentijdrit, na aanvankelijk te hebben opgegeven, zijn plaats weer inneemt in de ploeg | Verwijdering uit de wedstrijd van de ploeg | Verwijdering uit de wedstrijd van de ploeg | Verwijdering uit de wedstrijd van de ploeg |
+| 104.8 De deelnemer die een meerdaagse of etappewedstrijd heeft gestaakt en tijdens die wedstrijd zonder de vereiste schriftelijke toestemming deelneemt aan (een) andere wedstrijd(en) | Min € 30 tot max. € 300, vermeerderd met de in die wedstrijd(en) gewonnen prijzen en premies  schorsing 14 dagen | Min € 30 tot max. € 300, vermeerderd met de in die wedstrijd(en) gewonnen prijzen en premies  schorsing 7 dagen | Max. € 300, vermeerderd met de in die wedstrijd(en) gewonnen prijzen en premies |
+| 105 Neutrale ondersteuning |  |  |  |
+| 105.1 De neutrale materiaalwagen welke niet is uitgerust conform de eisen | € 100 + eventueel achteruitplaatsing in de volgerskaravaan | € 50 + eventueel achteruitplaatsing in de volgerskaravaan | € 50 + eventueel achteruitplaatsing in de volgerskaravaan |
+| 105.2 Een club op selectie die haar toezegging/bevestiging om een (neutrale) materiaalwagen in te zetten voor een wedstrijd niet nakomt | Max € 175 | Max € 175 | Max € 175 |
+| 106 Jeugd |  |  |  |
+| 106.1 Jeugdrenner die op een dag aan twee wedstrijden deelneemt |  | 1e overtreding: 2 weken schorsing 2e overtreding 1 maand schorsing | 1e overtreding: 2 weken schorsing 2e overtreding 1 maand schorsing |
+| 106.2 De Deelnemer die zich niet houdt aan de voor zijn/haar categorie voorgeschreven versnelling/verzet |  | Voor de wedstrijd: startverbod Tijdens of na de wedstrijd: Verwijdering uit de uitslag + 1 week schorsing | Voor de wedstrijd: startverbod Tijdens of na de wedstrijd: Verwijdering uit de uitslag + 1 week schorsing |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -6117,52 +3675,26 @@ Cycling wordt de renner/renster na classificatie ingedeeld in een bepaalde klass
 Vanaf het seizoen 2023 gebruiken wij binnen de KNWU-wedstrijden de helmkleuren conform UCI eisen
 (reglementsartikel 16.10.002) te weten;
 
-RED
+|  | C5 | men/women |
+| --- | --- | --- |
+| RED | T2 | men |
+|  | H4 | men/women |
+|  | B | men |
+|  | C4 | men/women |
+| WHITE | H3 | men/women |
+|  | B | women |
+|  | T2 | women |
+|  | C3 | men/women |
+| BLUE | H2 | men |
+|  | T1 | women |
+|  | H5 | men/women |
+| BLACK | C2 | men/women |
+|  | T1 | men |
+| YELLOW | C1 | men/women |
+|  | H2 | women |
+| GREEN | H1 | men |
+| ORANGE | H1 | women |
 
-C5 men/women
-
-T2 men
-
-H4 men/women
-
-B men
-
-WHITE
-
-C4 men/women
-
-H3 men/women
-
-B women
-
-T2 women
-
-BLUE
-
-C3 men/women
-
-H2 men
-
-T1 women
-
-BLACK
-
-H5 men/women
-
-C2 men/women
-
-T1 men
-
-YELLOW
-C1 men/women
-
-H2 women
-
-GREEN
-H1 men
-
-ORANGE
-H1 women
 Handbikers in de OPENKLASSE rijden zo wel bij de mannen als bij de vrouwen met een Zwarte helm of
 cap.
 De sporters dienen zelf voor de juiste helmkleur of helmcap te zorgen.
@@ -6300,17 +3832,11 @@ MEDAILLEVERDELING NK ID-CYCLING
 De medailleverdeling bij de nationale kampioenschappen in alle categorieën binnen de discipline “ID-
 Cycling” zal volgens onderstaand schema worden gehanteerd.
 
-Kampioenschap met 1 deelnemer per klasse
-NK trui. Eén medaille
-
-Kampioenschap met 2 deelnemers per klasse
-NK trui. Twee medailles
-
-Kampioenschap met 3 deelnemers per klasse
-NK trui. Drie medailles
-
-Kampioenschap met minimaal 4 deelnemers per klasse
-NK trui. Drie medailles
+| Kampioenschap met 1 deelnemer per klasse | NK trui. Eén medaille |
+| --- | --- |
+| Kampioenschap met 2 deelnemers per klasse | NK trui. Twee medailles |
+| Kampioenschap met 3 deelnemers per klasse | NK trui. Drie medailles |
+| Kampioenschap met minimaal 4 deelnemers per klasse | NK trui. Drie medailles |
 
 De uit te reiken truien zijn bestemd voor de winnaar (nationaal kampioen). Deze ontvangt tevens een
 gouden medaille. De tweede en derde aankomende ontvangen resp. het zilver en brons. Het aantal
@@ -6335,100 +3861,28 @@ Richtlijn / Advies Prijzenschema’s Wegwedstrijden per categorie Mannen en Vrou
 Het staat de organisatie vrij om een ander prijzenschema te hanteren. Dit dient vanaf de
 aanmelding van de wedstrijd bekend en gepubliceerd te zijn op de KNWU website.
 
-WEDSTRIJDCATEGORIE
-CAT. I
-(INT. KALENDER)
-
-CAT. II
-(NAT. KALENDER)
-
-CAT. III & IV
-(REGIOKALENDER)
-
-CATEGORIE
-Eendaagse wegwedstrijd,
-etappewedstrijd
-(Inclusief omlopen)
-
-Eendaagse Wegwedstrijd,
-etappewedstrijd
-(Inclusief omlopen van meer dan
-10 km op de Nationale kalender)
-
-Criterium en omlopen
-op de Regiokalender
-
-PROFESSIONALS A EN B
-(TT,S)
-
-UCI-schema
-Min. D - Max. A
----
-
-PROF-B + ELITE/BELOFTE
-UCI-schema
-Min. D - Max. A
-Max. E
-
-ELITE-/BELOFTEN
-UCI-schema
-Min. D - Max. A
-Max. E
-
-TOPCOMPETITIE
-UCI-schema
-G
-n.v.t.
-
-CLUBCOMPETITIE
-n.v.t.
-G
-n.v.t.
-
-WOMEN CYCLING
-SERIES
-
-n.v.t.
-G
----
-
-BELOFTEN
-UCI-schema
-Min. G - Max. D
----
-
-KLASSE 1
-n.v.t.
-Min. M* - Max. K*
-Max. L*
-
-KLASSE 2
-n.v.t.
-Min. T - Max. R
-Max. R
-
-MASTERS
-UCI-schema
-Min. S - Max. P*
-Max. R
-
-JUNIOREN
-UCI-schema
-Min. M - Max. K
-Max. L
-
-U17
-n.v.t.
-Min. S - Max. P
-Max. R
-
-VROUWEN, JUNIOR-
-VROUWEN, U17-
-MEISJES
-
-n.v.t.
-Min. S - Max. K
-Max. L
+| WEDSTRIJDCATEGORIE | CAT. I | CAT. II | CAT. III & IV |
+| --- | --- | --- | --- |
+|  | (INT. KALENDER) | (NAT. KALENDER) | (REGIOKALENDER) |
+| CATEGORIE | Eendaagse wegwedstrijd, | Eendaagse Wegwedstrijd, | Criterium en omlopen |
+|  | etappewedstrijd (Inclusief omlopen) | etappewedstrijd (Inclusief omlopen van meer dan | op de Regiokalender |
+|  |  | 10 km op de Nationale kalender) |  |
+| PROFESSIONALS A EN B (TT,S) | UCI-schema | Min. D - Max. A | --- |
+| PROF-B + ELITE/BELOFTE | UCI-schema | Min. D - Max. A | Max. E |
+| ELITE-/BELOFTEN | UCI-schema | Min. D - Max. A | Max. E |
+| TOPCOMPETITIE | UCI-schema | G | n.v.t. |
+| CLUBCOMPETITIE | n.v.t. | G | n.v.t. |
+| WOMEN CYCLING | n.v.t. | G | --- |
+| SERIES |  |  |  |
+| BELOFTEN | UCI-schema | Min. G - Max. D | --- |
+| KLASSE 1 | n.v.t. | Min. M* - Max. K* | Max. L* |
+| KLASSE 2 | n.v.t. | Min. T - Max. R | Max. R |
+| MASTERS | UCI-schema | Min. S - Max. P* | Max. R |
+| JUNIOREN | UCI-schema | Min. M - Max. K | Max. L |
+| U17 | n.v.t. | Min. S - Max. P | Max. R |
+| VROUWEN, JUNIOR- | n.v.t. | Min. S - Max. K | Max. L |
+| VROUWEN, U17- |  |  |  |
+| MEISJES |  |  |  |
 
 *= Maximaal 20 prijzen
 
@@ -6452,95 +3906,22 @@ Richtlijn/Advies Prijzenschema’s Mountainbikewedstrijden per categorie:
 Het staat de organisatie vrij om een ander prijzenschema te hanteren. Dit dient vanaf de aanmelding van
 de wedstrijd bekend en gepubliceerd te zijn op de KNWU website.
 
-WEDSTRIJD CATEGORIE
-CAT I
-(INT. KALENDER)
-
-CAT II
-(NAT.KALENDER)
-
-CAT. III & IV
-(REGIOKALENDER)
-
-LICENTIECATEGORIE
-Alle
-A -
-
-1
-A- 2
-B
-
-ELITE-MANNEN & BELOFTEN
-UCI-schema
-D
-F*
-Max €
-
-1.150
-W of T
-
-BELOFTEN
-UCI-schema
-F*
-n.v.t.
-n.v.t.
-W of T
-
-VROUWEN
-UCI-schema
-F*
-M*
-Max € 700
-W of T
-
-JUN./NWL/ VROUW
-n.v.t.
-R**
-T**
-n.v.t.
-W of T
-
-JUNIOREN
-UCI-schema
-M
-R
-Max € 250
-W of T
-
-U17
-n.v.t.
-R
-T
-Max € 175
-W of T
-
-KLASSE 1
-n.v.t.
-M*
-R*
-Max € 250
-W of T
-
-MASTERS (30+)
-n.v.t.
-M*
-R*
-Max € 250
-W of T
-
-MASTERS (40+)
-n.v.t.
-M*
-R*
-Max € 250
-W of T
-
-JEUGD U7-U15
-n.v.t.
-W
-W
-W
-W
+| WEDSTRIJD CATEGORIE | CAT I |  | CAT II | CAT II |  | CAT. III & IV |
+| --- | --- | --- | --- | --- | --- | --- |
+|  | (INT. KALENDER) |  | (NAT.KALENDER) | (NAT.KALENDER) | (NAT.KALENDER) | (REGIOKALENDER) |
+| LICENTIECATEGORIE | Alle | A - | A - | A- 2 | B |  |
+|  |  | 1 | 1 |  |  |  |
+| ELITE-MANNEN & BELOFTEN | UCI-schema | D | D | F* | Max € | W of T |
+|  |  |  |  |  | 1.150 |  |
+| BELOFTEN | UCI-schema | F* | F* | n.v.t. | n.v.t. | W of T |
+| VROUWEN | UCI-schema | F* | F* | M* | Max € 700 | W of T |
+| JUN./NWL/ VROUW | n.v.t. | R** | R** | T** | n.v.t. | W of T |
+| JUNIOREN | UCI-schema | M | M | R | Max € 250 | W of T |
+| U17 | n.v.t. | R | R | T | Max € 175 | W of T |
+| KLASSE 1 | n.v.t. | M* | M* | R* | Max € 250 | W of T |
+| MASTERS (30+) | n.v.t. | M* | M* | R* | Max € 250 | W of T |
+| MASTERS (40+) | n.v.t. | M* | M* | R* | Max € 250 | W of T |
+| JEUGD U7-U15 | n.v.t. | W | W | W | W | W |
 
 * = Maximaal 20 prijzen
 ** = Indien als aparte wedstrijd verreden
@@ -6554,1177 +3935,112 @@ VERSIE 20260918
 18.2.4 PRIJZENSCHEMA’S ALGEMEEN
 Schema A: Zie Int. Klasse ME 1.2 Zie verder www.uci.org onder "publications"
 
-SCHEMA
-A
-B
-C
-D
-E
-
-1E
-340,00
-340,00
-270,00
-270,00
-160,00
-160,00
-135,00
-135,00
-
-2E
-275,00
-615,00
-225,00
-495,00
-135,00
-295,00
-115,00
-250,00
-
-3E
-205,00
-820,00
-180,00
-675,00
-125,00
-420,00
-90,00
-340,00
-
-4E
-135,00
-955,00
-135,00
-810,00
-115,00
-535,00
-80,00
-420,00
-
-5E
-115,00
-1070,00
-115,00
-925,00
-100,00
-635,00
-65,00
-485,00
-
-6E
-95,00
-1165,00
-105,00
-1030,00
-90,00
-725,00
-55,00
-540,00
-
-7E
-70,00
-1235,00
-90,00
-1120,00
-80,00
-805,00
-50,00
-590,00
-
-8E
-65,00
-1300,00
-90,00
-1210,00
-70,00
-875,00
-45,00
-635,00
-
-9E
-60,00
-1360,00
-80,00
-1290,00
-55,00
-930,00
-45,00
-680,00
-
-10E
-55,00
-1415,00
-80,00
-1370,00
-55,00
-985,00
-45,00
-725,00
-
-11E
-45,00
-1460,00
-75,00
-1445,00
-50,00
-1035,00
-40,00
-765,00
-
-12E
-45,00
-1505,00
-75,00
-1520,00
-50,00
-1085,00
-40,00
-805,00
-
-13E
-40,00
-1545,00
-70,00
-1590,00
-50,00
-1135,00
-40,00
-845,00
-
-14E
-40,00
-1585,00
-70,00
-1660,00
-45,00
-1180,00
-35,00
-880,00
-
-15E
-35,00
-1620,00
-70,00
-1730,00
-45,00
-1225,00
-35,00
-915,00
-
-16E
-30,00
-1650,00
-65,00
-1795,00
-40,00
-1265,00
-35,00
-950,00
-
-17E
-25,00
-1675,00
-65,00
-1860,00
-40,00
-1305,00
-30,00
-980,00
-
-18E
-20,00
-1695,00
-60,00
-1920,00
-35,00
-1340,00
-30,00
-1010,00
-
-19E
-20,00
-1715,00
-60,00
-1980,00
-35,00
-1375,00
-30,00
-1040,00
-
-20E
-20,00
-1735,00
-60,00
-2040,00
-35,00
-1410,00
-30,00
-1070,00
-
-21E
-20,00
-1755,00
-55,00
-2095,00
-35,00
-1445,00
-30,00
-1100,00
-
-22E
-15,00
-1770,00
-55,00
-2150,00
-30,00
-1475,00
-30,00
-1130,00
-
-23E
-15,00
-1785,00
-55,00
-2205,00
-30,00
-1505,00
-25,00
-1155,00
-
-24E
-15,00
-1800,00
-50,00
-2255,00
-30,00
-1535,00
-25,00
-1180,00
-
-25E
-15,00
-1815,00
-50,00
-2305,00
-25,00
-1560,00
-20,00
-1200,00
-
-26E
-15,00
-1830,00
-50,00
-2355,00
-25,00
-1585,00
-20,00
-1220,00
-
-27E
-10,00
-1840,00
-50,00
-2405,00
-25,00
-1610,00
-15,00
-1235,00
-
-28E
-10,00
-1850,00
-45,00
-2450,00
-20,00
-1630,00
-15,00
-1250,00
-
-29E
-10,00
-1860,00
-45,00
-2495,00
-20,00
-1650,00
-10,00
-1260,00
-
-30E
-
-10,00
-1870,00
-45,00
-2540,00
-20,00
-1670,00
-10,00
-1270,00
+| SCHEMA | A |  | B |  |  | C |  |  | D |  | E |  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1E |  | 340,00 |  | 340,00 | 270,00 |  | 270,00 | 160,00 | 160,00 | 135,00 |  | 135,00 |
+| 2E |  | 275,00 |  | 615,00 | 225,00 |  | 495,00 | 135,00 | 295,00 | 115,00 |  | 250,00 |
+| 3E |  | 205,00 |  | 820,00 | 180,00 |  | 675,00 | 125,00 | 420,00 | 90,00 |  | 340,00 |
+| 4E |  | 135,00 |  | 955,00 | 135,00 |  | 810,00 | 115,00 | 535,00 | 80,00 |  | 420,00 |
+| 5E |  | 115,00 |  | 1070,00 | 115,00 |  | 925,00 | 100,00 | 635,00 | 65,00 |  | 485,00 |
+| 6E |  | 95,00 |  | 1165,00 | 105,00 |  | 1030,00 | 90,00 | 725,00 | 55,00 |  | 540,00 |
+| 7E |  | 70,00 |  | 1235,00 | 90,00 |  | 1120,00 | 80,00 | 805,00 | 50,00 |  | 590,00 |
+| 8E |  | 65,00 |  | 1300,00 | 90,00 |  | 1210,00 | 70,00 | 875,00 | 45,00 |  | 635,00 |
+| 9E |  | 60,00 |  | 1360,00 | 80,00 |  | 1290,00 | 55,00 | 930,00 | 45,00 |  | 680,00 |
+| 10E |  | 55,00 |  | 1415,00 | 80,00 |  | 1370,00 | 55,00 | 985,00 | 45,00 |  | 725,00 |
+| 11E |  | 45,00 |  | 1460,00 | 75,00 |  | 1445,00 | 50,00 | 1035,00 | 40,00 |  | 765,00 |
+| 12E |  | 45,00 |  | 1505,00 | 75,00 |  | 1520,00 | 50,00 | 1085,00 | 40,00 |  | 805,00 |
+| 13E |  | 40,00 |  | 1545,00 | 70,00 |  | 1590,00 | 50,00 | 1135,00 | 40,00 |  | 845,00 |
+| 14E |  | 40,00 |  | 1585,00 | 70,00 |  | 1660,00 | 45,00 | 1180,00 | 35,00 |  | 880,00 |
+| 15E |  | 35,00 |  | 1620,00 | 70,00 |  | 1730,00 | 45,00 | 1225,00 | 35,00 |  | 915,00 |
+| 16E |  | 30,00 |  | 1650,00 | 65,00 |  | 1795,00 | 40,00 | 1265,00 | 35,00 |  | 950,00 |
+| 17E |  | 25,00 |  | 1675,00 | 65,00 |  | 1860,00 | 40,00 | 1305,00 | 30,00 |  | 980,00 |
+| 18E |  | 20,00 |  | 1695,00 | 60,00 |  | 1920,00 | 35,00 | 1340,00 | 30,00 |  | 1010,00 |
+| 19E |  | 20,00 |  | 1715,00 | 60,00 |  | 1980,00 | 35,00 | 1375,00 | 30,00 |  | 1040,00 |
+| 20E |  | 20,00 |  | 1735,00 | 60,00 |  | 2040,00 | 35,00 | 1410,00 | 30,00 |  | 1070,00 |
+| 21E |  | 20,00 |  | 1755,00 | 55,00 |  | 2095,00 | 35,00 | 1445,00 | 30,00 |  | 1100,00 |
+| 22E |  | 15,00 |  | 1770,00 | 55,00 |  | 2150,00 | 30,00 | 1475,00 | 30,00 |  | 1130,00 |
+| 23E |  | 15,00 |  | 1785,00 | 55,00 |  | 2205,00 | 30,00 | 1505,00 | 25,00 |  | 1155,00 |
+| 24E |  | 15,00 |  | 1800,00 | 50,00 |  | 2255,00 | 30,00 | 1535,00 | 25,00 |  | 1180,00 |
+| 25E |  | 15,00 |  | 1815,00 | 50,00 |  | 2305,00 | 25,00 | 1560,00 | 20,00 |  | 1200,00 |
+| 26E |  | 15,00 |  | 1830,00 | 50,00 |  | 2355,00 | 25,00 | 1585,00 | 20,00 |  | 1220,00 |
+| 27E |  | 10,00 |  | 1840,00 | 50,00 |  | 2405,00 | 25,00 | 1610,00 | 15,00 |  | 1235,00 |
+| 28E |  | 10,00 |  | 1850,00 | 45,00 |  | 2450,00 | 20,00 | 1630,00 | 15,00 |  | 1250,00 |
+| 29E |  | 10,00 |  | 1860,00 | 45,00 |  | 2495,00 | 20,00 | 1650,00 | 10,00 |  | 1260,00 |
+| 30E |  | 10,00 |  | 1870,00 | 45,00 |  | 2540,00 | 20,00 | 1670,00 | 10,00 |  | 1270,00 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 95 VAN 98
 
-SCHEMA
-F
-G
-H
-K
-L
-M
-
-1E
-90,00
-90,00
-80,00
-80,00
-50,00
-50,00
-40,00
-40,00
-35,00
-35,00
-30,00
-30,00
-
-2E
-80,00
-170,00
-70,00
-150,00
-45,00
-95,00
-35,00
-75,00
-30,00
-65,00
-25,00
-55,00
-
-3E
-80,00
-250,00
-55,00
-205,00
-35,00
-130,00
-30,00
-105,00
-25,00
-90,00
-20,00
-75,00
-
-4E
-60,00
-310,00
-50,00
-255,00
-30,00
-160,00
-30,00
-135,00
-25,00
-115,00
-20,00
-95,00
-
-5E
-45,00
-355,00
-45,00
-300,00
-30,00
-190,00
-25,00
-160,00
-20,00
-135,00
-15,00
-110,00
-
-6E
-35,00
-390,00
-40,00
-340,00
-30,00
-220,00
-20,00
-180,00
-15,00
-150,00
-15,00
-125,00
-
-7E
-30,00
-420,00
-35,00
-375,00
-25,00
-245,00
-20,00
-200,00
-15,00
-165,00
-15,00
-140,00
-
-8E
-30,00
-450,00
-35,00
-410,00
-25,00
-270,00
-20,00
-220,00
-15,00
-180,00
-15,00
-155,00
-
-9E
-25,00
-475,00
-35,00
-445,00
-20,00
-290,00
-15,00
-235,00
-10,00
-190,00
-10,00
-165,00
-
-10E
-25,00
-500,00
-35,00
-480,00
-20,00
-310,00
-15,00
-250,00
-10,00
-200,00
-10,00
-175,00
-
-11E
-25,00
-525,00
-30,00
-510,00
-15,00
-325,00
-15,00
-265,00
-10,00
-210,00
-10,00
-185,00
-
-12E
-25,00
-550,00
-30,00
-540,00
-15,00
-340,00
-15,00
-280,00
-10,00
-220,00
-10,00
-195,00
-
-13E
-20,00
-570,00
-30,00
-570,00
-15,00
-355,00
-10,00
-290,00
-10,00
-230,00
-10,00
-205,00
-
-14E
-20,00
-590,00
-30,00
-600,00
-10,00
-365,00
-10,00
-300,00
-10,00
-240,00
-10,00
-215,00
-
-15E
-20,00
-610,00
-25,00
-625,00
-10,00
-375,00
-10,00
-310,00
-5,00
-245,00
-10,00
-225,00
-
-16E
-20,00
-630,00
-25,00
-650,00
-10,00
-385,00
-10,00
-320,00
-5,00
-250,00
-10,00
-235,00
-
-17E
-15,00
-645,00
-25,00
-675,00
-10,00
-395,00
-10,00
-330,00
-5,00
-255,00
-5,00
-240,00
-
-18E
-15,00
-660,00
-25,00
-700,00
-5,00
-400,00
-5,00
-335,00
-5,00
-260,00
-5,00
-245,00
-
-19E
-15,00
-675,00
-25,00
-725,00
-5,00
-405,00
-5,00
-340,00
-5,00
-265,00
-5,00
-250,00
-
-20E
-15,00
-690,00
-25,00
-750,00
-5,00
-410,00
-5,00
-345,00
-5,00
-270,00
-5,00
-255,00
-
-21E
-15,00
-705,00
-20,00
-770,00
---
---
-5,00
-350,00
---
---
-5,00
-260,00
-
-22E
-15,00
-720,00
-20,00
-790,00
---
---
-5,00
-355,00
---
---
-5,00
-265,00
-
-23E
-15,00
-735,00
-15,00
-805,00
---
---
-5,00
-360,00
---
---
-5,00
-270,00
-
-24E
-15,00
-750,00
-15,00
-820,00
---
---
-5,00
-365,00
---
---
-5,00
-275,00
-
-25E
-10,00
-760,00
-15,00
-835,00
---
---
-5,00
-370,00
---
---
-5,00
-280,00
-
-26E
-10,00
-770,00
-15,00
-850,00
---
---
-5,00
-375,00
---
---
-5,00
-285,00
-
-27E
-10,00
-780,00
-15,00
-865,00
---
---
-5,00
-380,00
---
---
-5,00
-290,00
-
-28E
-10,00
-790,00
-15,00
-880,00
---
---
-5,00
-385,00
---
---
-5,00
-295,00
-
-29E
-10,00
-800,00
-15,00
-895,00
---
---
-5,00
-390,00
---
---
-5,00
-300,00
-
-30E
-10,00
-810,00
-15,00
-910,00
---
---
-5,00
-395,00
---
---
-5,00
-305,00
+| SCHEMA |  | F |  | G |  | H |  | K |  | L |  | M |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1E | 90,00 | 90,00 | 80,00 | 80,00 | 50,00 | 50,00 | 40,00 | 40,00 | 35,00 | 35,00 | 30,00 | 30,00 |
+| 2E | 80,00 | 170,00 | 70,00 | 150,00 | 45,00 | 95,00 | 35,00 | 75,00 | 30,00 | 65,00 | 25,00 | 55,00 |
+| 3E | 80,00 | 250,00 | 55,00 | 205,00 | 35,00 | 130,00 | 30,00 | 105,00 | 25,00 | 90,00 | 20,00 | 75,00 |
+| 4E | 60,00 | 310,00 | 50,00 | 255,00 | 30,00 | 160,00 | 30,00 | 135,00 | 25,00 | 115,00 | 20,00 | 95,00 |
+| 5E | 45,00 | 355,00 | 45,00 | 300,00 | 30,00 | 190,00 | 25,00 | 160,00 | 20,00 | 135,00 | 15,00 | 110,00 |
+| 6E | 35,00 | 390,00 | 40,00 | 340,00 | 30,00 | 220,00 | 20,00 | 180,00 | 15,00 | 150,00 | 15,00 | 125,00 |
+| 7E | 30,00 | 420,00 | 35,00 | 375,00 | 25,00 | 245,00 | 20,00 | 200,00 | 15,00 | 165,00 | 15,00 | 140,00 |
+| 8E | 30,00 | 450,00 | 35,00 | 410,00 | 25,00 | 270,00 | 20,00 | 220,00 | 15,00 | 180,00 | 15,00 | 155,00 |
+| 9E | 25,00 | 475,00 | 35,00 | 445,00 | 20,00 | 290,00 | 15,00 | 235,00 | 10,00 | 190,00 | 10,00 | 165,00 |
+| 10E | 25,00 | 500,00 | 35,00 | 480,00 | 20,00 | 310,00 | 15,00 | 250,00 | 10,00 | 200,00 | 10,00 | 175,00 |
+| 11E | 25,00 | 525,00 | 30,00 | 510,00 | 15,00 | 325,00 | 15,00 | 265,00 | 10,00 | 210,00 | 10,00 | 185,00 |
+| 12E | 25,00 | 550,00 | 30,00 | 540,00 | 15,00 | 340,00 | 15,00 | 280,00 | 10,00 | 220,00 | 10,00 | 195,00 |
+| 13E | 20,00 | 570,00 | 30,00 | 570,00 | 15,00 | 355,00 | 10,00 | 290,00 | 10,00 | 230,00 | 10,00 | 205,00 |
+| 14E | 20,00 | 590,00 | 30,00 | 600,00 | 10,00 | 365,00 | 10,00 | 300,00 | 10,00 | 240,00 | 10,00 | 215,00 |
+| 15E | 20,00 | 610,00 | 25,00 | 625,00 | 10,00 | 375,00 | 10,00 | 310,00 | 5,00 | 245,00 | 10,00 | 225,00 |
+| 16E | 20,00 | 630,00 | 25,00 | 650,00 | 10,00 | 385,00 | 10,00 | 320,00 | 5,00 | 250,00 | 10,00 | 235,00 |
+| 17E | 15,00 | 645,00 | 25,00 | 675,00 | 10,00 | 395,00 | 10,00 | 330,00 | 5,00 | 255,00 | 5,00 | 240,00 |
+| 18E | 15,00 | 660,00 | 25,00 | 700,00 | 5,00 | 400,00 | 5,00 | 335,00 | 5,00 | 260,00 | 5,00 | 245,00 |
+| 19E | 15,00 | 675,00 | 25,00 | 725,00 | 5,00 | 405,00 | 5,00 | 340,00 | 5,00 | 265,00 | 5,00 | 250,00 |
+| 20E | 15,00 | 690,00 | 25,00 | 750,00 | 5,00 | 410,00 | 5,00 | 345,00 | 5,00 | 270,00 | 5,00 | 255,00 |
+| 21E | 15,00 | 705,00 | 20,00 | 770,00 | -- | -- | 5,00 | 350,00 | -- | -- | 5,00 | 260,00 |
+| 22E | 15,00 | 720,00 | 20,00 | 790,00 | -- | -- | 5,00 | 355,00 | -- | -- | 5,00 | 265,00 |
+| 23E | 15,00 | 735,00 | 15,00 | 805,00 | -- | -- | 5,00 | 360,00 | -- | -- | 5,00 | 270,00 |
+| 24E | 15,00 | 750,00 | 15,00 | 820,00 | -- | -- | 5,00 | 365,00 | -- | -- | 5,00 | 275,00 |
+| 25E | 10,00 | 760,00 | 15,00 | 835,00 | -- | -- | 5,00 | 370,00 | -- | -- | 5,00 | 280,00 |
+| 26E | 10,00 | 770,00 | 15,00 | 850,00 | -- | -- | 5,00 | 375,00 | -- | -- | 5,00 | 285,00 |
+| 27E | 10,00 | 780,00 | 15,00 | 865,00 | -- | -- | 5,00 | 380,00 | -- | -- | 5,00 | 290,00 |
+| 28E | 10,00 | 790,00 | 15,00 | 880,00 | -- | -- | 5,00 | 385,00 | -- | -- | 5,00 | 295,00 |
+| 29E | 10,00 | 800,00 | 15,00 | 895,00 | -- | -- | 5,00 | 390,00 | -- | -- | 5,00 | 300,00 |
+| 30E | 10,00 | 810,00 | 15,00 | 910,00 | -- | -- | 5,00 | 395,00 | -- | -- | 5,00 | 305,00 |
 
 NATIONALE BESLUITEN
 VERSIE 20260918
 96 VAN 98
 
-SCHEMA
-N
-P
-R
-S
-T
-Y
-
-1E
-25,00
-25,00
-25,00
-25,00
-20,00
-20,00
-20,00
-20,00
-15,00
-15,00
-10,00
-10,00
-
-2E
-20,00
-45,00
-20,00
-45,00
-15,00
-35,00
-15,00
-35,00
-10,00
-25,00
-5,00
-15,00
-
-3E
-20,00
-65,00
-15,00
-60,00
-15,00
-50,00
-10,00
-45,00
-10,00
-35,00
-5,00
-20,00
-
-4E
-15,00
-80,00
-15,00
-75,00
-15,00
-65,00
-10,00
-55,00
-10,00
-45,00
-5,00
-25,00
-
-5E
-15,00
-95,00
-10,00
-85,00
-10,00
-75,00
-10,00
-65,00
-5,00
-50,00
-5,00
-30,00
-
-6E
-15,00
-110,00
-10,00
-95,00
-10,00
-85,00
-10,00
-75,00
-5,00
-55,00
-5,00
-35,00
-
-7E
-15,00
-125,00
-10,00
-105,00
-10,00
-95,00
-10,00
-85,00
-5,00
-60,00
-5,00
-40,00
-
-8E
-10,00
-135,00
-10,00
-115,00
-10,00
-105,00
-10,00
-95,00
-5,00
-65,00
-5,00
-45,00
-
-9E
-10,00
-145,00
-10,00
-125,00
-10,00
-115,00
-10,00
-105,00
-5,00
-70,00
-5,00
-50,00
-
-10E
-10,00
-155,00
-10,00
-135,00
-10,00
-125,00
-10,00
-115,00
-5,00
-75,00
-5,00
-55,00
-
-11E
-10,00
-165,00
-10,00
-145,00
-10,00
-135,00
-5,00
-120,00
-5,00
-80,00
-5,00
-60,00
-
-12E
-10,00
-175,00
-10,00
-155,00
-5,00
-140,00
-5,00
-125,00
-5,00
-85,00
-5,00
-65,00
-
-13E
-10,00
-185,00
-10,00
-165,00
-5,00
-145,00
-5,00
-130,00
-5,00
-90,00
-5,00
-70,00
-
-14E
-10,00
-195,00
-10,00
-175,00
-5,00
-150,00
-5,00
-135,00
-5,00
-95,00
-5,00
-75,00
-
-15E
-5,00
-200,00
-5,00
-180,00
-5,00
-155,00
-5,00
-140,00
-5,00
-100,00
-5,00
-80,00
-
-16E
-5,00
-205,00
-5,00
-185,00
-5,00
-160,00
-5,00
-145,00
-5,00
-105,00
---
---
-
-17E
-5,00
-210,00
-5,00
-190,00
-5,00
-165,00
-5,00
-150,00
-5,00
-110,00
---
---
-
-18E
-5,00
-215,00
-5,00
-195,00
-5,00
-170,00
-5,00
-155,00
-5,00
-115,00
---
---
-
-19E
-5,00
-220,00
-5,00
-200,00
-5,00
-175,00
-5,00
-160,00
-5,00
-120,00
---
---
-
-20E
-5,00
-225,00
-5,00
-205,00
-5,00
-180,00
-5,00
-165,00
-5,00
-125,00
---
---
-
-21E
---
---
-5,00
-210,00
---
---
---
---
---
---
---
---
-
-22E
---
---
-5,00
-215,00
---
---
---
---
---
---
---
---
-
-23E
---
---
-5,00
-220,00
---
---
---
---
---
---
---
---
-
-24E
---
---
-5,00
-225,00
---
---
---
---
---
---
---
---
-
-25E
---
---
-5,00
-230,00
---
---
---
---
---
---
---
---
-
-26E
---
---
-5,00
-235,00
---
---
---
---
---
---
---
---
-
-27E
---
---
-5,00
-240,00
---
---
---
---
---
---
---
---
-
-28E
---
---
-5,00
-245,00
---
---
---
---
---
---
---
---
-
-29E
---
---
-5,00
-250,00
---
---
---
---
---
---
---
---
-
-30E
---
---
-5,00
-255,00
---
---
---
---
---
---
---
---
+| SCHEMA |  | N |  | P |  | R |  | S |  | T |  | Y |  |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1E | 25,00 | 25,00 | 25,00 | 25,00 | 20,00 | 20,00 | 20,00 | 20,00 | 15,00 | 15,00 | 10,00 |  | 10,00 |
+| 2E | 20,00 | 45,00 | 20,00 | 45,00 | 15,00 | 35,00 | 15,00 | 35,00 | 10,00 | 25,00 | 5,00 |  | 15,00 |
+| 3E | 20,00 | 65,00 | 15,00 | 60,00 | 15,00 | 50,00 | 10,00 | 45,00 | 10,00 | 35,00 | 5,00 |  | 20,00 |
+| 4E | 15,00 | 80,00 | 15,00 | 75,00 | 15,00 | 65,00 | 10,00 | 55,00 | 10,00 | 45,00 | 5,00 |  | 25,00 |
+| 5E | 15,00 | 95,00 | 10,00 | 85,00 | 10,00 | 75,00 | 10,00 | 65,00 | 5,00 | 50,00 | 5,00 |  | 30,00 |
+| 6E | 15,00 | 110,00 | 10,00 | 95,00 | 10,00 | 85,00 | 10,00 | 75,00 | 5,00 | 55,00 | 5,00 |  | 35,00 |
+| 7E | 15,00 | 125,00 | 10,00 | 105,00 | 10,00 | 95,00 | 10,00 | 85,00 | 5,00 | 60,00 | 5,00 |  | 40,00 |
+| 8E | 10,00 | 135,00 | 10,00 | 115,00 | 10,00 | 105,00 | 10,00 | 95,00 | 5,00 | 65,00 | 5,00 |  | 45,00 |
+| 9E | 10,00 | 145,00 | 10,00 | 125,00 | 10,00 | 115,00 | 10,00 | 105,00 | 5,00 | 70,00 | 5,00 |  | 50,00 |
+| 10E | 10,00 | 155,00 | 10,00 | 135,00 | 10,00 | 125,00 | 10,00 | 115,00 | 5,00 | 75,00 | 5,00 |  | 55,00 |
+| 11E | 10,00 | 165,00 | 10,00 | 145,00 | 10,00 | 135,00 | 5,00 | 120,00 | 5,00 | 80,00 | 5,00 |  | 60,00 |
+| 12E | 10,00 | 175,00 | 10,00 | 155,00 | 5,00 | 140,00 | 5,00 | 125,00 | 5,00 | 85,00 | 5,00 |  | 65,00 |
+| 13E | 10,00 | 185,00 | 10,00 | 165,00 | 5,00 | 145,00 | 5,00 | 130,00 | 5,00 | 90,00 | 5,00 |  | 70,00 |
+| 14E | 10,00 | 195,00 | 10,00 | 175,00 | 5,00 | 150,00 | 5,00 | 135,00 | 5,00 | 95,00 | 5,00 |  | 75,00 |
+| 15E | 5,00 | 200,00 | 5,00 | 180,00 | 5,00 | 155,00 | 5,00 | 140,00 | 5,00 | 100,00 | 5,00 |  | 80,00 |
+| 16E | 5,00 | 205,00 | 5,00 | 185,00 | 5,00 | 160,00 | 5,00 | 145,00 | 5,00 | 105,00 | -- |  | -- |
+| 17E | 5,00 | 210,00 | 5,00 | 190,00 | 5,00 | 165,00 | 5,00 | 150,00 | 5,00 | 110,00 | -- |  | -- |
+| 18E | 5,00 | 215,00 | 5,00 | 195,00 | 5,00 | 170,00 | 5,00 | 155,00 | 5,00 | 115,00 | -- |  | -- |
+| 19E | 5,00 | 220,00 | 5,00 | 200,00 | 5,00 | 175,00 | 5,00 | 160,00 | 5,00 | 120,00 | -- |  | -- |
+| 20E | 5,00 | 225,00 | 5,00 | 205,00 | 5,00 | 180,00 | 5,00 | 165,00 | 5,00 | 125,00 | -- |  | -- |
+| 21E | -- | -- | 5,00 | 210,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 22E | -- | -- | 5,00 | 215,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 23E | -- | -- | 5,00 | 220,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 24E | -- | -- | 5,00 | 225,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 25E | -- | -- | 5,00 | 230,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 26E | -- | -- | 5,00 | 235,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 27E | -- | -- | 5,00 | 240,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 28E | -- | -- | 5,00 | 245,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 29E | -- | -- | 5,00 | 250,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
+| 30E | -- | -- | 5,00 | 255,00 | -- | -- | -- | -- | -- | -- | -- |  | -- |
 
 SCHEMA W UITSLUITEND EREPRIJZEN
 
@@ -7735,109 +4051,25 @@ VERSIE 20260918
 18.3 JURYVERGOEDINGEN
 alle disciplines (art.1.2.125.01)
 
-Wedstrijddag korter dan 5 uur
-€ 30
-Excl. evt. KM vergoeding
-Voor definitie wedstrijddag zie onderaan
-deze tabel
-Wedstrijddag tussen 5 en 8 uur
-€ 40
+| Wedstrijddag korter dan 5 uur | € 30 Excl. evt. KM vergoeding Voor definitie wedstrijddag zie onderaan |
+| --- | --- |
+| Wedstrijddag tussen 5 en 8 uur | deze tabel € 40 |
+| Wedstrijddag langer dan 8 uur | € 40 + € 5 per uur langer |
+| Wedstrijddag die onderdeel uitmaakt van een evenement die is opgenomen in de UCI kalender, exclusief prof-criteriums | € 60 Excl. KM vergoeding, incl. eventuele afwachtingswedstrijden |
+| Reiskostenvergoeding Gemotoriseerd voertuig | [GEWIJZIGD]Wettelijke bepaalde onbelaste vergoeding die werkgevers aan werknemers mogen vergoeden + € 0,02[/GEWIJZIGD]  Huisadres naar permanence en viceversa, bepaald op basis van Snelste route Google Maps |
+|  | [GEWIJZIGD]€ 0,27 per km[/GEWIJZIGD] |
+| Reiskostenvergoeding Openbaar vervoer | Daadwerkelijke kosten  Kaartje/nota kunnen overleggen 2e klas |
+| Kilometer vergoeding t.b.v. jurywerkzaamheden tijdens de wedstrijd | [GEWIJZIGD]Wettelijke bepaalde onbelaste vergoeding die werkgevers aan werknemers mogen vergoeden + € 0,02[/GEWIJZIGD]  Wedstrijdkilometers dienen apart gespecifieerd te worden |
+|  | [GEWIJZIGD]€ 0,27 per km[/GEWIJZIGD] |
+| Kilometer vergoeding motorrijders t.b.v. jurywerkzaamheden tijdens de wedstrijd | [GEWIJZIGD]Wettelijke bepaalde onbelaste vergoeding die werkgevers aan werknemers mogen vergoeden + € 0,07[/GEWIJZIGD]  Wedstrijdkilometers dienen apart gespecifieerd te worden |
+|  | [GEWIJZIGD]€ 0,32 per km[/GEWIJZIGD] |
+| Toeslag per wedstrijddag Computerverwerker, videofinish- expert, fotofinish, Wedstrijdleider (nationaal) Wedstrijdcommissaris 1 (internationaal) | € 12,50 Enkel van toepassing voor opstellingen onder de verantwoording van de nationaal officialcoördinator in disciplines Weg, Veld en MTB |
+| Overnachting | Minimaal 3 sterren*** hotel op basis van een 2-persoons kamer Verplicht gescheiden bedden en afsluitbare badkamer/douche |
+|  | Indien op eigen verzoek een 1- persoons kamer wordt gewenst, dan is de meerprijs (=prijs 1-persoonskamer - ½ prijs 2-persoonskamer) voor rekening van het jurylid |
+| *Toelichting Wedstrijddag | De wedstrijddag begint voor ieder jurylid op het moment dat van hem/haar verwacht wordt aanwezig te zijn, zoals bijvoorbeeld juryvergadering, inschrijvingen of officiële training. Afhankelijk van de opgestelde rol kan de aanvang variëren tussen de juryleden. |
+|  | De wedstrijddag stopt op het moment dat er van juryleden geen inzet meer verwacht wordt, dit is 30 minuten na de laatste prijsuitreiking/huldiging. Mocht deze er niet zijn dan wordt 30 minuten na de finish van de laatste wedstrijd als einde gesteld. |
 
-Wedstrijddag langer dan 8 uur
-€ 40 + € 5 per uur langer
-
-Wedstrijddag die onderdeel uitmaakt
-van een evenement die is
-opgenomen in de UCI kalender,
-exclusief prof-criteriums
-
-€ 60
-Excl. KM vergoeding,
-incl. eventuele afwachtingswedstrijden
-
-Reiskostenvergoeding
-Gemotoriseerd voertuig
-
-[GEWIJZIGD]Wettelijke bepaalde onbelaste
-vergoeding die werkgevers
-aan werknemers mogen
-vergoeden + € 0,02
-
-€ 0,27 per km[/GEWIJZIGD]
-
-Huisadres naar permanence
-en viceversa, bepaald op
-basis van Snelste route
-Google Maps
-
-Reiskostenvergoeding
-Openbaar vervoer
-
-Daadwerkelijke kosten
-
-Kaartje/nota kunnen
-overleggen
-2e klas
-
-Kilometer vergoeding
-t.b.v. jurywerkzaamheden tijdens
-de wedstrijd
-
-[GEWIJZIGD]Wettelijke bepaalde onbelaste
-vergoeding die werkgevers
-aan werknemers mogen
-vergoeden + € 0,02
-
-€ 0,27 per km[/GEWIJZIGD]
-
-Wedstrijdkilometers dienen apart
-gespecifieerd te worden
-
-Kilometer vergoeding motorrijders
-t.b.v. jurywerkzaamheden tijdens
-de wedstrijd
-
-[GEWIJZIGD]Wettelijke bepaalde onbelaste
-vergoeding die werkgevers
-aan werknemers mogen
-vergoeden + € 0,07
-
-€ 0,32 per km[/GEWIJZIGD]
-
-Wedstrijdkilometers dienen apart
-gespecifieerd te worden
-
-Toeslag per wedstrijddag
-Computerverwerker, videofinish-
-expert, fotofinish,
-Wedstrijdleider (nationaal)
-Wedstrijdcommissaris 1
-(internationaal)
-
-€ 12,50
-Enkel van toepassing voor opstellingen
-onder de verantwoording van de
-nationaal officialcoördinator in
-disciplines Weg, Veld en MTB
-
-Overnachting
-Minimaal 3 sterren*** hotel op basis van een 2-persoons kamer
-Verplicht gescheiden bedden en afsluitbare badkamer/douche
-Indien op eigen verzoek een 1- persoons kamer wordt gewenst, dan
-is de meerprijs (=prijs 1-persoonskamer - ½ prijs 2-persoonskamer)
-voor rekening van het jurylid
-*Toelichting Wedstrijddag
-De wedstrijddag begint voor ieder jurylid op het moment dat van
-hem/haar verwacht wordt aanwezig te zijn, zoals bijvoorbeeld
-juryvergadering, inschrijvingen of officiële training. Afhankelijk van
-de opgestelde rol kan de aanvang variëren tussen de juryleden.
-
-De wedstrijddag stopt op het moment dat er van juryleden geen
-inzet meer verwacht wordt, dit is 30 minuten na de laatste
-prijsuitreiking/huldiging. Mocht deze er niet zijn dan wordt 30
-minuten na de finish van de laatste wedstrijd als einde gesteld.
-
-[GEWIJZIGD]{gewijzigd per 26.05.26; 02.06.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 26.05.26; 02.06.26}[/GEWIJZIGD]
 
 NATIONALE BESLUITEN
 VERSIE 20260918
@@ -7847,9 +4079,9 @@ Algemene toelichting juryvergoedingen
 
 
 Voor de juryleden die gezamenlijk met één auto reizen wordt het bedrag van de reiskostenvergoeding als
-volgt berekend: Elk jurylid ontvangt [GEWIJZIGD] het reguliere tarief[/GEWIJZIGD] per kilometer voor elk individueel afgelegd
-deel van de route. Voor het gezamenlijk gereisde deel krijgt [GEWIJZIGD]enkel [/GEWIJZIGD]de chauffeur [GEWIJZIGD] het reguliere tarief
-verhoogd met € 0,05 [/GEWIJZIGD]per kilometer. Dit als stimulans om niet individueel naar een wedstrijd te reizen.
+volgt berekend: Elk jurylid ontvangt [GEWIJZIGD]het reguliere tarief[/GEWIJZIGD] per kilometer voor elk individueel afgelegd
+deel van de route. Voor het gezamenlijk gereisde deel krijgt [GEWIJZIGD]enkel[/GEWIJZIGD] de chauffeur [GEWIJZIGD]het reguliere tarief
+verhoogd met € 0,05[/GEWIJZIGD] per kilometer. Dit als stimulans om niet individueel naar een wedstrijd te reizen.
 
 
 De berekening van de kilometers die voor vergoeding in aanmerking komen, dienen berekend worden
@@ -7905,4 +4137,4 @@ worden om gebruik te maken van een auto inclusief chauffeur beschikbaar gesteld 
 Zij behouden het recht om met eigen vervoer op basis van de reiskostenvergoeding te reizen. Dit in
 verband met de voorbereidingstijd en/of opbouw welke noodzakelijk zijn voor het vervullen van deze
 taken.
-[GEWIJZIGD]{gewijzigd per 26.05.26} [/GEWIJZIGD]
+[GEWIJZIGD]{gewijzigd per 26.05.26}[/GEWIJZIGD]

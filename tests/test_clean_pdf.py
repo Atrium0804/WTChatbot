@@ -138,6 +138,60 @@ def maak_pdf_pagina(page: pymupdf.Page) -> None:
     page.draw_line((118, 96.5), (146, 96.5))
 
 
+class TabelTests(unittest.TestCase):
+    """Tabellen als markdown-tabel, zodat de kolombetekenis blijft (#33)."""
+
+    def test_tabel_wordt_markdown_tabel_met_doorhaling_en_rood_per_cel(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf = Path(tmp) / "tabel.pdf"
+            doc = pymupdf.open()
+            page = doc.new_page()
+            page.insert_text((72, 60), "De toegestane verzetten:", fontsize=11)
+            # Vier rijen: bij minder rijen valt pymupdf terug op een tabel op basis van tekst.
+            kolommen, rijen = [70, 170, 300, 430], [80, 110, 140, 170, 200]
+            for x in kolommen:
+                page.draw_line((x, rijen[0]), (x, rijen[-1]))
+            for y in rijen:
+                page.draw_line((kolommen[0], y), (kolommen[-1], y))
+            for x, tekst in zip(kolommen, ["Categorie", "Weg", "Baan"]):
+                page.insert_text((x + 5, 100), tekst, fontsize=11)
+            page.insert_text((75, 130), "U10", fontsize=11, color=(1, 0, 0))
+            # Eén tekstrun zoals in de PDF, met alleen een spatie tussen oude en nieuwe waarde.
+            page.insert_text((175, 130), "5,46 5,50", fontsize=11, color=(1, 0, 0))
+            breedte_oud = pymupdf.get_text_length("5,46", fontsize=11)
+            page.draw_rect((175, 126.2, 175 + breedte_oud, 126.8), color=None, fill=(1, 0, 0))
+            page.insert_text(
+                (175 + pymupdf.get_text_length("5,46 5,50 ", fontsize=11), 130), "meter", fontsize=11
+            )
+            page.insert_text((305, 130), "5,46 meter", fontsize=11)
+            for y, categorie in [(160, "U11"), (190, "U12")]:
+                page.insert_text((75, y), categorie, fontsize=11)
+                page.insert_text((175, y), "5,90 meter", fontsize=11)
+                page.insert_text((305, y), "5,78 meter", fontsize=11)
+            page.insert_text((72, 230), "Na de tabel.", fontsize=11)
+            doc.save(pdf)
+
+            tekst = clean_pdf.clean_pdf(pdf)
+
+        self.assertIn(
+            "| Categorie | Weg | Baan |\n| --- | --- | --- |\n"
+            f"| {GEW}U10{GEW_SLUIT} | {GEW}5,50{GEW_SLUIT} meter | 5,46 meter |",
+            tekst,
+        )
+        self.assertLess(tekst.index("De toegestane verzetten:"), tekst.index("| Categorie"))
+        self.assertLess(tekst.index("| Categorie"), tekst.index("Na de tabel."))
+
+
+class NationaleBesluitenTabelTests(unittest.TestCase):
+    def test_titelrij_over_de_volle_breedte_staat_er_een_keer(self) -> None:
+        kandidaten = sorted((ROOT / "knowledge-documents").glob("*/Nationale_Besluiten_20260918*.pdf"))
+        if not kandidaten:
+            self.skipTest("Nationale_Besluiten_20260918.pdf niet lokaal aanwezig")
+        tekst = clean_pdf.clean_pdf(kandidaten[0])
+        self.assertIn("| 5 Tussensprints en eindsprint |  |  |  |  |", tekst)
+        self.assertNotIn("| 5 Tussensprints en eindsprint | 5 Tussensprints", tekst)
+
+
 GEW, GEW_SLUIT = clean_pdf.GEWIJZIGD_OPEN, clean_pdf.GEWIJZIGD_SLUIT
 
 
@@ -161,7 +215,9 @@ class TitelTwintigTests(unittest.TestCase):
         self.assertIn("ook mogen deelnemen aan het Nationaal Kampioenschap", self.tekst)
 
     def test_verzet_u11_weg_590_baan_578_veld_vrij(self) -> None:
-        self.assertIn("U11 U12 5,90 meter 5,78 meter vrij", self.tekst)
+        # Kolommen: Jongens | Meisjes | Wegwielrennen | Baanwielrennen | Veldrijden (#33)
+        self.assertIn("| Jongens | Meisjes | Wegwielrennen | Baanwielrennen | Veldrijden |", self.tekst)
+        self.assertIn("| U11 | U12 | 5,90 meter | 5,78 meter | vrij |", self.tekst)
 
 
 class HandboekRapportTests(unittest.TestCase):

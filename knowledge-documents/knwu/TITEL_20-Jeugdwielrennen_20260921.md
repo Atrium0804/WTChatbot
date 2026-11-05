@@ -51,29 +51,10 @@ vereniging die een licentie-houdende trainer in functie heeft.
 Voor het verkrijgen van het KNWU-lidmaatschap wordt verwezen naar het
 hiernavolgende artikel 20.0.003.
 
-[GEWIJZIGD]KNWU Licentie U13
-5 t/m 12 jaar Deelname aan wedstrijden in de Cat. 2 & 4.
-(BMX: zie Titel 6, Reglement BMX). [/GEWIJZIGD]
-
-[GEWIJZIGD]KNWU Licentie U17
-13 t/m 16 jaar, waarbij 15 en 16 jarige specifiek de aanduiding
-U17(Nieuweling) krijgen [/GEWIJZIGD]
-
-KNWU-lidmaatschap
-•
-KNWU-lidmaatschap vanaf de geboorte mogelijk.
-•
-Deelname aan uitsluitend clubactiviteiten, zijnde geen
-wedstrijden, is mogelijk.
-•
-Deelname aan sportstimuleringsactiviteiten
-bijv. loopfietsjes is mogelijk.
-•
-Deelname aan uitsluitend trainingen en
-clubactiviteiten is mogelijk vanaf 5 jaar.
-•
-Betreffende de discipline BMX wordt verwezen naar
-Titel 6 (reglement BMX).
+| [GEWIJZIGD]KNWU Licentie U13[/GEWIJZIGD] | [GEWIJZIGD]5 t/m 12 jaar Deelname aan wedstrijden in de Cat. 2 & 4. (BMX: zie Titel 6, Reglement BMX).[/GEWIJZIGD] |
+| --- | --- |
+| [GEWIJZIGD]KNWU Licentie U17[/GEWIJZIGD] | [GEWIJZIGD]13 t/m 16 jaar, waarbij 15 en 16 jarige specifiek de aanduiding U17(Nieuweling) krijgen[/GEWIJZIGD] |
+| KNWU-lidmaatschap | • KNWU-lidmaatschap vanaf de geboorte mogelijk. • Deelname aan uitsluitend clubactiviteiten, zijnde geen wedstrijden, is mogelijk. • Deelname aan sportstimuleringsactiviteiten bijv. loopfietsjes is mogelijk. • Deelname aan uitsluitend trainingen en clubactiviteiten is mogelijk vanaf 5 jaar. • Betreffende de discipline BMX wordt verwezen naar Titel 6 (reglement BMX). |
 
 (gewijzigd per 1.01.11; 1.01.14; 1.09.15; 1.03.17; 1.01.20; 1.01.21; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
@@ -101,10 +82,10 @@ Titel 20: JEUGDWIELRENNEN
 3
 
 Deelname aan wedstrijden met een KNWU-lidmaatschap aangevuld met een
-(dag)licentie is uitsluitend mogelijk in [GEWIJZIGD]Klasse 4 en 5 wedstrijden [/GEWIJZIGD]
+(dag)licentie is uitsluitend mogelijk in [GEWIJZIGD]Klasse 4 en 5 wedstrijden[/GEWIJZIGD]
 .
 Het tarief van het KNWU-lidmaatschap en (dag)licentie wordt jaarlijks vastgesteld
-en gepubliceerd middels de [GEWIJZIGD] Tarievenlijst[/GEWIJZIGD].
+en gepubliceerd middels de [GEWIJZIGD]Tarievenlijst[/GEWIJZIGD].
 
 (gewijzigd per 1.01.11; 1.01.12; 1.09.15; 1.01.21[GEWIJZIGD]; 01.01.26[/GEWIJZIGD])
 
@@ -115,45 +96,25 @@ Categorie-indeling
 20.0.004
 De categorie jeugd wordt onderverdeeld in de volgende categorieën:
 
-[GEWIJZIGD]U6
-Het jaar waarin je 5 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U7
-Het jaar waarin je 6 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U8
-Het jaar waarin je 7 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U9
-Het jaar waarin je 8 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U10
-Het jaar waarin je 9 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U11
-Het jaar waarin je 10 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U12
-Het jaar waarin je 11 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U13
-Het jaar waarin je 12 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U14
-Het jaar waarin je 13 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U15
-Het jaar waarin je 14 wordt [/GEWIJZIGD]
-
-[GEWIJZIGD]U17 Nieuweling
-Het jaar waarin je 15 of 16 wordt [/GEWIJZIGD]
+| [GEWIJZIGD]U6[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 5 wordt[/GEWIJZIGD] |
+| --- | --- |
+| [GEWIJZIGD]U7[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 6 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 7 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 8 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 9 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 10 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 11 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 12 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 13 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U15[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 14 wordt[/GEWIJZIGD] |
+| [GEWIJZIGD]U17 Nieuweling[/GEWIJZIGD] | [GEWIJZIGD]Het jaar waarin je 15 of 16 wordt[/GEWIJZIGD] |
 
 De categorie, waartoe de licentiehouder voor baan- en veldritwedstrijden op de
 nationale of regionale kalender het gehele baan- en veldritseizoen (september –
 maart) behoort, is de categorie waarop hij/zij vanaf 1 januari in dat seizoen
 reglementair behoort.
 
-(gewijzigd per[GEWIJZIGD] 01.01.26[/GEWIJZIGD])
+(gewijzigd per [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
 KNWU REGLEMENTEN
 
@@ -179,7 +140,7 @@ zij, behalve voor de discipline BMX, ook mogen deelnemen[/GEWIJZIGD] aan het Nat
 Kampioenschap, [GEWIJZIGD]in de categorie waarvoor ze dispensatie hebben gekregen. U6 t/m
 U8 renners kunnen geen dispensatie krijgen om het NK te rijden[/GEWIJZIGD]. De dispensatie
 vervalt als de jongen of het meisje in de lagere leeftijdscategorie in
-[GEWIJZIGD]nationale [/GEWIJZIGD]wedstrijden bij de eerste vijf in de uitslag voorkomt.
+[GEWIJZIGD]nationale[/GEWIJZIGD] wedstrijden bij de eerste vijf in de uitslag voorkomt.
 
 Verzoeken tot dispensatieverlening dient de vereniging waarvan de renner lid is,
 schriftelijk onderbouwd, bij de wedstrijdcoördinator in te dienen.
@@ -195,7 +156,7 @@ Chipverwerking
 20.0.007
 Onder verwijzing naar Titel 1, de artikelen N 1.01.102.02 t/m N 1.01.102.08 is het
 aanschaffen en het plaatsen van een chip voor iedere deelnemer tijdens
-[GEWIJZIGD]nationale [/GEWIJZIGD]wedstrijden verplicht.
+[GEWIJZIGD]nationale[/GEWIJZIGD] wedstrijden verplicht.
 
 Bij het niet of foutief plaatsen van de chip/transponder mag de renner/renster normaal
 starten, echter zal hij/zij bij een niet of foutief geplaatste chip/transponder als laatste
@@ -206,7 +167,7 @@ geklasseerd worden.
 
 20.0.008
 De categorie jeugd kent de volgende wedstrijdsoorten:
-* [GEWIJZIGD]Nationale [/GEWIJZIGD]wedstrijden:
+* [GEWIJZIGD]Nationale[/GEWIJZIGD] wedstrijden:
 - nationale kampioenschappen;
 - landelijk jeugdwielerfestijn; LJC – landelijke jeugd competitie
 - jeugdtoernooien (uitsluitend voor NK kwalificatie);
@@ -233,7 +194,7 @@ geldige jeugdlicentie.
 (gewijzigd per 1.01.11)
 
 20.0.010
-[GEWIJZIGD] Nationale [/GEWIJZIGD]-wedstrijden worden geplaatst op een door de desbetreffende
+[GEWIJZIGD]Nationale[/GEWIJZIGD] -wedstrijden worden geplaatst op een door de desbetreffende
 landelijke commissie vast te stellen kalender.
 
 
@@ -243,7 +204,7 @@ De desbetreffende organisator dient, in overleg met de betrokken
 wedstrijdcoördinator, een wedstrijdreglement vast te stellen.
 
 20.0.012
-[GEWIJZIGD] Regionale -/ Club[/GEWIJZIGD] wedstrijden op een clubparcours worden verreden
+[GEWIJZIGD]Regionale -/ Club[/GEWIJZIGD] wedstrijden op een clubparcours worden verreden
 onder verantwoording van het clubbestuur.
 [GEWIJZIGD]Regionale[/GEWIJZIGD]/clubwedstrijden kunnen ook worden verreden als voor /
 afwachtingswedstrijd of als zelfstandige wedstrijd in de vorm van een criterium op een
@@ -263,7 +224,7 @@ Hoofdstuk 1 : WEDSTRIJDEN, ALGEMEEN
 
 Afhalen rugnummers
 20.1.001
-[GEWIJZIGD] Na het tonen [/GEWIJZIGD]van de geldige licentie(s) moeten de door de
+[GEWIJZIGD]Na het tonen[/GEWIJZIGD] van de geldige licentie(s) moeten de door de
 organisator ter beschikking gestelde rugnummers worden afgehaald door de renner,
 dan wel door een ouder, voogd of aangewezen vervanger. Renners, van wie bij de
 inschrijving het licentienummer nog niet bekend is, mogen slechts deelnemen als de
@@ -281,83 +242,20 @@ Aantallen deelnemers
 Tijdens wedstrijden mogen per categorie/serie maximaal de volgende aantallen
 renners deelnemen:
 
-Categorie
-
-Weg
-Veld
-[GEWIJZIGD]MTB[/GEWIJZIGD]
-
-Baan
-(Lengte 250 M)
-
-*
-Jongens
-Meisjes
-
-[GEWIJZIGD]U6
-U6, U7
-20
-20 [/GEWIJZIGD]
-V[GEWIJZIGD] NVT[/GEWIJZIGD] Y
-
-[GEWIJZIGD]U7
-U8
-20
-20
-NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U8
-U9
-25
-25
-NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U9
-U9, U10 [/GEWIJZIGD]
-35
-35
-[GEWIJZIGD]NVT[/GEWIJZIGD]
-
-[GEWIJZIGD]U10
-U11 [/GEWIJZIGD]
-35
-50
-[GEWIJZIGD]NVT[/GEWIJZIGD]
-
-[GEWIJZIGD]U11
-U12 [/GEWIJZIGD]
-45
-50
-20
-
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-50
-50
-20
-
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-55
-55
-24
-
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-65
-65
-24
-
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-
-75
-75
-24
-
-[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
-75
-[GEWIJZIGD]100[/GEWIJZIGD]
-24
+| Categorie | Categorie | Weg | Veld [GEWIJZIGD]MTB[/GEWIJZIGD] | Baan (Lengte 250 M) * |
+| --- | --- | --- | --- | --- |
+| Jongens | Meisjes |  |  |  |
+| [GEWIJZIGD]U6[/GEWIJZIGD] | [GEWIJZIGD]U6, U7[/GEWIJZIGD] | [GEWIJZIGD]20[/GEWIJZIGD] | [GEWIJZIGD]20[/GEWIJZIGD] | V [GEWIJZIGD]NVT[/GEWIJZIGD] Y |
+| [GEWIJZIGD]U7[/GEWIJZIGD] | [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]20[/GEWIJZIGD] | [GEWIJZIGD]20[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]25[/GEWIJZIGD] | [GEWIJZIGD]25[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]U9, U10[/GEWIJZIGD] | 35 | 35 | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]U11[/GEWIJZIGD] | 35 | 50 | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U12[/GEWIJZIGD] | 45 | 50 | 20 |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 50 | 50 | 20 |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 55 | 55 | 24 |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 65 | 65 | 24 |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 75 | 75 | 24 |
+| [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | 75 | [GEWIJZIGD]100[/GEWIJZIGD] | 24 |
 
 * Ingeval een baan korter is dan dienen de maximale aantallen in evenredigheid te
 worden verminderd (zie ook Titel 3, artikel 3.1.009).
@@ -425,80 +323,20 @@ Titel 20: JEUGDWIELRENNEN
 20.1.007
 De toegestane verzetten zijn als volgt:
 
-Categorie
-Maximale verzet
-
-Jongens
-Meisjes
-Wegwielrennen
-Baanwielrennen
-Veldrijden
-
-[GEWIJZIGD]U6
-U6, U7
-5,50 meter [/GEWIJZIGD]
-NVT
-[GEWIJZIGD]NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U7
-U8
-5,50 meter [/GEWIJZIGD]
-NVT
-[GEWIJZIGD]NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U8
-U9
-5,50 meter [/GEWIJZIGD]
-NVT
-[GEWIJZIGD]NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U9
-U9, U10
-5,50 [/GEWIJZIGD]meter
-5,46 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U10
-U11
-5,50[/GEWIJZIGD] meter
-5,46 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U11
-U12
-5,90 [/GEWIJZIGD]meter
-5,78 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U12
-U13
-5,90[/GEWIJZIGD] meter
-5,78 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U13
-U14
-6,30 [/GEWIJZIGD]meter
-6,14 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U14
-U15
-6,30 [/GEWIJZIGD]meter
-6,14 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-[GEWIJZIGD]U15
-
-6,70 [/GEWIJZIGD]meter
-6,55 meter
-[GEWIJZIGD]vrij [/GEWIJZIGD]
-
-U17 (Nieuwelingen)
-[GEWIJZIGD] 7,68 meter [/GEWIJZIGD]
-7,41 meter
-vrij
-
+| Categorie | Categorie | Maximale verzet | Maximale verzet | Maximale verzet |
+| --- | --- | --- | --- | --- |
+| Jongens | Meisjes | Wegwielrennen | Baanwielrennen | Veldrijden |
+| [GEWIJZIGD]U6[/GEWIJZIGD] | [GEWIJZIGD]U6, U7[/GEWIJZIGD] | [GEWIJZIGD]5,50 meter[/GEWIJZIGD] | NVT | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U7[/GEWIJZIGD] | [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]5,50 meter[/GEWIJZIGD] | NVT | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]5,50 meter[/GEWIJZIGD] | NVT | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]U9, U10[/GEWIJZIGD] | [GEWIJZIGD]5,50[/GEWIJZIGD] meter | 5,46 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]5,50[/GEWIJZIGD] meter | 5,46 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]5,90[/GEWIJZIGD] meter | 5,78 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]5,90[/GEWIJZIGD] meter | 5,78 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]6,30[/GEWIJZIGD] meter | 6,14 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | [GEWIJZIGD]6,30[/GEWIJZIGD] meter | 6,14 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | [GEWIJZIGD]6,70[/GEWIJZIGD] meter | 6,55 meter | [GEWIJZIGD]vrij[/GEWIJZIGD] |
+| U17 (Nieuwelingen) | U17 (Nieuwelingen) | [GEWIJZIGD]7,68 meter[/GEWIJZIGD] | 7,41 meter | vrij |
 
 In het buitenland kunnen andere verzetten van toepassing zijn
 
@@ -522,7 +360,7 @@ weg of ploegachtervolging/teamsprint op de baan.
 
 Wanneer in een individuele combinatiewedstrijd een aparte uitslag van toepassing is,
 dan dient met het verzet van die categorie te worden gereden waartoe men behoort
-en is het verzet van de hoogste categorie niet van toepassing (b.v. [GEWIJZIGD]meisjes U11+U12 [/GEWIJZIGD]
+en is het verzet van de hoogste categorie niet van toepassing (b.v. [GEWIJZIGD]meisjes U11+U12[/GEWIJZIGD]
 of [GEWIJZIGD]U17[/GEWIJZIGD] nieuwelingen/junioren M/V).
 
 (gewijzigd: 1.01.17; 1.09.19[GEWIJZIGD]; 05.02.26; 22.03.26; 05.05.26[/GEWIJZIGD])
@@ -574,7 +412,7 @@ en eerste drie meisjes. Voor aanvang van de wedstrijd moet het aantal prijzen aa
 deelnemers bekend worden gemaakt.
 Een leidersprijs per categorie/wedstrijd is toegestaan, eveneens in de vorm van een
 ereprijs. Tijdens de landelijke toernooien dient voor de eerste drie aankomende
-meisjes in de categorieën [GEWIJZIGD]U13, U14 en U15 [/GEWIJZIGD]een extra prijs beschikbaar te
+meisjes in de categorieën [GEWIJZIGD]U13, U14 en U15[/GEWIJZIGD] een extra prijs beschikbaar te
 zijn.
 
 (gewijzigd per: 1.01.12; 1.01.20)
@@ -618,7 +456,7 @@ reglement staat vermeld (zie artikel 20.1.007).
 
 Twee wedstrijden op 1 dag niet toegestaan
 20.1.016
-Deelnemen aan twee wedstrijden [GEWIJZIGD] ongeacht de discipline, [/GEWIJZIGD]
+Deelnemen aan twee wedstrijden [GEWIJZIGD]ongeacht de discipline,[/GEWIJZIGD]
 op 1 dag is voor alle jeugdcategorieën niet toegestaan.
 Bij de eerste overtreding zal 2 weken schorsing worden opgelegd en bij de tweede
 overtreding 1 maand schorsing.
@@ -648,7 +486,7 @@ toegepast als de aanwezige jury dit noodzakelijk acht. Het geniet echter de voor
 om zonder boetes renners van uitleg te voorzien wat ze fout deden en hoe dit op een
 andere/betere wijze is op te lossen.
 
-(geïntroduceerd per 01.01.26) [/GEWIJZIGD]
+(geïntroduceerd per 01.01.26)[/GEWIJZIGD]
 
 KNWU REGLEMENTEN
 
@@ -672,7 +510,7 @@ Ploegentijdritten;
 e.
 Omniums;
 f.
-Eéndaagse wegwedstrijden (alleen te verrijden als [GEWIJZIGD] nationale [/GEWIJZIGD]
+Eéndaagse wegwedstrijden (alleen te verrijden als [GEWIJZIGD]nationale[/GEWIJZIGD]
 wedstrijd).
 De commissie Jury & Reglementen kan toestemming verlenen voor andere
 wedstrijdvormen.
@@ -686,104 +524,28 @@ criterium worden verreden.
 20.2.003
 Voor omniums stelt de organisator een wedstrijdreglement vast, dat dient te worden
 goedgekeurd door de wedstrijdcoördinator.
-Het programma voor [GEWIJZIGD]jongen U5 t/m U8 en meisjes U6 t/m U9 [/GEWIJZIGD]mag uit maximaal drie
-en voor de [GEWIJZIGD]jongens U9 t/m U1, meisjes U10 t/m U15 en U17 (nieuwelingen) [/GEWIJZIGD]uit
+Het programma voor [GEWIJZIGD]jongen U5 t/m U8 en meisjes U6 t/m U9[/GEWIJZIGD] mag uit maximaal drie
+en voor de [GEWIJZIGD]jongens U9 t/m U1, meisjes U10 t/m U15 en U17 (nieuwelingen)[/GEWIJZIGD] uit
 maximaal vier onderdelen bestaan. De totale wedstrijdafstand mag daarbij de
 maximum afstand voor criteriums niet overschrijden.
 
 20.2.004
 Maximale wedstrijdafstanden
 
-Categorie
-
-Criterium
-Tijdrit
-Ploegen
-
-tijdrit
-
-Criterium
-op een Omloop
-
-[GEWIJZIGD]NK[/GEWIJZIGD]
-Jongens
-Meisjes
-
-[GEWIJZIGD]U6
-U6, U7
-3 km
-NVT
-NVT
-NVT [/GEWIJZIGD]
-
-[GEWIJZIGD]U7
-U8
-3 km
-NVT
-NVT
-NVT[/GEWIJZIGD]
-
-[GEWIJZIGD]U8
-U9
-4 km
-NVT
-NVT
-NVT[/GEWIJZIGD]
-
-[GEWIJZIGD]U9
-U9, U10 [/GEWIJZIGD]
-6 km
-2 km
-4 km
-6 – 10 km
-
-[GEWIJZIGD]U10
-U11 [/GEWIJZIGD]
-8 km
-3 km
-6 km
-8 – 12 km
-
-[GEWIJZIGD]U11
-U12 [/GEWIJZIGD]
-12 km
-4 km
-8 km
-12 – 16 km
-
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-15 km
-6 km
-10 km
-15 – 20 km
-
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-20 km
-8 km
-12 km
-20 – 27 km
-
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-25 km
-10 km
-14 km
-25 – 32 km
-
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-
-35 km
-[GEWIJZIGD]15[/GEWIJZIGD] km
-[GEWIJZIGD]20 [/GEWIJZIGD]km
-[GEWIJZIGD]35 – [/GEWIJZIGD]45 km
-
-[GEWIJZIGD]U17 (Nieuwelingen) [/GEWIJZIGD]
-60km
-15 km
-20 km
-[GEWIJZIGD]80[/GEWIJZIGD] km
+| Categorie | Categorie | Criterium | Tijdrit | Ploegen tijdrit | Criterium op een Omloop [GEWIJZIGD]NK[/GEWIJZIGD] |
+| --- | --- | --- | --- | --- | --- |
+| Jongens | Meisjes |  |  |  |  |
+| [GEWIJZIGD]U6[/GEWIJZIGD] | [GEWIJZIGD]U6, U7[/GEWIJZIGD] | [GEWIJZIGD]3 km[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U7[/GEWIJZIGD] | [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]3 km[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]4 km[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] | [GEWIJZIGD]NVT[/GEWIJZIGD] |
+| [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]U9, U10[/GEWIJZIGD] | 6 km | 2 km | 4 km | 6 – 10 km |
+| [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]U11[/GEWIJZIGD] | 8 km | 3 km | 6 km | 8 – 12 km |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U12[/GEWIJZIGD] | 12 km | 4 km | 8 km | 12 – 16 km |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 15 km | 6 km | 10 km | 15 – 20 km |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 20 km | 8 km | 12 km | 20 – 27 km |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 25 km | 10 km | 14 km | 25 – 32 km |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 35 km | [GEWIJZIGD]15[/GEWIJZIGD] km | [GEWIJZIGD]20[/GEWIJZIGD] km | [GEWIJZIGD]35 –[/GEWIJZIGD] 45 km |
+| [GEWIJZIGD]U17 (Nieuwelingen)[/GEWIJZIGD] | [GEWIJZIGD]U17 (Nieuwelingen)[/GEWIJZIGD] | 60km | 15 km | 20 km | [GEWIJZIGD]80[/GEWIJZIGD] km |
 
 (gewijzigd: 1.01.14; 1.01.20; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
@@ -808,17 +570,17 @@ een vergoeding, zoals vermeld in art. [GEWIJZIGD]2.7.4 van de Nationale Besluite
 norm van 10km / 10 ronden zal worden verlaagd naar 5km / 5 ronden[/GEWIJZIGD].
 
 
-Overige verzorging [GEWIJZIGD]en bevoorrading [/GEWIJZIGD]is niet toegestaan[GEWIJZIGD], tenzij specifiek door de
-voorzitter van de jury is aangegeven. [/GEWIJZIGD]
+Overige verzorging [GEWIJZIGD]en bevoorrading[/GEWIJZIGD] is niet toegestaan[GEWIJZIGD], tenzij specifiek door de
+voorzitter van de jury is aangegeven.[/GEWIJZIGD]
 
 (gewijzigd: [GEWIJZIGD]01.01.26, 19.05.26[/GEWIJZIGD])
 
 
 20.2.007
-Als een renner bij [GEWIJZIGD]de Jongens U9 t/m U12, of meisjes U10 t/m U13 [/GEWIJZIGD]tijdens het eerste
-gedeelte van zijn wedstrijd materiaalpech krijgt, mag [GEWIJZIGD] de getroffen renner [/GEWIJZIGD]buiten
+Als een renner bij [GEWIJZIGD]de Jongens U9 t/m U12, of meisjes U10 t/m U13[/GEWIJZIGD] tijdens het eerste
+gedeelte van zijn wedstrijd materiaalpech krijgt, mag [GEWIJZIGD]de getroffen renner[/GEWIJZIGD] buiten
 mededinging meedoen bij de volgende categorie/serie. Op aanwijzing van de
-wedstrijdcommissarissen dient [GEWIJZIGD] de renner[/GEWIJZIGD] daarbij vroegtijdig de wedstrijd te
+wedstrijdcommissarissen dient [GEWIJZIGD]de renner[/GEWIJZIGD] daarbij vroegtijdig de wedstrijd te
 verlaten.
 Buiten mededinging meedoen is niet mogelijk bij nationale kampioenschappen.
 
@@ -837,14 +599,14 @@ aan de hand van een selectieprocedure per regio.
 
 [GEWIJZIGD]De stand wordt bijgehouden door een landelijk klassement waarbij de
 puntentelling voor regio’s gelijk gesteld zijn. Voor filtering door de regio’s is
-de vestigingsplaats van de vereniging bepalend. [/GEWIJZIGD]
+de vestigingsplaats van de vereniging bepalend.[/GEWIJZIGD]
 •
 De geselecteerden voor het NK jeugd krijgen van de KNWU een uitnodiging.
 Binnen de diversen regio`s heeft een verdeling plaatsgevonden door de
 KNWU naar rato van het aantal licentiehouders per regio.
 •
 De deelname procedure word bepaald volgens de geldende regels zoals
-weergegeven in de [GEWIJZIGD]Nationale [/GEWIJZIGD]Besluiten .
+weergegeven in de [GEWIJZIGD]Nationale[/GEWIJZIGD] Besluiten .
 •
 Het aantal deelnemers tijdens een NK jeugd kan per categorie afwijken van
 de normale aantallen i.v.m. parkoers of verdeling per regio. Dit wordt door de
@@ -880,13 +642,13 @@ zonnebril.
 
 20.2.009
 Materiaal
-Uitsluitend de traditionele fiets (en materiaal) is bij alle Jeugdcategorieën [GEWIJZIGD] inclusief[/GEWIJZIGD]
+Uitsluitend de traditionele fiets (en materiaal) is bij alle Jeugdcategorieën [GEWIJZIGD]inclusief[/GEWIJZIGD]
 U17 (Nieuwelingen) toegestaan. Tijdritfietsen zijn niet toegestaan.
 [GEWIJZIGD]Het rijden met dichte wielen, opzetsturen of andere aanpassingen aan de fiets zoals
 beschreven in Titel 1 zijn niet toegelaten voor de categorieën beschreven in Titel 20.
 Uitzondering hierop zijn de fietscomputer en/of camera, mits deze op een deugdelijke
 wijze zijn gemonteerd en niet tot gevaar voor de renner zelf of andere renners kunnen
-leiden. [/GEWIJZIGD]
+leiden.[/GEWIJZIGD]
 
 Elke vorm van misbruik, oneigenlijk gebruik of het schaden van de KNWU, officials,
 andere deelnemers, organisatoren, publiek, etc. d.m.v. het gebruik van een
@@ -908,13 +670,13 @@ en conform 1.3.008 dient de renner altijd volledige controle over de fiets te he
 
 Voor renners behorend tot de categorie U17 (nieuwelingen)
 zijn
-op basis van bovenstaande de volgende afwijkingen van toepassing: [/GEWIJZIGD]
+op basis van bovenstaande de volgende afwijkingen van toepassing:[/GEWIJZIGD]
 
 [GEWIJZIGD]•
 Het is toegestaan om te rijden met een goedgekeurde tijdrithelm tijdens
 individuele- en ploegentijdrit op de weg
 •
-De minimale breedte van het stuur is 400mm, conform 1.3.022 [/GEWIJZIGD]
+De minimale breedte van het stuur is 400mm, conform 1.3.022[/GEWIJZIGD]
 
 (gewijzigd per 01.01.10; 1.05.17; 18.04.18; 1.03.19; 1.09.19; 1.01.20; 01.01.25;
 [GEWIJZIGD]05.05.26[/GEWIJZIGD])
@@ -933,8 +695,8 @@ Bij het baanwielrennen zal de “oktober-regeling” worden toegepast. Dit betek
 dat een renner vanaf 1 oktober al zal rijden in de categorie welke pas vanaf 1
 januari officieel aangevraagd kan worden.
 
-[GEWIJZIGD] U15 [/GEWIJZIGD]meisjes en [GEWIJZIGD] U15 [/GEWIJZIGD]jongens, rijden vanaf 1 oktober al als
-nieuweling. Tot en met [GEWIJZIGD] U14[/GEWIJZIGD] meisjes en [GEWIJZIGD] U14[/GEWIJZIGD] jongens, in
+[GEWIJZIGD]U15[/GEWIJZIGD] meisjes en [GEWIJZIGD]U15[/GEWIJZIGD] jongens, rijden vanaf 1 oktober al als
+nieuweling. Tot en met [GEWIJZIGD]U14[/GEWIJZIGD] meisjes en [GEWIJZIGD]U14[/GEWIJZIGD] jongens, in
 de periode van 1 oktober t/m 31 december rijden de betreffende licentiehouders al
 in een categorie hoger dan vermeld op de licentie.
 
@@ -942,7 +704,7 @@ in een categorie hoger dan vermeld op de licentie.
 als nieuweling maar als junior.
 
 Binnen het baanwielrennen worden er geen wedstrijden georganiseerd voor
-renners [GEWIJZIGD] jonger dan 10 jaar [/GEWIJZIGD]. De leeftijd van
+renners [GEWIJZIGD]jonger dan 10 jaar[/GEWIJZIGD] . De leeftijd van
 deze renners wordt te jong geacht om deel te nemen aan wedstrijden op de baan.
 
 (gewijzigd per 23.09.24; [GEWIJZIGD]01.01.26, 21.09.26[/GEWIJZIGD])
@@ -982,7 +744,7 @@ commissie baansport
 20.3.004
 Team Sprint
 Voor licentiehouders in een jeugdcategorie wordt afgeweken van artikel 3.2.144
-De Teamsprint voor [GEWIJZIGD]categorieën t/m U15 [/GEWIJZIGD]is een wedstrijd door twee ploegen van 2
+De Teamsprint voor [GEWIJZIGD]categorieën t/m U15[/GEWIJZIGD] is een wedstrijd door twee ploegen van 2
 renners tegen elkaar, waarvan elke renner steeds één ronde de leiding moet
 nemen.
 
@@ -1003,10 +765,9 @@ Voor licentiehouders in een jeugdcategorie wordt afgeweken van artikel 3.2.007.
 De ploegenachtervolging is een wedstrijd welke wordt verreden over een
 vastgestelde afstand conform onderstaande tabel met ploegen van 3 of 4 renners.
 
-Jeugd t/m [GEWIJZIGD]U15[/GEWIJZIGD]
-1500 meter
-[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
-2000 meter
+| Jeugd t/m [GEWIJZIGD]U15[/GEWIJZIGD] | 1500 meter |
+| --- | --- |
+| [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | 2000 meter |
 
 (gewijzigd per 23.09.24; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
@@ -1017,45 +778,25 @@ verschillende wedstrijdvormen zoals deze er zijn binnen het baanwielrennen.
 
 Scratch & Temporace
 
-[GEWIJZIGD]Jongens
-Meisjes
-U11
-U11, U12 [/GEWIJZIGD]
-3 Km
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-3 Km
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-3 Km
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-4 Km
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-4 Km
-[GEWIJZIGD]U17[/GEWIJZIGD] Nieuwelingen)
-5 Km
+| [GEWIJZIGD]Jongens[/GEWIJZIGD] | [GEWIJZIGD]Meisjes[/GEWIJZIGD] |  |
+| --- | --- | --- |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U11, U12[/GEWIJZIGD] | 3 Km |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 3 Km |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 3 Km |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 4 Km |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 4 Km |
+| [GEWIJZIGD]U17[/GEWIJZIGD] Nieuwelingen) |  | 5 Km |
 
 Puntenkoers
 
-[GEWIJZIGD]Jongens
-Meisjes
-U11
-U11, U12 [/GEWIJZIGD]
-5 Km
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-6,5 Km
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-6,5 Km
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-8 Km
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-10 Km
-[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
-12,5 Km
+| [GEWIJZIGD]Jongens[/GEWIJZIGD] | [GEWIJZIGD]Meisjes[/GEWIJZIGD] |  |
+| --- | --- | --- |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U11, U12[/GEWIJZIGD] | 5 Km |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 6,5 Km |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 6,5 Km |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 8 Km |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 10 Km |
+| [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) |  | 12,5 Km |
 
 (gewijzigd per 23.09.24; [GEWIJZIGD]01.01.26, 21.09.26[/GEWIJZIGD])
 
@@ -1072,24 +813,14 @@ verreden
 Indien categorieën gezamenlijk rijden dan is de afstand van de hoogste categorie
 bepalend.
 
-[GEWIJZIGD]Jongens
-Meisjes
-U11
-U11, U12 [/GEWIJZIGD]
-10 Km
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-10 Km
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-15 Km
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-20 Km
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-20 Km
-[GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen)
-30 Km
+| [GEWIJZIGD]Jongens[/GEWIJZIGD] | [GEWIJZIGD]Meisjes[/GEWIJZIGD] |  |
+| --- | --- | --- |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U11, U12[/GEWIJZIGD] | 10 Km |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 10 Km |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 15 Km |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 20 Km |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 20 Km |
+| [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | 30 Km |
 
 (gewijzigd per 23.09.24; [GEWIJZIGD]01.01.26, 21.09.26[/GEWIJZIGD])
 
@@ -1101,7 +832,7 @@ Titel 20: JEUGDWIELRENNEN
 
 20.3008
 Nationale kampioenschappen
-Voor de jeugdcategorieën [GEWIJZIGD] U14-U15 en U17 [/GEWIJZIGD]worden nationale
+Voor de jeugdcategorieën [GEWIJZIGD]U14-U15 en U17[/GEWIJZIGD] worden nationale
 kampioenschappen georganiseerd, dit kampioenschap wordt georganiseerd op
 onderstaande wijze
 
@@ -1168,7 +899,7 @@ Titel 20: JEUGDWIELRENNEN
 17
 
 20.3.011
-[GEWIJZIGD][vervallen per 29.01.26] [/GEWIJZIGD]
+[GEWIJZIGD][vervallen per 29.01.26][/GEWIJZIGD]
 
 Is opgenomen in artikel 20.1.018
 
@@ -1187,7 +918,7 @@ Voorbeeld van hoe het rugnummer te dragen
 
 
 20.3.013
-[GEWIJZIGD][vervallen per 29.01.26] [/GEWIJZIGD]
+[GEWIJZIGD][vervallen per 29.01.26][/GEWIJZIGD]
 Verzettabel is opgenomen in artikel 20.1.007
 
 20.3.014
@@ -1215,7 +946,7 @@ Een baanfiets moet voldoen aan alle eisen zoals deze gesteld worden in Titel 1
 Hoofdstuk 3. Omwille van de veiligheid en om een gelijk speelveld te creëren zijn er
 een aantal aanvullende beperkingen voor het jeugdwielrennen op de baan
 
-[GEWIJZIGD] Wielen[/GEWIJZIGD]
+[GEWIJZIGD]Wielen[/GEWIJZIGD]
 
 •
 Dichte wielen zijn niet toegestaan
@@ -1233,7 +964,7 @@ Spaken: minimaal 20 spaken, welke demontabel zijn
 o
 Alle componenten moeten herkenbaar en commercieel
 verkrijgbaar zijn
-[GEWIJZIGD]Helm [/GEWIJZIGD]
+[GEWIJZIGD]Helm[/GEWIJZIGD]
 
 [GEWIJZIGD]•
 Tot en met de categorie U15 mag er enkel met een traditionele helm
@@ -1241,13 +972,13 @@ gereden worden in alle onderdelen. Voor U16 en U17 renners geldt
 dat zij met een tijdrithelm mogen rijden bij de onderdelen beschreven
 in 1.3.031
 
-Stuur [/GEWIJZIGD]
+Stuur[/GEWIJZIGD]
 
 •
 Opzetsturen zijn niet toegestaan
 [GEWIJZIGD]•
 De minimale totale breedte van het stuur, gemeten van buitenzijde
-naar buitenzijde conform artikel 1.3.022 (350mm) [/GEWIJZIGD]
+naar buitenzijde conform artikel 1.3.022 (350mm)[/GEWIJZIGD]
 
 
 (gewijzigd per 23.09.24, [GEWIJZIGD]09.09.26[/GEWIJZIGD])
@@ -1300,67 +1031,18 @@ Wedstrijdduur
 
 Wedstrijdduur (Minuten)
 
-Categorie
-Wedstrijdduur (Minuten
-Parcours
-Jongens
-Meisjes
-Basis
-Min.
-Max.
-[GEWIJZIGD]1
-U8
-U8
-10
-8
-12 [/GEWIJZIGD]
-1
-[GEWIJZIGD]U9
-U9, U10 [/GEWIJZIGD]
-15
-15
-20
-1
-[GEWIJZIGD]U10
-U11 [/GEWIJZIGD]
-15
-15
-20
-2
-[GEWIJZIGD]U11
-U12 [/GEWIJZIGD]
-25
-23
-29
-2
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-30
-27
-35
-3
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-35
-31
-40
-3
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-45
-41
-54
-3
-[GEWIJZIGD]U15[/GEWIJZIGD]
-
-55
-51
-60
-4
-[GEWIJZIGD]U17 (Nieuweling)[/GEWIJZIGD]
-60
-55
-65
+|  | Categorie | Categorie | Wedstrijdduur (Minuten | Wedstrijdduur (Minuten | Wedstrijdduur (Minuten |
+| --- | --- | --- | --- | --- | --- |
+| Parcours | Jongens | Meisjes | Basis | Min. | Max. |
+| [GEWIJZIGD]1[/GEWIJZIGD] | [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]U8[/GEWIJZIGD] | [GEWIJZIGD]10[/GEWIJZIGD] | [GEWIJZIGD]8[/GEWIJZIGD] | [GEWIJZIGD]12[/GEWIJZIGD] |
+| 1 | [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]U9, U10[/GEWIJZIGD] | 15 | 15 | 20 |
+| 1 | [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]U11[/GEWIJZIGD] | 15 | 15 | 20 |
+| 2 | [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U12[/GEWIJZIGD] | 25 | 23 | 29 |
+| 2 | [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 30 | 27 | 35 |
+| 3 | [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 35 | 31 | 40 |
+| 3 | [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 45 | 41 | 54 |
+| 3 | [GEWIJZIGD]U15[/GEWIJZIGD] |  | 55 | 51 | 60 |
+| 4 | [GEWIJZIGD]U17 (Nieuweling)[/GEWIJZIGD] | [GEWIJZIGD]U17 (Nieuweling)[/GEWIJZIGD] | 60 | 55 | 65 |
 
 De Start
 20.4.003
@@ -1376,7 +1058,7 @@ Deze markering zal dienen als ijkpunt voor een mogelijke herstart n.a.v. een inc
 gedurende de start. De jury is verantwoordelijk voor het al dan niet afbreken van de
 start. Achter de eindmarkering dient een official met fluit te staan die, ingeval van een
 herstart, aan de renners een duidelijk stopsignaal geeft.
-Dit geldt alleen voor [GEWIJZIGD]categorieën tot en met U15[/GEWIJZIGD] en niet voor [GEWIJZIGD]U17 [/GEWIJZIGD](nieuwelingen).
+Dit geldt alleen voor [GEWIJZIGD]categorieën tot en met U15[/GEWIJZIGD] en niet voor [GEWIJZIGD]U17[/GEWIJZIGD] (nieuwelingen).
 
 De Finish
 20.4.004
@@ -1439,12 +1121,12 @@ begeleider of starter (jurylid). De jury beslist over een herstart.
 Begeleidende Voor en Achter rijder
 20.4.008
 De organisatie draagt zorg voor twee goed herkenbare begeleiders die voor de eerste
-en achter de laatste deelnemer in de wedstrijd [GEWIJZIGD]rijdend op parcours 1 [/GEWIJZIGD]
+en achter de laatste deelnemer in de wedstrijd [GEWIJZIGD]rijdend op parcours 1[/GEWIJZIGD]
 . Bij [GEWIJZIGD]parcours 2 en 3[/GEWIJZIGD] neemt de achter
 rijder op deze positie plaats na het bellen bij het ingaan van de laatste ronde en er
 daarna wordt geklasseerd.
 
-Bij de [GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen) is geen achter rijder aanwezig.
+Bij de [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) is geen achter rijder aanwezig.
 
 Fiets en Materiaalcontrole
 20.4.009
@@ -1460,7 +1142,7 @@ karkas van de band (exclusief eventuele noppen).
 •
 Er mogen geen scherpe uitsteeksels (b.v. een standaard o.i.d.) aanwezig zijn.
 [GEWIJZIGD]•
-De uiteinden van sturen en bar-ends moeten afgedicht zijn. [/GEWIJZIGD]
+De uiteinden van sturen en bar-ends moeten afgedicht zijn.[/GEWIJZIGD]
 •
 De fiets moet voorzien zijn van goed werkende remmen.
 •
@@ -1511,19 +1193,19 @@ Hoofdstuk 5 : VELDRIT WEDSTRIJDEN
 Parkoers
 20.5.001
 Het parkoers dient dusdanig te zijn ingericht dat de [GEWIJZIGD]Jongens U9 t/m U12 en Meisjes
-U10 t/m U13 [/GEWIJZIGD]één keer af moeten stappen; de [GEWIJZIGD]Jongens U13 t/m U15 en Meisjes U14
-t/m U15[/GEWIJZIGD] en [GEWIJZIGD]U17 (nieuwelingen) [/GEWIJZIGD]moeten het voor ten minste drie-vierde deel fietsend
+U10 t/m U13[/GEWIJZIGD] één keer af moeten stappen; de [GEWIJZIGD]Jongens U13 t/m U15 en Meisjes U14
+t/m U15[/GEWIJZIGD] en [GEWIJZIGD]U17 (nieuwelingen)[/GEWIJZIGD] moeten het voor ten minste drie-vierde deel fietsend
 af kunnen leggen.
 Hindernissen die de renners dwingen het rijwiel op te tillen, mogen niet voorkomen bij
 wedstrijden voor de [GEWIJZIGD]Jongens U9 t/m U10 en Meisjes U9 t/m U11[/GEWIJZIGD], en mogen [GEWIJZIGD]tot en
-met U15 [/GEWIJZIGD]niet hoger zijn dan 20 cm. [GEWIJZIGD]Voor de U17 renners geldt dat zij op hetzelfde
-parcours met dezelfde reglementen als de junioren en hoger rijden. [/GEWIJZIGD]
+met U15[/GEWIJZIGD] niet hoger zijn dan 20 cm. [GEWIJZIGD]Voor de U17 renners geldt dat zij op hetzelfde
+parcours met dezelfde reglementen als de junioren en hoger rijden.[/GEWIJZIGD]
 
 (gewijzigd per 1.09.14; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
 Pauze
 20.5.002
-Tussen de wedstrijden van [GEWIJZIGD]Jongens U12/Meisjes U13 en Jongens U13/Meisjes U14 [/GEWIJZIGD]
+Tussen de wedstrijden van [GEWIJZIGD]Jongens U12/Meisjes U13 en Jongens U13/Meisjes U14[/GEWIJZIGD]
 dient een pauze te worden ingelast van minimaal een half uur, zodat de renners de
 gelegenheid hebben het parkoers te verkennen.
 
@@ -1538,32 +1220,16 @@ Het aantal ronden wordt voor, dan wel zo spoedig mogelijk na, het begin van de
 wedstrijd bekend gemaakt.
 De wedstrijdduur is als volgt:
 
-[GEWIJZIGD]Jongens
-Meisjes
-
-U9
-U9, U10 [/GEWIJZIGD]
-13 min.
-[GEWIJZIGD]U10
-U11 [/GEWIJZIGD]
-16 min.
-[GEWIJZIGD]U11
-U12 [/GEWIJZIGD]
-19 min.
-[GEWIJZIGD]U12
-U13 [/GEWIJZIGD]
-21 min.
-[GEWIJZIGD]U13
-U14 [/GEWIJZIGD]
-24 min.
-[GEWIJZIGD]U14
-U15 [/GEWIJZIGD]
-26 min.
-[GEWIJZIGD]U15 [/GEWIJZIGD]
-
-29 min.
-[GEWIJZIGD]U17 [/GEWIJZIGD](Nieuwelingen)
-30 min.
+| [GEWIJZIGD]Jongens[/GEWIJZIGD] | [GEWIJZIGD]Meisjes[/GEWIJZIGD] |  |
+| --- | --- | --- |
+| [GEWIJZIGD]U9[/GEWIJZIGD] | [GEWIJZIGD]U9, U10[/GEWIJZIGD] | 13 min. |
+| [GEWIJZIGD]U10[/GEWIJZIGD] | [GEWIJZIGD]U11[/GEWIJZIGD] | 16 min. |
+| [GEWIJZIGD]U11[/GEWIJZIGD] | [GEWIJZIGD]U12[/GEWIJZIGD] | 19 min. |
+| [GEWIJZIGD]U12[/GEWIJZIGD] | [GEWIJZIGD]U13[/GEWIJZIGD] | 21 min. |
+| [GEWIJZIGD]U13[/GEWIJZIGD] | [GEWIJZIGD]U14[/GEWIJZIGD] | 24 min. |
+| [GEWIJZIGD]U14[/GEWIJZIGD] | [GEWIJZIGD]U15[/GEWIJZIGD] | 26 min. |
+| [GEWIJZIGD]U15[/GEWIJZIGD] |  | 29 min. |
+| [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | [GEWIJZIGD]U17[/GEWIJZIGD] (Nieuwelingen) | 30 min. |
 
 (gewijzigd per 1.09.19; 1.09.21; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
@@ -1578,7 +1244,7 @@ Materiaalverzorging is toegestaan [GEWIJZIGD]voor vanaf Jongens U13, meisjes U14
 U15[/GEWIJZIGD] en mag uitsluitend op één in het parkoers aanwezige materiaalverzorgingsplaats
 geschieden. Daarbij is zowel links als rechts afstappen toegestaan. Een fietswissel is
 niet toegestaan [GEWIJZIGD]tot en met U15, vanaf U17 is een fietswissel in de materiaalzone
-toegestaan. [/GEWIJZIGD]
+toegestaan.[/GEWIJZIGD]
 
 (gewijzigd per 1.01.20; [GEWIJZIGD]01.01.26[/GEWIJZIGD])
 
@@ -1595,7 +1261,7 @@ commissie offroad besluiten om het kampioenschap te laten verrijden of uit te
 schrijven als twee aparte kampioenschappen: Zijnde U16 en U17. Deze eventuele
 splitsing wordt apart beoordeeld en bepaald voor de Jongens en de Meisjes.
 Belangrijkste bepalende voorwaarde is dat het aantal te verwachten deelnemers ruim
-groter is dan het maximale aantal bepaald in 20.1.003 [/GEWIJZIGD]
+groter is dan het maximale aantal bepaald in 20.1.003[/GEWIJZIGD]
 
 
 

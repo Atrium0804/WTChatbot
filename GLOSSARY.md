@@ -36,7 +36,7 @@ Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst
 _Avoid_: "de schone versie" (die bestaat niet; bedoel je onze eigen afgeleide tekst, zeg dan opgeschoonde versie)
 
 **Opgeschoonde versie**:
-De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
+De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd, tabellen als markdown-tabel. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
 _Avoid_: "schone versie", "gecleande PDF"
 
 **Opschoonrapport**:

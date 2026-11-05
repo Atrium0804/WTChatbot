@@ -40,7 +40,7 @@ Python-omgeving: gebruik de project-venv (`.venv`); zonder venv geeft het script
 - Identiteit van een document = bestandsnaam + bestandsgrootte. Bij een mismatch worden alle remote documenten met die naam verwijderd en wordt er één nieuwe geüpload (de API dedupliceert niet zelf).
 - Remote documenten zonder lokale tegenhanger worden uit de library verwijderd.
 - Lege (of ontbrekende) lokale map = lege library: alle remote documenten worden verwijderd.
-- Lokale mappen die niet in de config staan: warning, worden overgeslagen.
+- Lokale mappen die niet in de config staan: warning, worden overgeslagen. Uitzondering: `review/` (opschoonrapporten van `scripts/clean_pdf.py`) wordt zonder warning overgeslagen.
 - Na upload is een document asynchroon in processing (`process_status`); het script wacht hier niet op.
 - `versions.json` wordt niet aangeraakt (handmatig beheer, ADR-0005).
 
@@ -54,16 +54,22 @@ Python-omgeving: gebruik de project-venv (`.venv`); zonder venv geeft het script
 
 ## Workspace-overzicht: `scripts/list_libraries.py`
 
-Read-only listing van de remote inhoud per geconfigureerde library (de web-UI biedt geen workspace-breed overzicht).
+Read-only listing van de remote inhoud per geconfigureerde library (de web-UI biedt geen workspace-breed overzicht). Per library eerst de metadata (naam, uuid, beschrijving, aantal documenten en totale grootte), daarna de documenten.
 
 ```bash
-python scripts/list_libraries.py           # tabel op stdout
+python scripts/list_libraries.py           # per library een blok op stdout
 python scripts/list_libraries.py --json    # JSON (raw bytes, ISO-8601 datums)
 ```
 
-| Kolom (tabel) | JSON-veld | Betekenis |
+| Libraryveld (tabel) | JSON-veld | Betekenis |
 | --- | --- | --- |
-| `library` | `libraries[].name` | Library = submapnaam uit de config |
+| `== naam ==` | `libraries[].name` | Library = submapnaam uit de config |
+| `uuid` | `libraries[].id` | Remote library-id; `null` / `-` als de library niet remote bestaat |
+| `beschrijving` | `libraries[].description` | Remote beschrijving; uit de config als de library niet remote bestaat |
+| `documenten` | — | Aantal documenten en totale grootte (alleen tabel) |
+
+| Documentkolom (tabel) | JSON-veld | Betekenis |
+| --- | --- | --- |
 | `bestand` | `documents[].name` | Documentnaam |
 | `grootte` | `documents[].size` | Tabel: human-readable (MB/KB); JSON: raw bytes |
 | `aangemaakt` | `documents[].created_at` | ISO-8601 datetime |

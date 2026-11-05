@@ -13,22 +13,26 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt |
 | `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` |
 | `vraag` | string | ja | Typische clubvraag |
-| `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het B2-antwoord voorkomen |
-| `bron` | string | ja | Verwachte bron (documentnaam of URL); moet in de `Bron:`-regel van het antwoord staan |
+| `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het B2-antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
+| `bron` | string | ja | Verwachte bron (documentnaam of URL); moet in een `Bron:`-regel van het antwoord staan. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
 
-Huidige verdeling: 20 vragen — 10 knwu, 5 regio, 5 club; 13 standaard, 5 strikethrough, 2 websearch.
+Huidige verdeling: 20 vragen — 10 knwu, 5 regio, 5 club; 14 standaard, 4 strikethrough, 2 websearch.
+
+Een test (`tests/test_run_eval.py`, `Run3ReviewTests`) legt per vraag het oordeel uit de handmatige review van eval run 3 vast en controleert dat de evalset met de echte run-3-antwoorden (`tests/fixtures/eval_run3_antwoorden.json`) tot hetzelfde oordeel leidt. Pas je een entry aan, draai dan de tests.
 
 ## Meting: "correct mét correcte bron"
 
 Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 
-1. **Bron**: de laatste `Bron: ...`-regel van het antwoord matcht na normalisatie (lowercase, komma/punt, URL zonder protocol/query) de `bron` in de evalset.
-2. **Kernfeiten**: elk item van `verwacht_antwoord` komt voor in het antwoord (zelfde normalisatie).
+1. **Bron**: een van de `Bron: ...`-regels van het antwoord bevat na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee.
+2. **Kernfeiten**: elk token van elk item van `verwacht_antwoord` staat los in het antwoord. Getallen en woorden van maximaal 3 tekens moeten als heel token voorkomen (`5` matcht niet in `15`, `ja` niet in `jaar`); langere woorden als woordbegin (`verzeker` matcht `verzekering`). Getallen worden genormaliseerd: `11.05` = `11:05`, `08:30` = `8.30`, `€ 10,-` = `10,00` = `10`.
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
 
 Een vraag is "correct mét correcte bron" als alle drie de checks slagen.
+
+Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord.
 
 ## Gate
 
@@ -43,10 +47,15 @@ Een vraag is "correct mét correcte bron" als alle drie de checks slagen.
 `eval/run_eval.py` draait **offline** tegen dezelfde agents via de Mistral Conversations API (per vraag een nieuwe conversation, zelfde prompt als productie) — niet tegen de draaiende bot. Een live smoke-test tegen de gedeployde bot is post-MVP.
 
 ```bash
-pip install requests pyyaml
-MISTRAL_API_KEY=... MISTRAL_AGENT_ID_KNWU=... MISTRAL_AGENT_ID_REGIO=... MISTRAL_AGENT_ID_CLUB=... \
-  python eval/run_eval.py
+python eval/run_eval.py
 ```
+
+| Variabele (uit `.env` in de repo-root) | Betekenis |
+| --- | --- |
+| `MISTRAL_API_KEY` | Verplicht |
+| `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
+
+Waarden uit `.env` overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.
 
 Output: per-vraag resultaat op stdout, volledig resultaat in `eval/last_run.json`, exit-code 0 als de gate gehaald is, anders 1. **Nooit in CI draaien** (geen live API-calls in CI).
 

@@ -24,10 +24,11 @@ Hoe je de lokale bronmap `knowledge-documents/` synchroniseert met de Mistral-li
 Zie ook de [seizoenwissel-procedure](../operations.md):
 
 1. Zet de oude versie in `knowledge-documents/archive/` met de datum in de bestandsnaam (bijv. `Nationale_Besluiten_20260918_2026-09-18.pdf`).
-2. Plaats de nieuwe versie in `knowledge-documents/<library>/`.
-3. Werk `knowledge-documents/versions.json` handmatig bij (documentnaam → versiedatum).
-4. Draai de sync (eerst dry-run, dan `--apply`).
-5. Re-run de eval-set (`eval/run_eval.py`); launch-gate ≥90% correct mét correcte bron.
+2. Plaats de nieuwe versie in `knowledge-documents/<library>/`. Een KNWU-PDF met doorhalingen of rode revisies gaat er als opgeschoonde versie in: `python scripts/clean_pdf.py knowledge-documents/knwu/<document>.pdf --out knowledge-documents/knwu` (zie [operations.md](../operations.md)).
+3. Loop het [opschoonrapport](../../GLOSSARY.md) na: `knowledge-documents/review/<document>.md`. Vink elk twijfelgeval bovenaan af nadat je het in de PDF hebt gecontroleerd; de lijst met weggehaalde stukken eronder hoef je alleen te raadplegen. Commit het afgevinkte rapport samen met de opgeschoonde versie. Let op: opnieuw `clean_pdf.py` draaien overschrijft het rapport en dus je vinkjes; controleer met `git diff` voordat je commit.
+4. Werk `knowledge-documents/versions.json` handmatig bij (documentnaam → versiedatum).
+5. Draai de sync (eerst dry-run, dan `--apply`). De map `review/` wordt nooit gesynct.
+6. Re-run de eval-set (`eval/run_eval.py`); launch-gate ≥90% correct mét correcte bron.
 
 ## Controle dat het gelukt is
 

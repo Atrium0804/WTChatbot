@@ -228,3 +228,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 WTChatbot.code-workspace
+
+# Opgeschoonde library-documenten (gegenereerd met scripts/clean_pdf.py of afgeleid van websites)
+knowledge-documents/*/*.md
+!knowledge-documents/archive/README.md
+# Opgeschoonde KNWU-versies en hun opschoonrapporten wel in git (#30)
+!knowledge-documents/knwu/*.md
+!knowledge-documents/review/*.md

@@ -155,6 +155,26 @@ def print_summary(report: AgentReport, apply: bool) -> None:
             print(f"  {env_var_for(name)}={agent_id}  # {name}")
 
 
+def handoff_order(agents: list[AgentConfig]) -> list[AgentConfig]:
+    """Config order, but every agent after the in-config agents it hands off to.
+
+    Targets outside the config (remote or unknown) don't constrain the order;
+    a cycle falls back to config order and surfaces as a handoff error.
+    """
+    names = {a["name"] for a in agents}
+    ordered: list[AgentConfig] = []
+    placed: set[str] = set()
+    pending = list(agents)
+    while pending:
+        ready = [
+            a for a in pending if all(t in placed or t not in names for t in a.get("handoffs", []))
+        ] or pending
+        ordered += ready
+        placed |= {a["name"] for a in ready}
+        pending = [a for a in pending if a["name"] not in placed]
+    return ordered
+
+
 def run_create(
     client: Mistral,
     config: Config,
@@ -173,9 +193,9 @@ def run_create(
     id_by_name: dict[str, str] = {a.name: a.id for a in existing}
     report["agent_ids"] = id_by_name
 
-    # Agents with handoffs go last: their targets must exist (or be created) first.
-    ordered = [a for a in config["agents"] if not a.get("handoffs")]
-    ordered += [a for a in config["agents"] if a.get("handoffs")]
+    # Handoff targets must exist (or be created) before the agents that hand off
+    # to them; handoffs can chain (router -> regio -> knwu).
+    ordered = handoff_order(config["agents"])
 
     for agent in ordered:
         name = agent["name"]

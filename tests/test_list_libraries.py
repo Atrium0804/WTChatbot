@@ -29,7 +29,7 @@ class CollectOverviewTests(unittest.TestCase):
     def test_paginates_all_document_pages(self) -> None:
         client = MagicMock()
         client.beta.libraries.list.return_value = SimpleNamespace(
-            data=[SimpleNamespace(id="lib-1", name="knwu")], next_page_token=None
+            data=[SimpleNamespace(id="lib-1", name="knwu", description="KNWU-bibliotheek")], next_page_token=None
         )
         client.beta.libraries.documents.list.side_effect = [
             SimpleNamespace(
@@ -64,8 +64,12 @@ class OutputTests(unittest.TestCase):
         client = MagicMock()
         client.beta.libraries.list.return_value = SimpleNamespace(
             data=[
-                SimpleNamespace(id="lib-1", name="knwu", nb_documents=1, total_size=9786169),
-                SimpleNamespace(id="lib-9", name="extra-remote", nb_documents=7, total_size=123),
+                SimpleNamespace(
+                    id="lib-1", name="knwu", description="KNWU remote", nb_documents=1, total_size=9786169
+                ),
+                SimpleNamespace(
+                    id="lib-9", name="extra-remote", description="", nb_documents=7, total_size=123
+                ),
             ],
             next_page_token=None,
         )
@@ -97,6 +101,28 @@ class OutputTests(unittest.TestCase):
         self.assertIn("totaal: 1 documenten (9,3 MB) in 1 van 1 geconfigureerde libraries", text)
         self.assertIn("'extra-remote' (7 documenten)", err.getvalue())
 
+    def test_table_shows_library_metadata_above_its_documents(self) -> None:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
+            list_libraries.print_table(self.make_overview())
+
+        text = out.getvalue()
+        self.assertIn("== knwu ==", text)
+        self.assertIn("uuid:         lib-1", text)
+        self.assertIn("beschrijving: KNWU remote", text)
+        self.assertLess(text.index("beschrijving: KNWU remote"), text.index("doc.pdf"))
+
+    def test_table_marks_missing_library_with_config_description(self) -> None:
+        client = MagicMock()
+        client.beta.libraries.list.return_value = SimpleNamespace(data=[], next_page_token=None)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            list_libraries.print_table(list_libraries.collect_overview(client, make_config()))
+
+        text = out.getvalue()
+        self.assertIn("uuid:         - (library bestaat niet remote)", text)
+        self.assertIn("beschrijving: KNWU-bibliotheek", text)
+
     def test_json_output_keeps_raw_values(self) -> None:
         overview = self.make_overview()
         out = io.StringIO()
@@ -104,6 +130,8 @@ class OutputTests(unittest.TestCase):
             list_libraries.print_json(overview)
 
         data = json.loads(out.getvalue())
+        self.assertEqual(data["libraries"][0]["id"], "lib-1")
+        self.assertEqual(data["libraries"][0]["description"], "KNWU remote")
         doc = data["libraries"][0]["documents"][0]
         self.assertEqual(doc["size"], 9786169)
         self.assertEqual(doc["created_at"], "2026-10-29T14:25:00+00:00")

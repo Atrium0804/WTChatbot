@@ -1,6 +1,8 @@
+import io
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -151,6 +153,21 @@ class RunSyncTests(unittest.TestCase):
             upload_kwargs = client.beta.libraries.documents.upload.call_args.kwargs
             self.assertEqual(upload_kwargs["library_id"], "lib-new")
             self.assertEqual(upload_kwargs["file"]["file_name"], "a.pdf")
+
+    def test_review_folder_is_skipped_silently(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            rag = Path(tmp) / "knowledge-documents"
+            for folder in ("knwu", "review", "onbekend"):
+                (rag / folder).mkdir(parents=True)
+            make_local_files(rag / "review", {"a.md": 10})
+            client = self.make_client()
+
+            with redirect_stdout(io.StringIO()) as out:
+                sync_libraries.run_sync(client, self.make_config(rag), apply=True)
+
+            self.assertNotIn("'review'", out.getvalue())
+            self.assertIn("'onbekend' is not configured", out.getvalue())
+            client.beta.libraries.documents.upload.assert_not_called()
 
 
 if __name__ == "__main__":

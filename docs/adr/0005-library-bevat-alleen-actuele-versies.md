@@ -12,6 +12,8 @@ Versiecheck: in de MVP handmatig — bij elke Library-update wordt het document 
 
 _Amendment 2026-11-02 (wayfinder-ticket "Beslissing: ADR-0005 herzien — alleen actuele versies, strikethrough, cron", map #2): archief-library toegevoegd voor wijzigingsvragen; bronvolgorde voor wijzigingsvragen vastgelegd; cron-versiecheck verschoven naar post-MVP._
 
+_Amendment 2026-11-05 (issue #28, review eval run 3): het opschonen bij ingestie is naar de MVP gehaald. Tekstextractie verloor de doorhaallijnen en de rode kleur, waardoor de agent een doorgehaald verzet als geldend gaf en de evalset zelf een doorgehaalde NK-regel als verwacht antwoord had. KNWU-PDF's met doorhalingen of rode revisies (Titel 20, Nationale Besluiten, Handboek Veldrijden Jeugd) gaan als markdown de actuele library in, gemaakt met `scripts/clean_pdf.py`: doorgehaalde tekst verwijderd, rode tekst tussen `[GEWIJZIGD]` en `[/GEWIJZIGD]`. Het originele PDF gaat naar de archief-library en het repo-archief; daar blijven doorhalingen en revisies beschikbaar voor wijzigingsvragen. Bronvolgorde stap (2) gebruikt de `[GEWIJZIGD]`-markeringen._
+
 ## Considered options
 
 - **Oude versies in de actuele Library voor diffing** — verworpen: retrieval kan dan een superseded regel citeren en het strikethrough-probleem wordt erdoor vermenigvuldigd. Oude versies horen in een aparte archief-library (alleen voor wijzigingsvragen) en in het repo-archief.

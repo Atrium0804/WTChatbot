@@ -7,19 +7,20 @@
 #   categorie:         knwu | regio | club
 #   type:              standaard | websearch | strikethrough
 #   vraag:             typische clubvraag
-#   verwacht_antwoord: kernfeiten, gescheiden door ";" — moeten ALLEMAAL in
-#                      het B2-antwoord voorkomen (case-insensitive, komma-
-#                      en puntnotatie genormaliseerd)
-#   bron:              Verwachte bron (documentnaam of URL) — moet in de
+#   verwacht_antwoord: korte kernfeiten, gescheiden door ";" — elk token moet
+#                      in het B2-antwoord staan (getallen/korte woorden heel,
+#                      langere woorden als woordbegin; zie run_eval.py)
+#   bron:              Verwachte bron (documentnaam zonder extensie of URL),
+#                      alternatieven gescheiden door " | " — moet in een
 #                      "Bron:"-regel van het antwoord staan
 #   versiedatum:       Verwachte versie/datum van de bron
-#   doorhaal_waarde:   (alleen type=strrikethrough) de superseded waarde uit
+#   doorhaal_waarde:   (alleen type=strikethrough) de superseded waarde uit
 #                      de rode revisie — mag NIET in het antwoord voorkomen
 #
 # Verdeling: 10 knwu / 5 regio / 5 club. Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering).
-# Dit is een door de agent gegenereerd voorstel; de beheerder reviewt en
-# corrigeert (wayfinder-ticket #13, Q7).
+# Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
+# Q7); na eval run 3 handmatig gecontroleerd tegen PDF en live bronnen (#28).
 
 evalset:
   # --- KNWU (10) ---
@@ -27,74 +28,75 @@ evalset:
     categorie: knwu
     type: websearch
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
-    verwacht_antwoord: "Basis; Plus; Premium; startrecht zit in de licentie zelf; pakketten verschillen in buitenlandstartrecht en verzekeringsdekking"
+    verwacht_antwoord: "Basis; Plus; Premium; 26; 72; 135; startrecht; internationa; verzeker"
     bron: "kenniscentrum.knwu.nl/knwu-licenties"
     versiedatum: "2026"
   - id: knwu-verzekering-dekking
     categorie: knwu
     type: websearch
     vraag: "Wat is er verzekerd bij een Basis-licentie versus een Premium-licentie?"
-    verwacht_antwoord: "dekking; wettelijke aansprakelijkheid; verschil Basis vs Premium; sectie Verzekeringen Kenniscentrum"
-    bron: "kenniscentrum.knwu.nl Verzekeringen"
+    verwacht_antwoord: "aansprakelijk; Basis; Premium; wereldwijd"
+    bron: "kenniscentrum.knwu.nl/verzekeringen"
     versiedatum: "2026"
   - id: knwu-verzet-u15
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
-    verwacht_antwoord: "6,70 meter; U15; artikel 20.1.007"
-    bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
+    verwacht_antwoord: "6,70; U15; artikel 20.1.007"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "6,55"
   - id: knwu-verzet-u11
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?"
-    verwacht_antwoord: "5,90 meter; U11; artikel 20.1.007"
-    bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
+    verwacht_antwoord: "5,90; U11; artikel 20.1.007"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "5,78"
   - id: knwu-verzet-u17
     categorie: knwu
     type: strikethrough
     vraag: "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?"
-    verwacht_antwoord: "7,68 meter; U17 nieuwelingen; artikel 20.1.007"
-    bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
+    verwacht_antwoord: "7,68; U17; nieuwelingen; artikel 20.1.007"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "7,01"
   - id: knwu-inschrijfgeld-jeugd
     categorie: knwu
-    type: strikethrough
+    type: standaard
     vraag: "Wat zijn de geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden en wat geldt bij bijschrijven?"
-    verwacht_antwoord: "adviserend schema Nationale Besluiten; bijschrijven binnen 120 uur voor aanvang maximaal 10,00 euro; boete 30,00 euro bij niet-afmelden"
-    bron: "Nationale_Besluiten_20260918.pdf"
+    verwacht_antwoord: "nihil; 3,50; 120 uur; 10"
+    bron: "Nationale_Besluiten_20260918"
     versiedatum: "2026-09-18"
   - id: knwu-nk-dispensatie-u10
     categorie: knwu
     type: strikethrough
     vraag: "Mag een renner van categorie U10 die dispensatie heeft om in een categorie lager te rijden, meedoen aan het NK?"
-    verwacht_antwoord: "nee; dispensatie in een lagere categorie sluit deelname aan het NK uit; U6 t/m U8 kunnen sowieso geen dispensatie voor het NK krijgen"
-    bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
+    verwacht_antwoord: "ja; categorie waarvoor; U6 t/m U8; BMX"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
+    doorhaal_waarde: "niet kwalificeren"
   - id: knwu-actuele-versie-titel20
     categorie: knwu
     type: standaard
     vraag: "Welke versie van Titel 20 Jeugdwielrennen is leidend en waar controleer ik dat?"
-    verwacht_antwoord: "versie 21-09-2026; Kenniscentrum is autoriteit voor de nieuwste versie"
+    verwacht_antwoord: "21-09-2026; kenniscentrum; leidend"
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-21"
   - id: knwu-wijziging-nationale-besluiten
     categorie: knwu
     type: standaard
     vraag: "Wat is er gewijzigd in de Nationale Besluiten 2026 ten opzichte van de vorige versie?"
-    verwacht_antwoord: "wijzigingsmemo op het Kenniscentrum; bronvolgorde memo dan rode revisies"
+    verwacht_antwoord: "geen; wijzigingsmemo; gewijzigd"
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-18"
   - id: knwu-contact
     categorie: knwu
     type: standaard
     vraag: "Hoe kan ik de KNWU bereiken als ik conflicterende informatie tegenkom?"
-    verwacht_antwoord: "085-070 19 00; dinsdag t/m vrijdag 08:30-12:00"
-    bron: "kenniscentrum.knwu.nl"
+    verwacht_antwoord: "070; 1900; dinsdag; vrijdag; 8:30; 12:00"
+    bron: "knwu.nl/contact"
     versiedatum: "2026"
 
   # --- Regio Midden (5) ---
@@ -102,36 +104,36 @@ evalset:
     categorie: regio
     type: standaard
     vraag: "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?"
-    verwacht_antwoord: "seizoen 2026-2027; jeugd start om 11:05 en 11:30 uur"
+    verwacht_antwoord: "2026-2027; 11:05; 11:30"
     bron: "knwumidden.nl/competities"
     versiedatum: "2026-2027"
   - id: regio-hvh-kalender-2026
     categorie: regio
     type: standaard
     vraag: "Wanneer loopt de In Memoriam Hans van den Hengel jeugdcompetitie 2026?"
-    verwacht_antwoord: "kalender loopt van 29 maart t/m 27 september 2026"
-    bron: "knwumidden.nl/competities"
+    verwacht_antwoord: "29 maart; 27 september"
+    bron: "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl/competities"
     versiedatum: "2026"
   - id: regio-nk-kwalificatie
     categorie: regio
     type: standaard
     vraag: "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?"
-    verwacht_antwoord: "selectieprocedure; LJT; regio Midden-Oost; kwalificatieprocedure in Jaarlijkse Besluiten"
-    bron: "knwumidden.nl/jeugd"
+    verwacht_antwoord: "selectieprocedure; nationale wedstrijden; 5; Mijn KNWU; LJT"
+    bron: "Nationale_Besluiten_20260918"
     versiedatum: "2026"
   - id: regio-juiste-knwu-regio
     categorie: regio
     type: standaard
     vraag: "In welke KNWU-regio ligt WTC Woerden (Woerden, Utrecht)?"
-    verwacht_antwoord: "regio Midden-Oost; Utrecht hoort bij Midden-Oost"
-    bron: "kenniscentrum.knwu.nl/algemeen/regionale-indeling"
+    verwacht_antwoord: "Midden-Oost; Utrecht"
+    bron: "knwu.nl/over-knwu/regios | kenniscentrum.knwu.nl"
     versiedatum: "2026"
   - id: regio-techniekwedstrijden-2026
     categorie: regio
     type: standaard
     vraag: "Zijn er in 2026 techniek- of vaardigheidswedstrijden voor de jeugd in regio Midden?"
-    verwacht_antwoord: "ja; in 2026 één per regio"
-    bron: "knwumidden.nl"
+    verwacht_antwoord: "ja; techniekparcours"
+    bron: "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl"
     versiedatum: "2026"
 
   # --- Club WTC Woerden (5) ---
@@ -139,34 +141,34 @@ evalset:
     categorie: club
     type: standaard
     vraag: "Wat is de contributie voor een jeugdlid van WTC Woerden in 2026?"
-    verwacht_antwoord: "64,50 euro; 50,00 euro club plus 14,50 euro KNWU"
-    bron: "wtcwoerden.nl?page=674"
+    verwacht_antwoord: "64,50; 50,00; 14,50"
+    bron: "wtcwoerden.nl?page=674 | WTC Woerden - Contributietarieven"
     versiedatum: "2026"
   - id: club-zmc-kosten
     categorie: club
     type: standaard
     vraag: "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?"
     verwacht_antwoord: "gratis"
-    bron: "ZMC - Info en reglement Zaterdagmiddag Competitie.pdf"
-    versiedatum: "2025-01-31"
+    bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
+    versiedatum: "2026-10-29"
   - id: club-zmc-wanneer
     categorie: club
     type: standaard
     vraag: "Wanneer en waar vindt de ZMC plaats en voor wie is het bedoeld?"
-    verwacht_antwoord: "zaterdagmiddag; oktober t/m eind januari; parcours Woerden; jeugd start 13:45 uur; clubcompetitie van WTC Woerden"
-    bron: "wtcwoerden.nl"
-    versiedatum: "2026"
+    verwacht_antwoord: "zaterdagmiddag; oktober; januari; 13:45"
+    bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
+    versiedatum: "2026-10-29"
   - id: club-vertrouwenspersoon
     categorie: club
     type: standaard
     vraag: "Wie is de vertrouwenspersoon bij WTC Woerden en hoe bereik ik die?"
     verwacht_antwoord: "Ayan Dijkstra; ayan.dijkstra@gmail.com"
-    bron: "wtcwoerden.nl?page=607"
+    bron: "wtcwoerden.nl?page=607 | WTC Woerden - Contactpersonen"
     versiedatum: "2026"
   - id: club-gedragscode
     categorie: club
     type: standaard
     vraag: "Waar staat de gedragscode van WTC Woerden en waar gaat die over?"
-    verwacht_antwoord: "wtcwoerden.nl; 6 hoofdstukken waaronder respect en veiligheid/integriteit"
-    bron: "wtcwoerden.nl?page=956"
+    verwacht_antwoord: "Over de club; Respect; Veiligheid; Integriteit"
+    bron: "wtcwoerden.nl?page=956 | WTC Woerden - Gedragscode"
     versiedatum: "2026"

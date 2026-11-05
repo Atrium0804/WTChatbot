@@ -1,8 +1,9 @@
 """List the remote contents of the configured Mistral libraries.
 
-Reads libraries_config.json and prints, per library (folder), the remote
-documents: filename, size, creation datetime and process status. The web
-UI offers no workspace-wide overview; this script does.
+Reads libraries_config.json and prints, per library (folder), first the
+library metadata (name, uuid, description) and then its remote documents:
+filename, size, creation datetime and process status. The web UI offers no
+workspace-wide overview; this script does.
 
 Usage:
     python scripts/list_libraries.py           # human-readable table on stdout
@@ -38,6 +39,7 @@ class DocumentInfo(TypedDict):
 
 class LibraryOverview(TypedDict):
     name: str
+    id: str | None
     description: str
     exists: bool
     documents: list[DocumentInfo]
@@ -106,7 +108,9 @@ def collect_overview(client: Mistral, config: sync_libraries.Config) -> Overview
         overview["libraries"].append(
             {
                 "name": name,
-                "description": cfg["description"],
+                "id": lib.id if lib is not None else None,
+                # Remote beschrijving is de werkelijke metadata; zonder remote library alleen de config.
+                "description": (lib.description or "") if lib is not None else cfg["description"],
                 "exists": lib is not None,
                 "documents": sorted(documents, key=lambda d: d["name"]),
             }
@@ -119,21 +123,27 @@ def collect_overview(client: Mistral, config: sync_libraries.Config) -> Overview
 
 
 def print_table(overview: Overview) -> None:
-    header = f"{'library':<10} {'bestand':<60} {'grootte':>10} {'aangemaakt':<26} {'status':<22}"
-    print(header)
-    print("-" * len(header))
     for lib in overview["libraries"]:
-        if not lib["exists"]:
-            print(f"{lib['name']:<10} (library bestaat niet remote)")
-            continue
-        for doc in lib["documents"]:
-            print(
-                f"{lib['name']:<10} {doc['name'][:60]:<60} {format_size(doc['size']):>10} "
-                f"{doc['created_at']:<26} {doc['process_status']:<22}"
-            )
+        print(f"== {lib['name']} ==")
+        print(f"uuid:         {lib['id'] if lib['exists'] else '- (library bestaat niet remote)'}")
+        print(f"beschrijving: {lib['description']}")
+        if lib["exists"]:
+            size = sum(d["size"] for d in lib["documents"] if d["size"] is not None)
+            print(f"documenten:   {len(lib['documents'])} ({format_size(size)})")
+        print()
+        if lib["documents"]:
+            header = f"  {'bestand':<60} {'grootte':>10} {'aangemaakt':<32} {'status':<12}"
+            print(header)
+            print("  " + "-" * (len(header) - 2))
+            for doc in lib["documents"]:
+                print(
+                    f"  {doc['name'][:60]:<60} {format_size(doc['size']):>10} "
+                    f"{doc['created_at']:<32} {doc['process_status']:<12}"
+                )
+            print()
     totals = overview["totals"]
     print(
-        f"\ntotaal: {totals['documents']} documenten ({format_size(totals['size_bytes'])}) "
+        f"totaal: {totals['documents']} documenten ({format_size(totals['size_bytes'])}) "
         f"in {totals['libraries_existing']} van {totals['libraries_configured']} geconfigureerde libraries"
     )
     for info in overview["unconfigured_remote"]:

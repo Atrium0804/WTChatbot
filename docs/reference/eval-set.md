@@ -47,10 +47,15 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 `eval/run_eval.py` draait **offline** tegen dezelfde agents via de Mistral Conversations API (per vraag een nieuwe conversation, zelfde prompt als productie) — niet tegen de draaiende bot. Een live smoke-test tegen de gedeployde bot is post-MVP.
 
 ```bash
-pip install requests pyyaml
-MISTRAL_API_KEY=... MISTRAL_AGENT_ID_KNWU=... MISTRAL_AGENT_ID_REGIO=... MISTRAL_AGENT_ID_CLUB=... \
-  python eval/run_eval.py
+python eval/run_eval.py
 ```
+
+| Variabele (uit `.env` in de repo-root) | Betekenis |
+| --- | --- |
+| `MISTRAL_API_KEY` | Verplicht |
+| `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
+
+Waarden uit `.env` overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.
 
 Output: per-vraag resultaat op stdout, volledig resultaat in `eval/last_run.json`, exit-code 0 als de gate gehaald is, anders 1. **Nooit in CI draaien** (geen live API-calls in CI).
 

@@ -18,12 +18,12 @@ naar eval/last_run.json; exit-code 0 bij halen van de gate, anders 1.
 Draai handmatig door de beheerder na elke library-update — NOOIT in CI
 (geen live API-calls in CI). Zie docs/reference/eval-set.md.
 
-Environment:
+Environment (uit .env in de repo-root; .env wint van shellvariabelen):
 - MISTRAL_API_KEY               (verplicht)
 - MISTRAL_AGENT_ID_KNWU / MISTRAL_AGENT_ID_REGIO / MISTRAL_AGENT_ID_CLUB
   (agent per categorie; fallback: MISTRAL_AGENT_ID)
 
-Afhankelijkheden: pip install requests pyyaml
+Afhankelijkheden: pip install requests pyyaml python-dotenv
 """
 
 import json
@@ -34,12 +34,14 @@ from pathlib import Path
 
 import requests
 import yaml
+from dotenv import load_dotenv
 
 API_URL = "https://api.mistral.ai/v1/conversations"
 GATE_PCT = 90.0
 HARD_GATE_TYPES = {"strikethrough", "websearch"}
 
 EVAL_DIR = Path(__file__).parent
+ENV_PATH = EVAL_DIR.parent / ".env"
 
 
 def normalize(text: str) -> str:
@@ -225,6 +227,9 @@ def pct(n_ok: int, n_total: int) -> float:
 
 
 def main() -> int:
+    # override: na create_agents.py --apply staan nieuwe agent-ids in .env, terwijl
+    # de shell vaak nog de oude (verwijderde) ids heeft → anders 404 op elke vraag.
+    load_dotenv(ENV_PATH, override=True)
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         raise RuntimeError("MISTRAL_API_KEY ontbreekt")

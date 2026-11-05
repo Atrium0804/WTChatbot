@@ -269,5 +269,22 @@ class KernfeitGrenzenTests(unittest.TestCase):
         self.assertEqual(self.missing("08:30", "tussen 8.30 en 12.00 uur"), [])
 
 
+class EnvTests(unittest.TestCase):
+    def test_env_bestand_wint_van_verouderde_shellvariabele(self) -> None:
+        import os
+        import tempfile
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as tmp:
+            env = Path(tmp) / ".env"
+            env.write_text("MISTRAL_API_KEY=\n", encoding="utf-8")
+            with (
+                patch.object(run_eval, "ENV_PATH", env),
+                patch.dict(os.environ, {"MISTRAL_API_KEY": "verouderd-uit-de-shell"}),
+                self.assertRaisesRegex(RuntimeError, "MISTRAL_API_KEY ontbreekt"),
+            ):
+                run_eval.main()
+
+
 if __name__ == "__main__":
     unittest.main()

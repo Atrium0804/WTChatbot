@@ -11,6 +11,11 @@ from pathlib import Path
 
 # Zorg dat de module-level app bij import geen productie-DB raakt.
 os.environ["DATABASE_PATH"] = str(Path(tempfile.mkdtemp()) / "import-time.db")
+# Tests moeten offline/stub blijven, ook als .env een echte key bevat:
+# Zet lege waarden vóór import — config.py doet load_dotenv() (override=False)
+# en leest dan lege strings in plaats van de echte key.
+os.environ["MISTRAL_API_KEY"] = ""
+os.environ["MISTRAL_AGENT_ID"] = ""
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -137,3 +142,48 @@ def test_healthz_stub_mode(tmp_path):
     body = client.get("/healthz").json()
     assert body["status"] == "ok"
     assert body["mistral_configured"] is False
+
+
+# Realistische shape van POST /v1/conversations (captured 2026-11-04):
+# outputs[]-entries hebben top-level "content", type "message.output";
+# content-chunks hebben type "text" (of "thinking", die negeren we).
+REAL_OUTPUTS = [
+    {
+        "object": "entry",
+        "type": "message.output",
+        "role": "assistant",
+        "content": [
+            {"type": "thinking", "thinking": [{"type": "text", "text": "even nadenken"}]}
+        ],
+    },
+    {
+        "object": "entry",
+        "type": "tool.execution",
+        "name": "document_library",
+        "arguments": "{\"query\": \"ZMC kosten\"}",
+        "info": {"result": "..."},
+    },
+    {
+        "object": "entry",
+        "type": "message.output",
+        "role": "assistant",
+        "content": [
+            {"type": "text", "text": "Het antwoord is 6,70 meter.\n\nBron: TITEL_20.pdf, versie 2026-09-21"}
+        ],
+    },
+]
+
+
+def test_extract_text_real_conversations_shape():
+    import mistral_client
+
+    assert mistral_client.extract_text(REAL_OUTPUTS) == (
+        "Het antwoord is 6,70 meter.\n\nBron: TITEL_20.pdf, versie 2026-09-21"
+    )
+
+
+def test_extract_text_string_content():
+    import mistral_client
+
+    outputs = [{"type": "message.output", "content": "platte tekst"}]
+    assert mistral_client.extract_text(outputs) == "platte tekst"

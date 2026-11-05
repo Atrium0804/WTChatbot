@@ -32,8 +32,12 @@ _Avoid_: "zoek overal", ongescopeerde retrieval
 De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Eerste bron voor "wat is er veranderd"-vragen; daarna de rode revisies in het actuele document, dan een vergelijking met de oude versie uit de archief-library / het repo-archief (`knowledge-documents/archive/`).
 
 **Zichtbare revisies**:
-Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd.
-_Avoid_: "de schone versie" (die bestaat niet)
+Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd. De KNWU publiceert geen versie zonder zichtbare revisies.
+_Avoid_: "de schone versie" (die bestaat niet; bedoel je onze eigen afgeleide tekst, zeg dan opgeschoonde versie)
+
+**Opgeschoonde versie**:
+De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
+_Avoid_: "schone versie", "gecleande PDF"
 
 **Knowledge-documents**:
 De lokale bronmap (`knowledge-documents/`) met per library één submap (`knwu/`, `regio/`, `club/`, `archive/`). Bron van waarheid voor de sync naar de Mistral-libraries.
@@ -41,6 +45,16 @@ _Avoid_: "kennismap", "documentenmap"
 
 **Sync**:
 Het local → remote synchroniseren van `knowledge-documents/` met de bijbehorende Mistral-libraries: de submapnaam is gelijk aan de librarynaam, en remote documenten zonder lokale tegenhanger worden uit de actieve library verwijderd. Archiveren van oude versies gebeurt handmatig (zie ADR-0005).
+
+## Renners en wedstrijden
+
+**Leeftijdscategorie**:
+De categorie waarin een renner start (bijv. U13, nieuwelingen, junioren). Volgt uit geboortejaar, geslacht, discipline en seizoen, met uitzonderingen (meisjes een U-categorie lager, afwijkende indeling in het veldritseizoen, dispensatie). Gebruikers kennen meestal het geboortejaar en geslacht van de renner, niet de leeftijdscategorie.
+_Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
+
+**Wedstrijdcategorie**:
+De indeling van een wedstrijd naar niveau (bijv. Cat. II nationale wedstrijd, regionale wedstrijd).
+_Avoid_: "categorie" zonder toevoeging
 
 ## Taal
 

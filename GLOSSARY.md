@@ -89,3 +89,9 @@ _Avoid_: "ontwikkeling" voor deze afstand; "verzet" voor de tandwielverhouding z
 
 **Beheerder**:
 De benoemde eindverantwoordelijke (plus vervanger) voor ntfy-alerts, feedback-triage in `/admin/feedback`, Library-updates bij seizoenstart en het archief van oude versies. Staat met naam/rol in `docs/operations.md`.
+
+## Delivery
+
+**Webapp (PWA)**:
+De chatbot als installeerbare webapp op de telefoon: manifest + service worker + iconen in `app/static/`. Fase 1 wordt geserveerd vanaf de NAS achter NPM op `chat.famstieltjes.nl`; installatie vereist HTTPS (zie ADR-0007).
+_Avoid_: "app" (suggereert een store-app — via Capacitor is een apart post-MVP-pad), "bladwijzer", "link op het beginscherm"

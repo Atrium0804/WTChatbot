@@ -3,7 +3,7 @@
 #
 # Reverse proxy + HTTPS regelt hier NPM (nginx-proxy-manager): de Caddy uit de VPS-variant
 # draait NIET op de NAS (host-poorten 80/443 zijn al van NPM, Fritz!Box forwardt 80/443 -> 8080/8443).
-# NPM proxy host aanmaken: wtchat.famstieltjes.nl -> http://wtchatbot:8000
+# NPM proxy host aanmaken: chat.famstieltjes.nl -> http://wtchatbot:8000
 services:
   wtchatbot:
     build: ./app

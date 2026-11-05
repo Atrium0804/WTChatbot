@@ -1,6 +1,7 @@
 # WTChatbot MVP — app (FastAPI-proxy + chat-UI)
 
-Productieversie van het #14-prototype. Draait op de VPS achter Caddy
+Productieversie van het #14-prototype. Fase 1 draait op de Synology NAS achter NPM
+op `chat.famstieltjes.nl` (zie ADR-0007); einddoel is de VPS achter Caddy
 (automatische HTTPS) op `wtchat.famstieltjes.nl`.
 
 ```
@@ -10,6 +11,9 @@ app/
 ├── mistral_client.py     dunne laag over de Mistral Conversations API (mockbaar in tests)
 ├── store.py              SQLite-feedback: content ALLEEN bij duim-omlaag, retentie 30 dagen + purge
 ├── static/index.html     responsive mobile-first chat-UI (privacy-notitie + feedbackknoppen)
+├── static/manifest.webmanifest  PWA-manifest (issue #35)
+├── static/sw.js                 service worker — cachet NOOIT /chat, /feedback, /healthz
+├── static/icons/                PWA-iconen uit wielie.jpg (scripts/make_icons.py)
 ├── tests/test_app.py     offline tests (geen live API-calls)
 ├── Dockerfile
 ├── docker-compose.yml    app + caddy (VPS)
@@ -64,12 +68,12 @@ alleen `expose: 8000`; NPM regelt reverse proxy + HTTPS.
    (de build op de NAS kan een paar minuten duren).
 2. `.env` op de NAS aanmaken in `/volume1/docker/wtchatbot/` (alleen daar, nooit in git):
    `MISTRAL_API_KEY` + `MISTRAL_AGENT_ID`.
-3. NPM proxy host: `wtchat.famstieltjes.nl` -> `http://wtchatbot:8000`.
-4. Check: `curl https://wtchat.famstieltjes.nl/healthz` en één testvraag via de UI.
+3. NPM proxy host: `chat.famstieltjes.nl` -> `http://wtchatbot:8000` (Let's Encrypt, Force SSL).
+4. Check: `curl https://chat.famstieltjes.nl/healthz` en één testvraag via de UI.
 
 ## Security/privacy-headers
 
-- CSP `frame-ancestors 'self'` + `X-Content-Type-Options: nosniff`; expres géén
+- CSP incl. `worker-src 'self'` + `manifest-src 'self'` (PWA, issue #35), `frame-ancestors 'self'` + `X-Content-Type-Options: nosniff`; expres géén
   `X-Frame-Options`. Post-MVP iframe-embed (#14): `FRAME_ANCESTORS` in config
   verbreden naar de clubsite-origin.
 - Rate limiting: 10 vragen/uur per anonieme client-ID (in-memory), max. 1000

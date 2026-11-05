@@ -15,7 +15,7 @@
 
     Secrets (.env) en data (data/) worden NOOIT gekopieerd — die leven alleen op de NAS.
     .env maak je handmatig aan op de NAS: MISTRAL_API_KEY + MISTRAL_AGENT_ID (zie app/README.md).
-    Reverse proxy + HTTPS regelt NPM op de NAS: proxy host wtchat.famstieltjes.nl -> http://wtchatbot:8000.
+    Reverse proxy + HTTPS regelt NPM op de NAS: proxy host chat.famstieltjes.nl -> http://wtchatbot:8000.
 #>
 
 [CmdletBinding()]

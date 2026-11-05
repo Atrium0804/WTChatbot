@@ -105,7 +105,7 @@ evalset:
     type: standaard
     vraag: "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?"
     verwacht_antwoord: "2026-2027; 11:05; 11:30"
-    bron: "knwumidden.nl/competities | MNC Reglement MNC Veldrijden 2026"
+    bron: "knwumidden.nl/competities"
     versiedatum: "2026-2027"
   - id: regio-hvh-kalender-2026
     categorie: regio

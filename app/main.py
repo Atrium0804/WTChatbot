@@ -73,6 +73,9 @@ def create_app(db_path: Optional[str] = None) -> FastAPI:
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline'; "
             "style-src 'self' 'unsafe-inline'; "
+            # worker-src/manifest-src voor de PWA (service worker + manifest, issue #35)
+            "worker-src 'self'; "
+            "manifest-src 'self'; "
             f"frame-ancestors {config.FRAME_ANCESTORS}; "
             "base-uri 'self'; form-action 'self'"
         )

@@ -187,3 +187,62 @@ def test_extract_text_string_content():
 
     outputs = [{"type": "message.output", "content": "platte tekst"}]
     assert mistral_client.extract_text(outputs) == "platte tekst"
+
+
+def test_manifest_served_as_manifest_json(tmp_path):
+    client = make_client(tmp_path)
+    resp = client.get("/manifest.webmanifest")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("application/manifest+json")
+    data = resp.json()
+    assert data["name"] == "WTC Chatbot"
+    assert data["short_name"] == "Wheely"
+    assert data["display"] == "standalone"
+    assert data["start_url"] == "/" and data["scope"] == "/"
+    sizes = {i["sizes"] for i in data["icons"]}
+    assert {"192x192", "512x512"} <= sizes
+    assert any(i.get("purpose") == "maskable" for i in data["icons"])
+
+
+def test_service_worker_served_as_javascript(tmp_path):
+    client = make_client(tmp_path)
+    resp = client.get("/sw.js")
+    assert resp.status_code == 200
+    assert "javascript" in resp.headers["content-type"]
+    body = resp.text
+    assert 'addEventListener("fetch"' in body
+    # privacy: API-endpoints mogen nooit gecached worden
+    for path in ("/chat", "/feedback", "/healthz"):
+        assert path in body
+
+
+def test_icons_served_as_png(tmp_path):
+    client = make_client(tmp_path)
+    for name in (
+        "icon-192.png",
+        "icon-512.png",
+        "icon-maskable-512.png",
+        "apple-touch-icon.png",
+        "favicon-32.png",
+    ):
+        resp = client.get(f"/icons/{name}")
+        assert resp.status_code == 200, name
+        assert resp.headers["content-type"] == "image/png", name
+
+
+def test_index_has_pwa_head_tags(tmp_path):
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    assert '<link rel="manifest" href="/manifest.webmanifest">' in html
+    assert 'rel="apple-touch-icon"' in html
+    assert 'name="apple-mobile-web-app-capable"' in html
+    assert 'name="theme-color"' in html
+    assert "viewport-fit=cover" in html
+    assert 'navigator.serviceWorker.register("/sw.js")' in html
+
+
+def test_csp_allows_service_worker_and_manifest(tmp_path):
+    client = make_client(tmp_path)
+    csp = client.get("/").headers["content-security-policy"]
+    assert "worker-src 'self'" in csp
+    assert "manifest-src 'self'" in csp

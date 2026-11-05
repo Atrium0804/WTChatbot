@@ -243,11 +243,14 @@ RUN3_OORDEEL = {
 class Run3ReviewTests(unittest.TestCase):
     def test_evalset_oordeel_matcht_handmatige_review(self) -> None:
         evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
-        self.assertEqual({e["id"] for e in evalset}, set(RUN3_OORDEEL))
-        for e in evalset:
-            with self.subTest(id=e["id"]):
-                result = run_eval.check_entry(e, RUN3[e["id"]])
-                self.assertEqual(result["ok"], RUN3_OORDEEL[e["id"]], result)
+        by_id = {e["id"]: e for e in evalset}
+        # alle gereviewde run-3-vragen moeten nog in de evalset zitten;
+        # nieuwe entries zonder run-3-antwoord (#31) mogen er gewoon bij
+        self.assertTrue(set(RUN3_OORDEEL) <= set(by_id))
+        for eid, oordeel in RUN3_OORDEEL.items():
+            with self.subTest(id=eid):
+                result = run_eval.check_entry(by_id[eid], RUN3[eid])
+                self.assertEqual(result["ok"], oordeel, result)
 
 
 class KernfeitGrenzenTests(unittest.TestCase):
@@ -284,6 +287,65 @@ class EnvTests(unittest.TestCase):
                 self.assertRaisesRegex(RuntimeError, "MISTRAL_API_KEY ontbreekt"),
             ):
                 run_eval.main()
+
+
+class VerhelderingTests(unittest.TestCase):
+    """Type `verheldering`: vage vraag, bot stelt een wedervraag; geen bron-check."""
+
+    def verheldering_entry(self, verwacht: str) -> dict:
+        return {
+            "id": "knwu-verheldering-x",
+            "categorie": "knwu",
+            "type": "verheldering",
+            "vraag": "In welke categorie rijdt mijn kind mee?",
+            "verwacht_antwoord": verwacht,
+        }
+
+    def test_wedervraag_zonder_bronregel_is_ok(self) -> None:
+        antwoord = (
+            "Om te bepalen in welke leeftijdscategorie je kind rijdt, heb ik het "
+            "geboortejaar en het geslacht nodig. In welk jaar is je kind geboren, "
+            "en is het een jongen of een meisje?"
+        )
+        result = run_eval.check_entry(
+            self.verheldering_entry("geboortejaar; geslacht"), antwoord
+        )
+        self.assertTrue(result["bron_ok"])  # bron-check vervalt
+        self.assertTrue(result["ok"], result)
+
+    def test_ontbrekend_kernfeit_in_wedervraag_faalt(self) -> None:
+        result = run_eval.check_entry(
+            self.verheldering_entry("geboortejaar; geslacht"),
+            "Daar heb ik meer informatie voor nodig.",
+        )
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["missende_kernfeiten"], ["geboortejaar", "geslacht"])
+
+    def test_standaard_type_zonder_bronmatch_faalt_nog_steeds(self) -> None:
+        # regressieguard: alleen verheldering slaat de bron-check over
+        result = run_eval.check_entry(entry("x-y", "ja", "doc.pdf"), "Ja, dat klopt.")
+        self.assertFalse(result["bron_ok"])
+        self.assertFalse(result["ok"])
+
+
+class EvalsetSchemaTests(unittest.TestCase):
+    BEKENDE_TYPES = {"standaard", "websearch", "strikethrough", "verheldering"}
+
+    def test_alle_entries_heillopmen_bekend_type_en_verplichte_velden(self) -> None:
+        evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        ids = set()
+        for e in evalset:
+            with self.subTest(id=e["id"]):
+                self.assertIn(e["type"], self.BEKENDE_TYPES)
+                self.assertNotIn(e["id"], ids)  # id uniek
+                ids.add(e["id"])
+                self.assertTrue(e["vraag"])
+                self.assertTrue(e["verwacht_antwoord"])
+                if e["type"] != "verheldering":
+                    self.assertTrue(e.get("bron"))
+                    self.assertTrue(e.get("versiedatum"))
+                if e["type"] == "strikethrough":
+                    self.assertTrue(e.get("doorhaal_waarde"))
 
 
 if __name__ == "__main__":

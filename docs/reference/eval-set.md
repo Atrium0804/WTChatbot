@@ -11,14 +11,16 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | --- | --- | --- | --- |
 | `id` | string | ja | Unieke code, bijv. `knwu-verzet-u15` |
 | `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt |
-| `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` |
+| `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` \| `verheldering` |
 | `vraag` | string | ja | Typische clubvraag |
 | `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het B2-antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
-| `bron` | string | ja | Verwachte bron (documentnaam of URL); moet in een `Bron:`-regel van het antwoord staan. Alternatieven scheiden met ` \| ` (één match volstaat) |
+| `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); moet in een `Bron:`-regel van het antwoord staan. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
 
-Huidige verdeling: 20 vragen — 10 knwu, 5 regio, 5 club; 14 standaard, 4 strikethrough, 2 websearch.
+Huidige verdeling: 23 vragen — 13 knwu, 5 regio, 5 club; 16 standaard, 4 strikethrough, 2 websearch, 1 verheldering.
+
+Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. Alleen de kernfeiten tellen (bv. `geboortejaar; geslacht` moeten in de wedervraag staan); de bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
 Een test (`tests/test_run_eval.py`, `Run3ReviewTests`) legt per vraag het oordeel uit de handmatige review van eval run 3 vast en controleert dat de evalset met de echte run-3-antwoorden (`tests/fixtures/eval_run3_antwoorden.json`) tot hetzelfde oordeel leidt. Pas je een entry aan, draai dan de tests.
 
@@ -29,6 +31,7 @@ Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 1. **Bron**: een van de `Bron: ...`-regels van het antwoord bevat na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee.
 2. **Kernfeiten**: elk token van elk item van `verwacht_antwoord` staat los in het antwoord. Getallen en woorden van maximaal 3 tekens moeten als heel token voorkomen (`5` matcht niet in `15`, `ja` niet in `jaar`); langere woorden als woordbegin (`verzeker` matcht `verzekering`). Getallen worden genormaliseerd: `11.05` = `11:05`, `08:30` = `8.30`, `€ 10,-` = `10,00` = `10`.
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
+4. **Verheldering** (`type: verheldering`): de bron-check vervalt; alleen de kernfeiten (de wedervraag) tellen.
 
 Een vraag is "correct mét correcte bron" als alle drie de checks slagen.
 

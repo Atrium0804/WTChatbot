@@ -10,6 +10,8 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
   door ";") staat los in het antwoord (getallen en korte woorden heel,
   langere woorden als woordbegin; getallen/tijden genormaliseerd)
 - strikethrough: `doorhaal_waarde` (indien opgegeven) mag NIET voorkomen
+- verheldering: geen bron-check; de kernfeiten (bv. geboortejaar, geslacht)
+  moeten in de wedervraag van de bot staan
 
 Gate: globaal >= 90% en per categorie >= 90% correct met correcte bron;
 type `strikethrough` en `websearch` zijn een harde 100%-gate. Resultaat
@@ -202,20 +204,23 @@ def check_entry(entry: dict, antwoord: str) -> dict:
     missing = [f for f in feits if not kernfeit_gevonden(f, antwoord)]
     doorhaal = entry.get("doorhaal_waarde")
     doorhaal_gevonden = bool(doorhaal) and normalize(doorhaal) in norm_antwoord
-    ok = bron_match(entry["bron"], bron_line) and not missing and not doorhaal_gevonden
+    # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
+    # wedervraag); de bron-check vervalt.
+    bron_ok = entry.get("type") == "verheldering" or bron_match(entry.get("bron", ""), bron_line)
+    ok = bron_ok and not missing and not doorhaal_gevonden
     return {
         "id": entry["id"],
         "categorie": entry["categorie"],
         "type": entry["type"],
         "ok": ok,
         "bron_gevonden": bron_line,
-        "bron_ok": bron_match(entry["bron"], bron_line),
+        "bron_ok": bron_ok,
         "missende_kernfeiten": missing,
         "doorhaal_waarde_gevonden": doorhaal_gevonden,
         # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
         "vraag": entry["vraag"],
         "verwacht_antwoord": entry["verwacht_antwoord"],
-        "verwachte_bron": entry["bron"],
+        "verwachte_bron": entry.get("bron", ""),
         "versiedatum": entry.get("versiedatum", ""),
         "doorhaal_waarde": entry.get("doorhaal_waarde", ""),
         "antwoord": antwoord,

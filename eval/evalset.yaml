@@ -5,7 +5,7 @@
 # Schema per entry:
 #   id:                unieke code (bijv. knwu-verzet-u15)
 #   categorie:         knwu | regio | club
-#   type:              standaard | websearch | strikethrough
+#   type:              standaard | websearch | strikethrough | verheldering
 #   vraag:             typische clubvraag
 #   verwacht_antwoord: korte kernfeiten, gescheiden door ";" — elk token moet
 #                      in het B2-antwoord staan (getallen/korte woorden heel,
@@ -16,9 +16,12 @@
 #   versiedatum:       Verwachte versie/datum van de bron
 #   doorhaal_waarde:   (alleen type=strikethrough) de superseded waarde uit
 #                      de rode revisie — mag NIET in het antwoord voorkomen
+#   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
+#    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 10 knwu / 5 regio / 5 club. Harde 100%-gate op type
-# strikethrough (min. 3) en websearch (min. 2, licentie/verzekering).
+# Verdeling: 13 knwu / 5 regio / 5 club (23 vragen). Harde 100%-gate op type
+# strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
+# verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
 # Q7); na eval run 3 handmatig gecontroleerd tegen PDF en live bronnen (#28).
 
@@ -98,6 +101,25 @@ evalset:
     verwacht_antwoord: "070; 1900; dinsdag; vrijdag; 8:30; 12:00"
     bron: "knwu.nl/contact"
     versiedatum: "2026"
+  - id: knwu-categorie-jongen-2013
+    categorie: knwu
+    type: standaard
+    vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?"
+    verwacht_antwoord: "U14; 2013; artikel 20.0.004"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: knwu-categorie-meisje-2015
+    categorie: knwu
+    type: standaard
+    vraag: "In welke leeftijdscategorie rijdt een meisje geboren in 2015 bij wegwielrennen in 2026?"
+    verwacht_antwoord: "U12; 2015; artikel 20.0.004"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: knwu-verheldering-leeftijdscategorie
+    categorie: knwu
+    type: verheldering
+    vraag: "In welke categorie rijdt mijn kind mee?"
+    verwacht_antwoord: "geboortejaar; geslacht"
 
   # --- Regio Midden (5) ---
   - id: regio-mnc-veldrijden-starttijden

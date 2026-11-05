@@ -12,7 +12,8 @@ app/
 ├── static/index.html     responsive mobile-first chat-UI (privacy-notitie + feedbackknoppen)
 ├── tests/test_app.py     offline tests (geen live API-calls)
 ├── Dockerfile
-├── docker-compose.yml    app + caddy
+├── docker-compose.yml    app + caddy (VPS)
+├── docker-compose.nas.yml  NAS-variant (via NPM, zonder Caddy) — zie scripts/deploy-nas.ps1
 ├── Caddyfile             HTTPS + headers voor wtchat.famstieltjes.nl
 └── requirements.txt / requirements-dev.txt
 ```
@@ -51,6 +52,20 @@ MISTRAL_AGENT_ID=...        # de router-agent uit docs/system-prompt.md
 3. `cd app && docker compose up -d --build`
 4. Check: `curl https://wtchat.famstieltjes.nl/healthz` en één testvraag via de UI.
 5. Monitoring: UptimeRobot op `/healthz` (zie docs/operations.md).
+
+## Deploy op de Synology NAS (nas.fritz.box)
+
+NAS-variant: `docker-compose.nas.yml` — zonder Caddy, want host-poorten 80/443 zijn daar van NPM
+(Fritz!Box forwardt 80/443 -> NAS 8080/8443). De app draait in het externe `cloud`-netwerk,
+alleen `expose: 8000`; NPM regelt reverse proxy + HTTPS.
+
+1. `.\scripts\deploy-nas.ps1 -Apply -Up` (vanuit repo-root) — kopieert `app/docker-compose.nas.yml`
+   + de app-source naar `/volume1/docker/wtchatbot/` en buildt/start de container op de NAS
+   (de build op de NAS kan een paar minuten duren).
+2. `.env` op de NAS aanmaken in `/volume1/docker/wtchatbot/` (alleen daar, nooit in git):
+   `MISTRAL_API_KEY` + `MISTRAL_AGENT_ID`.
+3. NPM proxy host: `wtchat.famstieltjes.nl` -> `http://wtchatbot:8000`.
+4. Check: `curl https://wtchat.famstieltjes.nl/healthz` en één testvraag via de UI.
 
 ## Security/privacy-headers
 

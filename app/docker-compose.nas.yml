@@ -1,0 +1,28 @@
+# NAS-variant van docker-compose.yml — Synology DS220+ (nas.fritz.box).
+# Wordt door scripts/deploy-nas.ps1 geplaatst in /volume1/docker/wtchatbot/docker-compose.yaml.
+#
+# Reverse proxy + HTTPS regelt hier NPM (nginx-proxy-manager): de Caddy uit de VPS-variant
+# draait NIET op de NAS (host-poorten 80/443 zijn al van NPM, Fritz!Box forwardt 80/443 -> 8080/8443).
+# NPM proxy host aanmaken: wtchat.famstieltjes.nl -> http://wtchatbot:8000
+services:
+  wtchatbot:
+    build: ./app
+    container_name: wtchatbot
+    env_file: .env          # staat ALLEEN op de NAS, nooit in git (zie .gitignore)
+    volumes:
+      - ./data:/srv/app/data # feedback-SQLite; data blijft op de NAS
+    expose:
+      - "8000"               # geen host-poort: verkeer loopt via NPM op het cloud-netwerk
+    restart: unless-stopped
+    networks:
+      - cloud
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  cloud:
+    name: cloud
+    external: true

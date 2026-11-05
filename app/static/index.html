@@ -6,22 +6,22 @@
 <title>WTC Woerden chatbot</title>
 <style>
   :root {
-    --accent: #0b6e4f;
-    --accent-dark: #084d37;
-    --bg: #f4f6f5;
-    --bubble-user: #0b6e4f;
+    --accent: #033ec2;
+    --accent-dark: #022f96;
+    --bg: #e9edf5;
+    --bubble-user: #033ec2;
     --bubble-bot: #ffffff;
     --text: #1c2420;
-    --muted: #5b6b63;
-    --border: #d8e0dc;
-    --danger: #b3261e;
+    --muted: #55606e;
+    --border: #d3dae8;
+    --danger: #e00720;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
+    background: var(--bg) url("Achtergrond%2016-9.png") center / cover no-repeat fixed;
     color: var(--text);
     display: flex;
     flex-direction: column;
@@ -35,7 +35,7 @@
   header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
   header .sub { font-size: 0.75rem; opacity: 0.85; }
   #privacy {
-    background: #e7f0ec;
+    background: #e8edfb;
     border-bottom: 1px solid var(--border);
     font-size: 0.78rem;
     color: var(--muted);
@@ -120,7 +120,7 @@
   .feedback .thanks { font-size: 0.75rem; color: var(--accent-dark); }
   footer {
     border-top: 1px solid var(--border);
-    background: #fff;
+    background: #04050b;
     padding: 0.5rem;
   }
   #composer {
@@ -134,13 +134,13 @@
     max-height: 8rem;
     min-height: 2.4rem;
     padding: 0.5rem 0.65rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--danger);
     border-radius: 0.7rem;
     font-size: 0.95rem;
     font-family: inherit;
   }
   #send {
-    background: var(--accent);
+    background: var(--danger);
     color: #fff;
     border: none;
     border-radius: 0.7rem;
@@ -160,7 +160,7 @@
 </head>
 <body>
 <header>
-  <h1>WTC Woerden chatbot</h1>
+  <h1>WTC - Wheely The Chatbot</h1>
   <div class="sub">Vragen over KNWU-zaken, regio Midden en WTC Woerden</div>
 </header>
 <div id="privacy">

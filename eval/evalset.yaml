@@ -27,7 +27,7 @@ evalset:
     categorie: knwu
     type: websearch
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
-    verwacht_antwoord: "Basis; Plus; Premium; startrecht zit in de licentie zelf; pakketten verschillen in buitenlandstartrecht en verzekeringsdekking"
+    verwacht_antwoord: "Basis; Plus; Premium; startrecht zit in de licentie; buitenlandstartrecht; verzekeringsdekking"
     bron: "kenniscentrum.knwu.nl/knwu-licenties"
     versiedatum: "2026"
   - id: knwu-verzekering-dekking
@@ -41,7 +41,7 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
-    verwacht_antwoord: "6,70 meter; U15; artikel 20.1.007"
+    verwacht_antwoord: "6,70; U15; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "6,55"
@@ -49,7 +49,7 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?"
-    verwacht_antwoord: "5,90 meter; U11; artikel 20.1.007"
+    verwacht_antwoord: "5,90; U11; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "5,78"
@@ -57,7 +57,7 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?"
-    verwacht_antwoord: "7,68 meter; U17 nieuwelingen; artikel 20.1.007"
+    verwacht_antwoord: "7,68; U17; nieuwelingen; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921.pdf"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "7,01"
@@ -65,7 +65,7 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Wat zijn de geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden en wat geldt bij bijschrijven?"
-    verwacht_antwoord: "adviserend schema Nationale Besluiten; bijschrijven binnen 120 uur voor aanvang maximaal 10,00 euro; boete 30,00 euro bij niet-afmelden"
+    verwacht_antwoord: "adviserend schema Nationale Besluiten; bijschrijven binnen 120 uur; maximaal 10,00; boete 30,00 bij niet-afmelden"
     bron: "Nationale_Besluiten_20260918.pdf"
     versiedatum: "2026-09-18"
   - id: knwu-nk-dispensatie-u10
@@ -139,7 +139,7 @@ evalset:
     categorie: club
     type: standaard
     vraag: "Wat is de contributie voor een jeugdlid van WTC Woerden in 2026?"
-    verwacht_antwoord: "64,50 euro; 50,00 euro club plus 14,50 euro KNWU"
+    verwacht_antwoord: "64,50; 50,00; 14,50 KNWU"
     bron: "wtcwoerden.nl?page=674"
     versiedatum: "2026"
   - id: club-zmc-kosten

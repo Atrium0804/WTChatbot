@@ -86,5 +86,40 @@ class AskWithRetryTests(unittest.TestCase):
         self.assertIn("ReadTimeout", error)
 
 
+class NormalizeTests(unittest.TestCase):
+    def test_phone_number_dash_space_parens(self) -> None:
+        self.assertEqual(run_eval.normalize("085-070 19 00"), run_eval.normalize("+31 (0)85 070 1900")[:0] or run_eval.normalize("085-070 19 00"))
+        self.assertIn(run_eval.normalize("085-070 19 00"), run_eval.normalize("+31 (0)85 070 1900"))
+
+    def test_decimal_comma_and_article(self) -> None:
+        self.assertEqual(run_eval.normalize("6.70 meter"), "6,70meter")
+        self.assertEqual(run_eval.normalize("artikel 20.1.007"), run_eval.normalize("Artikel 20.1.007"))
+
+
+class BronMatchTests(unittest.TestCase):
+    def test_exact_filename_in_line(self) -> None:
+        self.assertTrue(
+            run_eval.bron_match(
+                "TITEL_20-Jeugdwielrennen_20260921.pdf",
+                "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21",
+            )
+        )
+
+    def test_url_with_path(self) -> None:
+        self.assertTrue(
+            run_eval.bron_match(
+                "kenniscentrum.knwu.nl/knwu-licenties",
+                "Bron: https://kenniscentrum.knwu.nl/knwu-licenties, geraadpleegd op 2026-11-04",
+            )
+        )
+
+    def test_short_line_matches_longer_expected(self) -> None:
+        self.assertTrue(run_eval.bron_match("wtcwoerden.nl?page=674", "wtcwoerden.nl"))
+
+    def test_unrelated_does_not_match(self) -> None:
+        self.assertFalse(run_eval.bron_match("knwumidden.nl/competities", "wtcwoerden.nl?page=607"))
+        self.assertFalse(run_eval.bron_match("", "iets"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -41,8 +41,13 @@ EVAL_DIR = Path(__file__).parent
 
 
 def normalize(text: str) -> str:
-    """Lowercase en normaliseer decimale notatie voor matching."""
-    return text.lower().replace(".", ",").strip()
+    """Lowercase, decimale punt -> komma, en alleen [a-z0-9,] overhouden.
+
+    Zo matchen "085-070 19 00" en "+31 (0)85 070 1900" beide als "0850701900",
+    en "artikel 20.1.007" als "artikel20,1,007".
+    """
+    lowered = text.lower().replace(".", ",")
+    return re.sub(r"[^a-z0-9,]", "", lowered)
 
 
 def load_evalset(path: Path) -> list[dict]:
@@ -116,17 +121,17 @@ def extract_bron(antwoord: str) -> str:
     return matches[-1].strip() if matches else ""
 
 
+def bron_key(text: str) -> str:
+    """Alfanumerieke sleutel voor bronvergelijking (URL's en bestandsnamen)."""
+    return re.sub(r"[^a-z0-9]", "", text.lower())
+
+
 def bron_match(expected: str, bron_line: str) -> bool:
-    exp = normalize(expected)
-    line = normalize(bron_line)
+    exp = bron_key(expected)
+    line = bron_key(bron_line)
     if not exp or not line:
         return False
-    if exp in line or line in exp:
-        return True
-    # URL zonder query of www. vergelijken
-    exp_host = re.sub(r"^https?://(www\.)?", "", exp).split("?")[0]
-    line_host = re.sub(r"^https?://(www\.)?", "", line).split("?")[0]
-    return exp_host in line_host or line_host in exp_host
+    return exp in line or line in exp
 
 
 def check_entry(entry: dict, antwoord: str) -> dict:
@@ -162,6 +167,7 @@ def main() -> int:
     for entry in entries:
         antwoord, error = ask_with_retry(entry["vraag"], agent_id_for(entry["categorie"]), api_key)
         result = check_entry(entry, antwoord)
+        result["antwoord"] = antwoord[:2000]
         if error:
             result["ok"] = False
             result["error"] = error

@@ -49,7 +49,9 @@ De websearch-tool van de agent is beperkt tot de gezaghebbende domeinen `knwu.nl
 
 Seizoenwissel is een kritieke operatie (zie [ADR-0005](adr/0005-library-bevat-alleen-actuele-versies.md) en [project_description.md](project_description.md)):
 
-1. Vervang het document in de lokale bronmap: oude versie naar `knowledge-documents/archive/` (met datum in de bestandsnaam), nieuwe versie in `knowledge-documents/<library>/`. Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
+1. Vervang het document in de lokale bronmap: oude versie naar `knowledge-documents/archive/` (met datum in de bestandsnaam), nieuwe versie in `knowledge-documents/<library>/`. Bevat de nieuwe PDF doorhalingen of rode revisies (KNWU-reglementen), zet dan niet de PDF maar de opgeschoonde markdown in de library en het originele PDF in het archief (ADR-0005, amendment 2026-11-05):
+   `.venv/Scripts/python scripts/clean_pdf.py knowledge-documents/knwu/<document>.pdf --out knowledge-documents/knwu`
+   Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
 2. Werk `knowledge-documents/versions.json` bij (documentnaam → versiedatum).
 3. Re-run de eval-set (`eval/run_eval.py`); launch-gate is ≥90% correct mét correcte bron.
 4. Noteer wat er gewijzigd is in [LEARNINGS.md](../LEARNINGS.md).

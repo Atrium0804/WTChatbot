@@ -167,6 +167,13 @@ def main() -> int:
     for entry in entries:
         antwoord, error = ask_with_retry(entry["vraag"], agent_id_for(entry["categorie"]), api_key)
         result = check_entry(entry, antwoord)
+        # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
+        result["vraag"] = entry["vraag"]
+        result["verwacht_antwoord"] = entry["verwacht_antwoord"]
+        result["verwachte_bron"] = entry["bron"]
+        result["versiedatum"] = entry.get("versiedatum", "")
+        if entry.get("doorhaal_waarde"):
+            result["doorhaal_waarde"] = entry["doorhaal_waarde"]
         result["antwoord"] = antwoord[:2000]
         if error:
             result["ok"] = False

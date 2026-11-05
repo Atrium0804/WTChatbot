@@ -121,5 +121,24 @@ class BronMatchTests(unittest.TestCase):
         self.assertFalse(run_eval.bron_match("", "iets"))
 
 
+class ResultTraceTests(unittest.TestCase):
+    def test_result_bevat_verwachting_en_antwoord(self) -> None:
+        # run_eval.main() slaat per entry vraag + verwacht_antwoord/verwachte_bron
+        # + het echte antwoord op in last_run.json (visuele trace voor review).
+        entry = {
+            "id": "x",
+            "categorie": "knwu",
+            "type": "standaard",
+            "vraag": "V?",
+            "verwacht_antwoord": "a; b",
+            "bron": "doc.pdf",
+            "versiedatum": "2026-09-21",
+            "doorhaal_waarde": "oud",
+        }
+        result = run_eval.check_entry(entry, "antwoord\n\nBron: doc.pdf, versie 2026-09-21")
+        for key in ("vraag", "verwacht_antwoord", "verwachte_bron", "versiedatum", "doorhaal_waarde", "antwoord"):
+            self.assertIn(key, result)
+
+
 if __name__ == "__main__":
     unittest.main()

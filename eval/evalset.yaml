@@ -16,10 +16,15 @@
 #   versiedatum:       Verwachte versie/datum van de bron
 #   doorhaal_waarde:   (alleen type=strikethrough) de superseded waarde uit
 #                      de rode revisie — mag NIET in het antwoord voorkomen
+#   niet_in_antwoord:  (optioneel) woorden gescheiden door ";" die NIET in het
+#                      antwoord mogen staan (bv. een routeringsvraag of
+#                      overbodige verheldervragen)
+#   via:               (optioneel, alleen "router") vraag end-to-end via de
+#                      router-agent in plaats van de categorie-agent
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 13 knwu / 5 regio / 5 club (23 vragen). Harde 100%-gate op type
+# Verdeling: 14 knwu / 5 regio / 5 club (24 vragen). Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
@@ -119,7 +124,18 @@ evalset:
     categorie: knwu
     type: verheldering
     vraag: "In welke categorie rijdt mijn kind mee?"
-    verwacht_antwoord: "geboortejaar; geslacht"
+    # één vraag per bericht (#38): eerst het geboortejaar, geslacht pas daarna
+    verwacht_antwoord: "geboortejaar"
+    niet_in_antwoord: "geslacht"
+  - id: knwu-verheldering-licentie-via-router
+    categorie: knwu
+    type: verheldering
+    via: router
+    vraag: "Welke licentie moet ik aanvragen voor mijn zoon?"
+    # alleen het geboortejaar bepaalt de licentiecategorie (Titel 20 art. 20.0.002);
+    # geen routeringsvraag en geen vragen naar discipline of geslacht (#38)
+    verwacht_antwoord: "geboortejaar"
+    niet_in_antwoord: "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"
 
   # --- Regio Midden (5) ---
   - id: regio-mnc-veldrijden-starttijden

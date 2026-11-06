@@ -10,6 +10,11 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
   door ";") staat los in het antwoord (getallen en korte woorden heel,
   langere woorden als woordbegin; getallen/tijden genormaliseerd)
 - strikethrough: `doorhaal_waarde` (indien opgegeven) mag NIET voorkomen
+- `niet_in_antwoord` (optioneel, ";"-gescheiden): geen van die woorden mag
+  in het antwoord staan (zelfde tokenmatching als de kernfeiten)
+- `via: router` (optioneel): de vraag gaat naar de router-agent
+  (MISTRAL_AGENT_ID) in plaats van de categorie-agent, dus end-to-end met
+  handoff; de vraag telt mee in de score van zijn categorie
 - verheldering: geen bron-check; de kernfeiten (bv. geboortejaar, geslacht)
   moeten in de wedervraag van de bot staan
 
@@ -62,7 +67,15 @@ def load_evalset(path: Path) -> list[dict]:
     return data["evalset"]
 
 
-def agent_id_for(categorie: str) -> str:
+def agent_id_for(entry: dict) -> str:
+    """Agent-id per evalvraag: `via: router` -> de router (end-to-end met
+    handoff), anders de agent van de categorie (fallback: de router)."""
+    categorie = entry["categorie"]
+    if entry.get("via") == "router":
+        key = os.environ.get("MISTRAL_AGENT_ID")
+        if not key:
+            raise RuntimeError(f"Geen router-id voor '{entry.get('id', categorie)}': zet MISTRAL_AGENT_ID")
+        return key
     key = os.environ.get(f"MISTRAL_AGENT_ID_{categorie.upper()}") or os.environ.get(
         "MISTRAL_AGENT_ID"
     )
@@ -204,10 +217,12 @@ def check_entry(entry: dict, antwoord: str) -> dict:
     missing = [f for f in feits if not kernfeit_gevonden(f, antwoord)]
     doorhaal = entry.get("doorhaal_waarde")
     doorhaal_gevonden = bool(doorhaal) and normalize(doorhaal) in norm_antwoord
+    verboden = [w.strip() for w in entry.get("niet_in_antwoord", "").split(";") if w.strip()]
+    verboden_gevonden = [w for w in verboden if kernfeit_gevonden(w, antwoord)]
     # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
     # wedervraag); de bron-check vervalt.
     bron_ok = entry.get("type") == "verheldering" or bron_match(entry.get("bron", ""), bron_line)
-    ok = bron_ok and not missing and not doorhaal_gevonden
+    ok = bron_ok and not missing and not doorhaal_gevonden and not verboden_gevonden
     return {
         "id": entry["id"],
         "categorie": entry["categorie"],
@@ -217,12 +232,14 @@ def check_entry(entry: dict, antwoord: str) -> dict:
         "bron_ok": bron_ok,
         "missende_kernfeiten": missing,
         "doorhaal_waarde_gevonden": doorhaal_gevonden,
+        "verboden_gevonden": verboden_gevonden,
         # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
         "vraag": entry["vraag"],
         "verwacht_antwoord": entry["verwacht_antwoord"],
         "verwachte_bron": entry.get("bron", ""),
         "versiedatum": entry.get("versiedatum", ""),
         "doorhaal_waarde": entry.get("doorhaal_waarde", ""),
+        "niet_in_antwoord": entry.get("niet_in_antwoord", ""),
         "antwoord": antwoord,
     }
 
@@ -242,7 +259,7 @@ def main() -> int:
     results = []
     for entry in entries:
         antwoord, error = ask_with_retry(
-            entry["vraag"], agent_id_for(entry["categorie"]), api_key, vraagtype=entry["type"]
+            entry["vraag"], agent_id_for(entry), api_key, vraagtype=entry["type"]
         )
         result = check_entry(entry, antwoord)
         if error:

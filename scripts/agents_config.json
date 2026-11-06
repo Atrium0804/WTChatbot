@@ -1,5 +1,5 @@
 {
-  "model": "mistral-large-4",
+  "model": "mistral-large-latest",
   "completion_args": {
     "temperature": 0,
     "top_p": 1,
@@ -24,10 +24,11 @@
     },
     {
       "name": "club-agent",
-      "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, wtcwoerden.nl), nooit fallback naar KNWU",
+      "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, wtcwoerden.nl), nooit fallback naar KNWU; licentievragen via handoff naar knwu-agent",
       "prompt_files": ["_shared.md", "club-agent.md"],
       "library": "club",
-      "websearch": true
+      "websearch": true,
+      "handoffs": ["knwu-agent"]
     },
     {
       "name": "archief-agent",

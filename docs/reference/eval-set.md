@@ -10,17 +10,19 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | Veld | Type | Verplicht | Betekenis |
 | --- | --- | --- | --- |
 | `id` | string | ja | Unieke code, bijv. `knwu-verzet-u15` |
-| `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt |
+| `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt (tenzij `via: router`) en in welke categoriescore de vraag meetelt |
 | `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` \| `verheldering` |
 | `vraag` | string | ja | Typische clubvraag |
 | `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het B2-antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
 | `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); moet in een `Bron:`-regel van het antwoord staan. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
+| `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
+| `via` | enum | nee | Alleen `router`: de vraag gaat naar de router-agent (`MISTRAL_AGENT_ID`) in plaats van de categorie-agent, dus end-to-end met handoff |
 
-Huidige verdeling: 23 vragen — 13 knwu, 5 regio, 5 club; 16 standaard, 4 strikethrough, 2 websearch, 1 verheldering.
+Huidige verdeling: 24 vragen — 14 knwu, 5 regio, 5 club; 16 standaard, 4 strikethrough, 2 websearch, 2 verheldering (waarvan 1 via de router).
 
-Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. Alleen de kernfeiten tellen (bv. `geboortejaar; geslacht` moeten in de wedervraag staan); de bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
+Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
 Een test (`tests/test_run_eval.py`, `Run3ReviewTests`) legt per vraag het oordeel uit de handmatige review van eval run 3 vast en controleert dat de evalset met de echte run-3-antwoorden (`tests/fixtures/eval_run3_antwoorden.json`) tot hetzelfde oordeel leidt. Pas je een entry aan, draai dan de tests.
 
@@ -31,9 +33,10 @@ Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 1. **Bron**: een van de `Bron: ...`-regels van het antwoord bevat na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee.
 2. **Kernfeiten**: elk token van elk item van `verwacht_antwoord` staat los in het antwoord. Getallen en woorden van maximaal 3 tekens moeten als heel token voorkomen (`5` matcht niet in `15`, `ja` niet in `jaar`); langere woorden als woordbegin (`verzeker` matcht `verzekering`). Getallen worden genormaliseerd: `11.05` = `11:05`, `08:30` = `8.30`, `€ 10,-` = `10,00` = `10`.
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
-4. **Verheldering** (`type: verheldering`): de bron-check vervalt; alleen de kernfeiten (de wedervraag) tellen.
+4. **Verboden woorden**: geen van de woorden uit `niet_in_antwoord` mag in het antwoord voorkomen; `last_run.json` toont ze onder `verboden_gevonden`.
+5. **Verheldering** (`type: verheldering`): de bron-check vervalt; de kernfeiten (de wedervraag) en eventueel `niet_in_antwoord` tellen.
 
-Een vraag is "correct mét correcte bron" als alle drie de checks slagen.
+Een vraag is "correct mét correcte bron" als alle checks slagen.
 
 Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord.
 

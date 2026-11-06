@@ -328,6 +328,98 @@ class VerhelderingTests(unittest.TestCase):
         self.assertFalse(result["ok"])
 
 
+class NietInAntwoordTests(unittest.TestCase):
+    """Optioneel veld `niet_in_antwoord`: woorden die het antwoord fout maken."""
+
+    def licentie_entry(self) -> dict:
+        return {
+            "id": "knwu-verheldering-licentie-via-router",
+            "categorie": "knwu",
+            "type": "verheldering",
+            "via": "router",
+            "vraag": "Welke licentie moet ik aanvragen voor mijn zoon?",
+            "verwacht_antwoord": "geboortejaar",
+            "niet_in_antwoord": "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht",
+        }
+
+    def test_routeringsvraag_met_verzonnen_opties_faalt(self) -> None:
+        # het echte foute antwoord van 2026-11-06 (router vroeg naar het licentietype)
+        antwoord = (
+            "Om je vraag goed te kunnen beantwoorden, wil ik eerst weten over welk "
+            "type licentie het gaat. 1. KNWU-licentie 2. Regio-specifieke licentie "
+            "(bijvoorbeeld via MNC, Hans van den Hengel of regio Midden). "
+            "3. Clubspecifieke licentie (binnen WTC Woerden). Wat is het geboortejaar?"
+        )
+        result = run_eval.check_entry(self.licentie_entry(), antwoord)
+        self.assertFalse(result["ok"])
+        self.assertEqual(
+            result["verboden_gevonden"], ["MNC", "Hans van den Hengel", "WTC Woerden"]
+        )
+
+    def test_vier_vragen_tegelijk_faalt(self) -> None:
+        antwoord = (
+            "Ik heb nodig: 1. Geboortejaar 2. Discipline: wegwielrennen of veldrijden? "
+            "3. Doel van de licentie 4. Soort wedstrijden"
+        )
+        result = run_eval.check_entry(self.licentie_entry(), antwoord)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["verboden_gevonden"], ["discipline"])
+
+    def test_alleen_geboortejaar_vragen_is_ok(self) -> None:
+        antwoord = "In welk geboortejaar is je zoon geboren? Bijvoorbeeld 2014, 2017 of 2020."
+        result = run_eval.check_entry(self.licentie_entry(), antwoord)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(result["verboden_gevonden"], [])
+
+    def test_entry_zonder_veld_ongewijzigd(self) -> None:
+        result = run_eval.check_entry(entry("x-y", "ja", "doc.pdf"), "Ja, via MNC.\n\nBron: doc.pdf")
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(result["verboden_gevonden"], [])
+
+
+class AgentKeuzeTests(unittest.TestCase):
+    ENV = {
+        "MISTRAL_AGENT_ID": "ag_router",
+        "MISTRAL_AGENT_ID_KNWU": "ag_knwu",
+    }
+
+    def kies(self, e: dict) -> str:
+        import os
+        from unittest.mock import patch
+
+        with patch.dict(os.environ, self.ENV, clear=True):
+            return run_eval.agent_id_for(e)
+
+    def test_via_router_gaat_naar_de_router(self) -> None:
+        self.assertEqual(self.kies({"categorie": "knwu", "via": "router"}), "ag_router")
+
+    def test_zonder_via_gaat_naar_de_categorie_agent(self) -> None:
+        self.assertEqual(self.kies({"categorie": "knwu"}), "ag_knwu")
+
+    def test_categorie_zonder_eigen_agent_valt_terug_op_router(self) -> None:
+        self.assertEqual(self.kies({"categorie": "club"}), "ag_router")
+
+    def test_via_router_zonder_router_id_geeft_fout(self) -> None:
+        import os
+        from unittest.mock import patch
+
+        with (
+            patch.dict(os.environ, {"MISTRAL_AGENT_ID_KNWU": "ag_knwu"}, clear=True),
+            self.assertRaisesRegex(RuntimeError, "MISTRAL_AGENT_ID"),
+        ):
+            run_eval.agent_id_for({"id": "x", "categorie": "knwu", "via": "router"})
+
+    def test_evalset_bevat_licentievraag_via_router(self) -> None:
+        evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        e = {x["id"]: x for x in evalset}["knwu-verheldering-licentie-via-router"]
+        self.assertEqual(e["via"], "router")
+        self.assertEqual(e["categorie"], "knwu")
+        self.assertEqual(e["verwacht_antwoord"], "geboortejaar")
+        self.assertEqual(
+            e["niet_in_antwoord"], "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"
+        )
+
+
 class EvalsetSchemaTests(unittest.TestCase):
     BEKENDE_TYPES = {"standaard", "websearch", "strikethrough", "verheldering"}
 
@@ -346,6 +438,7 @@ class EvalsetSchemaTests(unittest.TestCase):
                     self.assertTrue(e.get("versiedatum"))
                 if e["type"] == "strikethrough":
                     self.assertTrue(e.get("doorhaal_waarde"))
+                self.assertIn(e.get("via", "router"), {"router"})
 
 
 if __name__ == "__main__":

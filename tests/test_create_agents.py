@@ -1,7 +1,9 @@
+import io
 import json
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -307,6 +309,26 @@ class RunCreateTests(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertTrue(any("bestaat-niet" in e for e in report["errors"]))
         client.beta.agents.create.assert_not_called()
+
+
+class ProductieConfigTests(unittest.TestCase):
+    """De echte agents_config.json + prompts, met een fake client."""
+
+    def test_club_agent_zet_licentievragen_door_naar_knwu_agent(self) -> None:
+        config_path = create_agents.DEFAULT_CONFIG_PATH
+        client = make_client(
+            remote_libraries=[make_lib(n, f"lib-{n}") for n in ("knwu", "regio", "club", "archive")]
+        )
+        report: create_agents.AgentReport = {"created": [], "updated": [], "errors": [], "agent_ids": {}}
+
+        with redirect_stdout(io.StringIO()):
+            rc = create_agents.run_create(
+                client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+            )
+
+        self.assertEqual(rc, 0, report["errors"])
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent"])
 
 
 if __name__ == "__main__":

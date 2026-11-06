@@ -13,23 +13,22 @@ De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elk
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
 **Regio-library**:
-De regiodocumenten (MNC, Hans van den Hengel-competitie). Eerste bron voor vragen over regionale wedstrijden in regio Midden; bij MNC/HvH-vragen met expliciete fallback naar de KNWU-bibliotheek.
+De regiodocumenten, Eerste bron voor vragen over regionale wedstrijden in regio Midden Ooost; vragen over wedstrijdregelgeving met expliciete fallback naar de KNWU-bibliotheek.
 
 **Club-library**:
-De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen, samen met wtcwoerden.nl via websearch; geen fallback naar de KNWU-bibliotheek.
+De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen.
 
 **Algemeen-library**:
 De algemene kennisdocumenten (bijv. trainingsleer, het motiveren van kinderen). Te raadplegen bij algemene vragen die geen KNWU-, regio- of clubvraag zijn.
 
 **KNWU-bibliotheek**:
-De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor nationale/KNWU-vragen.
+De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor vragen over KNWU, landelijke of club/regio-overkoepelende wedstrijdregels en de organisatie van nationale wedstrijden en nationaal kampioenschappen (NK).
 
 **Bronvolgorde**:
 Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen Club-library + wtcwoerden.nl.
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
-**Wijzigingsmemo**:
-De officiële KNWU-publicatie per reglementsversie op het Kenniscentrum die opsomt wat er gewijzigd is. Eerste bron voor "wat is er veranderd"-vragen; daarna de rode revisies in het actuele document, dan een vergelijking met de oude versie uit de archief-library / het repo-archief (`knowledge-documents/archive/`).
+
 
 **Zichtbare revisies**:
 Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst door elkaar. Doorgestreepte tekst is nooit de huidige regel en wordt nooit geciteerd. De KNWU publiceert geen versie zonder zichtbare revisies.
@@ -55,8 +54,29 @@ Het local → remote synchroniseren van `knowledge-documents/` met de bijbehoren
 ## Renners en wedstrijden
 
 **Leeftijdscategorie**:
-De categorie waarin een renner start (bijv. U13, nieuwelingen, junioren). Volgt uit geboortejaar, geslacht, discipline en seizoen, met uitzonderingen (meisjes een U-categorie lager, afwijkende indeling in het veldritseizoen, dispensatie). Gebruikers kennen meestal het geboortejaar en geslacht van de renner, niet de leeftijdscategorie.
+De categorie waarin een renner start (bijv. U13, nieuwelingen, junioren). De categorie-indeling is gebaseerd op het geboortejaar. Wedstrijden kunnen gereden worden per categorie, of met meerdere categorieen tegelijk, waarbij jongens en meisjes van een verschillend geboortejaar samen rijden (bijv jongens U9 en meisjes U10). Zo'n wedstrijdcategorie wordt dan aangeduid met 'JO9/MO10' (jongens onder 9, meisjes onder 10). Na categorie U15 komen de categorieen voor jongeren
+Als er verwezen wordt naar een categorie met een nummer, dan wordt zo'n gecombineerde categorie bedoeld:
+1 - JO9/MO10
+2 - JO10/MO11
+3 - JO11/MO12
+4 - JO12/MO13
+5 - JO13/MO14
+6 - JO14/MO15
+7 - JO15
+
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
+
+
+**Licentie**:
+Altijd een KNWU-licentie: het startrecht dat de KNWU aan een renner verleent, eventueel aangevuld met een pakket (Basis, Plus, Premium). Ook als een regio- of clubdocument naar een licentie verwijst, is dat de KNWU-licentie; regio's en clubs geven zelf geen licenties uit.
+_Avoid_: "regiolicentie",
+
+**Licentiecategorie**:
+De soort KNWU-jeugdlicentie naar leeftijdsgroep, zoals vastgesteld in Titel 20 (Categorieën Jeugdlicenties). Volgt alleen uit het geboortejaar, niet uit discipline of geslacht. Namen en leeftijdsgrenzen kunnen per seizoen wijzigen; de actuele indeling staat in de bron. Niet hetzelfde als de leeftijdscategorie: één licentiecategorie kan meerdere leeftijdscategorieën omvatten (bv. seizoen 2026: een jongen geboren in 2020 heeft een KNWU Licentie U13 en rijdt in leeftijdscategorie U7).
+_Avoid_: een licentiecategorie afkorten tot alleen de U-aanduiding ("U13") als je de licentie bedoelt
+
+**KNWU-lidmaatschap**:
+Verplicht voor licentiehouders; zonder licentie voldoende voor alleen trainingen en clubactiviteiten (geen wedstrijden).
 
 **Wedstrijdcategorie**:
 De indeling van een wedstrijd naar niveau (bijv. Cat. II nationale wedstrijd, regionale wedstrijd).
@@ -89,3 +109,9 @@ _Avoid_: "ontwikkeling" voor deze afstand; "verzet" voor de tandwielverhouding z
 
 **Beheerder**:
 De benoemde eindverantwoordelijke (plus vervanger) voor ntfy-alerts, feedback-triage in `/admin/feedback`, Library-updates bij seizoenstart en het archief van oude versies. Staat met naam/rol in `docs/operations.md`.
+
+## Delivery
+
+**Webapp (PWA)**:
+De chatbot als installeerbare webapp op de telefoon: manifest + service worker + iconen in `app/static/` installatie vereist HTTPS (zie ADR-0007).
+_Avoid_: "app" (suggereert een store-app — via Capacitor is een apart post-MVP-pad), "bladwijzer", "link op het beginscherm"

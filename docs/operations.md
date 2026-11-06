@@ -23,7 +23,7 @@ De post-MVP cron-job op de VPS vergelijkt `knowledge-documents/versions.json` me
 
 ## Mistral API-key rotatie
 
-De Mistral API-key is een volledige factureerbare sleutel en staat daarom **alleen in `.env` op de server** — nooit in code of git (gedekt door de gitleaks-secrets-scan in CI, `.github/workflows/secrets-scan.yml`; `.env` is geverifieerd niet getrackt). Zie [ADR-0002](adr/0002-vps-met-eigen-proxy.md) voor de afweging.
+De Mistral API-key is een volledige factureerbare sleutel en staat daarom **alleen in `.env` op de server** (fase 1: de NAS — zie [ADR-0007](adr/0007-fase-1-op-nas-achter-npm.md); einddoel: de VPS) — nooit in code of git (gedekt door de gitleaks-secrets-scan in CI, `.github/workflows/secrets-scan.yml`; `.env` is geverifieerd niet getrackt). Zie [ADR-0002](adr/0002-vps-met-eigen-proxy.md) voor de afweging.
 
 Rotatieprocedure:
 
@@ -33,12 +33,15 @@ Rotatieprocedure:
 4. Controleer `/healthz` en stel één testvraag via de chat-UI.
 5. Revoke de oude key in de Mistral Console.
 
-Blast radius van een gelekte key: de key is direct factureerbaar. De key bestaat alleen op de VPS en wordt alleen door de FastAPI-proxy gebruikt; de workspace spend cap en rate limiting (ADR-0002) beperken de schade. Rotate bij vermoeden van een lek direct, volg bovenstaande stappen.
+Blast radius van een gelekte key: de key is direct factureerbaar. In fase 1 bestaat de key alleen op de NAS (`/volume1/docker/wtchatbot/.env`, ADR-0007) en wordt alleen door de FastAPI-proxy gebruikt; de workspace spend cap en rate limiting (ADR-0002) beperken de schade. Rotate bij vermoeden van een lek direct, volg bovenstaande stappen.
 
 ## Monitoring en VPS-toegang
 
+Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](how-to/chatdiagnostiek-tonen.md).
+
 - De FastAPI-proxy exposet een `/healthz` endpoint (controleert onder andere de bereikbaarheid van de Mistral API).
-- Externe monitoring: UptimeRobot (of een alternatief — nog te beslissen) checkt elke 5 minuten `https://wtchat.famstieltjes.nl/healthz` en alert bij failure. Accountgegevens staan in de password manager van de club, nooit in git.
+- Externe monitoring: UptimeRobot (of een alternatief — nog te beslissen) checkt elke 5 minuten `https://chat.famstieltjes.nl/healthz` (fase 1, NAS; fase 2 op de VPS: `https://wtchat.famstieltjes.nl/healthz`) en alert bij failure. Accountgegevens staan in de password manager van de club, nooit in git.
+- Deploy fase 1 (NAS): `.\scripts\deploy-nas.ps1 -Apply -Up` vanuit de repo-root; NPM proxy host `chat.famstieltjes.nl` -> `http://wtchatbot:8000` (Let's Encrypt, Force SSL). Zie [ADR-0007](adr/0007-fase-1-op-nas-achter-npm.md) en [app/README.md](../app/README.md).
 - VPS: Hetzner CX22 (±€ 4/maand), Docker + Caddy. Toegang via SSH met keys (geen wachtwoordlogin), firewall via `ufw` en `fail2ban` (zie [ADR-0002](adr/0002-vps-met-eigen-proxy.md)).
 
 ## Websearch-allowlist

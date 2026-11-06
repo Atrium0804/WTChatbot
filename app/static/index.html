@@ -2,8 +2,16 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WTC Woerden chatbot</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#033ec2">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wheely">
 <style>
   :root {
     --accent: #033ec2;
@@ -21,7 +29,7 @@
   body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg) url("Achtergrond%2016-9.png") center / cover no-repeat fixed;
+    background: var(--bg) url("Achtergrond%2016-9.jpg") center / cover no-repeat fixed;
     color: var(--text);
     display: flex;
     flex-direction: column;
@@ -184,28 +192,67 @@
   </form>
 </footer>
 
+<script src="/debug.js"></script>
 <script>
 (function () {
   "use strict";
+  document.dispatchEvent(new Event("chat:init-start"));
   // Geen geheugen tussen sessies: elke paginalading start een nieuwe conversatie.
   var conversationId = null;
-  // Anonieme client-ID (random UUID, bevat geen persoonsgegevens) — puur voor de rate limiter.
-  var clientId = (function () {
-    try {
-      var id = sessionStorage.getItem("wtchat_client_id");
-      if (!id) {
-        id = crypto.randomUUID();
-        sessionStorage.setItem("wtchat_client_id", id);
-      }
-      return id;
-    } catch (e) {
-      return crypto.randomUUID();
-    }
-  })();
+  var clientId = null;
   var messagesEl = document.getElementById("messages");
   var form = document.getElementById("composer");
   var input = document.getElementById("question");
   var send = document.getElementById("send");
+
+  form.addEventListener("submit", function (ev) {
+    if (!clientId) ev.preventDefault();
+  });
+
+  function createClientId() {
+    if (typeof crypto === "undefined") {
+      throw new Error("Veilige browser-randomgenerator ontbreekt.");
+    }
+    if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+    if (typeof crypto.getRandomValues !== "function") {
+      throw new Error("Veilige browser-randomgenerator ontbreekt.");
+    }
+    var bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 15) | 64;
+    bytes[8] = (bytes[8] & 63) | 128;
+    return Array.from(bytes, function (byte) {
+      return ("0" + byte.toString(16)).slice(-2);
+    }).join("").replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+  }
+
+  function loadClientId() {
+    var id;
+    try {
+      id = sessionStorage.getItem("wtchat_client_id");
+    } catch (e) {
+      console.warn("Client-ID niet leesbaar uit sessieopslag; alleen deze pagina gebruikt de ID.");
+    }
+    if (id) return id;
+    id = createClientId();
+    try {
+      sessionStorage.setItem("wtchat_client_id", id);
+    } catch (e) {
+      console.warn("Client-ID niet bewaard in sessieopslag; alleen deze pagina gebruikt de ID.");
+    }
+    return id;
+  }
+
+  try {
+    clientId = loadClientId();
+  } catch (e) {
+    addMessage("error", "Chat kon niet starten: veilige browserfuncties zijn niet beschikbaar. " +
+      "Open de HTTPS-site in een bijgewerkte browser of probeer Safari.");
+    input.disabled = true;
+    send.disabled = true;
+    document.dispatchEvent(new Event("chat:init-failed"));
+    return;
+  }
 
   function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
@@ -281,12 +328,15 @@
 
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
+    if (!clientId) return;
+    document.dispatchEvent(new Event("chat:submit"));
     var question = input.value.trim();
     if (!question) return;
     input.value = "";
     send.disabled = true;
     addMessage("user", question);
-    var typing = addMessage("bot typing", "…");
+    var typing = addMessage("bot typing", "Wheely denkt na…");
+    document.dispatchEvent(new Event("chat:messages-rendered"));
     fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -324,7 +374,14 @@
       });
   });
 
+  document.dispatchEvent(new Event("chat:ready"));
   input.focus();
+
+  // Service worker (PWA-installatie, issue #35). Op een beveiligde origin
+  // (HTTPS) registreert de worker; op plain HTTP faalt dit expres.
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(function () {});
+  }
 })();
 </script>
 </body>

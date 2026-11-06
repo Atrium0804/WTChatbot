@@ -37,6 +37,8 @@ Blast radius van een gelekte key: de key is direct factureerbaar. In fase 1 best
 
 ## Monitoring en VPS-toegang
 
+Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](how-to/chatdiagnostiek-tonen.md).
+
 - De FastAPI-proxy exposet een `/healthz` endpoint (controleert onder andere de bereikbaarheid van de Mistral API).
 - Externe monitoring: UptimeRobot (of een alternatief — nog te beslissen) checkt elke 5 minuten `https://chat.famstieltjes.nl/healthz` (fase 1, NAS; fase 2 op de VPS: `https://wtchat.famstieltjes.nl/healthz`) en alert bij failure. Accountgegevens staan in de password manager van de club, nooit in git.
 - Deploy fase 1 (NAS): `.\scripts\deploy-nas.ps1 -Apply -Up` vanuit de repo-root; NPM proxy host `chat.famstieltjes.nl` -> `http://wtchatbot:8000` (Let's Encrypt, Force SSL). Zie [ADR-0007](adr/0007-fase-1-op-nas-achter-npm.md) en [app/README.md](../app/README.md).

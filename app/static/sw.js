@@ -4,10 +4,11 @@
 // Daar zit vraag/antwoord in; alleen de app-shell mag lokaal worden bewaard.
 "use strict";
 
-var CACHE = "wtchat-shell-v2"; // bij elke wijziging van de shell: versie ophogen
+var CACHE = "wtchat-shell-v4"; // bij elke wijziging van de shell: versie ophogen
 var SHELL = [
   "/",
   "/index.html",
+  "/debug.js",
   "/manifest.webmanifest",
   "/icons/favicon-32.png",
   "/icons/icon-192.png",

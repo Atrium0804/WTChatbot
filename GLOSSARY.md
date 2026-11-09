@@ -100,6 +100,10 @@ De bot verzint nooit regels, data of bedragen; bij ontbrekende informatie, onzek
 Vaste set van ±20 typische clubvragen met verwacht antwoord en bron. Launch-gate: ≥90% correct; wordt her-run na elke Library-update.
 _Avoid_: testset, testvragen (in deze context)
 
+**Feedbackgeschiedenis**:
+De reeks laatste vraag/antwoord-paren (turns) van een conversatie die bij een duim-omlaag samen met de feedback wordt opgeslagen, puur voor triage — standaard de laatste 10 turns binnen één sessie. De laatste turn staat ook los als vraag/antwoord bij de feedback-row.
+_Avoid_: "chatlog", "conversatielog", "de hele conversatie opslaan"
+
 **Verzettenadvies**:
 De geplande uitbreiding (post-MVP) waarmee de chatbot adviseert welk verzet geschikt is voor een renner, gegeven geboortejaar en fiets. Hybride: RAG voor de KNWU-regel, een deterministische calculator-tool voor alle mogelijke combinaties kettingblad × cassette × bandenmaat, plus een beschikbaarheidscheck in de handel.
 

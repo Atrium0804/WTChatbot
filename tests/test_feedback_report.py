@@ -1,5 +1,6 @@
 import contextlib
 import io
+import json
 import sqlite3
 import sys
 import tempfile
@@ -90,6 +91,64 @@ class RenderReportTests(unittest.TestCase):
         report = feedback_report.render_report(rows, "test-db", "2026-11-20T12:00:00+00:00")
         self.assertIn("Geen negatieve feedback", report)
 
+    def test_history_rendered_oldest_first_last_marked(self) -> None:
+        history = [
+            {"question": "eerste vraag", "answer": "eerste antwoord"},
+            {"question": "tweede vraag", "answer": "tweede antwoord"},
+        ]
+        rows = [
+            {
+                "timestamp": "2026-11-15T10:00:00+00:00",
+                "rating": "negative",
+                "conversation_id": "abc",
+                "question": "tweede vraag",
+                "answer": "tweede antwoord",
+                "text": "klopt niet",
+                "history": json.dumps(history),
+            }
+        ]
+        report = feedback_report.render_report(rows, "test-db", "2026-11-20T12:00:00+00:00")
+        self.assertIn("Feedbackgeschiedenis (2 turns, oudste eerst):", report)
+        self.assertIn("1. **Vraag:** eerste vraag", report)
+        self.assertIn("2. (laatste) **Vraag:** tweede vraag", report)
+        self.assertLess(
+            report.index("1. **Vraag:** eerste vraag"),
+            report.index("2. (laatste) **Vraag:** tweede vraag"),
+        )
+
+    def test_row_without_history_key_renders(self) -> None:
+        # oude DB (vóór ADR-0008) heeft geen history-kolom: dict zonder die key
+        rows = [
+            {
+                "timestamp": "2026-11-15T10:00:00+00:00",
+                "rating": "negative",
+                "conversation_id": "abc",
+                "question": "vraag",
+                "answer": "antwoord",
+                "text": " oud schema",
+            }
+        ]
+        report = feedback_report.render_report(rows, "test-db", "2026-11-20T12:00:00+00:00")
+        self.assertIn("vraag", report)
+        self.assertNotIn("Feedbackgeschiedenis", report)
+
+
+class ParseHistoryTests(unittest.TestCase):
+    def test_null_and_missing(self) -> None:
+        self.assertEqual(feedback_report.parse_history({"history": None}), [])
+        self.assertEqual(feedback_report.parse_history({}), [])
+
+    def test_invalid_json_and_non_list(self) -> None:
+        self.assertEqual(feedback_report.parse_history({"history": "geen json"}), [])
+        self.assertEqual(feedback_report.parse_history({"history": '{"a": 1}'}), [])
+
+    def test_filters_non_dict_entries(self) -> None:
+        raw = json.dumps([{"question": "q", "answer": "a"}, "rommel", 42])
+        self.assertEqual(
+            feedback_report.parse_history({"history": raw}),
+            [{"question": "q", "answer": "a"}],
+        )
+
 
 class LoadRowsTests(unittest.TestCase):
     def test_roundtrip_via_store(self) -> None:
@@ -102,10 +161,15 @@ class LoadRowsTests(unittest.TestCase):
             question="vraag",
             answer="antwoord",
             text="toelichting",
+            history=[{"question": "vraag", "answer": "antwoord"}],
         )
         rows = feedback_report.load_rows(db)
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[1]["text"], "toelichting")
+        self.assertEqual(
+            json.loads(rows[1]["history"]), [{"question": "vraag", "answer": "antwoord"}]
+        )
+        self.assertIsNone(rows[0]["history"])
 
     def test_missing_db_exits(self) -> None:
         with self.assertRaises(SystemExit):

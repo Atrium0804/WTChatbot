@@ -12,7 +12,8 @@ Usage:
         [--nas-path /volume1/docker/wtchatbot/data/wtchat.db]
 
 Output: eerst counters (per rating, plus per week), daarna de negatieve
-feedback (vraag/antwoord/toelichting), oudste eerst.
+feedback (feedbackgeschiedenis met turns, laatste vraag/antwoord, toelichting),
+oudste eerst.
 
 Privacy: ruwe feedback nooit in git of in tickets (deze repo is publiek);
 permanente vastlegging alleen geanonimiseerd in LEARNINGS.md.
@@ -21,6 +22,7 @@ Zie docs/how-to/feedback-triage.md.
 
 import argparse
 import contextlib
+import json
 import os
 import posixpath
 import subprocess
@@ -68,6 +70,24 @@ def negative_rows(rows: list[dict]) -> list[dict]:
     )
 
 
+def parse_history(row: dict) -> list[dict]:
+    """Parse de history-JSON-kolom (lijst turns {question, answer}, oudste eerst).
+
+    Lege lijst bij NULL, een oude DB zonder history-kolom, of ongeldige JSON —
+    het rapport moet ook oude snapshots (vóór ADR-0008) kunnen tonen.
+    """
+    raw = row.get("history")
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(data, list):
+        return []
+    return [t for t in data if isinstance(t, dict)]
+
+
 def render_report(rows: list[dict], source: str, generated_at: str) -> str:
     per_rating, per_week = summarize(rows)
     lines = [
@@ -105,8 +125,17 @@ def render_report(rows: list[dict], source: str, generated_at: str) -> str:
             f"- Vraag: {row['question'] or '-'}",
             f"- Antwoord: {row['answer'] or '-'}",
             f"- Toelichting: {row['text'] or '-'}",
-            "",
         ]
+        history = parse_history(row)
+        if history:
+            lines.append(f"- Feedbackgeschiedenis ({len(history)} turns, oudste eerst):")
+            for j, turn in enumerate(history, start=1):
+                marker = " (laatste)" if j == len(history) else ""
+                lines += [
+                    f"  {j}.{marker} **Vraag:** {turn.get('question') or '-'}",
+                    f"     **Antwoord:** {turn.get('answer') or '-'}",
+                ]
+        lines.append("")
     lines.append(
         "_Retentie: rows ouder dan 30 dagen zijn automatisch gepurge'd uit de DB. "
         "Ruwe feedback niet kopiëren naar git/tickets — alleen geanonimiseerd vastleggen in LEARNINGS.md._"

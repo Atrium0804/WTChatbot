@@ -10,6 +10,7 @@ Run:  uvicorn main:app --host 0.0.0.0 --port 8000   (vanuit app/)
 
 import time
 import uuid
+from collections import deque
 from typing import Optional
 
 from fastapi import FastAPI, Request
@@ -61,8 +62,10 @@ def create_app(db_path: Optional[str] = None) -> FastAPI:
     store.purge_old(db, config.FEEDBACK_RETENTION_DAYS)
 
     app = FastAPI(title="WTChatbot")
-    # In-memory state: conversaties, laatste uitwisseling (voor feedback-koppeling), rate-limit buckets.
-    state: dict = {"conversations": {}, "last_exchange": {}, "buckets": {}}
+    # In-memory state: conversaties, feedbackgeschiedenis per conversatie (rolling
+    # window van de laatste FEEDBACK_HISTORY_TURNS turns, voor feedback-koppeling),
+    # rate-limit buckets.
+    state: dict = {"conversations": {}, "history": {}, "buckets": {}}
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
@@ -131,25 +134,41 @@ def create_app(db_path: Optional[str] = None) -> FastAPI:
             state["conversations"][conversation_id] = mistral_conv_id
         else:
             answer = stub_answer(message)
-        state["last_exchange"][conversation_id] = {"question": message, "answer": answer}
+        turns = state["history"].setdefault(
+            conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
+        )
+        turns.append({"question": message, "answer": answer})
         return {"conversation_id": conversation_id, "answer": answer}
 
     @app.post("/feedback")
     async def feedback(payload: FeedbackRequest):
-        """Content (vraag/antwoord) wordt ALLEEN opgeslagen bij duim-omlaag."""
+        """Content wordt ALLEEN opgeslagen bij duim-omlaag: de feedbackgeschiedenis
+        (laatste FEEDBACK_HISTORY_TURNS turns, oudste eerst) plus de laatste turn
+        los in question/answer en de toelichting. Bij duim-omhoog alleen een teller."""
         if payload.rating not in ("positive", "negative"):
             return JSONResponse(
                 {"error": "rating moet 'positive' of 'negative' zijn."}, status_code=400
             )
         if payload.rating == "negative":
-            exchange = state["last_exchange"].get(payload.conversation_id, {})
+            turns = list(state["history"].get(payload.conversation_id, []))[
+                -config.FEEDBACK_HISTORY_TURNS:
+            ]
+            history = [
+                {
+                    "question": t["question"],
+                    "answer": t["answer"][: config.FEEDBACK_MAX_TEXT_LENGTH],
+                }
+                for t in turns
+            ]
+            last = turns[-1] if turns else {}
             store.save_feedback(
                 db,
                 rating="negative",
                 conversation_id=payload.conversation_id,
-                question=exchange.get("question", ""),
-                answer=exchange.get("answer", ""),
-                text=payload.text[:2000],
+                question=last.get("question", ""),
+                answer=last.get("answer", "")[: config.FEEDBACK_MAX_TEXT_LENGTH],
+                text=payload.text[: config.FEEDBACK_MAX_TEXT_LENGTH],
+                history=history,
             )
         else:
             store.save_feedback(db, rating="positive")

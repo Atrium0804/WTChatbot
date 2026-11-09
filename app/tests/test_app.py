@@ -380,3 +380,58 @@ def test_mistral_timeout_default_60():
 def test_index_shows_thinking_message(tmp_path):
     client = make_client(tmp_path)
     assert "Wheely denkt na…" in client.get("/").text
+
+
+def fake_mistral(monkeypatch) -> list[dict]:
+    """Zet de app in Mistral-mode met een gemockte answer_question; geef de calls."""
+    import config
+    import mistral_client
+
+    calls: list[dict] = []
+
+    def answer_question(**kwargs):
+        calls.append(kwargs)
+        return "mistral-conv-1", "antwoord"
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(mistral_client, "answer_question", answer_question)
+    return calls
+
+
+def test_chat_adds_date_and_metadata_on_new_conversation(tmp_path, monkeypatch):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    body = chat(client, "Wanneer is de volgende wedstrijd?")
+    sent = calls[0]
+    assert sent["message"].startswith("Wanneer is de volgende wedstrijd?")
+    assert "maandag 9 november 2026" in sent["message"]
+    assert sent["conversation_id"] is None
+    assert sent["metadata"] == {"app_conversation_id": body["conversation_id"]}
+
+
+def test_chat_follow_up_adds_category_but_no_date(tmp_path, monkeypatch):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = chat(client, "In welke leeftijdscategorie rijdt mijn zoon?")
+    chat_in(client, first["conversation_id"], "2015", "test-client")
+    follow_up = calls[1]["message"]
+    assert calls[1]["conversation_id"] == "mistral-conv-1"
+    assert "november 2026" not in follow_up
+    assert "wegwielrennen 2026: U12" in follow_up
+
+
+def test_chat_feedback_history_keeps_raw_question(tmp_path, monkeypatch):
+    fake_mistral(monkeypatch)
+    client = make_client(tmp_path)
+    body = chat(client, "Mijn zoon is van 2015")
+    client.post(
+        "/feedback",
+        json={"conversation_id": body["conversation_id"], "rating": "negative", "text": ""},
+    )
+    rows = store.all_feedback(str(tmp_path / "test.db"))
+    assert rows[-1]["question"] == "Mijn zoon is van 2015"

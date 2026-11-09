@@ -21,10 +21,15 @@
 #                      overbodige verheldervragen)
 #   via:               (optioneel, alleen "router") vraag end-to-end via de
 #                      router-agent in plaats van de categorie-agent
+#   beurten:           (optioneel) lijst eerdere gebruikersberichten in
+#                      dezelfde conversatie, vóór `vraag`; alleen het
+#                      antwoord op `vraag` wordt gecheckt
+#   verwachte_agent:   (optioneel) agent die `vraag` moet beantwoorden
+#                      (router-agent | knwu-agent | regio-agent | club-agent)
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 14 knwu / 5 regio / 5 club (24 vragen). Harde 100%-gate op type
+# Verdeling: 17 knwu / 5 regio / 5 club (27 vragen, 4 via de router). Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
@@ -136,6 +141,46 @@ evalset:
     # geen routeringsvraag en geen vragen naar discipline of geslacht (#38)
     verwacht_antwoord: "geboortejaar"
     niet_in_antwoord: "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"
+  # --- KNWU via de router, met vervolgvragen (#44) ---
+  # Meten of een conversatie na een handoff bij de juiste agent uitkomt
+  # ("sticky handoff"), op basis van geanonimiseerde feedback.
+  - id: knwu-router-verzet-na-regiovraag
+    categorie: knwu
+    type: standaard
+    via: router
+    beurten:
+      - "Wanneer is de volgende MNC-veldrit?"
+    vraag: "Welk verzet mag mijn zoon op de weg rijden? Hij is geboren in 2015."
+    # U12 in 2026 (art. 20.0.004) -> max. 5,90 m op de weg (art. 20.1.007)
+    verwacht_antwoord: "5,90; U12; artikel 20.1.007"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+    verwachte_agent: knwu-agent
+  - id: knwu-router-geboortejaar-als-vervolg
+    categorie: knwu
+    type: standaard
+    via: router
+    beurten:
+      - "In welke leeftijdscategorie rijdt mijn zoon?"
+    vraag: "2015"
+    verwacht_antwoord: "U12; 2015"
+    # geen informatie over een andere leeftijdscategorie (feedback: "nieuwelingen")
+    niet_in_antwoord: "Nieuweling"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+    verwachte_agent: knwu-agent
+  - id: knwu-router-licentie-na-clubvraag
+    categorie: knwu
+    type: standaard
+    via: router
+    beurten:
+      - "Wat kost de contributie voor jeugdleden bij WTC Woerden?"
+    vraag: "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012."
+    # 14 jaar in 2026: leeftijdscategorie U15, licentie U17 (13 t/m 16 jaar, art. 20.0.002)
+    verwacht_antwoord: "KNWU Licentie U17; U15"
+    bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl"
+    versiedatum: "2026-09-21"
+    verwachte_agent: knwu-agent
 
   # --- Regio Midden (5) ---
   - id: regio-mnc-veldrijden-starttijden

@@ -17,7 +17,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 | club-agent | Club-library | wtcwoerden.nl | Clubzaken WTC Woerden |
 | archief-agent | archief-library | nee | Alleen bij "wat is er veranderd?"-vragen |
 
-- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy injecteert per conversatie contextregels: taalniveau (indien vastgesteld) en de versiecheck-cache (zie onder).
+- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentiecategorie, berekend uit `app/knwu_categories.json`. Contextregels voor taalniveau en de versiecheck-cache (zie onder) zijn nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
 - De proxy is dun: auth, rate limiting, logging, versiecheck-cache (SQLite `version_checks`) en de contextregels; de agents draaien server-side via de Conversations API.
 
 ## Routeringsregels

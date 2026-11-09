@@ -1,0 +1,29 @@
+{
+  "bron": "TITEL_20-Jeugdwielrennen_20260921.pdf",
+  "versie": "2026-09-21",
+  "leeftijdscategorieen": {
+    "artikel": "20.0.004",
+    "toelichting": "Leeftijd = het jaar waarin je die leeftijd wordt. Veldrijden: het hele seizoen (september-maart) geldt de categorie per 1 januari van dat seizoen.",
+    "per_leeftijd": {
+      "5": "U6",
+      "6": "U7",
+      "7": "U8",
+      "8": "U9",
+      "9": "U10",
+      "10": "U11",
+      "11": "U12",
+      "12": "U13",
+      "13": "U14",
+      "14": "U15",
+      "15": "U17 Nieuweling",
+      "16": "U17 Nieuweling"
+    }
+  },
+  "licentiecategorieen": {
+    "artikel": "20.0.002",
+    "indeling": [
+      {"naam": "KNWU Licentie U13", "van": 5, "tot_en_met": 12},
+      {"naam": "KNWU Licentie U17", "van": 13, "tot_en_met": 16}
+    ]
+  }
+}

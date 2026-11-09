@@ -26,8 +26,15 @@ Haal de feedback die gebruikers in de chat gaven (duim omhoog/omlaag, bij omlaag
    .venv\Scripts\python scripts/feedback_report.py --db app\data\wtchat.db
    ```
 3. Lees het rapport: eerst **counters** (aantal per rating, plus per week), daarna **triage** — de negatieve feedback, oudste eerst, met timestamp, conversation-ID, de **feedbackgeschiedenis** (de laatste turns van de conversatie, oudste eerst, de laatste gemarkeerd), de laatste vraag/antwoord en de toelichting.
-4. Bepaal aan de hand van het rapport of er tickets aangemaakt moeten worden. Maak tickets aan met alleen **geanonimiseerde patronen** — nooit ruwe vraag/antwoord/toelichting (deze repo is publiek).
-5. Leg terugkerende problemen en toegepaste fixes geanonimiseerd vast in [LEARNINGS.md](../../LEARNINGS.md).
+4. Wil je weten welke agent een fout antwoord gaf (bijvoorbeeld om een conversatie te vinden die na een handoff bij de verkeerde agent bleef, issue #44)? Draai het trace-commando dat het rapport achter de conversation-ID zet. Daarvoor is `MISTRAL_API_KEY` in `.env` nodig:
+
+   ```
+   .venv\Scripts\python scripts/trace_conversation.py <conversation-id>
+   ```
+
+   Per beurt zie je de vraag, de handoffs (`router-agent -> knwu-agent`), de gebruikte tools en de agent die antwoordde. Alleen conversaties die na #44 zijn gestart hebben een koppeling (`metadata.app_conversation_id`). Oudere conversaties vind je per dag (UTC) met `--date 2026-11-06`, of met `--mistral-id <id>` als je de Mistral-id al hebt. De output bevat vragen van gebruikers: bekijk hem alleen lokaal.
+5. Bepaal aan de hand van het rapport of er tickets aangemaakt moeten worden. Maak tickets aan met alleen **geanonimiseerde patronen** — nooit ruwe vraag/antwoord/toelichting (deze repo is publiek).
+6. Leg terugkerende problemen en toegepaste fixes geanonimiseerd vast in [LEARNINGS.md](../../LEARNINGS.md).
 
 ## Output bewaren?
 
@@ -47,3 +54,4 @@ Standaard wordt niets opgeslagen. Wil je de output toch bewaren (bijvoorbeeld om
 ## Controle
 
 - `python -m pytest tests/test_feedback_report.py -q` — tests voor counters, week-buckets, sortering (oudste eerst), integriteitscheck, scp-foutafhandeling en het opruimen van het temp-bestand.
+- `python -m pytest tests/test_trace_conversation.py -q` — tests voor het groeperen van de Mistral-geschiedenis per beurt en het zoeken op `app_conversation_id`.

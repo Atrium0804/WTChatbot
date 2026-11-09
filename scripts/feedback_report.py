@@ -121,7 +121,12 @@ def render_report(rows: list[dict], source: str, generated_at: str) -> str:
     for i, row in enumerate(negatives, start=1):
         lines += [
             f"### {i} — {row['timestamp']}",
-            f"- Conversation: `{row['conversation_id'] or '-'}`",
+            f"- Conversation: `{row['conversation_id'] or '-'}`"
+            + (
+                f" (agent-trace: `python scripts/trace_conversation.py {row['conversation_id']}`)"
+                if row["conversation_id"]
+                else ""
+            ),
             f"- Vraag: {row['question'] or '-'}",
             f"- Antwoord: {row['answer'] or '-'}",
             f"- Toelichting: {row['text'] or '-'}",

@@ -11,6 +11,8 @@ Run:  uvicorn main:app --host 0.0.0.0 --port 8000   (vanuit app/)
 import time
 import uuid
 from collections import deque
+from collections.abc import Callable
+from datetime import date
 from typing import Optional
 
 from fastapi import FastAPI, Request
@@ -19,6 +21,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import config
+import context
+import knwu_categories
 import mistral_client
 import store
 
@@ -56,10 +60,14 @@ def stub_answer(message: str) -> str:
     )
 
 
-def create_app(db_path: Optional[str] = None) -> FastAPI:
+def create_app(
+    db_path: Optional[str] = None,
+    today: Callable[[], date] = context.today_in_netherlands,
+) -> FastAPI:
     db = db_path or config.DATABASE_PATH
     store.init_db(db)
     store.purge_old(db, config.FEEDBACK_RETENTION_DAYS)
+    category_rules = knwu_categories.load_rules()
 
     app = FastAPI(title="WTChatbot")
     # In-memory state: conversaties, feedbackgeschiedenis per conversatie (rolling
@@ -118,13 +126,17 @@ def create_app(db_path: Optional[str] = None) -> FastAPI:
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             mistral_conv_id = state["conversations"].get(conversation_id)
+            context_lines = context.build_context_lines(
+                message, today(), category_rules, new_conversation=not mistral_conv_id
+            )
             try:
                 mistral_conv_id, answer = mistral_client.answer_question(
                     api_key=config.MISTRAL_API_KEY,
                     agent_id=config.MISTRAL_AGENT_ID,
                     base_url=config.MISTRAL_CONVERSATIONS_URL,
-                    message=message,
+                    message=context.add_context(message, context_lines),
                     conversation_id=mistral_conv_id or None,
+                    metadata={"app_conversation_id": conversation_id},
                 )
             except Exception as exc:
                 return JSONResponse(

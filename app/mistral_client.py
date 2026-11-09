@@ -38,9 +38,15 @@ def answer_question(
     base_url: str,
     message: str,
     conversation_id: str | None = None,
+    metadata: dict | None = None,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> tuple[str, str]:
-    """Stuur een bericht naar de agent; geef (mistral_conversation_id, antwoordtekst)."""
+    """Stuur een bericht naar de agent; geef (mistral_conversation_id, antwoordtekst).
+
+    `metadata` gaat alleen mee bij het starten van een conversatie (bv. de
+    app-conversation-id, zodat scripts/trace_conversation.py feedback aan de
+    Mistral-geschiedenis kan koppelen).
+    """
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     try:
         if conversation_id:
@@ -51,12 +57,10 @@ def answer_question(
                 timeout=timeout,
             )
         else:
-            resp = requests.post(
-                base_url,
-                headers=headers,
-                json={"agent_id": agent_id, "inputs": message},
-                timeout=timeout,
-            )
+            body = {"agent_id": agent_id, "inputs": message}
+            if metadata:
+                body["metadata"] = metadata
+            resp = requests.post(base_url, headers=headers, json=body, timeout=timeout)
     except requests.Timeout as exc:
         raise RuntimeError(f"Mistral API timeout na {timeout}s — probeer het opnieuw") from exc
     try:

@@ -28,7 +28,7 @@ def parse_age_categories(document: str) -> dict[str, str]:
     return per_age
 
 
-def parse_licence_categories(document: str) -> list[dict]:
+def parse_licences(document: str) -> list[dict]:
     """[{"naam": "KNWU Licentie U13", "van": 5, "tot_en_met": 12}, ...] uit art. 20.0.002."""
     pattern = r"^\|\s*(KNWU Licentie U\d+)\s*\|\s*(\d+) t/m (\d+) jaar"
     return [
@@ -53,9 +53,9 @@ class TestKnwuCategoriesMatchTitel20(unittest.TestCase):
             self.rules["leeftijdscategorieen"]["per_leeftijd"], parse_age_categories(self.document)
         )
 
-    def test_licence_categories_match(self):
+    def test_licences_match(self):
         self.assertEqual(
-            self.rules["licentiecategorieen"]["indeling"], parse_licence_categories(self.document)
+            self.rules["licenties"]["indeling"], parse_licences(self.document)
         )
 
     def test_parser_reads_age_table_row(self):

@@ -19,7 +19,7 @@
       "16": "U17 Nieuweling"
     }
   },
-  "licentiecategorieen": {
+  "licenties": {
     "artikel": "20.0.002",
     "indeling": [
       {"naam": "KNWU Licentie U13", "van": 5, "tot_en_met": 12},

@@ -26,11 +26,11 @@ def test_age_category_outside_youth_is_none():
     assert knwu_categories.age_category(2009, 2026, RULES) is None
 
 
-def test_licence_category_boundaries():
-    assert knwu_categories.licence_category(2014, 2026, RULES) == "KNWU Licentie U13"
-    assert knwu_categories.licence_category(2013, 2026, RULES) == "KNWU Licentie U17"
-    assert knwu_categories.licence_category(2012, 2026, RULES) == "KNWU Licentie U17"
-    assert knwu_categories.licence_category(2009, 2026, RULES) is None
+def test_licence_boundaries():
+    assert knwu_categories.licence(2014, 2026, RULES) == "KNWU Licentie U13"
+    assert knwu_categories.licence(2013, 2026, RULES) == "KNWU Licentie U17"
+    assert knwu_categories.licence(2012, 2026, RULES) == "KNWU Licentie U17"
+    assert knwu_categories.licence(2009, 2026, RULES) is None
 
 
 def test_cyclocross_season():

@@ -17,7 +17,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 | club-agent | Club-library | wtcwoerden.nl | Clubzaken WTC Woerden |
 | archief-agent | archief-library | nee | Alleen bij "wat is er veranderd?"-vragen |
 
-- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentiecategorie, berekend uit `app/knwu_categories.json`. Contextregels voor taalniveau en de versiecheck-cache (zie onder) zijn nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
+- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, berekend uit `app/knwu_categories.json`. Contextregels voor taalniveau en de versiecheck-cache (zie onder) zijn nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
 - De proxy is dun: auth, rate limiting, logging, versiecheck-cache (SQLite `version_checks`) en de contextregels; de agents draaien server-side via de Conversations API.
 
 ## Routeringsregels
@@ -26,7 +26,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 2. **Per-library scoping**: elke content-agent raadpleegt alléén zijn eigen library. Nooit ongescopeerde retrieval over meerdere libraries tegelijk.
 3. **Fallback**: de regio-agent (MNC/HvH-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
 4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl`, `wtcwoerden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
-5. **Licentievragen**: raadpleeg áltijd óók het Kenniscentrum (ook als de KNWU-bibliotheek al antwoord lijkt te geven); benoem de pakketten Basis, Plus en Premium en het verschil tussen startrecht (in de licentie) en pakketten (buitenlandstartrecht, verzekering, extra's). Alleen het geboortejaar bepaalt de licentiecategorie (Titel 20 art. 20.0.002: KNWU Licentie U13 voor 5 t/m 12 jaar, U17 voor 13 t/m 16 jaar), dus de agent vraagt alleen daarnaar. Het antwoord noemt de licentiecategorie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen), dat bij alleen trainen het KNWU-lidmaatschap volstaat, en kort de pakketten. **Verzekeringsvragen**: primair de sectie Verzekeringen van het Kenniscentrum.
+5. **Licentievragen**: raadpleeg áltijd óók het Kenniscentrum (ook als de KNWU-bibliotheek al antwoord lijkt te geven). Alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002), dus de agent vraagt alleen daarnaar; licentie en leeftijdscategorie neemt hij over uit de contextregel van de app, anders uit Titel 20. Het antwoord noemt de licentie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen) en dat bij alleen trainen het KNWU-lidmaatschap volstaat. De licentiepakketten (Basis, Plus, Premium) en het verschil tussen startrecht (in de licentie) en pakketten (buitenlandstartrecht, verzekering, extra's) noemt hij alleen als het Kenniscentrum voor die licentie pakketten noemt (seizoen 2026: niet bij de KNWU Licentie U13). De prompts noemen geen leeftijdsgrenzen of andere Titel 20-waarden, alleen artikelnummers, zodat een nieuwe Titel 20 de prompts niet laat verouderen. **Verzekeringsvragen**: primair de sectie Verzekeringen van het Kenniscentrum.
 6. **"Wat is er veranderd?"-vragen**: vaste bronvolgorde — (1) de officiële wijzigingsmemo op het Kenniscentrum (als die er is; voor de Nationale Besluiten 2026 bestaat er geen), (2) de rode revisies in het actuele document — in de library-versie gemarkeerd als `[GEWIJZIGD]…[/GEWIJZIGD]`, (3) als laatste fallback de archief-agent (archief-library / repo-archief). De archief-library wordt nóóit bij andere vragen geraadpleegd.
 7. **Strikethrough**: rode doorgehaalde tekst in documenten is nooit de huidige regel — citeer die nooit. Twijfel je over de status van een passage, zeg dat dan expliciet in het antwoord.
 8. **Versiecheck**: bij nationale/KNWU-regelgevingvragen checkt de agent via websearch (Kenniscentrum) of er een nieuwere versie is dan de library-versie — alléén als de proxy-contextregel geen geldige cache meldt. De proxy cachet versiechecks 2 dagen in `version_checks` en injecteert per conversatie een regel als "Versiecheck Kenniscentrum: <document> laatst gecheckt op <datum>, bevatte versie <X>". Is er een nieuwere versie? Meld expliciet dat de gebruikte kopie verouderd is (beide datums) en antwoord met de nieuwste regel.
@@ -92,19 +92,21 @@ vermeld je het KNWU-contact: +31 (0)85 070 1900, di-vr 8.30-12.00 uur.
 ## Jouw routing: KNWU-vragen (nationaal)
 Je behandelt ALLEEN nationale/KNWU-vragen (Titel 20, Nationale Besluiten,
 licenties, verzekeringen, NK's). Bronnen: KNWU-bibliotheek + Kenniscentrum.
-- Licentievragen: raadpleeg áltijd óók het Kenniscentrum; benoem de
-  pakketten Basis, Plus en Premium en het verschil startrecht vs pakket.
-  Alleen het geboortejaar bepaalt de licentiecategorie (Titel 20, art.
-  20.0.002: KNWU Licentie U13 voor 5 t/m 12 jaar, KNWU Licentie U17 voor
-  13 t/m 16 jaar; ouder: junioren/senioren). Vraag dus alleen naar het
-  geboortejaar — niet naar discipline, geslacht, doel, soort wedstrijden of
-  pakket. Antwoord daarna met: de licentiecategorie voluit, de
-  leeftijdscategorie van de renner (blijkt het geslacht niet uit de vraag,
-  zoals bij "mijn kind", noem dan de leeftijdscategorie voor jongen én
-  meisje in plaats van ernaar te vragen), één zin "Wil hij/zij alleen
-  trainen? Dan volstaat het KNWU-lidmaatschap." en kort de pakketten.
-  Voorbeeld: een jongen geboren in 2020 heeft in 2026 een KNWU Licentie U13
-  (5 t/m 12 jaar) en rijdt in leeftijdscategorie U7.
+- Licentievragen: raadpleeg áltijd óók het Kenniscentrum. Alleen het
+  geboortejaar bepaalt de licentie (Titel 20, art. 20.0.002). Vraag dus
+  alleen naar het geboortejaar — niet naar discipline, geslacht, doel,
+  soort wedstrijden of licentiepakket. Neem de licentie en de
+  leeftijdscategorie over uit de contextregel van de app; staat die er
+  niet, haal ze dan uit Titel 20 (art. 20.0.002 en 20.0.004). Antwoord
+  daarna met: de licentie voluit, de leeftijdscategorie van de renner
+  (blijkt het geslacht niet uit de vraag, zoals bij "mijn kind", noem dan
+  de leeftijdscategorie voor jongen én meisje in plaats van ernaar te
+  vragen) en één zin "Wil hij/zij alleen trainen? Dan volstaat het
+  KNWU-lidmaatschap.". Noem de licentiepakketten (Basis, Plus, Premium)
+  en het verschil startrecht vs pakket alleen als het Kenniscentrum voor
+  deze licentie pakketten noemt; heeft de licentie één variant, zeg dat
+  dan. Vorm: "Een jongen geboren in <geboortejaar> heeft in <jaar> een
+  <licentie> en rijdt in leeftijdscategorie <leeftijdscategorie>."
 - Verzekeringsvragen: primair de sectie Verzekeringen van het Kenniscentrum.
 - Versiecheck bij regelgevingvragen: vergelijk de library-versie met het
   Kenniscentrum via websearch, alléén als de contextregel "Versiecheck"

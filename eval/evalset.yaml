@@ -29,7 +29,7 @@
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 17 knwu / 5 regio / 5 club (27 vragen, 4 via de router). Harde 100%-gate op type
+# Verdeling: 18 knwu / 5 regio / 5 club (28 vragen, 4 via de router). Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
@@ -43,6 +43,15 @@ evalset:
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
     verwacht_antwoord: "Basis; Plus; Premium; 26; 72; 135; startrecht; internationa; verzeker"
     bron: "kenniscentrum.knwu.nl/knwu-licenties"
+    versiedatum: "2026"
+  - id: knwu-licentie-u13-geen-pakketten
+    categorie: knwu
+    type: websearch
+    vraag: "Welke licentie en welk licentiepakket heeft mijn dochter nodig? Ze is geboren in 2016."
+    # De KNWU Licentie U13 kent één variant (€26); de pakketprijzen van U17 (72/135) horen er niet bij
+    verwacht_antwoord: "KNWU Licentie U13; 26"
+    niet_in_antwoord: "72; 135"
+    bron: "kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13 | TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026"
   - id: knwu-verzekering-dekking
     categorie: knwu
@@ -137,7 +146,7 @@ evalset:
     type: verheldering
     via: router
     vraag: "Welke licentie moet ik aanvragen voor mijn zoon?"
-    # alleen het geboortejaar bepaalt de licentiecategorie (Titel 20 art. 20.0.002);
+    # alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002);
     # geen routeringsvraag en geen vragen naar discipline of geslacht (#38)
     verwacht_antwoord: "geboortejaar"
     niet_in_antwoord: "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"

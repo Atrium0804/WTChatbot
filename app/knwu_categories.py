@@ -1,4 +1,4 @@
-"""Deterministische lookup van leeftijdscategorie en licentiecategorie.
+"""Deterministische lookup van leeftijdscategorie en licentie.
 
 Het model rekent een geboortejaar niet betrouwbaar om naar een categorie
 (issue #44). De regels staan in knwu_categories.json met bron en versie,
@@ -29,12 +29,12 @@ def age_category(birth_year: int, year: int, rules: dict) -> str | None:
     return per_age.get(str(age_in_year(birth_year, year)))
 
 
-def licence_category(birth_year: int, year: int, rules: dict) -> str | None:
-    """Licentiecategorie (bv. "KNWU Licentie U13") in een kalenderjaar."""
+def licence(birth_year: int, year: int, rules: dict) -> str | None:
+    """Licentie (bv. "KNWU Licentie U13") in een kalenderjaar; None buiten de jeugdlicenties."""
     age = age_in_year(birth_year, year)
-    for licence in rules["licentiecategorieen"]["indeling"]:
-        if licence["van"] <= age <= licence["tot_en_met"]:
-            return licence["naam"]
+    for entry in rules["licenties"]["indeling"]:
+        if entry["van"] <= age <= entry["tot_en_met"]:
+            return entry["naam"]
     return None
 
 
@@ -47,8 +47,3 @@ def cyclocross_season(today: date) -> tuple[int, int]:
     if today.month <= 3:
         return today.year - 1, today.year
     return today.year, today.year + 1
-
-
-def youth_age_range(rules: dict) -> tuple[int, int]:
-    ages = [int(age) for age in rules["leeftijdscategorieen"]["per_leeftijd"]]
-    return min(ages), max(ages)

@@ -5,7 +5,7 @@ betrouwbaar om naar een categorie (issue #44). De proxy voegt daarom
 deterministische contextregels toe onder het bericht van de gebruiker:
 - bij een nieuwe conversatie: de datum van vandaag;
 - bij elk bericht met een geboortejaar uit de jeugdindeling: de
-  leeftijdscategorie (weg en veld) en de licentiecategorie.
+  leeftijdscategorie (weg en veld) en de licentie.
 Eval-runner (eval/run_eval.py) gebruikt dezelfde functies, zodat de eval
 de productie-input spiegelt.
 """
@@ -66,15 +66,15 @@ def category_line(birth_year: int, today: date, rules: dict) -> str:
     season_start, season_end = knwu_categories.cyclocross_season(today)
     road = knwu_categories.age_category(birth_year, today.year, rules) or outside
     cross = knwu_categories.age_category(birth_year, season_end, rules) or outside
-    licence = knwu_categories.licence_category(birth_year, today.year, rules) or "geen jeugdlicentie"
+    licence = knwu_categories.licence(birth_year, today.year, rules) or "geen jeugdlicentie"
     age_article = rules["leeftijdscategorieen"]["artikel"]
-    licence_article = rules["licentiecategorieen"]["artikel"]
+    licence_article = rules["licenties"]["artikel"]
     return (
         f"Geboortejaar {birth_year}, berekend door de app uit {rules['bron']} "
         f"(versie {rules['versie']}): leeftijdscategorie wegwielrennen {today.year}: {road}; "
         f"leeftijdscategorie veldrijden seizoen {season_start}-{season_end}: {cross} "
         f"(de categorie per 1 januari {season_end}) (artikel {age_article}); "
-        f"licentiecategorie {today.year}: {licence} (artikel {licence_article}). "
+        f"licentie {today.year}: {licence} (artikel {licence_article}). "
         "Gebruik deze waarden en reken de categorie niet zelf uit."
     )
 

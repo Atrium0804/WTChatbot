@@ -22,7 +22,7 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
 | `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
-Huidige verdeling: 27 vragen — 17 knwu, 5 regio, 5 club; 19 standaard, 4 strikethrough, 2 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `beurten` en `verwachte_agent` (issue #44).
+Huidige verdeling: 28 vragen — 18 knwu, 5 regio, 5 club; 19 standaard, 4 strikethrough, 3 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `beurten` en `verwachte_agent` (issue #44).
 
 Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
@@ -45,7 +45,7 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 
 ## Contextregels
 
-Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentiecategorie. De runner gebruikt de datum van de dag waarop hij draait.
+Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie. De runner gebruikt de datum van de dag waarop hij draait.
 
 ## Gate
 

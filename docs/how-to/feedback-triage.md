@@ -7,7 +7,8 @@ Haal de feedback die gebruikers in de chat gaven (duim omhoog/omlaag, bij omlaag
 
 ## Voorwaarden
 
-- SSH-toegang tot de NAS met een sleutel (scp werkt zonder wachtwoord); evt. een alias in `~/.ssh/config` voor host/poort.
+- SSH-toegang tot de NAS met een sleutel (werkt zonder wachtwoord); evt. een alias in `~/.ssh/config` voor host/poort.
+- `sqlite3` op de NAS (aanwezig op `nas.fritz.box`) — voor een consistente server-side snapshot.
 - De repo-venv is geactiveerd (`.venv\Scripts\activate`), gedraaid vanuit de repo-root.
 
 ## Stappen
@@ -18,7 +19,7 @@ Haal de feedback die gebruikers in de chat gaven (duim omhoog/omlaag, bij omlaag
    .venv\Scripts\python scripts/feedback_report.py --fetch --nas-host <ssh-target>
    ```
 
-   Het script kopieert `/volume1/docker/wtchatbot/data/wtchat.db` via scp naar een tijdelijk bestand, checkt de integriteit (`PRAGMA quick_check` — bij een corrupte kopie stopt het met een foutmelding), print het rapport en verwijdert het temp-bestand daarna.
+   Het script haalt via **ssh** (niet scp — de sftp-service van de Synology ziet `/volume1` niet) een snapshot op: de NAS maakt met `sqlite3` een `.backup`-kopie (`.feedback-snapshot.db` naast de DB), het script streamt die naar een lokaal tempfile, checkt de integriteit (`PRAGMA quick_check` — bij een corrupte kopie stopt het met een foutmelding), print het rapport en verwijdert daarna zowel de remote snapshot (in dezelfde ssh-call) als het lokale tempfile.
 2. Voor een lokale DB (development) gebruik je `--db` in plaats van `--fetch`:
 
    ```

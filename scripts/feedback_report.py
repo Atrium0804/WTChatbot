@@ -1,6 +1,7 @@
 """Feedback-rapport voor triage — print feedback uit de SQLite-DB op scherm.
 
-Haalt optioneel een snapshot van de NAS op (via scp), checkt de integriteit
+Haalt optioneel een snapshot van de NAS op (via ssh + sqlite3 .backup, want
+scp/sftp ziet /volume1 op de Synology niet), checkt de integriteit
 (PRAGMA quick_check), print counters + triage-lijst en ruimt het temp-bestand
 weer op. Er wordt niets in de repo opgeslagen.
 
@@ -21,6 +22,7 @@ Zie docs/how-to/feedback-triage.md.
 import argparse
 import contextlib
 import os
+import posixpath
 import subprocess
 import sys
 import tempfile
@@ -141,19 +143,32 @@ def load_rows(db_path: str | Path) -> list[dict]:
 
 @contextlib.contextmanager
 def fetch_snapshot(nas_host: str, nas_path: str) -> Iterator[Path]:
-    """Kopieer de DB van de NAS naar een tempfile; check integriteit; ruim op na gebruik."""
+    """Haal een consistente snapshot van de NAS-DB op via ssh; check integriteit; ruim op.
+
+    Via het shell-kanaal (scp/sftp ziet /volume1 op de Synology niet): de NAS
+    maakt met sqlite3 een .backup-snapshot naast de DB, we cat-en die in dezelfde
+    ssh-call en verwijderen de remote snapshot direct weer. Lokaal staat de kopie
+    in een tempfile dat na gebruik wordt opgeruimd. Vereist: sqlite3 op de NAS.
+    """
     fd, tmp = tempfile.mkstemp(prefix="wtchat-snapshot-", suffix=".db")
     os.close(fd)
     tmp_path = Path(tmp)
+    snap_remote = f"{posixpath.dirname(nas_path)}/.feedback-snapshot.db"
+    remote_cmd = (
+        f'sqlite3 {nas_path} ".backup {snap_remote}" && cat {snap_remote}; '
+        f"rc=$?; rm -f {snap_remote}; exit $rc"
+    )
     try:
-        proc = subprocess.run(
-            ["scp", "-q", f"{nas_host}:{nas_path}", str(tmp_path)],
-            capture_output=True,
-            text=True,
-        )
+        with open(tmp_path, "wb") as out:
+            proc = subprocess.run(
+                ["ssh", nas_host, remote_cmd],
+                stdout=out,
+                stderr=subprocess.PIPE,
+            )
         if proc.returncode != 0:
             raise SystemExit(
-                f"error: scp van {nas_host}:{nas_path} mislukt: {proc.stderr.strip()}"
+                f"error: ophalen van {nas_host}:{nas_path} mislukt: "
+                f"{proc.stderr.decode(errors='replace').strip()}"
             )
         check_integrity(tmp_path)
         yield tmp_path
@@ -174,6 +189,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--nas-host", help="ssh-target van de NAS (bij --fetch verplicht)")
     parser.add_argument("--nas-path", default=NAS_DEFAULT_PATH, help="DB-pad op de NAS")
     args = parser.parse_args(argv)
+
+    # Windows-console (cp1252) kan niet alle tekens uit feedback tonen — niet crashen
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     generated_at = datetime.now(timezone.utc).isoformat()
     if args.fetch:

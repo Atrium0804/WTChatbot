@@ -128,46 +128,54 @@ class CheckIntegrityTests(unittest.TestCase):
 
 
 class FetchSnapshotTests(unittest.TestCase):
-    def test_scp_writes_file_temp_removed_after_and_checked(self) -> None:
+    def test_ssh_backup_cat_temp_removed_after_and_checked(self) -> None:
         source_dir = Path(tempfile.mkdtemp())
         source_db = make_db(source_dir)
         store.save_feedback(source_db, rating="negative", text="x")
+        used_cmd: list[str] = []
 
-        def fake_scp(cmd: list[str], **kwargs: object) -> object:
-            dest = Path(cmd[-1])
-            dest.write_bytes(Path(source_db).read_bytes())
-            return type("Proc", (), {"returncode": 0, "stderr": ""})()
+        def fake_run(cmd: list[str], stdout: object = None, **kwargs: object) -> object:
+            used_cmd.extend(cmd)
+            stdout.write(Path(source_db).read_bytes())  # type: ignore[attr-defined]
+            return type("Proc", (), {"returncode": 0, "stderr": b""})()
 
-        with patch("subprocess.run", side_effect=fake_scp):
-            with feedback_report.fetch_snapshot("nas.local", "/pad/wtchat.db") as snap:
+        with patch("subprocess.run", side_effect=fake_run):
+            with feedback_report.fetch_snapshot("nas.local", "/volume1/docker/wtchatbot/data/wtchat.db") as snap:
                 self.assertTrue(snap.exists())
                 rows = feedback_report.load_rows(snap)
                 self.assertEqual(len(rows), 1)
                 inside = snap
             self.assertFalse(inside.exists())
+        # geen scp (sftp ziet /volume1 niet), maar ssh met server-side .backup + cat + rm
+        self.assertEqual(used_cmd[0], "ssh")
+        self.assertIn(".backup", used_cmd[-1])
+        self.assertIn("cat", used_cmd[-1])
+        self.assertIn("rm -f", used_cmd[-1])
+        self.assertIn(".feedback-snapshot.db", used_cmd[-1])
 
     def test_corrupt_snapshot_raises_and_cleans_up(self) -> None:
-        def fake_scp(cmd: list[str], **kwargs: object) -> object:
-            Path(cmd[-1]).write_bytes(b"rommel" * 500)
-            return type("Proc", (), {"returncode": 0, "stderr": ""})()
+        def fake_run(cmd: list[str], stdout: object = None, **kwargs: object) -> object:
+            stdout.write(b"rommel" * 500)  # type: ignore[attr-defined]
+            return type("Proc", (), {"returncode": 0, "stderr": b""})()
 
         tmpdir = Path(tempfile.gettempdir())
         before = set(tmpdir.glob("wtchat-snapshot-*"))
-        with patch("subprocess.run", side_effect=fake_scp):
+        with patch("subprocess.run", side_effect=fake_run):
             with self.assertRaises(ValueError):
                 with feedback_report.fetch_snapshot("nas.local", "/pad/wtchat.db"):
                     self.fail("corrupte snapshot moet ValueError geven")
         # tempfile is opgeruimd in finally
         self.assertEqual(before, set(tmpdir.glob("wtchat-snapshot-*")))
 
-    def test_scp_failure_exits(self) -> None:
-        def fake_scp(cmd: list[str], **kwargs: object) -> object:
-            return type("Proc", (), {"returncode": 1, "stderr": "connection refused"})()
+    def test_ssh_failure_exits(self) -> None:
+        def fake_run(cmd: list[str], stdout: object = None, **kwargs: object) -> object:
+            return type("Proc", (), {"returncode": 255, "stderr": b"connection refused"})()
 
-        with patch("subprocess.run", side_effect=fake_scp):
-            with self.assertRaises(SystemExit):
+        with patch("subprocess.run", side_effect=fake_run):
+            with self.assertRaises(SystemExit) as ctx:
                 with feedback_report.fetch_snapshot("nas.local", "/pad/wtchat.db"):
                     pass
+        self.assertIn("connection refused", str(ctx.exception))
 
 
 class MainTests(unittest.TestCase):

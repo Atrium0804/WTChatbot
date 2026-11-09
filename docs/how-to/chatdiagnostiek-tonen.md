@@ -1,8 +1,5 @@
 # Chatdiagnostiek tonen op een telefoon
 
-> [!WARNING]
-> Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
-
 Toon tijdelijke browserdiagnostiek om te bepalen waar het starten of versturen van de chat stopt.
 
 ## Voorwaarden

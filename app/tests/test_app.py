@@ -1,6 +1,6 @@
 """Offline tests voor de WTChatbot-proxy — geen live API-calls (CI-veilig).
 
-Draai: pytest app/tests   (vanuit repo-root, met requirements-dev.txt geinstalleerd)
+Draai: .venv\Scripts\python -m pytest app/tests   (vanuit repo-root; de project-venv installeer je met app\requirements-dev.txt)
 """
 
 import json

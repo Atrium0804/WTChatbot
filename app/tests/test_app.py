@@ -3,7 +3,9 @@
 Draai: pytest app/tests   (vanuit repo-root, met requirements-dev.txt geinstalleerd)
 """
 
+import json
 import os
+import sqlite3
 import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
@@ -32,6 +34,21 @@ def make_client(tmp_path: Path) -> TestClient:
 def chat(client: TestClient, message: str, client_id: str = "test-client") -> dict:
     resp = client.post(
         "/chat", json={"message": message, "client_id": client_id}
+    )
+    assert resp.status_code == 200, resp.text
+    return resp.json()
+
+
+def chat_in(
+    client: TestClient, conversation_id: str, message: str, client_id: str
+) -> dict:
+    resp = client.post(
+        "/chat",
+        json={
+            "message": message,
+            "conversation_id": conversation_id,
+            "client_id": client_id,
+        },
     )
     assert resp.status_code == 200, resp.text
     return resp.json()
@@ -85,6 +102,86 @@ def test_feedback_negative_stores_content(tmp_path):
     assert row["question"] == "Wat is het maximale verzet voor U15?"
     assert "STUB" in row["answer"]
     assert row["text"] == "klopt niet"
+    history = json.loads(row["history"])
+    assert len(history) == 1
+    assert history[0]["question"] == "Wat is het maximale verzet voor U15?"
+    assert "STUB" in history[0]["answer"]
+
+
+def test_feedback_negative_stores_history_capped_at_counter(tmp_path):
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    conv = chat(client, "vraag 0", client_id="c0")
+    conv_id = conv["conversation_id"]
+    # 12 turns totaal; rate limit is 10/uur per client-ID, dus elk een eigen ID
+    for i in range(1, 12):
+        chat_in(client, conv_id, f"vraag {i}", client_id=f"c{i}")
+    resp = client.post(
+        "/feedback",
+        json={"conversation_id": conv_id, "rating": "negative", "text": "nog steeds fout"},
+    )
+    assert resp.status_code == 200
+    row = store.all_feedback(db)[0]
+    history = json.loads(row["history"])
+    # counter (FEEDBACK_HISTORY_TURNS = 10): alleen de laatste 10 turns
+    assert len(history) == 10
+    assert history[0]["question"] == "vraag 2"
+    assert history[-1]["question"] == "vraag 11"
+    # losse question/answer-kolommen = laatste turn
+    assert row["question"] == "vraag 11"
+    assert "STUB" in row["answer"]
+
+
+def test_feedback_history_answer_capped(tmp_path, monkeypatch):
+    import main
+
+    monkeypatch.setattr(main, "stub_answer", lambda message: "x" * 5000)
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    conv = chat(client, "lange vraag")
+    client.post(
+        "/feedback",
+        json={"conversation_id": conv["conversation_id"], "rating": "negative"},
+    )
+    row = store.all_feedback(db)[0]
+    assert len(row["answer"]) == 2000
+    history = json.loads(row["history"])
+    assert len(history[0]["answer"]) == 2000
+
+
+def test_init_db_migrates_old_schema_without_history(tmp_path):
+    db = str(tmp_path / "old.db")
+    with sqlite3.connect(db) as conn:
+        conn.execute(
+            "CREATE TABLE feedback ("
+            " id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            " timestamp TEXT NOT NULL,"
+            " rating TEXT NOT NULL,"
+            " conversation_id TEXT,"
+            " question TEXT,"
+            " answer TEXT,"
+            " text TEXT)"
+        )
+        conn.execute(
+            "INSERT INTO feedback (timestamp, rating) VALUES (?, ?)",
+            ("2026-01-01T00:00:00+00:00", "positive"),
+        )
+    store.init_db(db)
+    with sqlite3.connect(db) as conn:
+        columns = {r[1] for r in conn.execute("PRAGMA table_info(feedback)")}
+    assert "history" in columns
+    store.save_feedback(
+        db,
+        rating="negative",
+        conversation_id="c1",
+        question="q",
+        answer="a",
+        text="t",
+        history=[{"question": "q", "answer": "a"}],
+    )
+    rows = store.all_feedback(db)
+    assert rows[0]["history"] is None  # oude row uit vòòr de migratie
+    assert json.loads(rows[1]["history"]) == [{"question": "q", "answer": "a"}]
 
 
 def test_feedback_positive_stores_counter_only(tmp_path):
@@ -101,6 +198,7 @@ def test_feedback_positive_stores_counter_only(tmp_path):
     assert rows[0]["question"] is None
     assert rows[0]["answer"] is None
     assert rows[0]["conversation_id"] is None
+    assert rows[0]["history"] is None
 
 
 def test_feedback_invalid_rating_400(tmp_path):
@@ -113,7 +211,6 @@ def test_purge_old_feedback(tmp_path):
     db = str(tmp_path / "test.db")
     store.init_db(db)
     old = (datetime.now(timezone.utc) - timedelta(days=31)).isoformat()
-    import sqlite3
 
     with sqlite3.connect(db) as conn:
         conn.execute(

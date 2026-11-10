@@ -2,10 +2,14 @@
 
 Privacy-beslissing (map #2): content (vraag/antwoord) wordt ALLEEN opgeslagen
 bij een duim-omlaag; bij een duim-omhoog alleen een teller (rating + timestamp).
+Bij een duim-omlaag slaan we además de laatste turn (question/answer) ook de
+feedbackgeschiedenis op: de `history`-kolom bevat een JSON-array met de
+laatste turns (vraag/antwoord), zie ADR-0008.
 Retentie: FEEDBACK_RETENTION_DAYS (30), daarna automatische purge.
 Geen IP-adressen — die slaan we überhaupt niet op.
 """
 
+import json
 import sqlite3
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -18,7 +22,8 @@ CREATE TABLE IF NOT EXISTS feedback (
     conversation_id TEXT,
     question TEXT,
     answer TEXT,
-    text TEXT
+    text TEXT,
+    history TEXT
 );
 """
 
@@ -30,9 +35,21 @@ def connect(db_path: str) -> sqlite3.Connection:
     return conn
 
 
+def migrate(conn: sqlite3.Connection) -> None:
+    """Voeg ontbrekende kolommen toe aan een bestaande DB.
+
+    CREATE TABLE IF NOT EXISTS past een bestaand schema niet aan, dus een
+    upgrade van een oude DB (bijv. op de NAS) vereist een expliciete ALTER.
+    """
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(feedback)")}
+    if "history" not in columns:
+        conn.execute("ALTER TABLE feedback ADD COLUMN history TEXT")
+
+
 def init_db(db_path: str) -> None:
     with connect(db_path) as conn:
         conn.executescript(SCHEMA)
+        migrate(conn)
 
 
 def save_feedback(
@@ -43,14 +60,18 @@ def save_feedback(
     question: str = "",
     answer: str = "",
     text: str = "",
+    history: list[dict] | None = None,
 ) -> None:
+    """Sla feedback op. `history` is een lijst turns ({question, answer}), oudste
+    eerst; wordt als JSON in de history-kolom bewaard (alleen bij negative)."""
     timestamp = datetime.now(timezone.utc).isoformat()
     with connect(db_path) as conn:
         if rating == "negative":
+            history_json = json.dumps(history, ensure_ascii=False) if history else None
             conn.execute(
-                "INSERT INTO feedback (timestamp, rating, conversation_id, question, answer, text)"
-                " VALUES (?, ?, ?, ?, ?, ?)",
-                (timestamp, rating, conversation_id, question, answer, text),
+                "INSERT INTO feedback (timestamp, rating, conversation_id, question, answer, text, history)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (timestamp, rating, conversation_id, question, answer, text, history_json),
             )
         else:
             # duim-omhoog: kale teller, géén content

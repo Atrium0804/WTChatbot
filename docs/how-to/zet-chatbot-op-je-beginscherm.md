@@ -1,8 +1,5 @@
 # Zet de chatbot op je beginscherm
 
-> [!WARNING]
-> Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
-
 De chatbot van WTC Woerden kun je installeren als webapp (PWA): Wheely krijgt dan een eigen icon op je beginscherm en opent als losse app. Gebruik hiervoor altijd de beveiligde link `https://chat.famstieltjes.nl` — de installatie werkt alleen via HTTPS (een service worker registreert niet op plain HTTP).
 
 ## Android (Chrome)

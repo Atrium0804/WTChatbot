@@ -6,13 +6,17 @@
 #   id:                unieke code (bijv. knwu-verzet-u15)
 #   categorie:         knwu | regio | club
 #   type:              standaard | websearch | strikethrough | verheldering
+#   taalniveau:        (optioneel) B1 (default) | B2 — het taalniveau dat de
+#                      runner in de contextregel injecteert (issue #52). Bij B2
+#                      moet het antwoord een "Bron:"-regel bevatten die matcht
+#                      met `bron`; bij B1 mag het antwoord géén Bron-regel bevatten.
 #   vraag:             typische clubvraag
 #   verwacht_antwoord: korte kernfeiten, gescheiden door ";" — elk token moet
-#                      in het B2-antwoord staan (getallen/korte woorden heel,
+#                      in het antwoord staan (getallen/korte woorden heel,
 #                      langere woorden als woordbegin; zie run_eval.py)
 #   bron:              Verwachte bron (documentnaam zonder extensie of URL),
-#                      alternatieven gescheiden door " | " — moet in een
-#                      "Bron:"-regel van het antwoord staan
+#                      alternatieven gescheiden door " | " — bij taalniveau B2
+#                      moet die in een "Bron:"-regel van het antwoord staan
 #   versiedatum:       Verwachte versie/datum van de bron
 #   doorhaal_waarde:   (alleen type=strikethrough) de superseded waarde uit
 #                      de rode revisie — mag NIET in het antwoord voorkomen
@@ -29,7 +33,8 @@
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 18 knwu / 5 regio / 5 club (28 vragen, 4 via de router). Harde 100%-gate op type
+# Verdeling: 18 knwu / 5 regio / 5 club (28 vragen, 4 via de router) + 4 extra
+# B1-vragen onderaan (taalniveau B1, zonder bron-check). Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
@@ -38,6 +43,7 @@
 evalset:
   # --- KNWU (10) ---
   - id: knwu-licentie-pakketten
+    taalniveau: B2
     categorie: knwu
     type: websearch
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
@@ -45,6 +51,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/knwu-licenties"
     versiedatum: "2026"
   - id: knwu-licentie-u13-geen-pakketten
+    taalniveau: B2
     categorie: knwu
     type: websearch
     vraag: "Welke licentie en welk licentiepakket heeft mijn dochter nodig? Ze is geboren in 2016."
@@ -54,6 +61,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13 | TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026"
   - id: knwu-verzekering-dekking
+    taalniveau: B2
     categorie: knwu
     type: websearch
     vraag: "Wat is er verzekerd bij een Basis-licentie versus een Premium-licentie?"
@@ -61,6 +69,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/verzekeringen"
     versiedatum: "2026"
   - id: knwu-verzet-u15
+    taalniveau: B2
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
@@ -69,6 +78,7 @@ evalset:
     versiedatum: "2026-09-21"
     doorhaal_waarde: "6,55"
   - id: knwu-verzet-u11
+    taalniveau: B2
     categorie: knwu
     type: strikethrough
     vraag: "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?"
@@ -77,6 +87,7 @@ evalset:
     versiedatum: "2026-09-21"
     doorhaal_waarde: "5,78"
   - id: knwu-verzet-u17
+    taalniveau: B2
     categorie: knwu
     type: strikethrough
     vraag: "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?"
@@ -85,6 +96,7 @@ evalset:
     versiedatum: "2026-09-21"
     doorhaal_waarde: "7,01"
   - id: knwu-inschrijfgeld-jeugd
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "Wat zijn de geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden en wat geldt bij bijschrijven?"
@@ -92,6 +104,7 @@ evalset:
     bron: "Nationale_Besluiten_20260918"
     versiedatum: "2026-09-18"
   - id: knwu-nk-dispensatie-u10
+    taalniveau: B2
     categorie: knwu
     type: strikethrough
     vraag: "Mag een renner van categorie U10 die dispensatie heeft om in een categorie lager te rijden, meedoen aan het NK?"
@@ -100,6 +113,7 @@ evalset:
     versiedatum: "2026-09-21"
     doorhaal_waarde: "niet kwalificeren"
   - id: knwu-actuele-versie-titel20
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "Welke versie van Titel 20 Jeugdwielrennen is leidend en waar controleer ik dat?"
@@ -107,6 +121,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-21"
   - id: knwu-wijziging-nationale-besluiten
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "Wat is er gewijzigd in de Nationale Besluiten 2026 ten opzichte van de vorige versie?"
@@ -114,6 +129,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-18"
   - id: knwu-contact
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "Hoe kan ik de KNWU bereiken als ik conflicterende informatie tegenkom?"
@@ -121,6 +137,7 @@ evalset:
     bron: "knwu.nl/contact"
     versiedatum: "2026"
   - id: knwu-categorie-jongen-2013
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?"
@@ -128,6 +145,7 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-categorie-meisje-2015
+    taalniveau: B2
     categorie: knwu
     type: standaard
     vraag: "In welke leeftijdscategorie rijdt een meisje geboren in 2015 bij wegwielrennen in 2026?"
@@ -135,6 +153,7 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-verheldering-leeftijdscategorie
+    taalniveau: B2
     categorie: knwu
     type: verheldering
     vraag: "In welke categorie rijdt mijn kind mee?"
@@ -142,6 +161,7 @@ evalset:
     verwacht_antwoord: "geboortejaar"
     niet_in_antwoord: "geslacht"
   - id: knwu-verheldering-licentie-via-router
+    taalniveau: B2
     categorie: knwu
     type: verheldering
     via: router
@@ -154,6 +174,7 @@ evalset:
   # Meten of een conversatie na een handoff bij de juiste agent uitkomt
   # ("sticky handoff"), op basis van geanonimiseerde feedback.
   - id: knwu-router-verzet-na-regiovraag
+    taalniveau: B2
     categorie: knwu
     type: standaard
     via: router
@@ -166,6 +187,7 @@ evalset:
     versiedatum: "2026-09-21"
     verwachte_agent: knwu-agent
   - id: knwu-router-geboortejaar-als-vervolg
+    taalniveau: B2
     categorie: knwu
     type: standaard
     via: router
@@ -179,6 +201,7 @@ evalset:
     versiedatum: "2026-09-21"
     verwachte_agent: knwu-agent
   - id: knwu-router-licentie-na-clubvraag
+    taalniveau: B2
     categorie: knwu
     type: standaard
     via: router
@@ -193,6 +216,7 @@ evalset:
 
   # --- Regio Midden (5) ---
   - id: regio-mnc-veldrijden-starttijden
+    taalniveau: B2
     categorie: regio
     type: standaard
     vraag: "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?"
@@ -200,6 +224,7 @@ evalset:
     bron: "knwumidden.nl/competities"
     versiedatum: "2026-2027"
   - id: regio-hvh-kalender-2026
+    taalniveau: B2
     categorie: regio
     type: standaard
     vraag: "Wanneer loopt de In Memoriam Hans van den Hengel jeugdcompetitie 2026?"
@@ -207,6 +232,7 @@ evalset:
     bron: "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl/competities"
     versiedatum: "2026"
   - id: regio-nk-kwalificatie
+    taalniveau: B2
     categorie: regio
     type: standaard
     vraag: "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?"
@@ -214,6 +240,7 @@ evalset:
     bron: "Nationale_Besluiten_20260918"
     versiedatum: "2026"
   - id: regio-juiste-knwu-regio
+    taalniveau: B2
     categorie: regio
     type: standaard
     vraag: "In welke KNWU-regio ligt WTC Woerden (Woerden, Utrecht)?"
@@ -221,6 +248,7 @@ evalset:
     bron: "knwu.nl/over-knwu/regios | kenniscentrum.knwu.nl"
     versiedatum: "2026"
   - id: regio-techniekwedstrijden-2026
+    taalniveau: B2
     categorie: regio
     type: standaard
     vraag: "Zijn er in 2026 techniek- of vaardigheidswedstrijden voor de jeugd in regio Midden?"
@@ -230,6 +258,7 @@ evalset:
 
   # --- Club WTC Woerden (5) ---
   - id: club-contributie-jeugd-2026
+    taalniveau: B2
     categorie: club
     type: standaard
     vraag: "Wat is de contributie voor een jeugdlid van WTC Woerden in 2026?"
@@ -237,6 +266,7 @@ evalset:
     bron: "wtcwoerden.nl?page=674 | WTC Woerden - Contributietarieven"
     versiedatum: "2026"
   - id: club-zmc-kosten
+    taalniveau: B2
     categorie: club
     type: standaard
     vraag: "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?"
@@ -244,6 +274,7 @@ evalset:
     bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
     versiedatum: "2026-10-29"
   - id: club-zmc-wanneer
+    taalniveau: B2
     categorie: club
     type: standaard
     vraag: "Wanneer en waar vindt de ZMC plaats en voor wie is het bedoeld?"
@@ -251,6 +282,7 @@ evalset:
     bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
     versiedatum: "2026-10-29"
   - id: club-vertrouwenspersoon
+    taalniveau: B2
     categorie: club
     type: standaard
     vraag: "Wie is de vertrouwenspersoon bij WTC Woerden en hoe bereik ik die?"
@@ -258,9 +290,44 @@ evalset:
     bron: "wtcwoerden.nl?page=607 | WTC Woerden - Contactpersonen"
     versiedatum: "2026"
   - id: club-gedragscode
+    taalniveau: B2
     categorie: club
     type: standaard
     vraag: "Waar staat de gedragscode van WTC Woerden en waar gaat die over?"
     verwacht_antwoord: "Over de club; Respect; Veiligheid; Integriteit"
     bron: "wtcwoerden.nl?page=956 | WTC Woerden - Gedragscode"
     versiedatum: "2026"
+
+  # --- B1-vragen (taalniveau B1 = standaard, issue #52): kort antwoord, géén Bron-regel ---
+  - id: knwu-b1-categorie-jongen-2015
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?"
+    verwacht_antwoord: "U12; 2015"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: knwu-b1-verzet-u15
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
+    verwacht_antwoord: "6,70"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: regio-b1-mnc-starttijden
+    taalniveau: B1
+    categorie: regio
+    type: standaard
+    vraag: "Hoe laat starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?"
+    verwacht_antwoord: "11:05; 11:30"
+    bron: "knwumidden.nl/competities"
+    versiedatum: "2026-2027"
+  - id: club-b1-zmc-kosten
+    taalniveau: B1
+    categorie: club
+    type: standaard
+    vraag: "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?"
+    verwacht_antwoord: "gratis"
+    bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
+    versiedatum: "2026-10-29"

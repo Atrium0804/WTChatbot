@@ -3,6 +3,8 @@
 De agents kennen de datum van vandaag niet en rekenen een geboortejaar niet
 betrouwbaar om naar een categorie (issue #44). De proxy voegt daarom
 deterministische contextregels toe onder het bericht van de gebruiker:
+- bij elk bericht: het taalniveau van de gebruiker (B1 standaard, B2 als de
+  app "Uitgebreid" meestuurt; issue #52);
 - bij een nieuwe conversatie: de datum van vandaag;
 - bij elk bericht met een geboortejaar uit de jeugdindeling: de
   leeftijdscategorie (weg en veld) en de licentie.
@@ -79,8 +81,28 @@ def category_line(birth_year: int, today: date, rules: dict) -> str:
     )
 
 
-def build_context_lines(message: str, today: date, rules: dict, new_conversation: bool) -> list[str]:
-    lines = [date_line(today)] if new_conversation else []
+LANGUAGE_LEVELS = ("B1", "B2")
+
+
+def normalize_language_level(level: str) -> str:
+    """Alleen B1/B2 gaan door; alles anders (incl. leeg) is de standaard B1."""
+    return level if level in LANGUAGE_LEVELS else "B1"
+
+
+def language_line(level: str) -> str:
+    return f"Voor deze gebruiker is vastgesteld taalniveau: {normalize_language_level(level)}"
+
+
+def build_context_lines(
+    message: str,
+    today: date,
+    rules: dict,
+    new_conversation: bool,
+    language_level: str = "B1",
+) -> list[str]:
+    lines = [language_line(language_level)]
+    if new_conversation:
+        lines.append(date_line(today))
     for birth_year in find_birth_years(message, today, rules):
         lines.append(category_line(birth_year, today, rules))
     return lines

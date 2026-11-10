@@ -66,8 +66,35 @@ def test_category_line_road_differs_from_cyclocross_in_autumn():
 def test_build_context_lines_date_only_on_new_conversation():
     first = context.build_context_lines("Wanneer is de volgende wedstrijd?", NOVEMBER_2026, RULES, True)
     follow_up = context.build_context_lines("En in Hilversum?", NOVEMBER_2026, RULES, False)
-    assert len(first) == 1 and "9 november 2026" in first[0]
-    assert follow_up == []
+    # taalniveau-regel staat op élk bericht (issue #52), de datum alleen bij een nieuwe conversatie
+    assert len(first) == 2
+    assert first[0] == "Voor deze gebruiker is vastgesteld taalniveau: B1"
+    assert "9 november 2026" in first[1]
+    assert follow_up == ["Voor deze gebruiker is vastgesteld taalniveau: B1"]
+
+
+def test_language_line_normalizes_to_b1_or_b2():
+    assert context.language_line("B1") == "Voor deze gebruiker is vastgesteld taalniveau: B1"
+    assert context.language_line("B2") == "Voor deze gebruiker is vastgesteld taalniveau: B2"
+    # leeg, ongeldig of kleine letters -> standaard B1
+    assert context.language_line("") == "Voor deze gebruiker is vastgesteld taalniveau: B1"
+    assert context.language_line("b2") == "Voor deze gebruiker is vastgesteld taalniveau: B1"
+    assert context.language_line("van alles") == "Voor deze gebruiker is vastgesteld taalniveau: B1"
+
+
+def test_build_context_lines_language_level_on_every_message():
+    first = context.build_context_lines(
+        "vraag", NOVEMBER_2026, RULES, True, language_level="B2"
+    )
+    follow_up = context.build_context_lines(
+        "vervolgvraag", NOVEMBER_2026, RULES, False, language_level="B2"
+    )
+    assert first[0] == "Voor deze gebruiker is vastgesteld taalniveau: B2"
+    assert follow_up == ["Voor deze gebruiker is vastgesteld taalniveau: B2"]
+    # ongeldige waarde wordt B1
+    assert context.build_context_lines("vraag", NOVEMBER_2026, RULES, False, language_level="gek")[0] == (
+        "Voor deze gebruiker is vastgesteld taalniveau: B1"
+    )
 
 
 def test_add_context_puts_question_first():

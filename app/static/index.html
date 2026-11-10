@@ -171,6 +171,31 @@
     #composer { width: 44rem; }
     .msg { max-width: 75%; }
   }
+  /* Keuze 'Antwoorden: Kort/Uitgebreid' (issue #52), zelfde patroon als de privacy-notitie */
+  .taalniveau {
+    background: #e8edfb;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0.4rem 1rem;
+  }
+  .taalniveau summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); }
+  .taalniveau-inhoud { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.35rem; }
+  .taalniveau-uitleg { flex: 1; min-width: 12rem; margin: 0; }
+  .taalniveau-hint { font-size: 0.72rem; font-style: italic; color: var(--accent-dark); }
+  .seg { display: inline-flex; gap: 2px; padding: 2px; background: #fff; border: 1px solid var(--border); border-radius: 999px; }
+  .seg button {
+    border: none;
+    background: transparent;
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -178,6 +203,17 @@
   <h1>WTC - Wheely The Chatbot</h1>
   <div class="sub">Vragen over KNWU-zaken, regio Midden en WTC Woerden</div>
 </header>
+<details id="taalniveau" class="taalniveau" open>
+  <summary>Antwoorden: <span id="taalniveau-stand">Kort</span></summary>
+  <div class="taalniveau-inhoud">
+    <p class="taalniveau-uitleg">Wheely antwoordt standaard kort en begrijpelijk. Kies 'Uitgebreid' voor volledige antwoorden met bronvermelding.</p>
+    <div class="seg" role="group" aria-label="Kies het soort antwoorden: begrijpelijk of uitgebreid">
+      <button type="button" id="taalniveau-b1" data-level="B1" aria-pressed="true">Kort</button>
+      <button type="button" id="taalniveau-b2" data-level="B2" aria-pressed="false">Uitgebreid</button>
+    </div>
+    <span class="taalniveau-hint">Gaat in vanaf je volgende bericht.</span>
+  </div>
+</details>
 <div id="privacy">
   <details>
     <summary>Privacy-notitie</summary>
@@ -261,6 +297,54 @@
     document.dispatchEvent(new Event("chat:init-failed"));
     return;
   }
+
+  // Keuze 'Antwoorden: Kort/Uitgebreid' (issue #52): kort (B1) is de standaard.
+  // De keuze staat in localStorage en gaat met elk bericht mee naar de proxy,
+  // die er een contextregel van maakt.
+  var TAALNIVEAU_KEY = "wtchat_taalniveau";
+  var TAALNIVEAU_LABELS = { B1: "Kort", B2: "Uitgebreid" };
+  var taalniveauBar = document.getElementById("taalniveau");
+  var taalniveauStand = document.getElementById("taalniveau-stand");
+  var taalniveauB1 = document.getElementById("taalniveau-b1");
+  var taalniveauB2 = document.getElementById("taalniveau-b2");
+
+  function loadTaalniveau() {
+    try {
+      var stored = window.localStorage.getItem(TAALNIVEAU_KEY);
+      if (stored === "B1" || stored === "B2") return stored;
+    } catch (e) {
+      console.warn("Taalniveau niet leesbaar uit lokale opslag; standaard (kort) blijft gelden.");
+    }
+    return "B1";
+  }
+
+  var languageLevel = loadTaalniveau();
+
+  function syncTaalniveau() {
+    taalniveauB1.setAttribute("aria-pressed", languageLevel === "B1" ? "true" : "false");
+    taalniveauB2.setAttribute("aria-pressed", languageLevel === "B2" ? "true" : "false");
+    taalniveauStand.textContent = TAALNIVEAU_LABELS[languageLevel];
+  }
+
+  function kiesTaalniveau(level) {
+    if ((level !== "B1" && level !== "B2") || level === languageLevel) return;
+    languageLevel = level;
+    try {
+      window.localStorage.setItem(TAALNIVEAU_KEY, level);
+    } catch (e) {
+      console.warn("Taalniveau niet bewaard in lokale opslag; geldt alleen voor dit gesprek.");
+    }
+    syncTaalniveau();
+  }
+
+  taalniveauB1.addEventListener("click", function () { kiesTaalniveau("B1"); });
+  taalniveauB2.addEventListener("click", function () { kiesTaalniveau("B2"); });
+  syncTaalniveau();
+
+  // De balk klapt in bij het eerste bericht; de summary blijft klikbaar om te heropenen.
+  document.addEventListener("chat:messages-rendered", function () {
+    taalniveauBar.open = false;
+  });
 
   function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
@@ -402,7 +486,12 @@
     fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: question, conversation_id: conversationId || "", client_id: clientId })
+      body: JSON.stringify({
+        message: question,
+        conversation_id: conversationId || "",
+        client_id: clientId,
+        language_level: languageLevel
+      })
     })
       .then(function (resp) {
         return resp.json().then(function (body) {

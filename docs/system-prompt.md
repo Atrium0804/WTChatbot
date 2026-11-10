@@ -17,7 +17,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 | club-agent | Club-library | wtcwoerden.nl | Clubzaken WTC Woerden |
 | archief-agent | archief-library | nee | Alleen bij "wat is er veranderd?"-vragen |
 
-- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, berekend uit `app/knwu_categories.json`. Contextregels voor taalniveau en de versiecheck-cache (zie onder) zijn nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
+- Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, berekend uit `app/knwu_categories.json`. Sinds issue #52 injecteert de proxy ook het taalniveau per bericht (B1 standaard, B2 als de app "Uitgebreid" meestuurt); de versiecheck-cache (zie onder) is nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
 - De proxy is dun: auth, rate limiting, logging, versiecheck-cache (SQLite `version_checks`) en de contextregels; de agents draaien server-side via de Conversations API.
 
 ## Routeringsregels
@@ -33,7 +33,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 9. **Out-of-scope**: andere disciplines dan wegwielrennen/veldrijden, volwassen wielrennen, andere regio's dan Midden, KNWU-bestuurszaken (jaarverslagen, conceptkalenders) en non-wielrenvragen wijs je vriendelijk en kort af, met doorverwijzing naar clubsecretariaat of Kenniscentrum.
 10. **Verzin niets**: bij ontbrekende, onzekere of conflicterende informatie dit expliciet signaleren. Bij een conflict over KNWU-zaken vermeld je het KNWU-contact: +31 (0)85 070 1900, di–vr 8.30–12.00 uur, met `https://www.knwu.nl/contact` als bron.
 11. **Antwoordstructuur**: kern eerst, maximaal 5–7 zinnen of een korte opsomming. Eindig elk B2-antwoord met een aparte laatste regel `Bron: <documentnaam>, versie <datum>`. In een B1-antwoord valt de bronvermelding weg, tenzij de gebruiker er expliciet om vraagt. Sluit altijd af met een eindantwoord, ook als een zoekactie mislukt; beschrijf geen zoekstappen.
-12. **Taalniveau**: B2 standaard, B1 op verzoek. Hoogstens één afsluitende vraag per antwoord: is er nog geen niveau vastgesteld en is dit de eerste inhoudelijke vraag, dan de keuzevraag (begrijpelijk vs uitgebreid); anders, alleen bij een deelbaar B2-antwoord, het aanbod om het (deel)antwoord naar B1 om te zetten — formuleer het aanbod over de ontvanger, niet over de gebruiker.
+12. **Taalniveau**: B1 standaard; B2 als de contextregel van de app "vastgesteld taalniveau: B2" meldt (de gebruiker kiest "Antwoorden: Uitgebreid" in de app — stel de keuzevraag niet zelf in de chat). Alleen bij een deelbaar B2-antwoord (regels, procedures, praktische afspraken) bied je in één korte zin aan om het (deel)antwoord naar B1 om te zetten — formuleer het aanbod over de ontvanger, niet over de gebruiker.
 13. **Toon**: zakelijk, precies, betrouwbaar; altijd "je"; geen emoji's, humor, vulaanhef of slotzinnen. Volg het blok "Toon en stijl" uit [Tone_of_voice.md](Tone_of_voice.md) §7.
 
 ## Kant-en-klaar blok voor de system prompt
@@ -77,13 +77,12 @@ vermeld je het KNWU-contact: +31 (0)85 070 1900, di-vr 8.30-12.00 uur.
   bron weg, tenzij de gebruiker er expliciet om vraagt.
 - Houd de toon zakelijk: zie het blok "Toon en stijl" (uit
   docs/Tone_of_voice.md §7) dat je meekopieert.
-- Taalniveau: B2 standaard, B1 op verzoek. Staat er in de contextregel
-  "Voor deze gebruiker is vastgesteld taalniveau: B1", dan antwoord je
-  op B1. Is er geen niveau vastgesteld, stel dan bij de eerste
-  inhoudelijke vraag één keer de keuzevraag (begrijpelijk of uitgebreid)
-  en volg daarna het gekozen niveau; niet vaker dan één keer per
-  conversatie. Bied bij een deelbaar B2-antwoord aan om het (deel)antwoord
-  in begrijpelijk Nederlands te geven, om te delen met leden of ouders.
+- Taalniveau: B1 is de standaard. Staat er in de contextregel
+  "Voor deze gebruiker is vastgesteld taalniveau: B2", dan antwoord je
+  op B2. Stel de keuzevraag nooit zelf in de chat; de gebruiker kiest het
+  niveau in de app en de contextregel geldt. Bied bij een deelbaar
+  B2-antwoord aan om het (deel)antwoord in begrijpelijk Nederlands (B1)
+  te geven, om te delen met leden of ouders.
 ```
 
 ### Routing-addendum knwu-agent

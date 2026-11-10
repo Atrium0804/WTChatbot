@@ -425,6 +425,47 @@ def test_chat_follow_up_adds_category_but_no_date(tmp_path, monkeypatch):
     assert "wegwielrennen 2026: U12" in follow_up
 
 
+def test_chat_sends_language_level_context(tmp_path, monkeypatch):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    resp = client.post(
+        "/chat", json={"message": "Hoeveel kost een licentie?", "client_id": "c", "language_level": "B2"}
+    )
+    assert resp.status_code == 200, resp.text
+    assert "vastgesteld taalniveau: B2" in calls[0]["message"]
+    # ook op een vervolgbericht (zonder datumregel) staat de taalniveau-regel
+    resp2 = client.post(
+        "/chat",
+        json={
+            "message": "en voor mijn dochter?",
+            "conversation_id": resp.json()["conversation_id"],
+            "client_id": "c",
+            "language_level": "B2",
+        },
+    )
+    assert resp2.status_code == 200, resp2.text
+    follow_up = calls[1]["message"]
+    assert "vastgesteld taalniveau: B2" in follow_up
+    assert "november 2026" not in follow_up
+
+
+def test_chat_language_level_defaults_to_b1(tmp_path, monkeypatch):
+    calls = fake_mistral(monkeypatch)
+    client = make_client(tmp_path)
+    # geen language_level meegestuurd
+    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
+    assert resp.status_code == 200, resp.text
+    assert "vastgesteld taalniveau: B1" in calls[0]["message"]
+    # ongeldige waarde: geen 400, maar B1
+    resp = client.post(
+        "/chat", json={"message": "vraag", "client_id": "c", "language_level": "van alles"}
+    )
+    assert resp.status_code == 200, resp.text
+    assert "vastgesteld taalniveau: B1" in calls[1]["message"]
+
+
 def test_chat_feedback_history_keeps_raw_question(tmp_path, monkeypatch):
     fake_mistral(monkeypatch)
     client = make_client(tmp_path)

@@ -33,6 +33,7 @@ class ChatRequest(BaseModel):
     message: str = Field(default="", max_length=100_000)  # harde limiet checkt /chat zelf
     conversation_id: str = ""
     client_id: str = ""  # anonieme client-ID (random UUID), puur voor de rate limiter — geen IP-logging
+    language_level: str = ""  # "B1" (standaard) of "B2"; ongeldige waarde wordt B1 (zie context.normalize_language_level)
 
 
 class FeedbackRequest(BaseModel):
@@ -127,7 +128,11 @@ def create_app(
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             mistral_conv_id = state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
-                message, today(), category_rules, new_conversation=not mistral_conv_id
+                message,
+                today(),
+                category_rules,
+                new_conversation=not mistral_conv_id,
+                language_level=payload.language_level,
             )
             try:
                 mistral_conv_id, answer = mistral_client.answer_question(

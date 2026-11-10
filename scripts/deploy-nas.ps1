@@ -49,8 +49,10 @@ $Files = @(
 )
 
 # App-source uit app/ wordt de build-context op de NAS.
-# tests/, __pycache__/, data/ en .env worden expres NIET meegekopieerd.
-$AppFiles = @('Dockerfile', 'requirements.txt', 'main.py', 'config.py', 'mistral_client.py', 'store.py')
+# tests/, __pycache__/ en data/ zijn mappen en vallen af (-File); .env wordt expliciet uitgesloten.
+$AppFiles = Get-ChildItem -Path $AppSrc -File -Force |
+    Where-Object { $_.Name -ne '.env' } |
+    ForEach-Object { $_.Name }
 foreach ($f in $AppFiles) {
     $Files += @{ Local = "app/$f"; Remote = "$NasRoot/$Service/app/$f" }
 }

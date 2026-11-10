@@ -17,10 +17,17 @@ function setup(
   const window = new EventTarget();
   const elements = {};
   const requests = [];
-  function element() {
+  function element(tag) {
     const node = new EventTarget();
+    let text = "";
+    Object.defineProperty(node, "textContent", {
+      get() { return text + this.children.map((c) => c.textContent).join(""); },
+      set(v) { text = String(v); this.children.length = 0; },
+      configurable: true,
+    });
     Object.assign(node, {
-      style: {}, value: "", children: [], textContent: "",
+      tagName: (tag || "div").toUpperCase(),
+      style: {}, value: "", children: [],
       setAttribute() {}, focus() {},
       appendChild(child) { this.children.push(child); },
       requestSubmit() { this.dispatchEvent(new Event("submit", { cancelable: true })); },
@@ -31,7 +38,12 @@ function setup(
     elements[id] = element();
   }
   document.body = element();
-  document.createElement = element;
+  document.createElement = (tag) => element(tag);
+  document.createTextNode = (text) => {
+    const node = element("#text");
+    node.textContent = text;
+    return node;
+  };
   document.getElementById = (id) => elements[id];
   const context = vm.createContext({
     document, window, location: { search }, Event, crypto,

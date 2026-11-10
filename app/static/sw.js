@@ -4,7 +4,7 @@
 // Daar zit vraag/antwoord in; alleen de app-shell mag lokaal worden bewaard.
 "use strict";
 
-var CACHE = "wtchat-shell-v7"; // bij elke wijziging van de shell: versie ophogen
+var CACHE = "wtchat-shell-v8"; // bij elke wijziging van de shell: versie ophogen
 var SHELL = [
   "/",
   "/index.html",

@@ -22,8 +22,10 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
 - verheldering: geen bron-check; de kernfeiten (bv. geboortejaar, geslacht)
   moeten in de wedervraag van de bot staan
 
-Elk bericht krijgt dezelfde contextregels als in productie (datum bij de
-eerste beurt, categorie bij een geboortejaar; app/context.py). Per beurt
+Elk bericht krijgt dezelfde contextregels als in productie (taalniveau per
+bericht, datum bij de eerste beurt, categorie bij een geboortejaar;
+app/context.py). Het taalniveau komt uit het optionele veld `taalniveau`
+per evalset-entry (default B1, de productiestandaard sinds #52). Per beurt
 legt last_run.json vast welke agent antwoordde (`trace`).
 
 Gate: globaal >= 90% en per categorie >= 90% correct met correcte bron;
@@ -214,7 +216,13 @@ def play_conversation(
     trace: list[dict] = []
     outputs: list[dict] = []
     for message in entry.get("beurten", []) + [entry["vraag"]]:
-        lines = context.build_context_lines(message, today, rules, new_conversation=conversation_id is None)
+        lines = context.build_context_lines(
+            message,
+            today,
+            rules,
+            new_conversation=conversation_id is None,
+            language_level=entry.get("taalniveau", "B1"),
+        )
         response, error = ask_with_retry(
             context.add_context(message, lines),
             api_key,
@@ -328,8 +336,16 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
     verboden = [w.strip() for w in entry.get("niet_in_antwoord", "").split(";") if w.strip()]
     verboden_gevonden = [w for w in verboden if kernfeit_gevonden(w, antwoord)]
     # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
-    # wedervraag); de bron-check vervalt.
-    bron_ok = entry.get("type") == "verheldering" or bron_match(entry.get("bron", ""), bron_line)
+    # wedervraag); de bron-check vervalt. Bij taalniveau B2 (default B1,
+    # issue #52) moet de bron in een "Bron:"-regel staan; bij B1 mag het
+    # antwoord géén Bron-regel bevatten.
+    level = entry.get("taalniveau", "B1")
+    if entry.get("type") == "verheldering":
+        bron_ok = True
+    elif level == "B2":
+        bron_ok = bron_match(entry.get("bron", ""), bron_line)
+    else:
+        bron_ok = bron_line == ""
     agents_laatste_beurt = trace[-1]["agents"] if trace else []
     verwachte_agent = entry.get("verwachte_agent", "")
     agent_ok = not verwachte_agent or verwachte_agent in agents_laatste_beurt
@@ -338,6 +354,7 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
         "id": entry["id"],
         "categorie": entry["categorie"],
         "type": entry["type"],
+        "taalniveau": level,
         "ok": ok,
         "bron_gevonden": bron_line,
         "bron_ok": bron_ok,

@@ -156,6 +156,7 @@ class RunConversationTests(unittest.TestCase):
         entry = {
             "id": "x", "categorie": "knwu", "type": "standaard", "vraag": "Welk verzet?",
             "verwacht_antwoord": "5,90", "bron": "doc.pdf", "verwachte_agent": "knwu-agent",
+            "taalniveau": "B2",
         }
         antwoord = "5,90 meter\n\nBron: doc.pdf"
         sticky = run_eval.check_entry(entry, antwoord, [{"vraag": "Welk verzet?", "agents": ["regio-agent"]}])
@@ -301,7 +302,15 @@ RUN3 = json.loads(
 )["antwoorden"]
 
 
-def entry(id: str, verwacht: str, bron: str, type: str = "standaard", doorhaal: str = "") -> dict:
+def entry(
+    id: str,
+    verwacht: str,
+    bron: str,
+    type: str = "standaard",
+    doorhaal: str = "",
+    taalniveau: str = "B2",
+) -> dict:
+    # default B2: de helper modelleert een 'uitgebreid'-entry (met bron-check)
     return {
         "id": id,
         "categorie": id.split("-")[0],
@@ -310,6 +319,7 @@ def entry(id: str, verwacht: str, bron: str, type: str = "standaard", doorhaal: 
         "verwacht_antwoord": verwacht,
         "bron": bron,
         "doorhaal_waarde": doorhaal,
+        "taalniveau": taalniveau,
     }
 
 
@@ -442,10 +452,69 @@ class VerhelderingTests(unittest.TestCase):
         self.assertEqual(result["missende_kernfeiten"], ["geboortejaar", "geslacht"])
 
     def test_standaard_type_zonder_bronmatch_faalt_nog_steeds(self) -> None:
-        # regressieguard: alleen verheldering slaat de bron-check over
+        # regressieguard: bij taalniveau B2 slaat alleen verheldering de bron-check over
         result = run_eval.check_entry(entry("x-y", "ja", "doc.pdf"), "Ja, dat klopt.")
         self.assertFalse(result["bron_ok"])
         self.assertFalse(result["ok"])
+
+
+class TaalniveauTests(unittest.TestCase):
+    """Taalniveau per entry (issue #52): B1 = standaard, geen Bron-regel; B2 = bron verplicht."""
+
+    def b1_entry(self, verwacht: str = "U12") -> dict:
+        return {
+            "id": "knwu-b1-x",
+            "categorie": "knwu",
+            "type": "standaard",
+            "taalniveau": "B1",
+            "vraag": "?",
+            "verwacht_antwoord": verwacht,
+            "bron": "doc.pdf",
+            "versiedatum": "2026",
+        }
+
+    def test_b1_zonder_bronregel_is_ok(self) -> None:
+        result = run_eval.check_entry(self.b1_entry(), "Hij rijdt in U12.")
+        self.assertTrue(result["bron_ok"])
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(result["taalniveau"], "B1")
+
+    def test_b1_met_bronregel_faalt(self) -> None:
+        result = run_eval.check_entry(self.b1_entry(), "Hij rijdt in U12.\n\nBron: doc.pdf")
+        self.assertFalse(result["bron_ok"])
+        self.assertFalse(result["ok"])
+
+    def test_b2_zonder_bronregel_faalt(self) -> None:
+        e = self.b1_entry()
+        e["taalniveau"] = "B2"
+        result = run_eval.check_entry(e, "Hij rijdt in U12.")
+        self.assertFalse(result["bron_ok"])
+        self.assertFalse(result["ok"])
+
+    def test_b2_met_bronregel_is_ok(self) -> None:
+        e = self.b1_entry()
+        e["taalniveau"] = "B2"
+        result = run_eval.check_entry(e, "Hij rijdt in U12.\n\nBron: doc.pdf, versie 2026")
+        self.assertTrue(result["ok"], result)
+
+    def test_runner_injecteert_taalniveau_in_context(self) -> None:
+        from datetime import date
+        from unittest.mock import patch
+
+        sent = []
+
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
+            sent.append(message)
+            return {"conversation_id": "c1", "outputs": [{"type": "message.output", "content": "ok"}]}
+
+        rules = run_eval.knwu_categories.load_rules()
+        b2 = {"id": "x", "categorie": "knwu", "type": "standaard", "taalniveau": "B2", "vraag": "b?"}
+        b1_default = {"id": "y", "categorie": "knwu", "type": "standaard", "vraag": "b?"}
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            run_eval.run_conversation(b2, "ag", "key", date(2026, 11, 9), rules, {})
+            run_eval.run_conversation(b1_default, "ag", "key", date(2026, 11, 9), rules, {})
+        self.assertIn("vastgesteld taalniveau: B2", sent[0])
+        self.assertIn("vastgesteld taalniveau: B1", sent[1])  # default = B1
 
 
 class NietInAntwoordTests(unittest.TestCase):
@@ -557,6 +626,7 @@ class EvalsetSchemaTests(unittest.TestCase):
                 if e["type"] != "verheldering":
                     self.assertTrue(e.get("bron"))
                     self.assertTrue(e.get("versiedatum"))
+                self.assertIn(e.get("taalniveau", "B1"), {"B1", "B2"})
                 if e["type"] == "strikethrough":
                     self.assertTrue(e.get("doorhaal_waarde"))
                 self.assertIn(e.get("via", "router"), {"router"})

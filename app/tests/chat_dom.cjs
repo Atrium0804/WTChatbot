@@ -12,14 +12,17 @@ function setup(
   search,
   crypto = { randomUUID: () => "test-id" },
   sessionStorage = { getItem: () => null, setItem() {} },
+  localStorage,
 ) {
   const document = new EventTarget();
   const window = new EventTarget();
+  if (localStorage !== undefined) window.localStorage = localStorage;
   const elements = {};
   const requests = [];
   function element(tag) {
     const node = new EventTarget();
     let text = "";
+    const attributes = {};
     Object.defineProperty(node, "textContent", {
       get() { return text + this.children.map((c) => c.textContent).join(""); },
       set(v) { text = String(v); this.children.length = 0; },
@@ -28,13 +31,18 @@ function setup(
     Object.assign(node, {
       tagName: (tag || "div").toUpperCase(),
       style: {}, value: "", children: [],
-      setAttribute() {}, focus() {},
+      setAttribute(name, value) { attributes[name] = String(value); },
+      getAttribute(name) { return name in attributes ? attributes[name] : null; },
+      focus() {},
       appendChild(child) { this.children.push(child); },
       requestSubmit() { this.dispatchEvent(new Event("submit", { cancelable: true })); },
     });
     return node;
   }
-  for (const id of ["messages", "composer", "question", "send"]) {
+  for (const id of [
+    "messages", "composer", "question", "send",
+    "taalniveau", "taalniveau-stand", "taalniveau-b1", "taalniveau-b2",
+  ]) {
     elements[id] = element();
   }
   document.body = element();

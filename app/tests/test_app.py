@@ -365,6 +365,31 @@ def test_index_has_safe_area_insets(tmp_path):
     assert "padding-left: calc(0.5rem + env(safe-area-inset-left, 0px))" in footer_css
 
 
+def test_text_inputs_are_at_least_16px_to_prevent_ios_zoom(tmp_path):
+    # iOS Safari zoomt in bij focus op invoervelden < 16px; in de PWA blijft die
+    # zoom hangen: header onder de statusbalk, Verstuur-knop buiten beeld (#54).
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    question_css = html[html.index("#question {"):html.index("#send {")]
+    feedback_css = html[html.index(".feedback textarea {"):html.index(".feedback .thanks")]
+    assert "font-size: 16px;" in question_css
+    assert "font-size: 16px;" in feedback_css
+
+
+def test_canvas_background_matches_header_for_ios_status_bar(tmp_path):
+    # iOS 26 negeert theme-color en tint de statusbalk naar de body-achtergrondkleur
+    # of een sticky element bovenin; beide moeten de header-kleur zijn (#54).
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    body_css = html[html.index("  body {"):html.index("  header {")]
+    header_css = html[html.index("  header {"):html.index("header h1")]
+    assert "background: var(--accent) url(" in body_css
+    assert "position: sticky;" in header_css
+    assert "top: 0;" in header_css
+    manifest = client.get("/manifest.webmanifest").json()
+    assert manifest["background_color"] == manifest["theme_color"]
+
+
 def test_csp_allows_service_worker_and_manifest(tmp_path):
     client = make_client(tmp_path)
     csp = client.get("/").headers["content-security-policy"]

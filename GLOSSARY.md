@@ -89,11 +89,11 @@ _Avoid_: "categorie" zonder toevoeging
 ## Taal
 
 **Taalniveau B1**:
-Niveau op verzoek (gem. zinslengte 10-15 woorden, max 20).
+Standaardniveau van alle antwoorden (gem. zinslengte 10-15 woorden, max 20). De app biedt een zichtbare keuze voor B2 ("Antwoorden: Uitgebreid"); de keuze staat in localStorage op het apparaat en de proxy injecteert er per bericht een contextregel van (issue #52).
 _Avoid_: "makkelijke taal", "eenvoudig Nederlands"
 
 **Taalniveau B2**:
-Standaardniveau van alle antwoorden (max 20 woorden gem., max 25; heroverweging na 2 maanden feedbackdata). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
+Niveau op verzoek, gekozen in de app (gem. max 20 woorden, max 25). Bij elk B2-antwoord wordt actief aangeboden het (deel)antwoord naar B1 om te zetten, o.a. om te delen met ouders.
 
 ## Kwaliteit en beheer
 

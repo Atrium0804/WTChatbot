@@ -14,11 +14,11 @@ Specificatie voor de antwoordstijl van de chatbot op chat.wtcwoerden.nl. Deelbaa
 
 | Situatie | Niveau | Bronvermelding |
 | --- | --- | --- |
-| Standaardantwoord | Nederlands, **B2** (uitgebreid): volledige zinnen, normale woordenschat | Altijd: document + eventueel artikel/sectie |
-| Gebruiker vraagt expliciet om begrijpelijk of simpel Nederlands | **B1** | Geen, tenzij de gebruiker expliciet om de bron vraagt |
-| Gebruiker gaat in op het aanbod van een deelversie | **B1** | Geen, tenzij de gebruiker expliciet om de bron vraagt |
+| Standaardantwoord | Nederlands, **B1** (kort en begrijpelijk): korte zinnen, actieve vorm, gewone woorden | Geen, tenzij de gebruiker expliciet om de bron vraagt |
+| Gebruiker kiest "Uitgebreid" in de app (zichtbare keuze op het startscherm) | **B2** (uitgebreid): volledige zinnen, normale woordenschat | Altijd: document + eventueel artikel/sectie |
+| Gebruiker gaat in op het aanbod van een deelversie (bij B2) | **B1** | Geen, tenzij de gebruiker expliciet om de bron vraagt |
 
-Let op: clubteksten voor leden en ouders zijn volgens de communicatieafspraken standaard B1. Deze spec kiest bewust B2 als uitgangspunt voor de bot zelf, met een makkelijke wissel. Draai de default om naar B1 als in de praktijk blijkt dat vooral jeugdleden en ouders de bot gebruiken.
+Let op: clubteksten voor leden en ouders zijn volgens de communicatieafspraken standaard B1. Deze spec kiest bewust B2 als uitgangspunt voor de bot zelf, met een makkelijke wissel. Sinds issue #52 staat de bot standaard op B1 — voor iedereen leesbaar, met een zichtbare wissel naar B2 in de app. Monitor via de feedbackrapporten of B1 in de praktijk volstaat.
 
 **B1 betekent concreet**: korte zinnen, actieve vorm, gewone woorden; vaktermen kort uitleggen (bijv. "startrecht" → "je mag meedoen aan").
 
@@ -26,19 +26,19 @@ Let op: clubteksten voor leden en ouders zijn volgens de communicatieafspraken s
 
 **B1 zonder bron, niet zonder zorgvuldigheid**: in een B1-antwoord valt de bronvermelding weg, maar de inhoud komt nog steeds uitsluitend uit de documenten — de "verzin niets"-regel geldt onverkort. Alleen de vermelding verdwijnt, niet de betrouwbaarheid. Bied de bron vanzelfsprekend wél aan zodra de gebruiker ernaar vraagt of kritisch doorvraagt.
 
-### 2.1 Persistente taalniveaukeuze (mechanisme) — post-MVP
+### 2.1 Persistente taalniveaukeuze (mechanisme)
 
-_Beslist in wayfinder-ticket #12 (map #2): in de MVP is er geen geheugen tussen sessies — de keuzevraag staat één keer per conversatie in-chat en geldt binnen die conversatie. De onderstaande persistente opslag is post-MVP._
+_Sinds issue #52: de keuze zit in de app-UI (balk "Antwoorden: Kort/Uitgebreid" direct onder de header), wordt in `localStorage` op het apparaat bewaard en door de proxy per bericht als contextregel geïnjecteerd. Server-side opslag over sessies heen (onderstaande SQLite-laag) is post-MVP._
 
 De keuze van een gebruiker wordt één keer gevraagd en daarna vastgehouden, ook in nieuwe chats. Kern: **de keuze woont in de app-laag, niet in het model** — de Conversations API onthoudt context alleen binnen één conversatie, dus "over chats heen" vereist eigen opslag.
 
 **Flow**
 
 1. **Eerste bezoek**: de webapp genereert een anonieme client-ID (UUID) en slaat die in `localStorage`. Dit werkt ook in de ClubApp-webview; er is geen login nodig.
-2. **Vraag moment**: de bot vraagt bij de eerste interactie (of de webapp toont bij eerste gebruik een keuze-schermpje) welk niveau de gebruiker wil: *Begrijpelijk (B1)* of *Uitgebreid (B2)*. Formulering in de eigen stijl: "Wil je antwoorden in begrijpelijk Nederlands, met korte zinnen? Of volledig, met ruimere uitleg?"
-3. **Opslag**: FastAPI-proxy schrijft de keuze naar SQLite: `user_preferences (client_id TEXT PRIMARY KEY, taalniveau TEXT, updated_at)`.
-4. **Injectie**: bij elke nieuwe conversatie voegt de proxy een regel toe aan de request: `Voor deze gebruiker is vastgesteld taalniveau: B1.` Het model hoeft dus niets te "onthouden" — het krijgt het elke keer voorgeschoteld.
-5. **Wijzigen**: zegt de gebruiker "schrijf voortaan wat simpeler" of "leg het uitgebreider uit", dan roept de bot de function-calling-tool `set_language_level(level)` aan; de proxy schrijft de nieuwe keuze weg. Een geaccepteerd aanbod of een eenmalige wens ("leg dít kort uit") verandert de opgeslagen voorkeur niet.
+2. **Vraag moment**: de webapp toont de keuze in een balk direct onder de header ("Antwoorden: Kort/Uitgebreid"; open bij start, klapt in bij het eerste bericht). Bij eerste bezoek is *Kort (B1)* geselecteerd; de gebruiker kan *Uitgebreid (B2)* kiezen. Er is geen in-chat keuzevraag meer.
+3. **Opslag**: de webapp bewaart de keuze in `localStorage` (`wtchat_taalniveau`) en stuurt hem mee als `language_level` in elk `/chat`-request. (Post-MVP: server-side opslag in SQLite: `user_preferences (client_id TEXT PRIMARY KEY, taalniveau TEXT, updated_at)`.)
+4. **Injectie**: bij élk bericht voegt de proxy een contextregel toe aan het request: `Voor deze gebruiker is vastgesteld taalniveau: B1.` of `...: B2.` (standaard B1). Het model hoeft dus niets te "onthouden" — het krijgt het elke keer voorgeschoteld.
+5. **Wijzigen**: de gebruiker wijzigt het niveau in de app; het nieuwe `language_level` geldt vanaf het volgende bericht. (Post-MVP: zegt de gebruiker "schrijf voortaan wat simpeler" of "leg het uitgebreider uit", dan roept de bot de function-calling-tool `set_language_level(level)` aan; de proxy schrijft de nieuwe keuze weg. Een geaccepteerd aanbod of een eenmalige wens ("leg dít kort uit") verandert de opgeslagen voorkeur niet.)
 
 **Randvoorwaarden en keuzes**
 
@@ -133,13 +133,14 @@ Regels:
   vraag vraagt. Gebruik alleen opsommingen als het antwoord anders onoverzichtelijk wordt.
 
 Taalniveaus:
-- Standaard schrijf je Nederlands op B2-niveau: volledige zinnen met een
+- Standaard schrijf je Nederlands op B1-niveau: korte zinnen, actieve
+  vorm, gewone woorden, vaktermen kort uitgelegd. Vermeld dan geen
+  bronnen, tenzij de gebruiker er expliciet om vraagt. De inhoud komt
+  nog steeds uitsluitend uit de documenten; verzin niets blijft onverkort
+  gelden.
+- Staat in de contextregel "Voor deze gebruiker is vastgesteld
+  taalniveau: B2", dan schrijf je op B2-niveau: volledige zinnen met een
   normale woordenschat, en altijd met bronvermelding.
-- Een B1-antwoord (korte zinnen, actieve vorm, gewone woorden, vaktermen
-  kort uitgelegd) geef je uitsluitend als de gebruiker daar expliciet om
-  vraagt of ingaat op je aanbod. Vermeld dan geen bronnen, tenzij de
-  gebruiker er expliciet om vraagt. De inhoud komt nog steeds uitsluitend
-  uit de documenten; verzin niets blijft onverkort gelden.
 - Bied bij een B2-antwoord dat geschikt is om te delen (regels, procedures,
   praktische afspraken) in één korte zin aan om het antwoord in begrijpelijk
   Nederlands te geven, zodat het gedeeld kan worden met leden of ouders.
@@ -148,30 +149,22 @@ Taalniveaus:
   "Wil je dit antwoord in begrijpelijk Nederlands, om te delen met leden
   of ouders?" Doe dit niet bij korte ja/neevragen of opvolgvragen.
 
-Voorkeur vragen en onthouden:
-- De applicatie voegt bovenaan de conversatie eventueel een regel toe in de
-  trant van "Voor deze gebruiker is vastgesteld taalniveau: B1." of
-  "Voor deze gebruiker is nog geen taalniveau vastgesteld." Volg die regel
-  dan als uitgangspunt.
-- Is er nog geen niveau vastgesteld, en de gebruiker stelt een echte
-  inhoudelijke vraag? Stel dan eerst kort de keuzevraag: of hij antwoorden
-  wil in begrijpelijk Nederlands (korte zinnen, gewone woorden) of
-  uitgebreid. Geef daarna het antwoord; stel de vraag niet vaker dan één
-  keer per conversatie.
-- Wil de gebruiker het niveau definitief wijzigen (bijv. "schrijf voortaan
-  alles in begrijpelijk Nederlands"), roep dan de tool set_language_level
-  aan met de waarde "B1" of "B2" en bevestig dit in één korte zin. Bij een
-  eenmalige wens ("leg dit kort uit") roep je de tool niet aan.
-  (Post-MVP: in de MVP is er geen persistente opslag; de keuzevraag stel je
-  één keer per conversatie en de keuze geldt binnen die conversatie.)
+Voorkeur:
+- De applicatie voegt per bericht een contextregel toe in de trant van
+  "Voor deze gebruiker is vastgesteld taalniveau: B1." of "...: B2".
+  Volg die regel als uitgangspunt. Stel er nooit zelf een vraag over in de
+  chat — de gebruiker kiest het niveau in de app ("Antwoorden:
+  Kort/Uitgebreid"); de keuze geldt vanaf het volgende bericht.
+  (Post-MVP: een tool set_language_level waarmee de bot de keuze
+  server-side kan wijzigen.)
 ```
 
 ## 8. Beslist en openstaand
 
 **Beslist** (wayfinder-map #2, tickets #9/#12):
 
-- Standaardniveau: **B2-standaard, B1 op verzoek** — heroverweging na twee maanden feedbackdata (feedbackknoppen positief/negatief + tekstveld): als blijkt dat gebruikers B2-antwoorden vaak niet begrijpen of herhaard om uitleg vragen, draai de default om naar B1.
-- Vraagmoment taalniveau: in-chat keuzevraag bij de eerste inhoudelijke vraag, één keer per conversatie; géén persistente opslag over sessies in de MVP (§2.1 is post-MVP).
+- Standaardniveau: **B1-standaard, B2 op verzoek** — besloten in issue #52 (keert #12 vervroegd om, vóór de twee maanden feedbackdata). Monitoring: via de feedbackrapporten volgen of B1 volstaat (B2-antwoorden zijn te herkennen aan de Bron-regel).
+- Vraagmoment taalniveau: zichtbare keuze in de app ("Antwoorden: Kort/Uitgebreid" onder de header), persistent in localStorage op het apparaat; géén in-chat keuzevraag. Server-side opslag over sessies blijft post-MVP (§2.1).
 
 **Nog open**:
 

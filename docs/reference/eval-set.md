@@ -12,9 +12,10 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `id` | string | ja | Unieke code, bijv. `knwu-verzet-u15` |
 | `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt (tenzij `via: router`) en in welke categoriescore de vraag meetelt |
 | `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` \| `verheldering` |
+| `taalniveau` | enum | nee | `B1` (default) \| `B2` — het taalniveau dat de runner per bericht in de contextregel injecteert (issue #52); de bron-check geldt alleen bij `B2` |
 | `vraag` | string | ja | Typische clubvraag |
-| `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het B2-antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
-| `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); moet in een `Bron:`-regel van het antwoord staan. Alternatieven scheiden met ` \| ` (één match volstaat) |
+| `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
+| `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); bij `taalniveau: B2` moet die in een `Bron:`-regel van het antwoord staan, bij `B1` mag het antwoord géén `Bron:`-regel bevatten. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
 | `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
@@ -22,7 +23,7 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
 | `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
-Huidige verdeling: 28 vragen — 18 knwu, 5 regio, 5 club; 19 standaard, 4 strikethrough, 3 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `beurten` en `verwachte_agent` (issue #44).
+Huidige verdeling: 32 vragen — 18 knwu, 5 regio, 5 club, plus 4 B1-vragen (taalniveau `B1`); 19 standaard, 4 strikethrough, 3 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `beurten` en `verwachte_agent` (issue #44). Alle entries hebben expliciet `taalniveau: B2`, behalve de 4 B1-vragen (issue #52).
 
 Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
@@ -32,7 +33,7 @@ Een test (`tests/test_run_eval.py`, `Run3ReviewTests`) legt per vraag het oordee
 
 Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 
-1. **Bron**: een van de `Bron: ...`-regels van het antwoord bevat na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee.
+1. **Bron**: bij `taalniveau: B2` moet een van de `Bron: ...`-regels van het antwoord na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset bevatten, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee. Bij `taalniveau: B1` (default) moet het antwoord juist géén `Bron:`-regel bevatten.
 2. **Kernfeiten**: elk token van elk item van `verwacht_antwoord` staat los in het antwoord. Getallen en woorden van maximaal 3 tekens moeten als heel token voorkomen (`5` matcht niet in `15`, `ja` niet in `jaar`); langere woorden als woordbegin (`verzeker` matcht `verzekering`). Getallen worden genormaliseerd: `11.05` = `11:05`, `08:30` = `8.30`, `€ 10,-` = `10,00` = `10`.
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
 4. **Verboden woorden**: geen van de woorden uit `niet_in_antwoord` mag in het antwoord voorkomen; `last_run.json` toont ze onder `verboden_gevonden`.
@@ -45,7 +46,7 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 
 ## Contextregels
 
-Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie. De runner gebruikt de datum van de dag waarop hij draait.
+Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie. De runner gebruikt de datum van de dag waarop hij draait.
 
 ## Gate
 

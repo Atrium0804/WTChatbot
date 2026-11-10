@@ -375,6 +375,16 @@
       });
   });
 
+  // Enter in het vraagveld verstuurt via hetzelfde submit-pad als de knop;
+  // Shift+Enter laat de standaard newline toe. Tijdens IME-compositie of een
+  // lopend verzoek (send disabled) doet Enter niets.
+  input.addEventListener("keydown", function (ev) {
+    if (ev.key !== "Enter" || ev.shiftKey || ev.isComposing) return;
+    ev.preventDefault();
+    if (send.disabled) return;
+    form.requestSubmit();
+  });
+
   document.dispatchEvent(new Event("chat:ready"));
   input.focus();
 

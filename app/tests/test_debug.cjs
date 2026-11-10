@@ -1,49 +1,9 @@
 const assert = require("node:assert/strict");
-const { readFileSync } = require("node:fs");
-const { join } = require("node:path");
+
 const { test } = require("node:test");
-const vm = require("node:vm");
 
-const source = readFileSync(join(__dirname, "..", "static", "debug.js"), "utf8");
-const html = readFileSync(join(__dirname, "..", "static", "index.html"), "utf8");
-const chatSource = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const { setup, runChat } = require("./chat_dom.cjs");
 
-function setup(
-  search,
-  crypto = { randomUUID: () => "test-id" },
-  sessionStorage = { getItem: () => null, setItem() {} },
-) {
-  const document = new EventTarget();
-  const window = new EventTarget();
-  const elements = {};
-  const requests = [];
-  function element() {
-    const node = new EventTarget();
-    Object.assign(node, {
-      style: {}, value: "", children: [], textContent: "",
-      setAttribute() {}, focus() {},
-      appendChild(child) { this.children.push(child); },
-    });
-    return node;
-  }
-  for (const id of ["messages", "composer", "question", "send"]) {
-    elements[id] = element();
-  }
-  document.body = element();
-  document.createElement = element;
-  document.getElementById = (id) => elements[id];
-  const context = vm.createContext({
-    document, window, location: { search }, Event, crypto,
-    sessionStorage,
-    navigator: {}, console: { warn() {} },
-    fetch: (url, options) => {
-      requests.push({ url, options });
-      return new Promise(() => {});
-    },
-  });
-  vm.runInContext(source, context);
-  return { document, window, elements, context, requests };
-}
 
 test("diagnostics are opt-in with an exact query parameter", () => {
   for (const search of ["", "?debug=0", "?debug=10", "?other=debug=1"]) {
@@ -54,7 +14,7 @@ test("diagnostics are opt-in with an exact query parameter", () => {
 
 test("real chat initialization and submission report milestones without content", () => {
   const { document, elements, context } = setup("?debug=1");
-  vm.runInContext(chatSource, context);
+  runChat(context);
   elements.question.value = "PRIVATE TEST CONTENT";
   elements.composer.dispatchEvent(new Event("submit", { cancelable: true }));
   const output = document.body.children[0].textContent;
@@ -70,7 +30,7 @@ test("real chat initialization and submission report milestones without content"
 
 test("normal chat submission still works with diagnostics disabled", () => {
   const { document, elements, context } = setup("");
-  vm.runInContext(chatSource, context);
+  runChat(context);
   elements.question.value = "Hello";
   const submit = new Event("submit", { cancelable: true });
   elements.composer.dispatchEvent(submit);
@@ -104,7 +64,7 @@ test("chat works without randomUUID using a secure version-4 UUID", () => {
   const { document, elements, context, requests } = setup("?debug=1", {
     getRandomValues(bytes) { bytes.fill(255); return bytes; },
   });
-  vm.runInContext(chatSource, context);
+  runChat(context);
   assert.ok(document.body.children[0].textContent.split("\n").includes("ready"));
   elements.question.value = "Hello";
   elements.composer.dispatchEvent(new Event("submit", { cancelable: true }));
@@ -121,7 +81,7 @@ test("blocked session storage keeps the same generated ID for subsequent message
     getItem() { throw new Error("storage blocked"); },
     setItem() { throw new Error("storage blocked"); },
   });
-  vm.runInContext(chatSource, context);
+  runChat(context);
   for (let i = 0; i < 2; i++) {
     elements.question.value = "Hello";
     elements.composer.dispatchEvent(new Event("submit", { cancelable: true }));
@@ -136,7 +96,7 @@ test("existing stored client ID is reused without generating another", () => {
     getItem: () => "existing-client",
     setItem() { assert.fail("Existing ID should not be overwritten"); },
   });
-  vm.runInContext(chatSource, context);
+  runChat(context);
   elements.question.value = "Hello";
   elements.composer.dispatchEvent(new Event("submit", { cancelable: true }));
   assert.equal(JSON.parse(requests[0].options.body).client_id, "existing-client");
@@ -150,7 +110,7 @@ test("storage write failure does not generate an extra ID", () => {
     getItem: () => null,
     setItem() { throw new Error("storage full"); },
   });
-  vm.runInContext(chatSource, context);
+  runChat(context);
   assert.equal(generated, 1);
 });
 
@@ -158,7 +118,7 @@ test("unavailable or failing secure randomness shows an error and prevents nativ
   for (const crypto of [{}, null, { randomUUID() { throw new Error("unavailable"); } }]) {
     const { document, elements, context, requests } = setup("?debug=1", crypto);
     if (crypto === null) delete context.crypto;
-    vm.runInContext(chatSource, context);
+    runChat(context);
     const submit = new Event("submit", { cancelable: true });
     elements.composer.dispatchEvent(submit);
     assert.equal(submit.defaultPrevented, true);

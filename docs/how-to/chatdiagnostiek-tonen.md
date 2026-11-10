@@ -26,4 +26,4 @@ Toon tijdelijke browserdiagnostiek om te bepalen waar het starten of versturen v
 
 Zonder `debug=1` verschijnt geen paneel. De diagnostiek bewaart geen gegevens in browseropslag en verstuurt geen diagnostische gegevens; het normale chatverzoek blijft ongewijzigd. Het paneel toont maximaal 30 regels en bevat geen berichtinhoud, client-ID of volledige foutmeldingen.
 
-De lokale controles zijn `node --test app\tests\test_debug.cjs` en `python -m pytest app\tests -q`. De JavaScript-tests gebruiken de echte chatscripts in een gesimuleerde DOM; een test op de getroffen telefoon blijft nodig.
+De lokale controles zijn `node --test "app\tests\*.cjs"` en `python -m pytest app\tests -q`. De JavaScript-tests gebruiken de echte chatscripts in een gesimuleerde DOM; een test op de getroffen telefoon blijft nodig.

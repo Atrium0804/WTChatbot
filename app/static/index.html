@@ -39,6 +39,10 @@
     background: var(--accent);
     color: #fff;
     padding: 0.6rem 1rem;
+    /* iOS: bij viewport-fit=cover valt de statusbalk over de header */
+    padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+    padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+    padding-left: calc(1rem + env(safe-area-inset-left, 0px));
   }
   header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
   header .sub { font-size: 0.75rem; opacity: 0.85; }
@@ -137,6 +141,10 @@
     border-top: 1px solid var(--border);
     background: #04050b;
     padding: 0.5rem;
+    /* iOS: de home-indicator valt over de footer met invoerbalk en knop */
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    padding-right: calc(0.5rem + env(safe-area-inset-right, 0px));
+    padding-left: calc(0.5rem + env(safe-area-inset-left, 0px));
   }
   #composer {
     display: flex;

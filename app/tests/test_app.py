@@ -350,6 +350,21 @@ def test_index_has_pwa_head_tags(tmp_path):
     assert 'navigator.serviceWorker.register("/sw.js")' in html
 
 
+def test_index_has_safe_area_insets(tmp_path):
+    # iOS standalone-PWA met viewport-fit=cover: statusbalk valt over de header
+    # en de home-indicator over de footer (issue #54).
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    header_css = html[html.index("header {"):html.index("header h1")]
+    footer_css = html[html.index("footer {"):html.index("#composer")]
+    assert "padding-top: calc(0.6rem + env(safe-area-inset-top, 0px))" in header_css
+    assert "padding-right: calc(1rem + env(safe-area-inset-right, 0px))" in header_css
+    assert "padding-left: calc(1rem + env(safe-area-inset-left, 0px))" in header_css
+    assert "padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px))" in footer_css
+    assert "padding-right: calc(0.5rem + env(safe-area-inset-right, 0px))" in footer_css
+    assert "padding-left: calc(0.5rem + env(safe-area-inset-left, 0px))" in footer_css
+
+
 def test_csp_allows_service_worker_and_manifest(tmp_path):
     client = make_client(tmp_path)
     csp = client.get("/").headers["content-security-policy"]

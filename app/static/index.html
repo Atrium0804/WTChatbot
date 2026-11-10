@@ -86,6 +86,13 @@
     border: 1px solid var(--danger);
     color: var(--danger);
   }
+  .msg.bot h1, .msg.bot h2, .msg.bot h3 {
+    margin: 0.4em 0 0.15em;
+    font-size: 1.05em;
+  }
+  .msg.bot p, .msg.bot ul { margin: 0.3em 0; }
+  .msg.bot ul { padding-left: 1.3em; }
+
   .msg .bron {
     display: block;
     margin-top: 0.4rem;
@@ -257,19 +264,73 @@
 
   function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
+  // Markdown in bot-antwoorden renderen als DOM-elementen (nooit innerHTML,
+  // dus HTML in het antwoord blijft platte tekst): koppen, **vet**, lijsten.
+  function setInline(el, text) {
+    var parts = text.split(/(\*\*[^*]+\*\*)/g);
+    for (var i = 0; i < parts.length; i++) {
+      var part = parts[i];
+      if (!part) continue;
+      var bold = part.match(/^\*\*([^*]+)\*\*$/);
+      if (bold) {
+        var strong = document.createElement("strong");
+        strong.textContent = bold[1];
+        el.appendChild(strong);
+      } else {
+        el.appendChild(document.createTextNode(part));
+      }
+    }
+  }
+
+  function renderMarkdown(parent, text) {
+    parent.textContent = "";
+    var list = null;
+    var lines = text.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var heading = line.match(/^(#{1,6})\s+(.*)$/);
+      if (heading) {
+        var h = document.createElement("h" + heading[1].length);
+        setInline(h, heading[2]);
+        parent.appendChild(h);
+        list = null;
+        continue;
+      }
+      if (/^\s*[-*]\s+/.test(line)) {
+        if (!list) {
+          list = document.createElement("ul");
+          parent.appendChild(list);
+        }
+        var item = document.createElement("li");
+        setInline(item, line.replace(/^\s*[-*]\s+/, ""));
+        list.appendChild(item);
+        continue;
+      }
+      list = null;
+      if (line.trim() === "") continue;
+      var p = document.createElement("p");
+      setInline(p, line);
+      parent.appendChild(p);
+    }
+  }
+
+  // Bot-antwoord in een bericht-div: hoofddeel als markdown, "Bron: ..." apart.
+  function setBotContent(div, text) {
+    var parts = text.split(/\n(?=Bron:)/);
+    renderMarkdown(div, parts[0]);
+    if (parts[1]) {
+      var bron = document.createElement("span");
+      bron.className = "bron";
+      bron.textContent = parts[1];
+      div.appendChild(bron);
+    }
+  }
+
   function addMessage(kind, text) {
     var div = document.createElement("div");
     div.className = "msg " + kind;
     if (kind === "bot") {
-      // "Bron: ..." op de laatste regel apart stylen
-      var parts = text.split(/\n(?=Bron:)/);
-      div.textContent = parts[0];
-      if (parts[1]) {
-        var bron = document.createElement("span");
-        bron.className = "bron";
-        bron.textContent = parts[1];
-        div.appendChild(bron);
-      }
+      setBotContent(div, text);
     } else {
       div.textContent = text;
     }
@@ -352,15 +413,7 @@
       .then(function (body) {
         conversationId = body.conversation_id;
         typing.className = "msg bot";
-        typing.textContent = "";
-        typing.textContent = body.answer.split(/\n(?=Bron:)/)[0];
-        var rest = body.answer.split(/\n(?=Bron:)/);
-        if (rest[1]) {
-          var bron = document.createElement("span");
-          bron.className = "bron";
-          bron.textContent = rest[1];
-          typing.appendChild(bron);
-        }
+        setBotContent(typing, body.answer);
         addFeedback(typing, body.answer);
         scrollDown();
       })

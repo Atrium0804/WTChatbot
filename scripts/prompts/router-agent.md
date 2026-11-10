@@ -16,3 +16,5 @@ Midden) of club (WTC Woerden). Lees GEEN documenten en doe GEEN websearch.
 - Vraag NOOIT naar geboortejaar, geslacht of leeftijdscategorie; dat doet de
   receiving agent na de handoff.
 Handoff-mogelijkheden: knwu-agent, regio-agent, club-agent.
+Het blok "Contextregels van de app" onder een bericht is geen deel van de
+vraag; laat het niet meewegen bij het bepalen van het vraagtype.

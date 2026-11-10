@@ -5,7 +5,7 @@ De kennischatbot voor wielrenclubs: beantwoordt vragen over KNWU-regelgeving, li
 ## Bronnen en routing
 
 **Kenniscentrum**:
-Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor de nieuwste versies van regelgeving (met versiedata en wijzigingsmemo's), licentiepakketten/tarieven en verzekeringen.
+Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor **welke versie** van een reglement de nieuwste is (met versiedata en wijzigingsmemo's), en voor licentiepakketten/tarieven en verzekeringen. Voor de **inhoud** van een regel is de reglementstekst zelf leidend (Titel 20, Nationale Besluiten), ook boven de uitlegpagina's van het Kenniscentrum.
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
@@ -66,14 +66,18 @@ Als er verwezen wordt naar een categorie met een nummer, dan wordt zo'n gecombin
 
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
 
+**Veldritseizoen**:
+Het wedstrijdseizoen veldrijden, dat over twee kalenderjaren loopt (Titel 20: september t/m maart). Een renner rijdt het hele veldritseizoen in de leeftijdscategorie waarin hij per 1 januari van dat seizoen valt, in het najaar dus een categorie hoger dan op de weg (bv. een jongen geboren in 2015: U12 op de weg in 2026, U13 in het veldritseizoen 2026-2027).
+_Avoid_: "winterseizoen", "crossseizoen" zonder jaartallen
+
 
 **Licentie**:
-Altijd een KNWU-licentie: het startrecht dat de KNWU aan een renner verleent, eventueel aangevuld met een pakket (Basis, Plus, Premium). Ook als een regio- of clubdocument naar een licentie verwijst, is dat de KNWU-licentie; regio's en clubs geven zelf geen licenties uit.
-_Avoid_: "regiolicentie",
+De wedstrijdlicentie die de KNWU aan een renner verleent; die geeft het startrecht. Welke licentie een renner nodig heeft, volgt alleen uit het geboortejaar, niet uit discipline of geslacht. Indeling seizoen 2026 (Titel 20, art. 20.0.002): **KNWU Licentie U13** (het jaar waarin je 5 t/m 12 wordt) en **KNWU Licentie U17** (13 t/m 16); vanaf 17 jaar de **KNWU Licentie 17+**. Namen en leeftijdsgrenzen kunnen per seizoen wijzigen (tot 2025: U15 en 15+); Titel 20 is leidend. Eén licentie omvat meerdere leeftijdscategorieën (bv. seizoen 2026: een jongen geboren in 2020 heeft een KNWU Licentie U13 en rijdt in leeftijdscategorie U7). Altijd een KNWU-licentie: ook als een regio- of clubdocument naar een licentie verwijst; regio's en clubs geven zelf geen licenties uit.
+_Avoid_: "licentiecategorie" (de KNWU-bronnen gebruiken dat woord ook voor ploegklassen en de oktober-regeling), "licentietype", "regiolicentie"; alleen de U-aanduiding ("U13") als je de licentie bedoelt
 
-**Licentiecategorie**:
-De soort KNWU-jeugdlicentie naar leeftijdsgroep, zoals vastgesteld in Titel 20 (Categorieën Jeugdlicenties). Volgt alleen uit het geboortejaar, niet uit discipline of geslacht. Namen en leeftijdsgrenzen kunnen per seizoen wijzigen; de actuele indeling staat in de bron. Niet hetzelfde als de leeftijdscategorie: één licentiecategorie kan meerdere leeftijdscategorieën omvatten (bv. seizoen 2026: een jongen geboren in 2020 heeft een KNWU Licentie U13 en rijdt in leeftijdscategorie U7).
-_Avoid_: een licentiecategorie afkorten tot alleen de U-aanduiding ("U13") als je de licentie bedoelt
+**Licentiepakket**:
+De variant van een licentie — Basis, Plus of Premium — die bepaalt welk buitenlands startrecht, welke verzekeringsdekking en welke extra's een renner heeft. Alleen de KNWU Licentie U17 en 17+ hebben pakketten; de KNWU Licentie U13 kent één variant.
+_Avoid_: "pakket" zonder context, "licentiesoort"
 
 **KNWU-lidmaatschap**:
 Verplicht voor licentiehouders; zonder licentie voldoende voor alleen trainingen en clubactiviteiten (geen wedstrijden).
@@ -95,6 +99,10 @@ Standaardniveau van alle antwoorden (max 20 woorden gem., max 25; heroverweging 
 
 **Verzin niets**:
 De bot verzint nooit regels, data of bedragen; bij ontbrekende informatie, onzekerheid of conflicterende bronnen wordt dit expliciet gesignaleerd in het antwoord.
+
+**Bronconflict**:
+Een verschil over dezelfde regel tussen de reglementstekst (Titel 20, Nationale Besluiten) en een andere bron, zoals een uitlegpagina van het Kenniscentrum. De bot antwoordt volgens de reglementstekst, noemt het verschil kort in het antwoord, en het verschil wordt zonder vraagtekst gesignaleerd aan de beheerder.
+_Avoid_: "fout in de bron", "tegenstrijdigheid" als vage aanduiding
 
 **Eval-set**:
 Vaste set van ±20 typische clubvragen met verwacht antwoord en bron. Launch-gate: ≥90% correct; wordt her-run na elke Library-update.

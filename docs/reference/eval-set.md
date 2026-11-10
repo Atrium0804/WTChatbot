@@ -19,8 +19,10 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
 | `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
 | `via` | enum | nee | Alleen `router`: de vraag gaat naar de router-agent (`MISTRAL_AGENT_ID`) in plaats van de categorie-agent, dus end-to-end met handoff |
+| `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
+| `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
-Huidige verdeling: 24 vragen — 14 knwu, 5 regio, 5 club; 16 standaard, 4 strikethrough, 2 websearch, 2 verheldering (waarvan 1 via de router).
+Huidige verdeling: 28 vragen — 18 knwu, 5 regio, 5 club; 19 standaard, 4 strikethrough, 3 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `beurten` en `verwachte_agent` (issue #44).
 
 Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
@@ -35,10 +37,15 @@ Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
 4. **Verboden woorden**: geen van de woorden uit `niet_in_antwoord` mag in het antwoord voorkomen; `last_run.json` toont ze onder `verboden_gevonden`.
 5. **Verheldering** (`type: verheldering`): de bron-check vervalt; de kernfeiten (de wedervraag) en eventueel `niet_in_antwoord` tellen.
+6. **Agent** (alleen met `verwachte_agent`): de agent die het antwoord op `vraag` gaf moet de verwachte agent zijn. De naam komt uit `agent_id` van de `message.output` in de response, vertaald via de `MISTRAL_AGENT_ID*`-variabelen.
 
 Een vraag is "correct mét correcte bron" als alle checks slagen.
 
-Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord.
+Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord en een `trace`: per beurt de vraag en de agent(s) die antwoordden.
+
+## Contextregels
+
+Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie. De runner gebruikt de datum van de dag waarop hij draait.
 
 ## Gate
 
@@ -50,7 +57,7 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 
 ## Runner
 
-`eval/run_eval.py` draait **offline** tegen dezelfde agents via de Mistral Conversations API (per vraag een nieuwe conversation, zelfde prompt als productie) — niet tegen de draaiende bot. Een live smoke-test tegen de gedeployde bot is post-MVP.
+`eval/run_eval.py` draait **offline** tegen dezelfde agents via de Mistral Conversations API (per vraag een nieuwe conversation, zelfde prompt en contextregels als productie) — niet tegen de draaiende bot. Een live smoke-test tegen de gedeployde bot is post-MVP.
 
 ```bash
 python eval/run_eval.py
@@ -60,6 +67,7 @@ python eval/run_eval.py
 | --- | --- |
 | `MISTRAL_API_KEY` | Verplicht |
 | `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
+| `MISTRAL_AGENT_ID` | Router-agent, voor vragen met `via: router` |
 
 Waarden uit `.env` overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.
 

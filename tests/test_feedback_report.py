@@ -132,6 +132,20 @@ class RenderReportTests(unittest.TestCase):
         self.assertIn("vraag", report)
         self.assertNotIn("Feedbackgeschiedenis", report)
 
+    def test_trace_hint_per_conversation(self) -> None:
+        row = {
+            "timestamp": "2026-11-15T10:00:00+00:00",
+            "rating": "negative",
+            "question": "vraag",
+            "answer": "antwoord",
+            "text": "",
+        }
+        report = feedback_report.render_report(
+            [dict(row, conversation_id="abc"), dict(row, conversation_id="")], "test-db", "nu"
+        )
+        self.assertIn("`python scripts/trace_conversation.py abc`", report)
+        self.assertIn("- Conversation: `-`\n", report)
+
 
 class ParseHistoryTests(unittest.TestCase):
     def test_null_and_missing(self) -> None:

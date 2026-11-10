@@ -62,15 +62,15 @@ class AskWithRetryTests(unittest.TestCase):
 
         calls = {"n": 0}
 
-        def fake_call(vraag, agent_id, api_key, timeout=None):
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
             calls["n"] += 1
             if calls["n"] == 1:
                 raise requests.ReadTimeout("read timed out")
-            return "antwoord"
+            return {"conversation_id": "c1", "outputs": []}
 
-        with patch.object(run_eval, "call_agent", side_effect=fake_call):
-            antwoord, error = run_eval.ask_with_retry("vraag", "agent", "key")
-        self.assertEqual(antwoord, "antwoord")
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            response, error = run_eval.ask_with_retry("vraag", "key", agent_id="agent")
+        self.assertEqual(response["conversation_id"], "c1")
         self.assertEqual(error, "")
         self.assertEqual(calls["n"], 2)
 
@@ -79,10 +79,10 @@ class AskWithRetryTests(unittest.TestCase):
         from unittest.mock import patch
 
         with patch.object(
-            run_eval, "call_agent", side_effect=requests.ReadTimeout("read timed out")
+            run_eval, "send_message", side_effect=requests.ReadTimeout("read timed out")
         ):
-            antwoord, error = run_eval.ask_with_retry("vraag", "agent", "key", attempts=2)
-        self.assertEqual(antwoord, "")
+            response, error = run_eval.ask_with_retry("vraag", "key", attempts=2, agent_id="agent")
+        self.assertEqual(response, {})
         self.assertIn("ReadTimeout", error)
 
     def timeouts_per_poging(self, vraagtype: str) -> list:
@@ -91,12 +91,12 @@ class AskWithRetryTests(unittest.TestCase):
 
         timeouts = []
 
-        def fake_call(vraag, agent_id, api_key, timeout):
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
             timeouts.append(timeout)
             raise requests.ReadTimeout("read timed out")
 
-        with patch.object(run_eval, "call_agent", side_effect=fake_call):
-            run_eval.ask_with_retry("vraag", "agent", "key", vraagtype=vraagtype)
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            run_eval.ask_with_retry("vraag", "key", vraagtype=vraagtype, agent_id="agent")
         return timeouts
 
     def test_websearch_krijgt_ruimere_timeout_en_extra_poging(self) -> None:
@@ -104,6 +104,126 @@ class AskWithRetryTests(unittest.TestCase):
 
     def test_standaard_houdt_gewone_timeout(self) -> None:
         self.assertEqual(self.timeouts_per_poging("standaard"), [180, 180])
+
+
+class RunConversationTests(unittest.TestCase):
+    """Multi-turn (`beurten`) met dezelfde contextregels als de proxy (#44)."""
+
+    AGENTS = {"ag_router": "router-agent", "ag_regio": "regio-agent", "ag_knwu": "knwu-agent"}
+
+    def run_with(self, entry: dict, responses: list[dict]) -> tuple[dict, list[dict]]:
+        from datetime import date
+        from unittest.mock import patch
+
+        sent = []
+
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
+            sent.append({"message": message, "agent_id": agent_id, "conversation_id": conversation_id})
+            return responses[len(sent) - 1]
+
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            run = run_eval.run_conversation(entry, "ag_router", "key", date(2026, 11, 9), rules, self.AGENTS)
+        return run, sent
+
+    def test_beurten_in_een_conversation_met_context(self) -> None:
+        entry = {
+            "id": "x",
+            "type": "standaard",
+            "beurten": ["Wanneer is de volgende MNC-veldrit?"],
+            "vraag": "Welk verzet mag mijn zoon rijden? Hij is geboren in 2015.",
+        }
+        responses = [
+            {"conversation_id": "c1", "outputs": [
+                {"type": "agent.handoff", "previous_agent_name": "router-agent", "next_agent_name": "regio-agent"},
+                {"type": "message.output", "agent_id": "ag_regio", "content": "MNC"},
+            ]},
+            {"conversation_id": "c1", "outputs": [
+                {"type": "message.output", "agent_id": "ag_regio", "content": "6,1 meter"},
+            ]},
+        ]
+        run, sent = self.run_with(entry, responses)
+        self.assertEqual(sent[0]["agent_id"], "ag_router")
+        self.assertIsNone(sent[0]["conversation_id"])
+        self.assertIn("maandag 9 november 2026", sent[0]["message"])
+        self.assertEqual(sent[1]["conversation_id"], "c1")
+        self.assertIsNone(sent[1]["agent_id"])
+        self.assertIn("wegwielrennen 2026: U12", sent[1]["message"])
+        self.assertEqual(run["antwoord"], "6,1 meter")
+        self.assertEqual([t["agents"] for t in run["trace"]], [["regio-agent"], ["regio-agent"]])
+
+    def test_sticky_agent_faalt_op_verwachte_agent(self) -> None:
+        entry = {
+            "id": "x", "categorie": "knwu", "type": "standaard", "vraag": "Welk verzet?",
+            "verwacht_antwoord": "5,90", "bron": "doc.pdf", "verwachte_agent": "knwu-agent",
+        }
+        antwoord = "5,90 meter\n\nBron: doc.pdf"
+        sticky = run_eval.check_entry(entry, antwoord, [{"vraag": "Welk verzet?", "agents": ["regio-agent"]}])
+        goed = run_eval.check_entry(entry, antwoord, [{"vraag": "Welk verzet?", "agents": ["knwu-agent"]}])
+        self.assertFalse(sticky["ok"])
+        self.assertFalse(sticky["agent_ok"])
+        self.assertTrue(goed["ok"])
+
+    def test_error_stopt_de_conversation(self) -> None:
+        import requests
+        from datetime import date
+        from unittest.mock import patch
+
+        entry = {"id": "x", "type": "standaard", "beurten": ["a"], "vraag": "b"}
+        with patch.object(run_eval, "send_message", side_effect=requests.ConnectionError("weg")):
+            run = run_eval.run_conversation(
+                entry, "ag_router", "key", date(2026, 11, 9), run_eval.knwu_categories.load_rules(), {}
+            )
+        self.assertEqual(run["antwoord"], "")
+        self.assertIn("ConnectionError", run["error"])
+        self.assertEqual(run["trace"], [])
+
+    def test_fout_in_vervolgbeurt_herstart_de_hele_conversation(self) -> None:
+        import requests
+
+        entry = {"id": "x", "type": "standaard", "beurten": ["a"], "vraag": "b"}
+        ok = {"conversation_id": "c1", "outputs": [{"type": "message.output", "agent_id": "ag_knwu", "content": "ok"}]}
+        ok2 = dict(ok, conversation_id="c2")
+        responses = [ok, requests.ReadTimeout("traag"), ok2, ok2]
+
+        def respond_or_raise(index: int) -> dict:
+            if isinstance(responses[index], Exception):
+                raise responses[index]
+            return responses[index]
+
+        from datetime import date
+        from unittest.mock import patch
+
+        sent = []
+
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
+            sent.append({"agent_id": agent_id, "conversation_id": conversation_id})
+            return respond_or_raise(len(sent) - 1)
+
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            run = run_eval.run_conversation(
+                entry, "ag_router", "key", date(2026, 11, 9), run_eval.knwu_categories.load_rules(), self.AGENTS
+            )
+        # beurt 2 wordt niet opnieuw in c1 gepost; de conversation start opnieuw
+        self.assertEqual(
+            sent,
+            [
+                {"agent_id": "ag_router", "conversation_id": None},
+                {"agent_id": None, "conversation_id": "c1"},
+                {"agent_id": "ag_router", "conversation_id": None},
+                {"agent_id": None, "conversation_id": "c2"},
+            ],
+        )
+        self.assertEqual(run["error"], "")
+        self.assertEqual(run["antwoord"], "ok")
+
+    def test_agent_names_from_env(self) -> None:
+        import os
+        from unittest.mock import patch
+
+        env = {"MISTRAL_AGENT_ID": "ag_r", "MISTRAL_AGENT_ID_KNWU": "ag_k", "MISTRAL_AGENT_ID_REGIO": ""}
+        with patch.dict(os.environ, env, clear=True):
+            self.assertEqual(run_eval.agent_names_from_env(), {"ag_r": "router-agent", "ag_k": "knwu-agent"})
 
 
 class NormalizeTests(unittest.TestCase):
@@ -422,6 +542,7 @@ class AgentKeuzeTests(unittest.TestCase):
 
 class EvalsetSchemaTests(unittest.TestCase):
     BEKENDE_TYPES = {"standaard", "websearch", "strikethrough", "verheldering"}
+    BEKENDE_AGENTS = {"router-agent", "knwu-agent", "regio-agent", "club-agent"}
 
     def test_alle_entries_heillopmen_bekend_type_en_verplichte_velden(self) -> None:
         evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
@@ -439,6 +560,10 @@ class EvalsetSchemaTests(unittest.TestCase):
                 if e["type"] == "strikethrough":
                     self.assertTrue(e.get("doorhaal_waarde"))
                 self.assertIn(e.get("via", "router"), {"router"})
+                beurten = e.get("beurten", [])
+                self.assertIsInstance(beurten, list)
+                self.assertTrue(all(isinstance(b, str) and b for b in beurten))
+                self.assertIn(e.get("verwachte_agent", "knwu-agent"), self.BEKENDE_AGENTS)
 
 
 if __name__ == "__main__":

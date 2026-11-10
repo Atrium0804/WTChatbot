@@ -15,8 +15,16 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
 - `via: router` (optioneel): de vraag gaat naar de router-agent
   (MISTRAL_AGENT_ID) in plaats van de categorie-agent, dus end-to-end met
   handoff; de vraag telt mee in de score van zijn categorie
+- `beurten` (optioneel): eerdere gebruikersberichten in dezelfde
+  conversatie, vóór `vraag`; alleen het antwoord op `vraag` wordt gecheckt
+- `verwachte_agent` (optioneel): naam van de agent die het antwoord op
+  `vraag` moet geven (bv. knwu-agent); vangt een sticky handoff
 - verheldering: geen bron-check; de kernfeiten (bv. geboortejaar, geslacht)
   moeten in de wedervraag van de bot staan
+
+Elk bericht krijgt dezelfde contextregels als in productie (datum bij de
+eerste beurt, categorie bij een geboortejaar; app/context.py). Per beurt
+legt last_run.json vast welke agent antwoordde (`trace`).
 
 Gate: globaal >= 90% en per categorie >= 90% correct met correcte bron;
 type `strikethrough` en `websearch` zijn een harde 100%-gate. Resultaat
@@ -37,18 +45,24 @@ import json
 import os
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 import requests
 import yaml
 from dotenv import load_dotenv
 
+EVAL_DIR = Path(__file__).parent
+ENV_PATH = EVAL_DIR.parent / ".env"
+sys.path.insert(0, str(EVAL_DIR.parent / "app"))
+
+import context  # noqa: E402  (app-module: dezelfde contextregels als de proxy)
+import knwu_categories  # noqa: E402
+
 API_URL = "https://api.mistral.ai/v1/conversations"
 GATE_PCT = 90.0
 HARD_GATE_TYPES = {"strikethrough", "websearch"}
-
-EVAL_DIR = Path(__file__).parent
-ENV_PATH = EVAL_DIR.parent / ".env"
+AGENT_ENV_PREFIX = "MISTRAL_AGENT_ID"
 
 
 def normalize(text: str) -> str:
@@ -108,19 +122,50 @@ def extract_text(outputs: list[dict]) -> str:
     return "\n".join(texts)
 
 
-def call_agent(vraag: str, agent_id: str, api_key: str, timeout: int = 180) -> str:
-    """Stuur de vraag naar een nieuwe conversation en geef de antwoordtekst."""
+def agent_names_from_env() -> dict[str, str]:
+    """Agent-id -> naam uit de env-variabelen van create_agents.py:
+    MISTRAL_AGENT_ID = router-agent, MISTRAL_AGENT_ID_<NAAM> = <naam>-agent."""
+    names = {}
+    for key, agent_id in os.environ.items():
+        if not key.startswith(AGENT_ENV_PREFIX) or not agent_id:
+            continue
+        suffix = key[len(AGENT_ENV_PREFIX):].lstrip("_")
+        names[agent_id] = f"{suffix.lower().replace('_', '-') or 'router'}-agent"
+    return names
+
+
+def answering_agents(outputs: list[dict], agent_names: dict[str, str]) -> list[str]:
+    """Namen van de agents met een message.output in deze beurt (in volgorde)."""
+    agents = []
+    for out in outputs:
+        if out.get("type") == "message.output":
+            agent_id = out.get("agent_id") or "?"
+            agents.append(agent_names.get(agent_id, agent_id))
+    return agents
+
+
+def send_message(
+    message: str,
+    api_key: str,
+    timeout: int,
+    agent_id: str | None = None,
+    conversation_id: str | None = None,
+) -> dict:
+    """Start een conversation (agent_id) of zet er één voort (conversation_id);
+    geef de ruwe response (conversation_id + outputs)."""
+    url = f"{API_URL}/{conversation_id}" if conversation_id else API_URL
+    body = {"inputs": message} if conversation_id else {"agent_id": agent_id, "inputs": message}
     resp = requests.post(
-        API_URL,
+        url,
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         },
-        json={"agent_id": agent_id, "inputs": vraag},
+        json=body,
         timeout=timeout,
     )
     resp.raise_for_status()
-    return extract_text(resp.json().get("outputs", []))
+    return resp.json()
 
 
 TIMEOUT_EN_POGINGEN = {"websearch": (300, 3)}
@@ -128,9 +173,14 @@ STANDAARD_TIMEOUT_EN_POGINGEN = (180, 2)
 
 
 def ask_with_retry(
-    vraag: str, agent_id: str, api_key: str, vraagtype: str = "standaard", attempts: int | None = None
-) -> tuple[str, str]:
-    """Stel de vraag met retry bij netwerkfouten; geef (antwoord, error).
+    message: str,
+    api_key: str,
+    vraagtype: str = "standaard",
+    attempts: int | None = None,
+    agent_id: str | None = None,
+    conversation_id: str | None = None,
+) -> tuple[dict, str]:
+    """Stuur het bericht met retry bij netwerkfouten; geef (response, error).
 
     Websearch-vragen draaien langer (meerdere tool-calls), dus ruimere timeout
     en een extra poging.
@@ -139,10 +189,65 @@ def ask_with_retry(
     error = ""
     for _ in range(attempts or default_attempts):
         try:
-            return call_agent(vraag, agent_id, api_key, timeout=timeout), ""
+            response = send_message(
+                message, api_key, timeout, agent_id=agent_id, conversation_id=conversation_id
+            )
+            return response, ""
         except requests.RequestException as exc:
             error = f"{type(exc).__name__}: {str(exc)[:200]}"
-    return "", error
+    return {}, error
+
+
+def play_conversation(
+    entry: dict,
+    agent_id: str,
+    api_key: str,
+    today: date,
+    rules: dict,
+    agent_names: dict[str, str],
+) -> dict:
+    """Speel `beurten` + `vraag` één keer af in een nieuwe conversation, met de
+    contextregels van de proxy; geef het laatste antwoord, de trace per beurt
+    en een error. Geen retry per beurt: na een timeout kan Mistral het bericht
+    al verwerkt hebben, dus opnieuw posten zou de conversatie vervuilen."""
+    conversation_id = None
+    trace: list[dict] = []
+    outputs: list[dict] = []
+    for message in entry.get("beurten", []) + [entry["vraag"]]:
+        lines = context.build_context_lines(message, today, rules, new_conversation=conversation_id is None)
+        response, error = ask_with_retry(
+            context.add_context(message, lines),
+            api_key,
+            vraagtype=entry["type"],
+            attempts=1,
+            agent_id=None if conversation_id else agent_id,
+            conversation_id=conversation_id,
+        )
+        if error:
+            return {"antwoord": "", "trace": trace, "error": error}
+        conversation_id = response.get("conversation_id") or conversation_id
+        outputs = response.get("outputs", [])
+        trace.append({"vraag": message, "agents": answering_agents(outputs, agent_names)})
+    return {"antwoord": extract_text(outputs), "trace": trace, "error": ""}
+
+
+def run_conversation(
+    entry: dict,
+    agent_id: str,
+    api_key: str,
+    today: date,
+    rules: dict,
+    agent_names: dict[str, str],
+) -> dict:
+    """Speel de conversation af; bij een netwerkfout start hij helemaal opnieuw
+    (zelfde aantal pogingen als ask_with_retry voor dit vraagtype)."""
+    _, attempts = TIMEOUT_EN_POGINGEN.get(entry["type"], STANDAARD_TIMEOUT_EN_POGINGEN)
+    run: dict = {}
+    for _ in range(attempts):
+        run = play_conversation(entry, agent_id, api_key, today, rules, agent_names)
+        if not run["error"]:
+            break
+    return run
 
 
 def extract_bron(antwoord: str) -> str:
@@ -210,7 +315,10 @@ def kernfeit_gevonden(feit: str, antwoord: str) -> bool:
     return True
 
 
-def check_entry(entry: dict, antwoord: str) -> dict:
+def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> dict:
+    """Beoordeel het antwoord op `vraag`; `trace` (per beurt de agents) is
+    nodig voor de `verwachte_agent`-check."""
+    trace = trace or []
     bron_line = extract_bron(antwoord)
     norm_antwoord = normalize(antwoord)
     feits = [f.strip() for f in entry["verwacht_antwoord"].split(";") if f.strip()]
@@ -222,7 +330,10 @@ def check_entry(entry: dict, antwoord: str) -> dict:
     # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
     # wedervraag); de bron-check vervalt.
     bron_ok = entry.get("type") == "verheldering" or bron_match(entry.get("bron", ""), bron_line)
-    ok = bron_ok and not missing and not doorhaal_gevonden and not verboden_gevonden
+    agents_laatste_beurt = trace[-1]["agents"] if trace else []
+    verwachte_agent = entry.get("verwachte_agent", "")
+    agent_ok = not verwachte_agent or verwachte_agent in agents_laatste_beurt
+    ok = bron_ok and agent_ok and not missing and not doorhaal_gevonden and not verboden_gevonden
     return {
         "id": entry["id"],
         "categorie": entry["categorie"],
@@ -233,7 +344,11 @@ def check_entry(entry: dict, antwoord: str) -> dict:
         "missende_kernfeiten": missing,
         "doorhaal_waarde_gevonden": doorhaal_gevonden,
         "verboden_gevonden": verboden_gevonden,
+        "agent_ok": agent_ok,
+        "verwachte_agent": verwachte_agent,
+        "agents_laatste_beurt": agents_laatste_beurt,
         # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
+        "beurten": entry.get("beurten", []),
         "vraag": entry["vraag"],
         "verwacht_antwoord": entry["verwacht_antwoord"],
         "verwachte_bron": entry.get("bron", ""),
@@ -241,6 +356,7 @@ def check_entry(entry: dict, antwoord: str) -> dict:
         "doorhaal_waarde": entry.get("doorhaal_waarde", ""),
         "niet_in_antwoord": entry.get("niet_in_antwoord", ""),
         "antwoord": antwoord,
+        "trace": trace,
     }
 
 
@@ -256,15 +372,16 @@ def main() -> int:
     if not api_key:
         raise RuntimeError("MISTRAL_API_KEY ontbreekt")
     entries = load_evalset(EVAL_DIR / "evalset.yaml")
+    today = context.today_in_netherlands()
+    rules = knwu_categories.load_rules()
+    agent_names = agent_names_from_env()
     results = []
     for entry in entries:
-        antwoord, error = ask_with_retry(
-            entry["vraag"], agent_id_for(entry), api_key, vraagtype=entry["type"]
-        )
-        result = check_entry(entry, antwoord)
-        if error:
+        run = run_conversation(entry, agent_id_for(entry), api_key, today, rules, agent_names)
+        result = check_entry(entry, run["antwoord"], run["trace"])
+        if run["error"]:
             result["ok"] = False
-            result["error"] = error
+            result["error"] = run["error"]
         results.append(result)
         print(f"[{'OK ' if result['ok'] else 'FAIL'}] {entry['id']}")
 

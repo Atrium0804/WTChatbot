@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Wheely">
+<meta name="apple-mobile-web-app-title" content="Wielie">
 <style>
   :root {
     --accent: #033ec2;
@@ -216,13 +216,13 @@
 </head>
 <body>
 <header>
-  <h1>WTC - Wheely The Chatbot</h1>
+  <h1>WTC - Wielie The Chatbot</h1>
   <div class="sub">Vragen over KNWU-zaken, regio Midden en WTC Woerden</div>
 </header>
 <details id="taalniveau" class="taalniveau" open>
   <summary>Antwoorden: <span id="taalniveau-stand">Kort</span></summary>
   <div class="taalniveau-inhoud">
-    <p class="taalniveau-uitleg">Wheely antwoordt standaard kort en begrijpelijk. Kies 'Uitgebreid' voor volledige antwoorden met bronvermelding.</p>
+    <p class="taalniveau-uitleg">Wielie antwoordt standaard kort en begrijpelijk. Kies 'Uitgebreid' voor volledige antwoorden met bronvermelding.</p>
     <div class="seg" role="group" aria-label="Kies het soort antwoorden: begrijpelijk of uitgebreid">
       <button type="button" id="taalniveau-b1" data-level="B1" aria-pressed="true">Kort</button>
       <button type="button" id="taalniveau-b2" data-level="B2" aria-pressed="false">Uitgebreid</button>
@@ -497,7 +497,7 @@
     input.value = "";
     send.disabled = true;
     addMessage("user", question);
-    var typing = addMessage("bot typing", "Wheely denkt na…");
+    var typing = addMessage("bot typing", "Wielie denkt na…");
     document.dispatchEvent(new Event("chat:messages-rendered"));
     fetch("/chat", {
       method: "POST",

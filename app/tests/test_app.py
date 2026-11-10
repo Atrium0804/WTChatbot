@@ -293,7 +293,7 @@ def test_manifest_served_as_manifest_json(tmp_path):
     assert resp.headers["content-type"].startswith("application/manifest+json")
     data = resp.json()
     assert data["name"] == "WTC Chatbot"
-    assert data["short_name"] == "Wheely"
+    assert data["short_name"] == "Wielie"
     assert data["display"] == "standalone"
     assert data["start_url"] == "/" and data["scope"] == "/"
     sizes = {i["sizes"] for i in data["icons"]}
@@ -419,7 +419,7 @@ def test_mistral_timeout_default_60():
 
 def test_index_shows_thinking_message(tmp_path):
     client = make_client(tmp_path)
-    assert "Wheely denkt na…" in client.get("/").text
+    assert "Wielie denkt na…" in client.get("/").text
 
 
 def fake_mistral(monkeypatch) -> list[dict]:

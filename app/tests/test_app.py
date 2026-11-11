@@ -401,28 +401,6 @@ def test_viewport_script_is_served_and_included_in_offline_shell(tmp_path):
     assert '"/viewport.js"' in client.get("/sw.js").text
 
 
-def test_lab_has_separate_pwa_identity(tmp_path):
-    # Herbouwexperiment #54: aparte installatie naast het huidige scherm.
-    client = make_client(tmp_path)
-    html = client.get("/lab/index.html")
-    assert html.status_code == 200
-    assert html.headers["cache-control"] == "no-cache"
-    assert '<link rel="manifest" href="/lab/manifest.webmanifest">' in html.text
-    assert '<meta name="apple-mobile-web-app-title" content="Wielie Lab">' in html.text
-    lab = client.get("/lab/manifest.webmanifest").json()
-    root = client.get("/manifest.webmanifest").json()
-    assert lab["id"] == "/lab/"
-    assert lab["scope"] == "/lab/"
-    assert lab["start_url"] == "/lab/index.html"
-    assert lab["name"] != root["name"] and lab["short_name"] != root["short_name"]
-
-
-def test_root_service_worker_leaves_lab_alone(tmp_path):
-    client = make_client(tmp_path)
-    body = client.get("/sw.js").text
-    assert 'url.pathname.indexOf("/lab/") === 0' in body
-
-
 def test_csp_allows_service_worker_and_manifest(tmp_path):
     client = make_client(tmp_path)
     csp = client.get("/").headers["content-security-policy"]

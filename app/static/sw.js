@@ -4,7 +4,7 @@
 // Daar zit vraag/antwoord in; alleen de app-shell mag lokaal worden bewaard.
 "use strict";
 
-var CACHE = "wtchat-shell-v18"; // bij elke wijziging van de shell: versie ophogen
+var CACHE = "wtchat-shell-v19"; // bij elke wijziging van de shell: versie ophogen
 var SHELL = [
   "/",
   "/index.html",
@@ -54,8 +54,6 @@ self.addEventListener("fetch", function (event) {
   if (url.origin !== location.origin) { return; }
   // Privacy: API-endpoints altijd via netwerk, nooit uit de cache.
   if (isNeverCache(url.pathname)) { return; }
-  // Herbouwexperiment #54: /lab/ is een aparte installatie en hoort niet in deze shell.
-  if (url.pathname.indexOf("/lab/") === 0) { return; }
 
   // Navigaties: network-first, fallback op de gecachte shell (offline start).
   if (event.request.mode === "navigate") {

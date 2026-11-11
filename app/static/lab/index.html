@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wielie Lab</title>
+<!-- Herbouwexperiment #54, stap 1: kale schermopbouw. Geen achtergrond,
+     geen safe areas, geen viewport.js, geen service worker. -->
+<link rel="manifest" href="/lab/manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#033ec2">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wielie Lab">
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header { padding: 0.6rem 1rem; background: #033ec2; color: #fff; }
+  header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
+  main { flex: 1; overflow-y: auto; padding: 0.75rem; }
+  form { display: flex; gap: 0.5rem; padding: 0.5rem; border-top: 1px solid #d3dae8; }
+  textarea { flex: 1; font-size: 16px; font-family: inherit; resize: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>WTC - Wielie The Chatbot</h1>
+  <div>Lab stap 1</div>
+</header>
+<main id="messages">
+  <p>Hoi! Dit is het herbouwexperiment. Is de kop hierboven scherp?</p>
+</main>
+<form id="composer" onsubmit="return false">
+  <textarea id="question" rows="1" placeholder="Stel je vraag…" aria-label="Je vraag"></textarea>
+  <button id="send" type="submit">Verstuur</button>
+</form>
+</body>
+</html>

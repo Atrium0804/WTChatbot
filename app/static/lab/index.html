@@ -2,50 +2,45 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Wielie Lab</title>
-<!-- Diagnose #54: de kale stap-1-pagina was al wazig in de geinstalleerde PWA.
-     Deze pagina toont dezelfde kop in varianten plus de schaalmetingen. -->
+<!-- Diagnose #54: in de geinstalleerde PWA vervaagt iOS de bovenste ~36 css-px onder
+     de statusbalk. Proef: pagina onder de statusbalk tekenen met een blauwe kop. -->
 <link rel="manifest" href="/lab/manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
 <meta name="theme-color" content="#033ec2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wielie Lab">
 <style>
   body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .s { padding: 0.6rem 1rem; margin: 0; font-size: 1.05rem; font-weight: 600; }
+  header {
+    background: #033ec2;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+  }
+  header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
   .label { font: 12px monospace; color: #555; padding: 0.4rem 1rem 0; }
-  .A { background: #033ec2; color: #fff; }
-  .B { background: #033ec2; color: #fff; font-weight: 400; }
-  .C { background: #fff; color: #033ec2; }
-  .D { background: #fff; color: #000; }
-  .E { background: #033ec2; color: #fff; font-size: 1.6rem; }
-  .F { background: #000; color: #fff; }
+  .s { padding: 0.6rem 1rem; margin: 0; font-size: 1.05rem; font-weight: 600; background: #033ec2; color: #fff; }
   #m { font: 12px monospace; padding: 0.6rem 1rem; white-space: pre-wrap; }
 </style>
 </head>
 <body>
-<div class="label">A — zoals nu (wit op blauw, vet)</div>
-<h1 class="s A">WTC - Wielie The Chatbot</h1>
-<div class="label">B — wit op blauw, niet vet</div>
-<h1 class="s B">WTC - Wielie The Chatbot</h1>
-<div class="label">C — blauw op wit, vet</div>
-<h1 class="s C">WTC - Wielie The Chatbot</h1>
-<div class="label">D — zwart op wit, vet</div>
-<h1 class="s D">WTC - Wielie The Chatbot</h1>
-<div class="label">E — wit op blauw, groot</div>
-<h1 class="s E">WTC - Wielie The Chatbot</h1>
-<div class="label">F — wit op zwart, vet</div>
-<h1 class="s F">WTC - Wielie The Chatbot</h1>
+<header>
+  <h1>WTC - Wielie The Chatbot</h1>
+  <div>Vragen over KNWU-zaken, regio Midden en WTC Woerden</div>
+</header>
+<div class="label">Ter vergelijking, ruim onder de zone:</div>
+<h1 class="s">WTC - Wielie The Chatbot</h1>
 <pre id="m"></pre>
 <script>
   (function () {
-    // Liniaal voor de wazige zone bovenaan: label elke 4 css-px vanaf de bovenrand.
+    // Liniaal vanaf de echte bovenrand van het scherm: streep elke 4 css-px, getal elke 20.
     var ruler = document.createElement("div");
     ruler.style.cssText = "position:absolute;top:0;left:0;right:0;pointer-events:none;";
-    for (var y = 0; y <= 120; y += 4) {
+    for (var y = 0; y <= 160; y += 4) {
       var tick = document.createElement("div");
       tick.textContent = y % 20 === 0 ? y : "";
       tick.style.cssText = "position:absolute;right:4px;top:" + y + "px;font:10px monospace;" +
@@ -55,16 +50,21 @@
     document.body.appendChild(ruler);
   })();
   (function () {
+    var probe = document.createElement("div");
+    probe.style.cssText = "position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px);";
+    document.body.appendChild(probe);
+    var safeTop = getComputedStyle(probe).paddingTop;
+    probe.remove();
+    var h1 = document.querySelector("header h1").getBoundingClientRect();
     var v = window.visualViewport;
     document.getElementById("m").textContent = [
-      "versie: lab-diag-2",
+      "versie: lab-diag-3",
       "standalone: " + (navigator.standalone === true),
-      "devicePixelRatio: " + window.devicePixelRatio,
+      "safe-area-inset-top: " + safeTop,
+      "kop-tekst: " + Math.round(h1.top) + " tot " + Math.round(h1.bottom) + " px",
       "screen: " + screen.width + " x " + screen.height,
       "inner: " + window.innerWidth + " x " + window.innerHeight,
-      "clientWidth: " + document.documentElement.clientWidth,
-      "visualViewport.scale: " + (v ? v.scale : "n.v.t."),
-      "visualViewport: " + (v ? v.width + " x " + v.height : "n.v.t.")
+      "visualViewport: " + (v ? v.width + " x " + v.height + " @ " + v.scale : "n.v.t.")
     ].join("\n");
   })();
 </script>

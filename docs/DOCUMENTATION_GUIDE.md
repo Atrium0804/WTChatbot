@@ -24,7 +24,7 @@ Elke pagina hoort bij precies één categorie en staat in de bijbehorende map. M
 ## Schrijfregels
 
 - **Taal:** Nederlands. Code, identifiers en commando's blijven zoals ze in de code staan.
-- **Opmaak:** één H1, koppen in sentence case, bestandsnaam in kebab-case. Geen `Last updated`-regel; git houdt dat bij.
+- **Opmaak:** één H1, koppen in sentence case, bestandsnaam in kebab-case. In `how-to/` is de bestandsnaam bovendien in de actieve werkwoordsvorm (bijv. `raadpleeg-feedback-voor-triage.md`), zodat de naam de taak beschrift. Geen `Last updated`-regel; git houdt dat bij.
 - **Eerst zoeken:** breid een bestaande pagina uit in plaats van een bijna-dubbele te maken.
 - **Linken, niet herhalen:** verwijs naar ADR's, [GLOSSARY.md](../GLOSSARY.md) en code in plaats van hun inhoud over te nemen.
 - **Termen** volgens [GLOSSARY.md](../GLOSSARY.md).

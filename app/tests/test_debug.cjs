@@ -4,6 +4,49 @@ const { test } = require("node:test");
 
 const { setup, runChat } = require("./chat_dom.cjs");
 
+test("viewport diagnostics catch clipped composer bounds, including keyboard and horizontal clipping", () => {
+  for (const scenario of [
+    { name: "visible", height: 844, footerBottom: 844, sendRight: 382, verdict: "PASS" },
+    { name: "clipped bottom", height: 797, footerBottom: 844, sendRight: 382, verdict: "FAIL" },
+    { name: "keyboard", height: 500, footerBottom: 844, sendRight: 382, verdict: "FAIL" },
+    { name: "clipped right", height: 844, footerBottom: 844, sendRight: 410, verdict: "FAIL" },
+  ]) {
+    const viewport = new EventTarget();
+    Object.assign(viewport, {
+      offsetTop: 0, offsetLeft: 0, width: 390, height: scenario.height, scale: 1,
+    });
+    const rect = (top, bottom, right = 390) => ({ top, bottom, left: 0, right });
+    const { document, window, elements } = setup("?debug=1", undefined, undefined, undefined, {
+      window: {
+        visualViewport: viewport,
+        screen: { width: 390, height: 844 },
+        innerWidth: 390, innerHeight: 797,
+        matchMedia: () => ({ matches: true }),
+        getComputedStyle: () => ({
+          height: "844px", paddingTop: "47px", paddingRight: "0px",
+          paddingBottom: "34px", paddingLeft: "0px",
+          getPropertyValue: () => "844px",
+        }),
+      },
+      bounds: {
+        body: rect(0, 844), header: rect(0, 110),
+        footer: rect(750, scenario.footerBottom),
+        question: rect(760, 800, 280), send: rect(760, 800, scenario.sendRight),
+      },
+    });
+    elements.question.value = "PRIVATE QUESTION";
+    for (const [target, event] of [[window, "pageshow"], [viewport, "resize"], [viewport, "scroll"]]) {
+      target.dispatchEvent(new Event(event));
+    }
+    const output = document.body.children[0].textContent;
+    assert.match(output, new RegExp("\\[DEBUG-54\\] load " + scenario.verdict), scenario.name);
+    assert.match(output, /visualViewport-resize/);
+    assert.match(output, /pageshow/);
+    assert.ok(!output.includes("PRIVATE QUESTION"));
+    assert.equal(document.body.children.length, 1, "safe-area probe must be removed");
+  }
+});
+
 
 test("diagnostics are opt-in with an exact query parameter", () => {
   for (const search of ["", "?debug=0", "?debug=10", "?other=debug=1"]) {

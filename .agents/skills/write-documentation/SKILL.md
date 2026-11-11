@@ -43,7 +43,7 @@ Lees de code, configuratie of prompt die je beschrijft. Schrijf niets op dat je 
 
 ### Stap 5 - Schrijf de pagina
 
-- Volg de "Schrijfregels" uit de gids: Nederlands, één H1, koppen in sentence case, kebab-case bestandsnaam.
+- Volg de "Schrijfregels" uit de gids: Nederlands, één H1, koppen in sentence case, kebab-case bestandsnaam; in `docs/how-to/` bovendien in de actieve werkwoordsvorm (bijv. `raadpleeg-feedback-voor-triage.md`).
 - Gebruik de structuur die bij de categorie past:
   - **Tutorial:** doel, benodigdheden, genummerde stappen met zichtbaar resultaat, volgende stap.
   - **How-to:** doel in één zin, voorwaarden, genummerde stappen, controle dat het gelukt is.

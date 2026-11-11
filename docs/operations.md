@@ -37,7 +37,7 @@ Blast radius van een gelekte key: de key is direct factureerbaar. In fase 1 best
 
 ## Monitoring en VPS-toegang
 
-Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](how-to/chatdiagnostiek-tonen.md).
+Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](how-to/toon-chatdiagnostiek-op-je-telefoon.md).
 
 - De FastAPI-proxy exposet een `/healthz` endpoint (controleert onder andere de bereikbaarheid van de Mistral API).
 - Externe monitoring: UptimeRobot (of een alternatief — nog te beslissen) checkt elke 5 minuten `https://chat.famstieltjes.nl/healthz` (fase 1, NAS; fase 2 op de VPS: `https://wtchat.famstieltjes.nl/healthz`) en alert bij failure. Accountgegevens staan in de password manager van de club, nooit in git.
@@ -46,7 +46,7 @@ Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](h
 
 ## Websearch-allowlist
 
-De websearch-tool van de agent is beperkt tot de gezaghebbende domeinen `knwu.nl` (inclusief kenniscentrum.knwu.nl), `knwumidden.nl` en `wtcwoerden.nl` — nooit het open web. Afdwinging: system prompt + eval-set, en optioneel server-side via een org-level allowlist (`/v1/web-filters`) — maar die filter is **org-breed** en treft álle applicaties in de Organization, dus alleen toe te passen als de org dedicated is voor de WTChatbot (ADR-0004, amendment 2026-11-04; in een gedeelde org: prompt-only). Zie [ADR-0004](adr/0004-websearch-beperkt-tot-kenniscentrum.md) voor de beslissing en [how-to: websearch-allowlist configureren](how-to/websearch-allowlist.md) voor de exacte endpoints, payloads en matchregels.
+De websearch-tool van de agent is beperkt tot de gezaghebbende domeinen `knwu.nl` (inclusief kenniscentrum.knwu.nl), `knwumidden.nl` en `wtcwoerden.nl` — nooit het open web. Afdwinging: system prompt + eval-set, en optioneel server-side via een org-level allowlist (`/v1/web-filters`) — maar die filter is **org-breed** en treft álle applicaties in de Organization, dus alleen toe te passen als de org dedicated is voor de WTChatbot (ADR-0004, amendment 2026-11-04; in een gedeelde org: prompt-only). Zie [ADR-0004](adr/0004-websearch-beperkt-tot-kenniscentrum.md) voor de beslissing en [how-to: websearch-allowlist configureren](how-to/stel-websearch-allowlist-in.md) voor de exacte endpoints, payloads en matchregels.
 
 ## Seizoenwissel-procedure
 
@@ -54,8 +54,8 @@ Seizoenwissel is een kritieke operatie (zie [ADR-0005](adr/0005-library-bevat-al
 
 1. Vervang het document in de lokale bronmap: oude versie naar `knowledge-documents/archive/` (met datum in de bestandsnaam), nieuwe versie in `knowledge-documents/<library>/`. Bevat de nieuwe PDF doorhalingen of rode revisies (KNWU-reglementen), zet dan niet de PDF maar de opgeschoonde markdown in de library en het originele PDF in het archief (ADR-0005, amendment 2026-11-05):
    `.venv/Scripts/python scripts/clean_pdf.py knowledge-documents/knwu/<document>.pdf --out knowledge-documents/knwu`
-   Het script schrijft ook een [opschoonrapport](../GLOSSARY.md) naar `knowledge-documents/review/<document>.md` (andere map: `--review <map>`), met bovenaan de twijfelgevallen. Een mens vinkt die af vóór de sync; rapport en opgeschoonde versie gaan samen in één commit (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)).
-   Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/sync-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
+   Het script schrijft ook een [opschoonrapport](../GLOSSARY.md) naar `knowledge-documents/review/<document>.md` (andere map: `--review <map>`), met bovenaan de twijfelgevallen. Een mens vinkt die af vóór de sync; rapport en opgeschoonde versie gaan samen in één commit (zie [how-to: libraries synchroniseren](how-to/synchroniseer-libraries.md)).
+   Draai daarna de library-sync (zie [how-to: libraries synchroniseren](how-to/synchroniseer-libraries.md)) — die zet de nieuwe versie in de actieve library en de oude versie in de archief-library.
 2. Werk `knowledge-documents/versions.json` bij (documentnaam → versiedatum).
 3. Re-run de eval-set (`eval/run_eval.py`); launch-gate is ≥90% correct mét correcte bron.
 4. Noteer wat er gewijzigd is in [LEARNINGS.md](../LEARNINGS.md).

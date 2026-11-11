@@ -79,3 +79,4 @@ Output: per-vraag resultaat op stdout, volledig resultaat in `eval/last_run.json
 - De beheerder (zie [operations.md](../operations.md)) runt de eval-set handmatig na elke library-update (seizoenwissel) en bij elke prompt-wijziging.
 - Missers (falende vragen) noteert de beheerder als entry in [LEARNINGS.md](../../LEARNINGS.md) met oorzaak en fix.
 - Nieuwe vragen worden toegevoegd aan `eval/evalset.yaml`; de set is een door de agent gegenereerd voorstel dat de beheerder reviewt en corrigeert.
+- Van feedback naar een prompt-wijziging met de eval-gate als controle: zie [how-to: gebruik feedback om prompts te finetunen](../how-to/gebruik-feedback-om-prompts-te-finetunen.md) (issue #55).

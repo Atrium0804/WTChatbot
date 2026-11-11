@@ -25,7 +25,7 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 
 - De summary print per agent naam → id en de bijbehorende env-var.
 - In Mistral Studio: 5 agents; per content-agent precies één `document_library`-tool met de juiste library; `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club) en op de regio-agent (naar de knwu-agent, de fallback uit [system-prompt.md](../system-prompt.md) regel 3).
-- Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](websearch-allowlist.md).
+- Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](stel-websearch-allowlist-in.md).
 - Model is `mistral-large-4` met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0).
 
 ## Opmerkingen
@@ -33,3 +33,4 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 - Het script is idempotent: een bestaande agent met dezelfde naam wordt geüpdatet (nieuwe versie), een missende aangemaakt. Draai het opnieuw na elke prompt- of configwijziging.
 - Handoffs worden in een tweede fase naar agent-ids omgezet; een target die niet in de config staat en niet remote bestaat, is een error.
 - Na het aanmaken/updaten van agents: re-run de eval-set (`python eval/run_eval.py`) met de agent-id env-vars gezet.
+- Van feedback naar een prompt-wijziging: zie [gebruik feedback om prompts te finetunen](gebruik-feedback-om-prompts-te-finetunen.md) (issue #55).

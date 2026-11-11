@@ -17,7 +17,7 @@ oudste eerst.
 
 Privacy: ruwe feedback nooit in git of in tickets (deze repo is publiek);
 permanente vastlegging alleen geanonimiseerd in LEARNINGS.md.
-Zie docs/how-to/feedback-triage.md.
+Zie docs/how-to/raadpleeg-feedback-voor-triage.md.
 """
 
 import argparse

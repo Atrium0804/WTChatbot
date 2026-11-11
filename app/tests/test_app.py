@@ -1,6 +1,6 @@
 """Offline tests voor de WTChatbot-proxy — geen live API-calls (CI-veilig).
 
-Draai: pytest app/tests   (vanuit repo-root, met requirements-dev.txt geinstalleerd)
+Draai: .venv\Scripts\python -m pytest app/tests   (vanuit repo-root; de project-venv installeer je met app\requirements-dev.txt)
 """
 
 import json
@@ -293,7 +293,7 @@ def test_manifest_served_as_manifest_json(tmp_path):
     assert resp.headers["content-type"].startswith("application/manifest+json")
     data = resp.json()
     assert data["name"] == "WTC Chatbot"
-    assert data["short_name"] == "Wheely"
+    assert data["short_name"] == "Wielie"
     assert data["display"] == "standalone"
     assert data["start_url"] == "/" and data["scope"] == "/"
     sizes = {i["sizes"] for i in data["icons"]}
@@ -345,9 +345,67 @@ def test_index_has_pwa_head_tags(tmp_path):
     assert '<link rel="manifest" href="/manifest.webmanifest">' in html
     assert 'rel="apple-touch-icon"' in html
     assert 'name="apple-mobile-web-app-capable"' in html
-    assert 'name="theme-color"' in html
+    assert '<meta name="apple-mobile-web-app-status-bar-style" content="default">' in html
+    assert 'name="theme-color"' not in html
     assert "viewport-fit=cover" in html
     assert 'navigator.serviceWorker.register("/sw.js")' in html
+
+
+def test_index_has_safe_area_insets(tmp_path):
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    header_css = html[html.index("header {"):html.index("header h1")]
+    footer_css = html[html.index("footer {"):html.index("#composer")]
+    assert "padding-top: calc(0.6rem + env(safe-area-inset-top, 0px))" in header_css
+    assert "padding-right: calc(1rem + env(safe-area-inset-right, 0px))" in header_css
+    assert "padding-left: calc(1rem + env(safe-area-inset-left, 0px))" in header_css
+    assert "padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px))" in footer_css
+    assert "padding-right: calc(0.5rem + env(safe-area-inset-right, 0px))" in footer_css
+    assert "padding-left: calc(0.5rem + env(safe-area-inset-left, 0px))" in footer_css
+
+
+def test_text_inputs_are_at_least_16px_to_prevent_ios_zoom(tmp_path):
+    # iOS Safari zoomt in bij focus op invoervelden < 16px; in de PWA blijft die
+    # zoom hangen: header onder de statusbalk, Verstuur-knop buiten beeld (#54).
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    question_css = html[html.index("#question {"):html.index("#send {")]
+    feedback_css = html[html.index(".feedback textarea {"):html.index(".feedback .thanks")]
+    assert "font-size: 16px;" in question_css
+    assert "font-size: 16px;" in feedback_css
+
+
+def test_shell_backgrounds_use_club_blue(tmp_path):
+    client = make_client(tmp_path)
+    html = client.get("/").text
+    body_css = html[html.index("  body {"):html.index("  header {")]
+    assert "background: var(--accent) url(" in body_css
+    manifest = client.get("/manifest.webmanifest").json()
+    assert manifest["background_color"] == "#033ec2"
+
+
+def test_no_theme_color_because_ios_blurs_top_edge(tmp_path):
+    # iOS 27 vervaagt in de geinstalleerde PWA de bovenste ~36 css-px zodra er een
+    # theme-color is, via de meta-tag of het manifest. Op het toestel vastgesteld (#54).
+    client = make_client(tmp_path)
+    assert 'name="theme-color"' not in client.get("/").text
+    assert "theme_color" not in client.get("/manifest.webmanifest").json()
+
+
+def test_viewport_script_is_served_and_included_in_offline_shell(tmp_path):
+    client = make_client(tmp_path)
+    assert '<script src="/viewport.js"></script>' in client.get("/").text
+    response = client.get("/viewport.js")
+    assert response.status_code == 200
+    assert "javascript" in response.headers["content-type"]
+    assert '"/viewport.js"' in client.get("/sw.js").text
+
+
+def test_wielie_source_image_served_but_not_in_offline_shell(tmp_path):
+    # wielie.jpg is alleen de bron voor de iconen; geen scherm toont hem.
+    client = make_client(tmp_path)
+    assert client.get("/wielie.jpg").status_code == 200
+    assert '"/wielie.jpg"' not in client.get("/sw.js").text
 
 
 def test_csp_allows_service_worker_and_manifest(tmp_path):
@@ -379,7 +437,7 @@ def test_mistral_timeout_default_60():
 
 def test_index_shows_thinking_message(tmp_path):
     client = make_client(tmp_path)
-    assert "Wheely denkt na…" in client.get("/").text
+    assert "Wielie denkt na…" in client.get("/").text
 
 
 def fake_mistral(monkeypatch) -> list[dict]:

@@ -1,18 +1,18 @@
 # Zet de chatbot op je beginscherm
 
-De chatbot van WTC Woerden kun je installeren als webapp (PWA): Wheely krijgt dan een eigen icon op je beginscherm en opent als losse app. Gebruik hiervoor altijd de beveiligde link `https://chat.famstieltjes.nl` — de installatie werkt alleen via HTTPS (een service worker registreert niet op plain HTTP).
+De chatbot van WTC Woerden kun je installeren als webapp (PWA): Wielie krijgt dan een eigen icon op je beginscherm en opent als losse app. Gebruik hiervoor altijd de beveiligde link `https://chat.famstieltjes.nl` — de installatie werkt alleen via HTTPS (een service worker registreert niet op plain HTTP).
 
 ## Android (Chrome)
 
 1. Open `https://chat.famstieltjes.nl` in Chrome.
 2. Tik rechtsboven op het menu (drie verticale puntjes) en kies **App installeren** (bij sommige versies: "Toevoegen aan beginscherm" en dan **Installeren**).
-3. Bevestig met **Installeren**. Wheely verschijnt op je beginscherm.
+3. Bevestig met **Installeren**. Wielie verschijnt op je beginscherm.
 
 ## iPhone (Safari)
 
 1. Open `https://chat.famstieltjes.nl` in Safari.
 2. Tik op het deelblad-icoon (vierkant met pijl omhoog) en kies **Zet op beginscherm**.
-3. Tik rechtsboven op **Voeg toe**. Wheely verschijnt op je beginscherm met het club-icon.
+3. Tik rechtsboven op **Voeg toe**. Wielie verschijnt op je beginscherm met het club-icon.
 
 ## Let op
 

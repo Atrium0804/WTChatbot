@@ -7,7 +7,7 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 1. **Issue eerst.** Werk vanuit een GitHub Issue (`gh issue list`). Labels en triage: [docs/agents/triage-labels.md](docs/agents/triage-labels.md).
 2. **Branch per issue**, kleine en gerichte commits.
 3. **Code volgens [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md).**
-4. **Tests toevoegen of bijwerken** en lokaal draaien: `pytest`.
+4. **Tests toevoegen of bijwerken** en lokaal draaien met de project-venv: `.venv\Scripts\python -m pytest app/tests` vanuit de repo-root. De venv maak je eenmalig aan met `python -m venv .venv` en `.\.venv\Scripts\pip install -r app\requirements-dev.txt` (zonder venv mist de standaard-`python` `fastapi` en `pytest`). Installeer voor de layouttests de browsers met `.venv\Scripts\python -m playwright install chromium webkit`; zie [Chatlayout testen](docs/how-to/test-chatlayout.md).
 5. **Dependencies** toevoegen in `pyproject.toml` met een versiegrens.
 6. **Secrets** alleen in `.env`; nieuwe variabelen ook (leeg) in `.env.example`.
 7. **Documentatie bijwerken** waar relevant (zie hieronder).
@@ -23,7 +23,7 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 
 ## Checklist vóór merge
 
-- [ ] `pytest` slaagt
+- [ ] `.venv\Scripts\python -m pytest app/tests` slaagt (vanuit repo-root)
 - [ ] Geen secrets of persoonsgegevens in de diff
 - [ ] Nieuwe tools hebben type hints en tests
 - [ ] ADR/GLOSSARY bijgewerkt bij een besluit of nieuwe term

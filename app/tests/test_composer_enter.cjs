@@ -16,12 +16,12 @@ function pressEnter(elements, overrides = {}) {
 test("Enter verstuurt een niet-lege vraag via het formulier", () => {
   const { elements, context, requests } = setup("");
   runChat(context);
-  elements.question.value = "Hallo Wheely";
+  elements.question.value = "Hallo Wielie";
   const ev = pressEnter(elements);
   assert.equal(ev.defaultPrevented, true, "Enter mag geen nieuwe regel invoegen");
   assert.equal(requests.length, 1);
   assert.equal(requests[0].url, "/chat");
-  assert.equal(JSON.parse(requests[0].options.body).message, "Hallo Wheely");
+  assert.equal(JSON.parse(requests[0].options.body).message, "Hallo Wielie");
   assert.equal(elements.question.value, "");
   assert.equal(elements.send.disabled, true);
 });

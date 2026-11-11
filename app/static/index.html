@@ -7,11 +7,10 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#033ec2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Wheely">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wielie">
 <style>
   :root {
     --accent: #033ec2;
@@ -26,19 +25,28 @@
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
+  html { overflow: hidden; }
   body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg) url("Achtergrond%2016-9.jpg") center / cover no-repeat fixed;
+    background: var(--accent) url("Achtergrond%2016-9.jpg") center / cover no-repeat fixed;
     color: var(--text);
     display: flex;
     flex-direction: column;
+    height: 100vh;
     height: 100dvh;
+    height: var(--viewport-height, 100dvh);
+    position: relative;
+    top: var(--viewport-top, 0px);
+    overflow: hidden;
   }
   header {
     background: var(--accent);
     color: #fff;
     padding: 0.6rem 1rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+    padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+    padding-left: calc(1rem + env(safe-area-inset-left, 0px));
   }
   header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
   header .sub { font-size: 0.75rem; opacity: 0.85; }
@@ -67,6 +75,7 @@
     font-size: 0.92rem;
     white-space: pre-wrap;
     word-break: break-word;
+    border: 1px solid var(--danger);
   }
   .msg.user {
     align-self: flex-end;
@@ -77,7 +86,6 @@
   .msg.bot {
     align-self: flex-start;
     background: var(--bubble-bot);
-    border: 1px solid var(--border);
     border-bottom-left-radius: 0.2rem;
   }
   .msg.error {
@@ -125,7 +133,8 @@
   .feedback textarea {
     width: 100%;
     min-height: 3rem;
-    font-size: 0.8rem;
+    /* iOS zoomt in op focus bij invoervelden < 16px */
+    font-size: 16px;
     padding: 0.35rem 0.5rem;
     border: 1px solid var(--border);
     border-radius: 0.5rem;
@@ -137,6 +146,10 @@
     border-top: 1px solid var(--border);
     background: #04050b;
     padding: 0.5rem;
+    /* iOS: de home-indicator valt over de footer met invoerbalk en knop */
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    padding-right: calc(0.5rem + env(safe-area-inset-right, 0px));
+    padding-left: calc(0.5rem + env(safe-area-inset-left, 0px));
   }
   #composer {
     display: flex;
@@ -151,7 +164,9 @@
     padding: 0.5rem 0.65rem;
     border: 1px solid var(--danger);
     border-radius: 0.7rem;
-    font-size: 0.95rem;
+    /* iOS zoomt in op focus bij invoervelden < 16px; de zoom blijft hangen en
+       duwt de header onder de statusbalk en de Verstuur-knop buiten beeld */
+    font-size: 16px;
     font-family: inherit;
   }
   #send {
@@ -200,13 +215,13 @@
 </head>
 <body>
 <header>
-  <h1>WTC - Wheely The Chatbot</h1>
+  <h1>WTC - Wielie The Chatbot</h1>
   <div class="sub">Vragen over KNWU-zaken, regio Midden en WTC Woerden</div>
 </header>
 <details id="taalniveau" class="taalniveau" open>
   <summary>Antwoorden: <span id="taalniveau-stand">Kort</span></summary>
   <div class="taalniveau-inhoud">
-    <p class="taalniveau-uitleg">Wheely antwoordt standaard kort en begrijpelijk. Kies 'Uitgebreid' voor volledige antwoorden met bronvermelding.</p>
+    <p class="taalniveau-uitleg">Wielie antwoordt standaard kort en begrijpelijk. Kies 'Uitgebreid' voor volledige antwoorden met bronvermelding.</p>
     <div class="seg" role="group" aria-label="Kies het soort antwoorden: begrijpelijk of uitgebreid">
       <button type="button" id="taalniveau-b1" data-level="B1" aria-pressed="true">Kort</button>
       <button type="button" id="taalniveau-b2" data-level="B2" aria-pressed="false">Uitgebreid</button>
@@ -222,6 +237,8 @@
     omhoog slaan we alleen een teller op.
     Er worden geen IP-adressen opgeslagen. Elke bezoeker start een nieuwe conversatie: de chatbot onthoudt
     niets tussen sessies. Opgeslagen feedback gebruiken we om de chatbot te verbeteren.</p>
+    <p><a href="/?debug=1">Schermdiagnostiek (#54)</a> — tijdelijke, lokale meting zonder berichtinhoud.
+    Opent een nieuw gesprek.</p>
   </details>
 </div>
 <main id="messages" aria-live="polite">
@@ -348,6 +365,11 @@
 
   function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
+  // Op een touchscreen opent focus het toetsenbord, dat dan het antwoord afdekt.
+  function focusQuestionOnDesktop() {
+    if (window.matchMedia && window.matchMedia("(pointer: fine)").matches) input.focus();
+  }
+
   // Markdown in bot-antwoorden renderen als DOM-elementen (nooit innerHTML,
   // dus HTML in het antwoord blijft platte tekst): koppen, **vet**, lijsten.
   function setInline(el, text) {
@@ -429,20 +451,26 @@
   function addFeedback(div, answerText) {
     var row = document.createElement("div");
     row.className = "feedback";
-    var sent = false;
+    var sending = false;
+    var status = document.createElement("span");
+    status.className = "thanks";
     function sendFeedback(rating, text) {
-      if (sent) return;
-      sent = true;
+      if (sending) return;
+      sending = true;
       fetch("/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_id: conversationId, rating: rating, text: text || "" })
-      }).catch(function () {}).then(function () {
-        row.innerHTML = "";
-        var thanks = document.createElement("span");
-        thanks.className = "thanks";
-        thanks.textContent = "Bedankt voor je feedback.";
-        row.appendChild(thanks);
+      }).then(function (resp) {
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        row.textContent = "";
+        status.textContent = "Bedankt voor je feedback.";
+        row.appendChild(status);
+      }).catch(function () {
+        // Mislukt: knoppen en toelichting blijven staan zodat opnieuw proberen kan.
+        sending = false;
+        status.textContent = "Feedback niet verstuurd. Probeer het opnieuw.";
+        row.appendChild(status);
       });
     }
     var up = document.createElement("button");
@@ -481,7 +509,7 @@
     input.value = "";
     send.disabled = true;
     addMessage("user", question);
-    var typing = addMessage("bot typing", "Wheely denkt na…");
+    var typing = addMessage("bot typing", "Wielie denkt na…");
     document.dispatchEvent(new Event("chat:messages-rendered"));
     fetch("/chat", {
       method: "POST",
@@ -494,8 +522,12 @@
       })
     })
       .then(function (resp) {
-        return resp.json().then(function (body) {
-          if (!resp.ok) throw new Error(body.error || "Onbekende fout");
+        return resp.json().catch(function () { return {}; }).then(function (body) {
+          if (!resp.ok) {
+            var err = new Error("HTTP " + resp.status);
+            err.userMessage = body.error;
+            throw err;
+          }
           return body;
         });
       })
@@ -508,12 +540,13 @@
       })
       .catch(function (err) {
         typing.className = "msg error";
-        typing.textContent = err.message || "Er ging iets mis. Probeer het opnieuw.";
+        // Alleen de eigen foutmelding van de server tonen, nooit technische browserteksten.
+        typing.textContent = err.userMessage || "Er ging iets mis. Probeer het opnieuw.";
         scrollDown();
       })
       .finally(function () {
         send.disabled = false;
-        input.focus();
+        focusQuestionOnDesktop();
       });
   });
 
@@ -528,7 +561,7 @@
   });
 
   document.dispatchEvent(new Event("chat:ready"));
-  input.focus();
+  focusQuestionOnDesktop();
 
   // Service worker (PWA-installatie, issue #35). Op een beveiligde origin
   // (HTTPS) registreert de worker; op plain HTTP faalt dit expres.
@@ -537,5 +570,6 @@
   }
 })();
 </script>
+<script src="/viewport.js"></script>
 </body>
 </html>

@@ -37,6 +37,12 @@ Toon tijdelijke browserdiagnostiek om te bepalen waar het starten of versturen v
 
 [Apples gearchiveerde beschrijving](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html) plaatst webinhoud bij `default` onder de statusbalk, in plaats van erachter bij `black-translucent`. De uitkomst op de gebruikte iOS-versie moet op het toestel worden vastgesteld; lokale HTML- en layouttests bewijzen dit native gedrag niet.
 
+### Uitkomst: wazige kop komt door `theme-color`
+
+Op iOS 27 vervaagt het systeem in de geinstalleerde PWA de bovenste ±36 css-px onder de statusbalk zodra er een theme-color is: via `<meta name="theme-color">` of via `theme_color` in het manifest. In een Safari-tabblad treedt het niet op. Zonder beide is de kop scherp en is de statusbalk wit. Daarom heeft de app geen theme-color; `test_no_theme_color_because_ios_blurs_top_edge` bewaakt dat.
+
+iOS leest deze instellingen bij installatie: verwijder de startscherm-app en voeg hem opnieuw toe om een wijziging te zien. Zie ook [devswha/ovis#164](https://github.com/devswha/ovis/issues/164): daar geeft `black-translucent` een nog bredere wazige band (±112 px).
+
 ## Controle
 
 Zonder `debug=1` verschijnt geen paneel. De diagnostiek bewaart geen gegevens in browseropslag en verstuurt geen diagnostische gegevens; het normale chatverzoek blijft ongewijzigd. Het paneel toont maximaal 30 regels en bevat geen berichtinhoud, client-ID of volledige foutmeldingen.

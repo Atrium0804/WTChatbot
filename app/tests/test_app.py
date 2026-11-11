@@ -346,7 +346,7 @@ def test_index_has_pwa_head_tags(tmp_path):
     assert 'rel="apple-touch-icon"' in html
     assert 'name="apple-mobile-web-app-capable"' in html
     assert '<meta name="apple-mobile-web-app-status-bar-style" content="default">' in html
-    assert 'name="theme-color"' in html
+    assert 'name="theme-color"' not in html
     assert "viewport-fit=cover" in html
     assert 'navigator.serviceWorker.register("/sw.js")' in html
 
@@ -381,7 +381,15 @@ def test_shell_backgrounds_use_club_blue(tmp_path):
     body_css = html[html.index("  body {"):html.index("  header {")]
     assert "background: var(--accent) url(" in body_css
     manifest = client.get("/manifest.webmanifest").json()
-    assert manifest["background_color"] == manifest["theme_color"]
+    assert manifest["background_color"] == "#033ec2"
+
+
+def test_no_theme_color_because_ios_blurs_top_edge(tmp_path):
+    # iOS 27 vervaagt in de geinstalleerde PWA de bovenste ~36 css-px zodra er een
+    # theme-color is, via de meta-tag of het manifest. Op het toestel vastgesteld (#54).
+    client = make_client(tmp_path)
+    assert 'name="theme-color"' not in client.get("/").text
+    assert "theme_color" not in client.get("/manifest.webmanifest").json()
 
 
 def test_viewport_script_is_served_and_included_in_offline_shell(tmp_path):

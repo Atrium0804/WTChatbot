@@ -365,6 +365,11 @@
 
   function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
+  // Op een touchscreen opent focus het toetsenbord, dat dan het antwoord afdekt.
+  function focusQuestionOnDesktop() {
+    if (window.matchMedia && window.matchMedia("(pointer: fine)").matches) input.focus();
+  }
+
   // Markdown in bot-antwoorden renderen als DOM-elementen (nooit innerHTML,
   // dus HTML in het antwoord blijft platte tekst): koppen, **vet**, lijsten.
   function setInline(el, text) {
@@ -446,20 +451,26 @@
   function addFeedback(div, answerText) {
     var row = document.createElement("div");
     row.className = "feedback";
-    var sent = false;
+    var sending = false;
+    var status = document.createElement("span");
+    status.className = "thanks";
     function sendFeedback(rating, text) {
-      if (sent) return;
-      sent = true;
+      if (sending) return;
+      sending = true;
       fetch("/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_id: conversationId, rating: rating, text: text || "" })
-      }).catch(function () {}).then(function () {
-        row.innerHTML = "";
-        var thanks = document.createElement("span");
-        thanks.className = "thanks";
-        thanks.textContent = "Bedankt voor je feedback.";
-        row.appendChild(thanks);
+      }).then(function (resp) {
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        row.textContent = "";
+        status.textContent = "Bedankt voor je feedback.";
+        row.appendChild(status);
+      }).catch(function () {
+        // Mislukt: knoppen en toelichting blijven staan zodat opnieuw proberen kan.
+        sending = false;
+        status.textContent = "Feedback niet verstuurd. Probeer het opnieuw.";
+        row.appendChild(status);
       });
     }
     var up = document.createElement("button");
@@ -511,8 +522,12 @@
       })
     })
       .then(function (resp) {
-        return resp.json().then(function (body) {
-          if (!resp.ok) throw new Error(body.error || "Onbekende fout");
+        return resp.json().catch(function () { return {}; }).then(function (body) {
+          if (!resp.ok) {
+            var err = new Error("HTTP " + resp.status);
+            err.userMessage = body.error;
+            throw err;
+          }
           return body;
         });
       })
@@ -525,12 +540,13 @@
       })
       .catch(function (err) {
         typing.className = "msg error";
-        typing.textContent = err.message || "Er ging iets mis. Probeer het opnieuw.";
+        // Alleen de eigen foutmelding van de server tonen, nooit technische browserteksten.
+        typing.textContent = err.userMessage || "Er ging iets mis. Probeer het opnieuw.";
         scrollDown();
       })
       .finally(function () {
         send.disabled = false;
-        input.focus();
+        focusQuestionOnDesktop();
       });
   });
 
@@ -545,7 +561,7 @@
   });
 
   document.dispatchEvent(new Event("chat:ready"));
-  input.focus();
+  focusQuestionOnDesktop();
 
   // Service worker (PWA-installatie, issue #35). Op een beveiligde origin
   // (HTTPS) registreert de worker; op plain HTTP faalt dit expres.

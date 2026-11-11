@@ -16,7 +16,6 @@ var SHELL = [
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",
   "/icons/apple-touch-icon.png",
-  "/wielie.jpg",
   "/Achtergrond%2016-9.jpg"
 ];
 

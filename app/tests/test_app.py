@@ -401,6 +401,13 @@ def test_viewport_script_is_served_and_included_in_offline_shell(tmp_path):
     assert '"/viewport.js"' in client.get("/sw.js").text
 
 
+def test_wielie_source_image_served_but_not_in_offline_shell(tmp_path):
+    # wielie.jpg is alleen de bron voor de iconen; geen scherm toont hem.
+    client = make_client(tmp_path)
+    assert client.get("/wielie.jpg").status_code == 200
+    assert '"/wielie.jpg"' not in client.get("/sw.js").text
+
+
 def test_csp_allows_service_worker_and_manifest(tmp_path):
     client = make_client(tmp_path)
     csp = client.get("/").headers["content-security-policy"]

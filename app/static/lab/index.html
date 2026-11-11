@@ -42,9 +42,22 @@
 <pre id="m"></pre>
 <script>
   (function () {
+    // Liniaal voor de wazige zone bovenaan: label elke 4 css-px vanaf de bovenrand.
+    var ruler = document.createElement("div");
+    ruler.style.cssText = "position:absolute;top:0;left:0;right:0;pointer-events:none;";
+    for (var y = 0; y <= 120; y += 4) {
+      var tick = document.createElement("div");
+      tick.textContent = y % 20 === 0 ? y : "";
+      tick.style.cssText = "position:absolute;right:4px;top:" + y + "px;font:10px monospace;" +
+        "color:#c00;border-top:1px solid #c00;width:" + (y % 20 === 0 ? 40 : 16) + "px;text-align:right;";
+      ruler.appendChild(tick);
+    }
+    document.body.appendChild(ruler);
+  })();
+  (function () {
     var v = window.visualViewport;
     document.getElementById("m").textContent = [
-      "versie: lab-diag-1",
+      "versie: lab-diag-2",
       "standalone: " + (navigator.standalone === true),
       "devicePixelRatio: " + window.devicePixelRatio,
       "screen: " + screen.width + " x " + screen.height,

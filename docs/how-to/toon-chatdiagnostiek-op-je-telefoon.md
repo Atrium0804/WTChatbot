@@ -37,9 +37,11 @@ Toon tijdelijke browserdiagnostiek om te bepalen waar het starten of versturen v
 
 [Apples gearchiveerde beschrijving](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html) plaatst webinhoud bij `default` onder de statusbalk, in plaats van erachter bij `black-translucent`. De uitkomst op de gebruikte iOS-versie moet op het toestel worden vastgesteld; lokale HTML- en layouttests bewijzen dit native gedrag niet.
 
-### Uitkomst: wazige kop komt door `theme-color`
+### Uitkomst: `theme-color` is één oorzaak, het echte scherm blijft wazig (uitgesteld)
 
-Op iOS 27 vervaagt het systeem in de geinstalleerde PWA de bovenste ±36 css-px onder de statusbalk zodra er een theme-color is: via `<meta name="theme-color">` of via `theme_color` in het manifest. In een Safari-tabblad treedt het niet op. Zonder beide is de kop scherp en is de statusbalk wit. Daarom heeft de app geen theme-color; `test_no_theme_color_because_ios_blurs_top_edge` bewaakt dat.
+Op iOS 27 vervaagt het systeem in de geinstalleerde PWA de bovenste ±36 css-px onder de statusbalk. In een Safari-tabblad treedt het niet op. Op een kale testpagina (witte bovenkant, zonder `viewport-fit=cover`) verdween de vervaging pas zonder theme-color, zowel `<meta name="theme-color">` als `theme_color` in het manifest; met alleen de manifestwaarde bleef hij. Daarom heeft de app geen theme-color; `test_no_theme_color_because_ios_blurs_top_edge` bewaakt dat.
+
+Het echte scherm bleef daarna wazig, met een blauwe statusbalk, ook na herinstallatie. Open verschillen met de scherpe testpagina: de blauwe kop bovenaan en `viewport-fit=cover`. De proef die dat zou scheiden (vier paginavarianten in één labinstallatie, commit `c193b4d`) is niet uitgevoerd; het onderzoek is uitgesteld omdat het om een iOS 27-fout lijkt te gaan die 27.2.1 niet oplost. Herhaal die proef bij hervatting, op de dan actuele iOS-versie.
 
 iOS leest deze instellingen bij installatie: verwijder de startscherm-app en voeg hem opnieuw toe om een wijziging te zien. Zie ook [devswha/ovis#164](https://github.com/devswha/ovis/issues/164): daar geeft `black-translucent` een nog bredere wazige band (±112 px).
 

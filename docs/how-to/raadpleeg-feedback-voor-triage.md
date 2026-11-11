@@ -55,3 +55,7 @@ Standaard wordt niets opgeslagen. Wil je de output toch bewaren (bijvoorbeeld om
 
 - `python -m pytest tests/test_feedback_report.py -q` — tests voor counters, week-buckets, sortering (oudste eerst), integriteitscheck, scp-foutafhandeling en het opruimen van het temp-bestand.
 - `python -m pytest tests/test_trace_conversation.py -q` — tests voor het groeperen van de Mistral-geschiedenis per beurt en het zoeken op `app_conversation_id`.
+
+## Zie ook
+
+- [Gebruik feedback om prompts te finetunen](gebruik-feedback-om-prompts-te-finetunen.md) — van feedback naar een aantoonbare prompt-/config-wijziging met eval-gate als controle (issue #55)

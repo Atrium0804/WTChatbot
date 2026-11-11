@@ -50,7 +50,7 @@ Controleer dat de invoerbalk binnen het zichtbare browsergebied blijft bij opene
    - Na sluiten van het toetsenbord en heropenen past de layout weer bij het zichtbare venster.
    - Pinch-zoom blijft mogelijk.
 
-6. Gebruik bij een afwijking [Chatdiagnostiek tonen](chatdiagnostiek-tonen.md). Noteer de meting na `viewport-fitted`, samen met de browser- en OS-versie. Deel geen echte chatinhoud.
+6. Gebruik bij een afwijking [Chatdiagnostiek tonen](toon-chatdiagnostiek-op-je-telefoon.md). Noteer de meting na `viewport-fitted`, samen met de browser- en OS-versie. Deel geen echte chatinhoud.
 
 ## Controle
 

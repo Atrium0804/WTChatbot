@@ -12,7 +12,7 @@ Dry-run by default; pass --apply to execute changes.
 
 The web_search tool is configured as a bare {"type": "web_search"}: domain
 filtering is enforced org-wide via /v1/web-filters (docs/how-to/
-websearch-allowlist.md) — do NOT use tool_configuration.include, it silently
+stel-websearch-allowlist-in.md) — do NOT use tool_configuration.include, it silently
 breaks the tool in mistralai 3.6.0.
 
 Usage:

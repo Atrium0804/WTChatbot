@@ -40,7 +40,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 
 Onderstaande blokken kopiëren naar de agent-instructies in Mistral Studio. De gedeelde kern + het "Toon en stijl"-blok uit `Tone_of_voice.md` §7 gaan naar alle content-agents; de routing-addenda per agent; de routerprompt naar de router-agent.
 
-De werkende kopieën van deze blokken staan in `scripts/prompts/`; `scripts/create_agents.py` zet ze naar Mistral Studio (zie [how-to: productie-agents aanmaken](../how-to/create-agents.md)). Bij wijzigingen: pas `scripts/prompts/` aan, niet deze pagina.
+De werkende kopieën van deze blokken staan in `scripts/prompts/`; `scripts/create_agents.py` zet ze naar Mistral Studio (zie [how-to: productie-agents aanmaken](how-to/maak-of-update-productie-agents.md)). Bij wijzigingen: pas `scripts/prompts/` aan, niet deze pagina.
 
 ### Gedeelde kern (knwu-agent, regio-agent, club-agent)
 

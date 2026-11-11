@@ -120,7 +120,7 @@ De afstand die een fiets aflegt bij één volle pedaalomwenteling, in meters —
 _Avoid_: "ontwikkeling" voor deze afstand; "verzet" voor de tandwielverhouding zelf (dat is de overbrenging, bijv. 52×14)
 
 **Beheerder**:
-De benoemde eindverantwoordelijke (plus vervanger) voor ntfy-alerts, feedback-triage (nu via `scripts/feedback_report.py`, zie [how-to: feedback raadplegen voor triage](docs/how-to/feedback-triage.md); permanent: `/admin/feedback`), Library-updates bij seizoenstart en het archief van oude versies. Staat met naam/rol in `docs/operations.md`.
+De benoemde eindverantwoordelijke (plus vervanger) voor ntfy-alerts, feedback-triage (nu via `scripts/feedback_report.py`, zie [how-to: feedback raadplegen voor triage](docs/how-to/raadpleeg-feedback-voor-triage.md); permanent: `/admin/feedback`), Library-updates bij seizoenstart en het archief van oude versies. Staat met naam/rol in `docs/operations.md`.
 
 ## Delivery
 

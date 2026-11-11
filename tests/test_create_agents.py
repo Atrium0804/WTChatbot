@@ -84,7 +84,7 @@ class BuildToolsTests(unittest.TestCase):
         )
 
     def test_websearch_tool_has_no_tool_configuration(self) -> None:
-        # docs/how-to/websearch-allowlist.md: tool_configuration.include breekt de
+        # docs/how-to/stel-websearch-allowlist-in.md: tool_configuration.include breekt de
         # web_search-tool in mistralai 3.6.0 — de org-level web-filters regelen de scope.
         agent = {"name": "club-agent", "websearch": True}
         tools = create_agents.build_tools(agent, {})

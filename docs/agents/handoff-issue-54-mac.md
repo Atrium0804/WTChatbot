@@ -27,7 +27,7 @@ The user handles deployment. Keep working on the same issue branch and preserve 
 ## Existing artifacts to read, not recreate
 
 - [Coding principles](../../CODING_PRINCIPLES.md) and [contribution workflow](../../CONTRIBUTING.md).
-- [Diagnostics procedure and status-bar trial](../how-to/chatdiagnostiek-tonen.md).
+- [Diagnostics procedure and status-bar trial](../how-to/toon-chatdiagnostiek-op-je-telefoon.md).
 - [Browser tests and device-check limitations](../how-to/test-chatlayout.md).
 - [App shell](../../app/static/index.html), [viewport fitter](../../app/static/viewport.js), [diagnostics](../../app/static/debug.js), and [service worker](../../app/static/sw.js): inspect the handoff commit for implementation details.
 - [Real-browser regression coverage](../../app/tests/test_layout.py).

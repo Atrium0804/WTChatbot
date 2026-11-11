@@ -345,14 +345,13 @@ def test_index_has_pwa_head_tags(tmp_path):
     assert '<link rel="manifest" href="/manifest.webmanifest">' in html
     assert 'rel="apple-touch-icon"' in html
     assert 'name="apple-mobile-web-app-capable"' in html
+    assert '<meta name="apple-mobile-web-app-status-bar-style" content="default">' in html
     assert 'name="theme-color"' in html
     assert "viewport-fit=cover" in html
     assert 'navigator.serviceWorker.register("/sw.js")' in html
 
 
 def test_index_has_safe_area_insets(tmp_path):
-    # iOS standalone-PWA met viewport-fit=cover: statusbalk valt over de header
-    # en de home-indicator over de footer (issue #54).
     client = make_client(tmp_path)
     html = client.get("/").text
     header_css = html[html.index("header {"):html.index("header h1")]
@@ -376,18 +375,22 @@ def test_text_inputs_are_at_least_16px_to_prevent_ios_zoom(tmp_path):
     assert "font-size: 16px;" in feedback_css
 
 
-def test_canvas_background_matches_header_for_ios_status_bar(tmp_path):
-    # iOS 26 negeert theme-color en tint de statusbalk naar de body-achtergrondkleur
-    # of een sticky element bovenin; beide moeten de header-kleur zijn (#54).
+def test_shell_backgrounds_use_club_blue(tmp_path):
     client = make_client(tmp_path)
     html = client.get("/").text
     body_css = html[html.index("  body {"):html.index("  header {")]
-    header_css = html[html.index("  header {"):html.index("header h1")]
     assert "background: var(--accent) url(" in body_css
-    assert "position: sticky;" in header_css
-    assert "top: 0;" in header_css
     manifest = client.get("/manifest.webmanifest").json()
     assert manifest["background_color"] == manifest["theme_color"]
+
+
+def test_viewport_script_is_served_and_included_in_offline_shell(tmp_path):
+    client = make_client(tmp_path)
+    assert '<script src="/viewport.js"></script>' in client.get("/").text
+    response = client.get("/viewport.js")
+    assert response.status_code == 200
+    assert "javascript" in response.headers["content-type"]
+    assert '"/viewport.js"' in client.get("/sw.js").text
 
 
 def test_csp_allows_service_worker_and_manifest(tmp_path):

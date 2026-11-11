@@ -11,6 +11,7 @@ app/
 ├── mistral_client.py     dunne laag over de Mistral Conversations API (mockbaar in tests)
 ├── store.py              SQLite-feedback: content ALLEEN bij duim-omlaag, retentie 30 dagen + purge
 ├── static/index.html     responsive mobile-first chat-UI (privacy-notitie + feedbackknoppen)
+├── static/viewport.js    zichtbare viewport volgen bij toetsenbord en heropenen
 ├── static/manifest.webmanifest  PWA-manifest (issue #35)
 ├── static/sw.js                 service worker — cachet NOOIT /chat, /feedback, /healthz
 ├── static/icons/                PWA-iconen uit wielie.jpg (scripts/make_icons.py)
@@ -39,6 +40,11 @@ duidelijk gemarkeerd STUB-antwoord — geen API-key nodig om te ontwikkelen.
 ```bash
 pytest app/tests   # vanuit repo-root; 100% offline
 ```
+
+Installeer vooraf de testbrowsers met `.venv\Scripts\python -m playwright install chromium webkit`.
+De layouttests gebruiken een lokale server en een gestubde chat-API.
+Zie [Chatlayout testen](../docs/how-to/test-chatlayout.md) voor de browsercommando's
+en de aanvullende controles op echte telefoons.
 
 ## Met echte Mistral-agent
 

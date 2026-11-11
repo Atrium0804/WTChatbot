@@ -13,9 +13,11 @@ function setup(
   crypto = { randomUUID: () => "test-id" },
   sessionStorage = { getItem: () => null, setItem() {} },
   localStorage,
+  viewportFixture,
 ) {
   const document = new EventTarget();
   const window = new EventTarget();
+  window.requestAnimationFrame = (callback) => callback();
   if (localStorage !== undefined) window.localStorage = localStorage;
   const elements = {};
   const requests = [];
@@ -53,6 +55,25 @@ function setup(
     return node;
   };
   document.getElementById = (id) => elements[id];
+  if (viewportFixture) {
+    Object.assign(window, viewportFixture.window);
+    document.documentElement = element();
+    elements.header = element();
+    elements.footer = element();
+    document.querySelector = (tag) => elements[tag];
+    for (const [id, rect] of Object.entries(viewportFixture.bounds)) {
+      const node = id === "body" ? document.body : elements[id];
+      node.getBoundingClientRect = () => rect;
+    }
+    const createElement = document.createElement;
+    document.createElement = (tag) => {
+      const node = createElement(tag);
+      node.remove = () => {
+        document.body.children.splice(document.body.children.indexOf(node), 1);
+      };
+      return node;
+    };
+  }
   const context = vm.createContext({
     document, window, location: { search }, Event, crypto,
     sessionStorage,

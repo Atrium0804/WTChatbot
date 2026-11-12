@@ -19,7 +19,7 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
    $env:DATABASE_PATH = "data\reviewronde-1.db"
    $env:RATE_LIMIT_PER_HOUR = "500"
    cd app
-   ..\.venv\Scripts\python -m uvicorn main:app --port 8000
+   ..\.venv\Scripts\python -m uvicorn main:app --port 8000 --relo
    ```
 
    `DATABASE_PATH` is relatief aan `app/`; `app/data/` staat in `.gitignore`.

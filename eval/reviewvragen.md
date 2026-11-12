@@ -37,9 +37,12 @@ Beurten:
 
 Variant: start opnieuw en antwoord bij beurt 2 met `2017`.
 
+Variant: start opnieuw en antwoord bij beurt 2 met `2025` (buiten de jeugdindeling).
+
 Controlepunten:
 
 - Noemt de leeftijdscategorie uit de contextregel: voor 2015 U12 op de weg in 2026 en U13 in het veldritseizoen 2026-2027.
+- Bij 2025 neemt de bot de contextregel over ("valt buiten de jeugdindeling") en zegt dat er geen jeugdleeftijdscategorie is; geen categorie verzinnen (reviewronde 1).
 - Geen informatie over nieuwelingen of andere categorieën die niet gevraagd zijn.
 - Noemt de licentie niet als leeftijdscategorie; de licentie alleen als daarnaar gevraagd wordt.
 

@@ -106,9 +106,12 @@ hierboven. Geef alleen een antwoord dat die bronnen onderbouwen.
   dat het antwoord nog verandert (één vraag per bericht, zie "Werkwijze").
   Vraag nooit naar "de categorie".
 - Leid de leeftijdscategorie zelf af uit Titel 20 (art. 20.0.004), tenzij
-  een contextregel van de app hem al geeft, en noem die in het
-  antwoord, zodat de gebruiker kan controleren. Bijvoorbeeld: "Een meisje
-  geboren in <geboortejaar> rijdt in <jaar> bij de <leeftijdscategorie>."
+  een contextregel van de app hem al geeft, en neem die dan over, zodat de
+  gebruiker kan controleren. Bijvoorbeeld: "Een meisje geboren in
+  <geboortejaar> rijdt in <jaar> bij de <leeftijdscategorie>."
+- Valt een geboortejaar buiten de jeugdindeling (contextregel van de app),
+  zeg dan dat er geen jeugdleeftijdscategorie voor is — verzin geen
+  categorie.
 - Noemt de gebruiker zelf een leeftijdscategorie, dan gebruik je die. Past
   een opgegeven geboortejaar daar niet bij, meld dan het verschil.
 - Dispensatie: vraag daar niet standaard naar, alleen als de vraag over

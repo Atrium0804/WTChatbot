@@ -147,6 +147,61 @@ class RenderReportTests(unittest.TestCase):
         self.assertIn("- Conversation: `-`\n", report)
 
 
+class BronconflictTests(unittest.TestCase):
+    """Sectie 'Bronconflicten' in het rapport (#47)."""
+
+    CONFLICT_A = "TITEL_20 art. 20.0.004: U17 Nieuweling | https://kenniscentrum.knwu.nl/x: U16 en U17"
+    CONFLICT_B = "Nationale_Besluiten art. 18.1: A | https://voorbeeld.nl: B"
+
+    def rows(self) -> list[dict]:
+        return [
+            {"timestamp": "2026-11-10T10:00:00+00:00", "rating": "bronconflict",
+             "conversation_id": "c1", "text": self.CONFLICT_A, "question": None, "answer": None},
+            {"timestamp": "2026-11-15T10:00:00+00:00", "rating": "bronconflict",
+             "conversation_id": "c2", "text": self.CONFLICT_A, "question": None, "answer": None},
+            {"timestamp": "2026-11-12T10:00:00+00:00", "rating": "bronconflict",
+             "conversation_id": "", "text": self.CONFLICT_B, "question": None, "answer": None},
+            {"timestamp": "2026-11-16T10:00:00+00:00", "rating": "negative",
+             "conversation_id": "c9", "question": "q", "answer": "a", "text": "fout"},
+        ]
+
+    def test_bronconflict_rows_filter(self) -> None:
+        rows = self.rows()
+        self.assertEqual(len(feedback_report.bronconflict_rows(rows)), 3)
+
+    def test_summarize_groups_identical_with_count_and_last_date(self) -> None:
+        groups = feedback_report.summarize_bronconflicten(self.rows())
+        self.assertEqual(len(groups), 2)
+        a = next(g for g in groups if g["text"] == self.CONFLICT_A)
+        self.assertEqual(a["aantal"], 2)
+        self.assertEqual(a["laatste"], "2026-11-15T10:00:00+00:00")
+        b = next(g for g in groups if g["text"] == self.CONFLICT_B)
+        self.assertEqual(b["aantal"], 1)
+        self.assertEqual(b["laatste"], "2026-11-12T10:00:00+00:00")
+        # sorteer: meeste meldingen eerst
+        self.assertEqual(groups[0]["text"], self.CONFLICT_A)
+
+    def test_report_section_grouped_and_pipes_escaped(self) -> None:
+        report = feedback_report.render_report(self.rows(), "test-db", "nu")
+        self.assertIn("## Bronconflicten", report)
+        # pipes in de marker zijn ge-escaped in de tabel
+        self.assertIn(self.CONFLICT_A.replace("|", "\\|") + " | 2 | 2026-11-15T10:00:00+00:00", report)
+        self.assertIn(self.CONFLICT_B.replace("|", "\\|") + " | 1 |", report)
+
+    def test_bronconflict_not_counted_as_negative_and_in_counters(self) -> None:
+        report = feedback_report.render_report(self.rows(), "test-db", "nu")
+        self.assertIn("| bronconflict | 3 |", report)
+        triage = report.split("## Triage")[1].split("## Bronconflicten")[0]
+        self.assertNotIn(self.CONFLICT_A, triage)
+        self.assertIn("fout", triage)  # de negatieve row staat er wél
+
+    def test_empty_section_when_no_conflicts(self) -> None:
+        rows = [{"timestamp": "2026-11-16T10:00:00+00:00", "rating": "positive"}]
+        report = feedback_report.render_report(rows, "test-db", "nu")
+        self.assertIn("## Bronconflicten", report)
+        self.assertIn("Geen bronconflicten", report)
+
+
 class ParseHistoryTests(unittest.TestCase):
     def test_null_and_missing(self) -> None:
         self.assertEqual(feedback_report.parse_history({"history": None}), [])

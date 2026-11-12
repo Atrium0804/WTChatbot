@@ -335,6 +335,10 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
     norm_antwoord = normalize(antwoord)
     feits = [f.strip() for f in entry["verwacht_antwoord"].split(";") if f.strip()]
     missing = [f for f in feits if not kernfeit_gevonden(f, antwoord)]
+    # optioneel `verwacht_marker` (#47): bv. "[BRONCONFLICT]" — moet in de RUWE
+    # agent-output staan (de proxy stript de marker pas voor de gebruiker)
+    marker = entry.get("verwacht_marker", "")
+    marker_gevonden = bool(marker) and normalize(marker) in norm_antwoord
     doorhaal = entry.get("doorhaal_waarde")
     doorhaal_gevonden = bool(doorhaal) and normalize(doorhaal) in norm_antwoord
     verboden = [w.strip() for w in entry.get("niet_in_antwoord", "").split(";") if w.strip()]
@@ -353,7 +357,14 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
     agents_laatste_beurt = trace[-1]["agents"] if trace else []
     verwachte_agent = entry.get("verwachte_agent", "")
     agent_ok = not verwachte_agent or verwachte_agent in agents_laatste_beurt
-    ok = bron_ok and agent_ok and not missing and not doorhaal_gevonden and not verboden_gevonden
+    ok = (
+        bron_ok
+        and agent_ok
+        and (not marker or marker_gevonden)
+        and not missing
+        and not doorhaal_gevonden
+        and not verboden_gevonden
+    )
     return {
         "id": entry["id"],
         "categorie": entry["categorie"],
@@ -376,6 +387,8 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
         "versiedatum": entry.get("versiedatum", ""),
         "doorhaal_waarde": entry.get("doorhaal_waarde", ""),
         "niet_in_antwoord": entry.get("niet_in_antwoord", ""),
+        "verwacht_marker": marker,
+        "marker_gevonden": marker_gevonden,
         "antwoord": antwoord,
         "trace": trace,
     }

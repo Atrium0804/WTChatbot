@@ -25,7 +25,7 @@ Haal de feedback die gebruikers in de chat gaven (duim omhoog/omlaag, bij omlaag
    ```
    .venv\Scripts\python scripts/feedback_report.py --db app\data\wtchat.db
    ```
-3. Lees het rapport: eerst **counters** (aantal per rating, plus per week), daarna **triage** — de negatieve feedback, oudste eerst, met timestamp, conversation-ID, de **feedbackgeschiedenis** (de laatste turns van de conversatie, oudste eerst, de laatste gemarkeerd), de laatste vraag/antwoord en de toelichting.
+3. Lees het rapport: eerst **counters** (aantal per rating, plus per week), daarna **triage** — de negatieve feedback, oudste eerst, met timestamp, conversation-ID, de **feedbackgeschiedenis** (de laatste turns van de conversatie, oudste eerst, de laatste gemarkeerd), de laatste vraag/antwoord en de toelichting. Daarna de sectie **Bronconflicten** (#47): identieke conflicten gegroepeerd op de `[BRONCONFLICT]`-marker, met aantal en laatste melding — deze rows tellen niet mee als negatieve feedback.
 4. Wil je weten welke agent een fout antwoord gaf (bijvoorbeeld om een conversatie te vinden die na een handoff bij de verkeerde agent bleef, issue #44)? Draai het trace-commando dat het rapport achter de conversation-ID zet. Daarvoor is `MISTRAL_API_KEY` in `.env` nodig:
 
    ```
@@ -47,6 +47,7 @@ Standaard wordt niets opgeslagen. Wil je de output toch bewaren (bijvoorbeeld om
 ## Privacy-afspraken
 
 - In de DB staat bij duim-omlaag de feedbackgeschiedenis (JSON in de `history`-kolom: de laatste 10 turns vraag/antwoord, met de laatste turn ook los in `question`/`answer`) plus de toelichting (maximaal 30 dagen, daarna automatische purge); bij duim-omhoog alleen een teller. Er worden geen IP-adressen opgeslagen. Zie [project_description.md](../project_description.md) (Privacy en retentie), ADR-0008 en de privacy-notitie in de chat-UI.
+- Bronconflicten (#47) staan als `bronconflict`-row in de DB: alléén de `[BRONCONFLICT]`-marker in `text` plus conversation-ID — géén vraag/antwoord/history (zelfde privacy-precedent als out-of-scope). De markerregel is door de proxy al uit het antwoord gestript vóórdat de gebruiker hem zag, ook uit de feedbackgeschiedenis.
 - Deze repo is publiek: ruwe feedback komt nooit in git, issues of PR's.
 - Permanente vastlegging gebeurt alleen geanonimiseerd in `LEARNINGS.md`.
 - `/admin/feedback` (beheerder-only, basic auth) is de geplande permanente triage-oplossing; dit CLI-script is de tussenoplossing (issue #42).

@@ -18,6 +18,7 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); bij `taalniveau: B2` moet die in een `Bron:`-regel van het antwoord staan, bij `B1` mag het antwoord géén `Bron:`-regel bevatten. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
+| `verwacht_marker` | string | nee | Marker die in de **ruwe agent-output** moet voorkomen, bijv. `[BRONCONFLICT]` (#47). De proxy stript de marker vóór de gebruiker hem ziet, dus in productie-antwoorden is hij weg; de eval-runner draait offline en ziet de ruwe output |
 | `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
 | `via` | enum | nee | Alleen `router`: de vraag gaat naar de router-agent (`MISTRAL_AGENT_ID`) in plaats van de categorie-agent, dus end-to-end met handoff |
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |

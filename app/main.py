@@ -8,6 +8,7 @@ MISTRAL_API_KEY/MISTRAL_AGENT_ID draait de app in stub-mode (duidelijk gemarkeer
 Run:  uvicorn main:app --host 0.0.0.0 --port 8000   (vanuit app/)
 """
 
+import re
 import time
 import uuid
 from collections import deque
@@ -51,6 +52,24 @@ def rate_limit_ok(buckets: dict[str, list[float]], key: str, limit: int, window:
         return False
     hits.append(now)
     return True
+
+
+BRONCONFLICT_RE = re.compile(r"^\s*\[BRONCONFLICT\]\s*(.+?)\s*$", re.MULTILINE)
+
+
+def split_bronconflict_markers(answer: str) -> tuple[str, list[str]]:
+    """Split [BRONCONFLICT]-markerregels van het antwoord (#47).
+
+    Geef (antwoord zonder markerregels, lijst marker-inhoud per regel). De
+    marker is een beheerderssignaal en wordt vóór de gebruiker het ziet uit
+    het antwoord én de feedbackgeschiedenis gehaald.
+    """
+    markers = [m.group(1) for m in BRONCONFLICT_RE.finditer(answer)]
+    if not markers:
+        return answer, []
+    stripped = BRONCONFLICT_RE.sub("", answer)
+    stripped = re.sub(r"\n{3,}", "\n\n", stripped).strip()
+    return stripped, markers
 
 
 def stub_answer(message: str) -> str:
@@ -151,6 +170,17 @@ def create_app(
             state["conversations"][conversation_id] = mistral_conv_id
         else:
             answer = stub_answer(message)
+        # bronconflict-marker (#47): uit het antwoord halen vóór de gebruiker het
+        # ziet (en vóór opslag in de feedbackgeschiedenis); per regel één row
+        # zonder vraagtekst
+        answer, bronconflicts = split_bronconflict_markers(answer)
+        for marker in bronconflicts:
+            store.save_feedback(
+                db,
+                rating="bronconflict",
+                conversation_id=conversation_id,
+                text=marker[: config.FEEDBACK_MAX_TEXT_LENGTH],
+            )
         turns = state["history"].setdefault(
             conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
         )

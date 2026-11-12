@@ -63,7 +63,7 @@ De categorie waarin een renner start (bijv. U13, U17 Nieuweling). De categorie-i
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
 
 **Oude categorie-indeling**:
-De numerieke jeugdindeling van vóór 2026 (Categorie 1 t/m 7, daarna Nieuwelingen), die nog in regiodocumenten en bij ouders en trainers voorkomt. Elk nummer is een gecombineerde categorie: Categorie 1 = JO8/MO9 en JO9/MO10, 2 = JO10/MO11, 3 = JO11/MO12, 4 = JO12/MO13, 5 = JO13/MO14, 6 = JO14/MO15, 7 = JO15; Nieuwelingen = U17 Nieuweling. De bot noemt een oude aanduiding altijd samen met de nieuwe, bijv. "categorie 3 (JO11/MO12)", zodat de bron herkenbaar blijft.
+De numerieke jeugdindeling van vóór 2026 (Categorie 1 t/m 7, daarna Nieuwelingen), die nog in regiodocumenten en bij ouders en trainers voorkomt. Elk nummer is een gecombineerde categorie van jongens en meisjes van een verschillend geboortejaar (bijv. categorie 3 = JO11/MO12); Categorie 0 bestaat niet. De vertaling staat in de Website-tekst *KNWU - leeftijdscategorieën*. De bot noemt een oude aanduiding altijd samen met de nieuwe, bijv. "categorie 3 (JO11/MO12)", zodat de bron herkenbaar blijft.
 _Avoid_: "cat. 3" zonder de nieuwe aanduiding erbij
 
 **Veldritseizoen**:
@@ -98,7 +98,8 @@ Niveau op verzoek, gekozen in de app (gem. max 20 woorden, max 25). Bij elk B2-a
 ## Kwaliteit en beheer
 
 **Verzin niets**:
-De bot verzint nooit regels, data of bedragen; bij ontbrekende informatie, onzekerheid of conflicterende bronnen wordt dit expliciet gesignaleerd in het antwoord.
+De bot gebruikt alleen gezaghebbende bronnen en geeft alleen antwoorden die daarmee onderbouwd zijn. Hij verzint nooit regels, data of bedragen en doet geen aannames over wat de gebruiker niet gezegd heeft. Ontbreekt informatie, is de bron niet actueel of spreken bronnen elkaar tegen, zodat geen juist antwoord mogelijk is, dan zegt hij dat expliciet in het antwoord.
+_Avoid_: "best guess", "waarschijnlijk" als antwoord zonder bron
 
 **Bronconflict**:
 Een verschil over dezelfde regel tussen de reglementstekst (Titel 20, Nationale Besluiten) en een andere bron, zoals een uitlegpagina van het Kenniscentrum. De bot antwoordt volgens de reglementstekst, noemt het verschil kort in het antwoord, en het verschil wordt zonder vraagtekst gesignaleerd aan de beheerder.

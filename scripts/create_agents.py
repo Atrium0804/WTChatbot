@@ -15,9 +15,14 @@ filtering is enforced org-wide via /v1/web-filters (docs/how-to/
 stel-websearch-allowlist-in.md) — do NOT use tool_configuration.include, it silently
 breaks the tool in mistralai 3.6.0.
 
+Test-agents (issue #59): --prefix zet een prefix voor elke agentnaam en elk
+handoff-doel (test-router-agent -> test-knwu-agent), --model overschrijft het
+model uit de config. Zonder deze opties verandert er niets.
+
 Usage:
     python scripts/create_agents.py           # dry-run
     python scripts/create_agents.py --apply   # create/update the agents
+    python scripts/create_agents.py --prefix test- --model mistral-medium-latest --apply
 """
 
 import argparse
@@ -88,6 +93,20 @@ def load_config(path: Path) -> Config:
     return data
 
 
+def apply_overrides(config: Config, prefix: str = "", model: str | None = None) -> Config:
+    """Kopie van de config met `prefix` voor elke agentnaam en elk handoff-doel,
+    en `model` in plaats van het config-model. Zonder opties: ongewijzigd."""
+    agents = [
+        {
+            **agent,
+            "name": prefix + agent["name"],
+            **({"handoffs": [prefix + t for t in agent["handoffs"]]} if "handoffs" in agent else {}),
+        }
+        for agent in config["agents"]
+    ]
+    return {**config, "model": model or config["model"], "agents": agents}
+
+
 def build_tools(agent: AgentConfig, library_ids: dict[str, str]) -> list[dict]:
     """Build the tools list for one agent.
 
@@ -131,16 +150,18 @@ def list_all_agents(client: Mistral) -> list:
     return agents
 
 
-def env_var_for(agent_name: str) -> str:
+def env_var_for(agent_name: str, prefix: str = "") -> str:
     """Env var that holds this agent's id: MISTRAL_AGENT_ID for the router (app),
-    MISTRAL_AGENT_ID_<NAME> per content agent (eval)."""
+    MISTRAL_AGENT_ID_<NAME> per content agent (eval). Een prefix telt niet mee:
+    test-router-agent hoort ook bij MISTRAL_AGENT_ID (in .env.local)."""
+    agent_name = agent_name.removeprefix(prefix)
     if agent_name == "router-agent":
         return "MISTRAL_AGENT_ID"
     category = agent_name.removesuffix("-agent")
     return "MISTRAL_AGENT_ID_" + category.upper().replace("-", "_")
 
 
-def print_summary(report: AgentReport, apply: bool) -> None:
+def print_summary(report: AgentReport, apply: bool, prefix: str = "") -> None:
     mode = "apply" if apply else "dry-run"
     print(f"\n--- summary ({mode}) ---")
     print(f"agents created: {len(report['created'])} {report['created']}")
@@ -149,10 +170,12 @@ def print_summary(report: AgentReport, apply: bool) -> None:
         print(f"errors ({len(report['errors'])}):")
         for error in report["errors"]:
             print(f"  - {error}")
-    if report["agent_ids"]:
-        print("agent ids (zet in .env):")
-        for name, agent_id in report["agent_ids"].items():
-            print(f"  {env_var_for(name)}={agent_id}  # {name}")
+    # Met prefix alleen de eigen (test-)agents: die ids horen in .env.local.
+    agent_ids = {n: i for n, i in report["agent_ids"].items() if n.startswith(prefix)}
+    if agent_ids:
+        print(f"agent ids (zet in {'.env.local' if prefix else '.env'}):")
+        for name, agent_id in agent_ids.items():
+            print(f"  {env_var_for(name, prefix)}={agent_id}  # {name}")
 
 
 def handoff_order(agents: list[AgentConfig]) -> list[AgentConfig]:
@@ -181,6 +204,7 @@ def run_create(
     apply: bool,
     report: AgentReport,
     config_path: Path | None = None,
+    prefix: str = "",
 ) -> int:
     prompts_dir = Path(config["prompts_folder"])
     if not prompts_dir.is_absolute() and config_path is not None:
@@ -252,7 +276,7 @@ def run_create(
             print(f"created agent '{name}' ({result.id})")
         id_by_name[name] = result.id
 
-    print_summary(report, apply)
+    print_summary(report, apply, prefix)
     return 1 if report["errors"] else 0
 
 
@@ -260,6 +284,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Create/update the production Mistral agents.")
     parser.add_argument("--apply", action="store_true", help="execute changes (default: dry-run)")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="path to config JSON")
+    parser.add_argument(
+        "--prefix", default="", help="prefix voor agentnamen en handoff-doelen, bv. 'test-'"
+    )
+    parser.add_argument("--model", default=None, help="overschrijft 'model' uit de config")
     args = parser.parse_args()
 
     load_dotenv()
@@ -268,9 +296,11 @@ def main() -> int:
         print("error: MISTRAL_API_KEY is not set; check .env", file=sys.stderr)
         return 2
     client = Mistral(api_key=api_key)
-    config = load_config(args.config)
+    config = apply_overrides(load_config(args.config), prefix=args.prefix, model=args.model)
     report: AgentReport = {"created": [], "updated": [], "errors": [], "agent_ids": {}}
-    return run_create(client, config, apply=args.apply, report=report, config_path=args.config)
+    return run_create(
+        client, config, apply=args.apply, report=report, config_path=args.config, prefix=args.prefix
+    )
 
 
 if __name__ == "__main__":

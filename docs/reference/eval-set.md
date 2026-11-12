@@ -64,13 +64,14 @@ Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): p
 python eval/run_eval.py
 ```
 
-| Variabele (uit `.env` in de repo-root) | Betekenis |
+| Variabele (uit `.env` in de repo-root, of uit de file in `ENV_FILE`) | Betekenis |
 | --- | --- |
+| `ENV_FILE` | Optioneel, als shellvariabele: andere env-file, relatief aan de repo-root (bv. `.env.local` met de test-agents) |
 | `MISTRAL_API_KEY` | Verplicht |
 | `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
 | `MISTRAL_AGENT_ID` | Router-agent, voor vragen met `via: router` |
 
-Waarden uit `.env` overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.
+Waarden uit de env-file overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.
 
 Output: per-vraag resultaat op stdout, volledig resultaat in `eval/last_run.json`, exit-code 0 als de gate gehaald is, anders 1. **Nooit in CI draaien** (geen live API-calls in CI).
 

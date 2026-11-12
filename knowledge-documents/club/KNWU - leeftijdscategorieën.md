@@ -23,7 +23,6 @@ Jongens en meisjes van hetzelfde geboortejaar hebben dezelfde categorienaam. In 
 
 | Oude naam | Nieuwe naam | Jongens worden dit jaar | Meisjes worden dit jaar |
 | --- | --- | --- | --- |
-| Categorie 0 | JO7 / MO8 | 6 | 7 |
 | Categorie 1 | JO8 / MO9 | 7 | 8 |
 | Categorie 1 | JO9 / MO10 | 8 | 9 |
 | Categorie 2 | JO10 / MO11 | 9 | 10 |

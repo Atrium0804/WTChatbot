@@ -67,9 +67,7 @@ def save_feedback(
 ) -> None:
     """Sla feedback op. `history` is een lijst turns ({question, answer}), oudste
     eerst; wordt als JSON in de history-kolom bewaard (alleen bij negative).
-
-    rating "bronconflict" (#47): alleen de markerregel in `text`, plus
-    conversation_id — géén question/answer/history (privacy)."""
+    Zie de module-docstring voor de privacy-regel per rating."""
     timestamp = datetime.now(timezone.utc).isoformat()
     with connect(db_path) as conn:
         if rating == "negative":

@@ -207,7 +207,8 @@ def render_report(rows: list[dict], source: str, generated_at: str) -> str:
         ]
         for g in conflicten:
             # de marker bevat zelf '|' — escape in de tabelcel
-            lines.append(f"| {g['text'].replace('|', chr(92) + '|')} | {g['aantal']} | {g['laatste']} |")
+            escaped = g["text"].replace("|", "\\|")
+            lines.append(f"| {escaped} | {g['aantal']} | {g['laatste']} |")
 
     lines.append(
         "_Retentie: rows ouder dan 30 dagen zijn automatisch gepurge'd uit de DB. "

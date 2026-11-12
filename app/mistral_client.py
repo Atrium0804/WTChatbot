@@ -6,7 +6,7 @@ provider vervangbaar blijft (CODING_PRINCIPLES.md).
 
 import requests
 
-DEFAULT_TIMEOUT = 60  # kortere worst-case: bij timeout direct een 502 met melding
+DEFAULT_TIMEOUT = 180  # ruimer (review 2026-11-12: websearch/handoff-runs liepen op 60s in een timeout); bij timeout direct een 502 met melding
 
 
 def extract_text(outputs: list) -> str:

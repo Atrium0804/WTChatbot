@@ -47,7 +47,9 @@ evalset:
     categorie: knwu
     type: websearch
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
-    verwacht_antwoord: "Basis; Plus; Premium; 26; 72; 135; startrecht; internationa; verzeker"
+    # review 2026-11-12: "startrecht" was een false negative — een goed antwoord
+    # noemt welke wedstrijden per pakket mogen ("wedstrijden"), niet het woord "startrecht"
+    verwacht_antwoord: "Basis; Plus; Premium; 26; 72; 135; wedstrijden; internationa; verzeker"
     bron: "kenniscentrum.knwu.nl/knwu-licenties"
     versiedatum: "2026"
   - id: knwu-licentie-u13-geen-pakketten
@@ -185,19 +187,8 @@ evalset:
   # --- KNWU via de router, met vervolgvragen (#44) ---
   # Meten of een conversatie na een handoff bij de juiste agent uitkomt
   # ("sticky handoff"), op basis van geanonimiseerde feedback.
-  - id: knwu-router-verzet-na-regiovraag
-    taalniveau: B2
-    categorie: knwu
-    type: standaard
-    via: router
-    beurten:
-      - "Wanneer is de volgende MNC-veldrit?"
-    vraag: "Welk verzet mag mijn zoon op de weg rijden? Hij is geboren in 2015."
-    # U12 in 2026 (art. 20.0.004) -> max. 5,90 m op de weg (art. 20.1.007)
-    verwacht_antwoord: "5,90; U12; artikel 20.1.007"
-    bron: "TITEL_20-Jeugdwielrennen_20260921"
-    versiedatum: "2026-09-21"
-    verwachte_agent: knwu-agent
+  # knwu-router-verzet-na-regiovraag verwijderd (review 2026-11-12): dubbel met
+  # de andere verzet-vragen; er zijn voldoende verzet-vragen in de set
   - id: knwu-router-geboortejaar-als-vervolg
     taalniveau: B2
     categorie: knwu
@@ -240,14 +231,23 @@ evalset:
     categorie: regio
     type: standaard
     vraag: "Wanneer loopt de In Memoriam Hans van den Hengel jeugdcompetitie 2026?"
-    verwacht_antwoord: "29 maart; 27 september"
+    # sinds 2026-11-12: antwoorden mogen geen datums in het verleden bevatten;
+    # een goed antwoord meldt dat de competitie al is afgelopen en noemt geen
+    # wedstrijddata uit het verleden (deze datums zijn daarom verboden)
+    verwacht_antwoord: "afgelopen; geen toekomstige"
+    niet_in_antwoord: "29 maart; 27 september"
     bron: "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl/competities"
     versiedatum: "2026"
   - id: regio-nk-kwalificatie
     taalniveau: B2
     categorie: regio
     type: standaard
-    vraag: "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?"
+    beurten:
+      - "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?"
+
+    # review 2026-11-12: de bot stelt eerst de verhelderingsvraag (discipline);
+    # pas het eindantwoord op het vervolg wordt gecheckt, anders is er geen eindantwoord
+    vraag: "NK wegwielrennen"
     verwacht_antwoord: "selectieprocedure; nationale wedstrijden; 5; Mijn KNWU; LJT"
     bron: "Nationale_Besluiten_20260918"
     versiedatum: "2026"

@@ -363,7 +363,9 @@ RUN3_OORDEEL = {
     "knwu-actuele-versie-titel20": True,
     "knwu-wijziging-nationale-besluiten": True,
     "regio-mnc-veldrijden-starttijden": True,
-    "regio-hvh-kalender-2026": True,
+    # regel gewijzigd 2026-11-12: antwoorden mogen geen datums in het verleden
+    # bevatten; het run-3-antwoord (met 29 maart t/m 27 september) faalt nu dus
+    "regio-hvh-kalender-2026": False,
     "regio-juiste-knwu-regio": True,
     "regio-techniekwedstrijden-2026": True,
     # true positives
@@ -410,6 +412,11 @@ class KernfeitGrenzenTests(unittest.TestCase):
 
     def test_tijd_met_voorloopnul_matcht_tijd_zonder(self) -> None:
         self.assertEqual(self.missing("08:30", "tussen 8.30 en 12.00 uur"), [])
+
+    def test_art_matcht_artikel(self) -> None:
+        # review 2026-11-12: modellen schrijven "art. 20.1.007" waar de evalset
+        # "artikel 20.1.007" verwacht — inhoudelijk hetzelfde, moet matchen
+        self.assertEqual(self.missing("artikel 20.1.007", "max 6,70 meter (art. 20.1.007)"), [])
 
 
 class EnvTests(unittest.TestCase):

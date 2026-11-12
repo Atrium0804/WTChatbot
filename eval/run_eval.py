@@ -288,7 +288,11 @@ def bron_match(expected: str, bron_line: str) -> bool:
 
 
 def _canoniek(token: str) -> str:
-    """Getal-token canoniek: voorloopnullen weg, nul-decimalen weg (08,30->8,30; 10,00->10)."""
+    """Token canoniek: "art" -> "artikel" (review 2026-11-12: modellen schrijven
+    "art. 20.1.007" waar de evalset "artikel 20.1.007" verwacht), en getal-token
+    canoniek: voorloopnullen weg, nul-decimalen weg (08,30->8,30; 10,00->10)."""
+    if token == "art":
+        return "artikel"
     if not token[0].isdigit():
         return token
     parts = [p.lstrip("0") or "0" for p in token.split(",")]

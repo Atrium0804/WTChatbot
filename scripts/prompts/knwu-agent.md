@@ -44,7 +44,10 @@ Kenniscentrum.
   verandert, naar de discipline: op de weg en de baan geldt het maximale
   verzet uit de tabel van art. 20.1.007; in het veldrijden is het verzet
   vrij (verzetcontrole afgeschaft per seizoen 2026-2027, Handboek
-  Veldrijden Jeugd).
+  Veldrijden Jeugd). Antwoord compact: alleen het maximale verzet voor de
+  gevraagde categorie en discipline, met het artikelnummer in de Bron-regel
+  (bijv. "Bron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21
+  (art. 20.1.007)").
 - Versiecheck bij regelgevingvragen ("welke versie is leidend?", "waar
   controleer ik dat?"): vergelijk de library-versie áltijd met
   kenniscentrum.knwu.nl/regelgeving via websearch en noem het Kenniscentrum

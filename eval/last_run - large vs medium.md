@@ -959,6 +959,8 @@ knwumidden.nl/competities — 2026-2027
 
 ## Benodigde wijzigingen (uit review van de 9 large-fails, 2026-11-12)
 
+**Status: alle 8 wijzigingen doorgevoerd op 2026-11-12** (evalset.yaml, run_eval.py, knwu-agent.md, regio-agent.md, app/mistral_client.py, tests). Herberekening van de bestaande runs met de nieuwe evalset/checker: large 24→28 ok, medium 17→21 ok; `regio-hvh-kalender-2026` slaat bij medium nu om naar FALEN (datums in het verleden), `knwu-verzet-u11` blijft expres falen (doorhaalwaarde 5,78 echt aanwezig).
+
 De `> [!important]`-blokken hierboven zijn de reviewbevindingen per falende vraag. Daaruit volgen deze wijzigingen:
 
 | # | Constatering uit review (vraag-id) | Benodigde wijziging | Bestand |

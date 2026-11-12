@@ -64,9 +64,8 @@ Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): p
 python eval/run_eval.py
 ```
 
-| Variabele (uit `.env` in de repo-root, of uit de file in `ENV_FILE`) | Betekenis |
+| Variabele (uit `.env` in de repo-root) | Betekenis |
 | --- | --- |
-| `ENV_FILE` | Optioneel, als shellvariabele: andere env-file, relatief aan de repo-root (bv. `.env.local` met de test-agents) |
 | `MISTRAL_API_KEY` | Verplicht |
 | `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
 | `MISTRAL_AGENT_ID` | Router-agent, voor vragen met `via: router` |

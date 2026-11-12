@@ -3,20 +3,19 @@
 > [!WARNING]
 > Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
 
-Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit [eval/reviewvragen.md](../../eval/reviewvragen.md) zelf stellen aan de lokale bot met de test-agents, ze beoordelen met de feedbackknop, de feedback door een AI laten analyseren en de goedgekeurde verbeteringen doorvoeren. Herhaal rondes tot een ronde geen enkele duim omlaag meer oplevert (issue #63).
+Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit [eval/reviewvragen.md](../../eval/reviewvragen.md) zelf stellen aan de lokaal draaiende bot, ze beoordelen met de feedbackknop, de feedback door een AI laten analyseren en de goedgekeurde verbeteringen doorvoeren. Herhaal rondes tot een ronde geen enkele duim omlaag meer oplevert (issue #63).
 
 ## Voorwaarden
 
-- De test-agents bestaan en `.env.local` is gevuld: zie [Test-agents aanmaken en de bot lokaal reviewen](maak-test-agents-en-review-lokaal.md), stap 1 t/m 3.
+- `.env` in de repo-root is gevuld (key + agent-ID's van de productie-agents); de agents zijn gedeployed: zie [Productie-agents aanmaken of updaten](maak-of-update-productie-agents.md).
 - De libraries zijn gesynct met `knowledge-documents/`: zie [Libraries synchroniseren](synchroniseer-libraries.md).
 - Alle commando's draaien vanuit de repo-root, tenzij anders vermeld.
 
 ## Stappen
 
-1. **Start de app tegen de test-agents, met een eigen database voor deze ronde.** Zo staat in de database alleen de feedback van deze ronde. De standaardlimiet van 10 berichten per uur is te laag voor een ronde, dus zet die tijdelijk hoger. Vervang `1` door het nummer van de ronde:
+1. **Start de app lokaal, met een eigen database voor deze ronde.** Zo staat in de database alleen de feedback van deze ronde. De standaardlimiet van 10 berichten per uur is te laag voor een ronde, dus zet die tijdelijk hoger. Vervang `1` door het nummer van de ronde:
 
    ```powershell
-   $env:ENV_FILE = ".env.local"
    $env:DATABASE_PATH = "data\reviewronde-1.db"
    $env:RATE_LIMIT_PER_HOUR = "500"
    cd app
@@ -43,13 +42,13 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
 
 5. **Keur de voorstellen goed of af.** Alleen goedgekeurde voorstellen worden doorgevoerd, op een branch per ronde met een PR die naar issue #58 verwijst.
 
-6. **Werk de test-agents en libraries bij.** Na een promptwijziging:
+6. **Werk de agents en libraries bij.** Na een promptwijziging (agents worden in place geüpdatet, de ID's in `.env` blijven gelijk):
 
    ```powershell
-   .venv\Scripts\python scripts\create_agents.py --prefix test- --model mistral-medium-latest --apply
+   .venv\Scripts\python scripts\create_agents.py --apply
    ```
 
-   Na een documentwijziging: sync de betreffende library (zie [Libraries synchroniseren](synchroniseer-libraries.md)). Let op: de libraries zijn gedeeld met productie.
+   Na een documentwijziging: sync de betreffende library (zie [Libraries synchroniseren](synchroniseer-libraries.md)).
 
 7. **Leg de ronde vast.** Vul een regel in de rondelog onderaan [eval/reviewvragen.md](../../eval/reviewvragen.md): datum, model, scenario-ID's met duim omlaag en de doorgevoerde wijzigingen. Zet terugkerende patronen geanonimiseerd in [LEARNINGS.md](../../LEARNINGS.md). Verwijder daarna het rapport uit `$env:TEMP`.
 
@@ -57,7 +56,7 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
 
 ## Stopcriterium
 
-Levert een ronde geen enkele duim omlaag meer op, dan gaat het model naar productie (issue #64) en worden de scenario's cases in de [Eval-set](../reference/eval-set.md).
+Levert een ronde geen enkele duim omlaag meer op, dan worden de scenario's cases in de [Eval-set](../reference/eval-set.md).
 
 ## Controle dat het gelukt is
 
@@ -67,6 +66,6 @@ Levert een ronde geen enkele duim omlaag meer op, dan gaat het model naar produc
 
 ## Zie ook
 
-- [Test-agents aanmaken en de bot lokaal reviewen](maak-test-agents-en-review-lokaal.md)
+- [Productie-agents aanmaken of updaten](maak-of-update-productie-agents.md)
 - [Feedback gebruiken om prompts te finetunen](gebruik-feedback-om-prompts-te-finetunen.md): dezelfde loop met de productiefeedback en de eval-set
 - [Feedback raadplegen voor triage](raadpleeg-feedback-voor-triage.md)

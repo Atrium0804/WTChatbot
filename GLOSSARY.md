@@ -110,7 +110,7 @@ Vaste set van ±20 typische clubvragen met verwacht antwoord en bron. Launch-gat
 _Avoid_: testset, testvragen (in deze context)
 
 **Reviewronde**:
-Eén keer handmatig de vaste scenario's (beginvraag plus vervolgvragen, afgeleid van eerdere negatieve feedback) doorlopen in de lokaal draaiende bot tegen de test-agents, met beoordeling via de feedbackknop, gevolgd door een AI-analyse van die feedback en goedgekeurde verbeteringen. Rondes herhalen tot geen scenario meer een duim omlaag krijgt; de scenario's voeden later de Eval-set.
+Eén keer handmatig de vaste scenario's (beginvraag plus vervolgvragen, afgeleid van eerdere negatieve feedback) doorlopen in de lokaal draaiende bot, met beoordeling via de feedbackknop, gevolgd door een AI-analyse van die feedback en goedgekeurde verbeteringen. Rondes herhalen tot geen scenario meer een duim omlaag krijgt; de scenario's voeden later de Eval-set.
 _Avoid_: "testronde", "even testen"
 
 **Feedbackgeschiedenis**:

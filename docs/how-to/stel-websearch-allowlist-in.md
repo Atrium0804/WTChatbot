@@ -3,7 +3,7 @@
 > [!WARNING]
 > Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
 
-Hoe je de domeinen beperkt die de `web_search`-tool mag raadplegen. De beslissing en scope (allowlist: `knwu.nl`, `knwumidden.nl`, `wtcwoerden.nl`) staan in [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md); deze pagina beschrijft alleen de configuratie.
+Hoe je de domeinen beperkt die de `web_search`-tool mag raadplegen. De beslissing en scope (allowlist: `knwu.nl`, `knwumidden.nl`) staan in [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md); deze pagina beschrijft alleen de configuratie.
 
 Mistral domeinfiltering is een **org-level** governance-control, geconfigureerd via de REST-endpoints onder `https://api.mistral.ai/v1/web-filters`. Er is (nog) geen Admin Panel-pagina voor — API-only — en de endpoints zitten (nog) niet in de `mistralai`-SDK (getest met 3.6.0), dus gebruik `curl` of `httpx` uit de project-venv.
 
@@ -43,13 +43,13 @@ print(h.get("/v1/web-filters/domains/allowed").json())  # {"domains": [...]}
 
 Huidige state van onze org (gelezen met de project-key): `block_by_default` is `null` en beide lijsten zijn leeg — filtering staat nog **uit**.
 
-## Allowlist instellen (knwu.nl, knwumidden.nl, wtcwoerden.nl)
+## Allowlist instellen (knwu.nl, knwumidden.nl)
 
 1. Zet de default-actie op block (allowlist-modus):
    `curl -X PUT "https://api.mistral.ai/v1/web-filters/config" -H "Authorization: Bearer $MISTRAL_API_KEY" -H "Content-Type: application/json" -d '{"block_by_default": true}'`
 2. Voeg de gezaghebbende domeinen toe aan de allowlist:
-   `curl -X POST "https://api.mistral.ai/v1/web-filters/domains/allowed" -H "Authorization: Bearer $MISTRAL_API_KEY" -H "Content-Type: application/json" -d '{"domains": ["knwu.nl", "knwumidden.nl", "wtcwoerden.nl"]}'`
-3. Controleer: herhaal de GET-calls uit "Huidige configuratie lezen" — `block_by_default` moet `true` zijn en de drie domeinen in `allowed` staan.
+   `curl -X POST "https://api.mistral.ai/v1/web-filters/domains/allowed" -H "Authorization: Bearer $MISTRAL_API_KEY" -H "Content-Type: application/json" -d '{"domains": ["knwu.nl", "knwumidden.nl"]}'`
+3. Controleer: herhaal de GET-calls uit "Huidige configuratie lezen" — `block_by_default` moet `true` zijn en de twee domeinen in `allowed` staan.
 
 ## Domeinen beheren
 
@@ -83,8 +83,8 @@ Zet beide stappen, want entries matchen in beide modi:
 
 ## Controle dat het gelukt is
 
-- De GET-calls tonen `block_by_default: true` en de drie domeinen in `allowed`.
-- Stel via een agent met de `web_search`-tool een vraag waarvan je weet dat het open web ook resultaten geeft (bijvoorbeeld "Wanneer is WTC Woerden opgericht?"). In de `tool_reference`-chunks van de `message.output` mogen alleen `knwu.nl`, `knwumidden.nl` en `wtcwoerden.nl` (en subdomeinen) voorkomen.
+- De GET-calls tonen `block_by_default: true` en de twee domeinen in `allowed`.
+- Stel via een agent met de `web_search`-tool een vraag waarvan je weet dat het open web ook resultaten geeft (bijvoorbeeld "Wanneer is WTC Woerden opgericht?"). In de `tool_reference`-chunks van de `message.output` mogen alleen `knwu.nl` en `knwumidden.nl` (en subdomeinen) voorkomen.
 
 ## Let op: geen per-tool `include` gebruiken
 

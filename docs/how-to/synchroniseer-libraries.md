@@ -31,6 +31,19 @@ Zie ook de [seizoenwissel-procedure](../operations.md):
 6. Draai de sync (eerst dry-run, dan `--apply`). De map `review/` wordt nooit gesynct.
 7. Re-run de eval-set (`eval/run_eval.py`); launch-gate ≥90% correct mét correcte bron.
 
+## Website-teksten importeren in de Club-library
+
+De pagina's van de jeugdsite (Website-teksten, zie [GLOSSARY.md](../../GLOSSARY.md)) staan als markdown in de WebsiteWTCjeugd-repo. `scripts/import_website_texts.py` kopieert ze naar `knowledge-documents/club/` en haalt het CMS-paginanummer uit de bestandsnaam (`Trainingen - 1014.md` wordt `Trainingen.md`). De website geldt als actueel: een gewijzigde tekst overschrijft de kopie. Een bestand dat al gelijk is, wordt niet opnieuw geschreven.
+
+1. Haal de laatste versie van de WebsiteWTCjeugd-repo op (`git pull` in die clone).
+2. Draai een dry-run: `python scripts/import_website_texts.py`. De default bronmap is de naastgelegen clone `..\WebsiteWTCjeugd\websiteteksten\website_teksten md`; geef een ander pad mee met `--source "<pad>"` (bijvoorbeeld vanuit een git-worktree).
+3. Controleer de output: welke teksten nieuw of gewijzigd zijn.
+4. Schrijf de bestanden: `python scripts/import_website_texts.py --apply`.
+5. Commit de gewijzigde Website-teksten. Ze staan in git; de overige clubdocumenten (`WTC Woerden - ...`) blijven lokaal.
+6. Sync de Club-library: `python scripts/sync_libraries.py --library club` (eerst dry-run, dan `--apply`).
+
+Het script verwijdert niets: is een pagina van de website verdwenen, verwijder de kopie dan zelf uit `knowledge-documents/club/`.
+
 ## Controle dat het gelukt is
 
 - De summary onderaan de script-output toont per categorie de aantallen; bij fouten tijdens `--apply` is de exit-code 1 en staan de fouten in de summary.

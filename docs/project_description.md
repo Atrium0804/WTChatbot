@@ -66,12 +66,12 @@ De chatbot beantwoordt vragen over de volgende gebieden:
     - https://kenniscentrum.knwu.nl/algemeen - gezaghebbende bron voor regio-indeling en tarieven
     - https://kenniscentrum.knwu.nl/toekomstcup - gezaghebbende bron voor U17-wedstrijden van de Toekomstclub
     - https://mijn.knwu.nl/calendar/ - gezaghebbende bron voor nationale wedstrijden
-  - Websearch-fallback (ADR-0004): als de documenten in de bibliotheken geen (sluitend) antwoord geven, wordt de websearch-tool ingezet met scope beperkt tot een allowlist van de gezaghebbende domeinen: knwu.nl (incl. kenniscentrum.knwu.nl), knwumidden.nl en wtcwoerden.nl - nooit het open web. Licentievragen raadplegen altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
+  - Websearch-fallback (ADR-0004): als de documenten in de bibliotheken geen (sluitend) antwoord geven, wordt de websearch-tool ingezet met scope beperkt tot een allowlist van de gezaghebbende domeinen: knwu.nl (incl. kenniscentrum.knwu.nl) en knwumidden.nl - nooit het open web. wtcwoerden.nl valt erbuiten omdat het CMS de bot blokkeert; clubinformatie komt uit de Website-teksten in de Club-library (ADR-0004, amendment 2026-11-12). Licentievragen raadplegen altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
   - Vragen over regionale wedstrijden worden alleen beantwoord voor de regio Midden. Vragen over andere regio's worden vriendelijk geweigerd.
     - https://www.knwumidden.nl/competities - gezaghebbende bron voor wedstrijdreglementen van de Midden Nederland Competitie/Hans van den Hengelcompetitie en de wedstrijdkalender van deze competities
   - Vragen over clubzaken:
-    - github-repo met website-teksten - gezaghebbende bron voor WTC Woerden Jeugd
-    - website WTCwoerden.nl - gezaghebbende bron voor clubzaken, te weten:
+    - github-repo met website-teksten - gezaghebbende bron voor WTC Woerden Jeugd; als Website-teksten in de Club-library via `scripts/import_website_texts.py`
+    - website WTCwoerden.nl - gezaghebbende bron voor clubzaken (alleen als lokale kopie in de Club-library, niet via websearch), te weten:
       - https://www.wtcwoerden.nl/index.php?page=Agenda&sid=1 - clubactiviteiten
         - post-MVP op te halen via de AllUnited-iCal-feed van de agenda (zie #34); de feed-URL is nog niet ingeregeld en wtcwoerden.nl blokkeert direct ophalen via websearch (CloudFront-403, zie #29)
       - https://www.wtcwoerden.nl/index.php?page=674&sid=1 - contributietarieven
@@ -82,7 +82,7 @@ De chatbot beantwoordt vragen over de volgende gebieden:
 ## Belangrijk
 
 - Beantwoord vragen over KNWU- en regiozaken enkel op basis van de genoemde gezaghebbende bronnen.
-- RAG-retrieval is gescoped per bibliotheek: nationale/KNWU-vragen alleen via de KNWU-bibliotheek en/of het Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) via de Regio-library met expliciete fallback naar de KNWU-bibliotheek; clubvragen via de Club-library en wtcwoerden.nl. Nooit ongescopeerde retrieval over meerdere bibliotheken tegelijk.
+- RAG-retrieval is gescoped per bibliotheek: nationale/KNWU-vragen alleen via de KNWU-bibliotheek en/of het Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) via de Regio-library met expliciete fallback naar de KNWU-bibliotheek; clubvragen alleen via de Club-library (inclusief de Website-teksten van de jeugdsite). Nooit ongescopeerde retrieval over meerdere bibliotheken tegelijk.
 - Vermeld bij elk antwoord de bron en de versiedatum van het gebruikte document.
 - Benoem als je geen informatie hebt in de gezaghebbende bronnen om de vraag te beantwoorden.
 - Benoem als je tegenstrijdige informatie tegenkomt in de gezaghebbende bronnen en vermeld dan het KNWU-contact: +31 (0)85 070 1900 (di-vr 8.30-12.00 uur).

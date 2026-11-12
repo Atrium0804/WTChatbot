@@ -170,6 +170,18 @@ evalset:
     # geen routeringsvraag en geen vragen naar discipline of geslacht (#38)
     verwacht_antwoord: "geboortejaar"
     niet_in_antwoord: "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"
+  - id: knwu-verheldering-categorie-via-router
+    taalniveau: B1
+    categorie: knwu
+    type: verheldering
+    via: router
+    vraag: "In welke categorie rijdt mijn zoon?"
+    # feedback: met contextregels kondigde de router de handoff alleen in
+    # tekst aan ("Ik geef je door naar de juiste agent") en deed hem niet;
+    # de knwu-agent moet zelf naar het geboortejaar vragen
+    verwacht_antwoord: "geboortejaar"
+    niet_in_antwoord: "agent; geslacht"
+    verwachte_agent: knwu-agent
   # --- KNWU via de router, met vervolgvragen (#44) ---
   # Meten of een conversatie na een handoff bij de juiste agent uitkomt
   # ("sticky handoff"), op basis van geanonimiseerde feedback.

@@ -24,7 +24,7 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
 
    `DATABASE_PATH` is relatief aan `app/`; `app/data/` staat in `.gitignore`.
 
-2. **Doorloop de scenario's.** Open `http://localhost:8000` en volg [eval/reviewvragen.md](../../eval/reviewvragen.md): per scenario een nieuwe conversatie, de beurten in volgorde. Geef bij elk antwoord een duim omhoog of omlaag. Noem bij een duim omlaag in de toelichting het scenario-ID en het controlepunt, bijvoorbeeld `S09: oude categorie niet vertaald`.
+2. **Doorloop de scenario's.** Open [http://localhost:8000](http://localhost:8000) en volg [eval/reviewvragen.md](../../eval/reviewvragen.md): per scenario een nieuwe conversatie, de beurten in volgorde. Geef bij elk antwoord een duim omhoog of omlaag. Noem bij een duim omlaag in de toelichting het scenario-ID en het controlepunt, bijvoorbeeld `S09: oude categorie niet vertaald`.
 
 3. **Maak het feedbackrapport, buiten de repo.** Open een tweede terminal in de repo-root:
 

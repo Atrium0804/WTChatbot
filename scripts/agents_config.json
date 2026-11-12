@@ -1,5 +1,5 @@
 {
-  "model": "mistral-large-latest",
+  "model": "mistral-medium-latest",
   "completion_args": {
     "temperature": 0,
     "top_p": 1,

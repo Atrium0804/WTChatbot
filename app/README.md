@@ -55,6 +55,8 @@ MISTRAL_API_KEY=...
 MISTRAL_AGENT_ID=...        # de router-agent uit docs/system-prompt.md
 ```
 
+Lokaal tegen de test-agents: zet `ENV_FILE=.env.local` (relatief aan de repo-root); zie [test-agents aanmaken en de bot lokaal reviewen](../docs/how-to/maak-test-agents-en-review-lokaal.md).
+
 ## Deploy op de VPS (Hetzner CX22, ADR-0002)
 
 1. DNS: A-record `wtchat.famstieltjes.nl` -> VPS-IP.

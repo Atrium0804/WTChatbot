@@ -295,6 +295,32 @@ class RunCreateTests(unittest.TestCase):
         self.assertEqual(calls["regio-agent"]["handoffs"], ["agent-knwu-agent"])
         self.assertEqual(calls["router-agent"]["handoffs"], ["agent-regio-agent"])
 
+    def test_handoff_cyclus_wordt_in_tweede_pass_gezet(self) -> None:
+        # knwu <-> regio: bij verse creatie bestaat geen van beide eerst.
+        (self.root / "prompts" / "regio-agent.md").write_text("REGIO ADDENDUM", encoding="utf-8")
+        regio = {
+            "name": "regio-agent",
+            "description": "Regio-agent",
+            "prompt_files": ["_shared.md", "regio-agent.md"],
+            "handoffs": ["knwu-agent"],
+        }
+        knwu = self.knwu_agent()
+        knwu["handoffs"] = ["regio-agent"]
+        config_path = self.make_config([knwu, regio])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(report["errors"], [])
+        self.assertEqual(rc, 0)
+        updates = {c.kwargs["agent_id"]: c.kwargs for c in client.beta.agents.update.call_args_list}
+        self.assertEqual(updates["agent-knwu-agent"]["handoffs"], ["agent-regio-agent"])
+        creates = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(creates["regio-agent"]["handoffs"], ["agent-knwu-agent"])
+
     def test_unknown_handoff_target_is_error(self) -> None:
         router = self.router_agent()
         router["handoffs"] = ["bestaat-niet"]
@@ -329,6 +355,30 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertEqual(rc, 0, report["errors"])
         calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
         self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent"])
+
+    def test_knwu_agent_kan_doorverwijzen_na_onderwerpwissel(self) -> None:
+        # Bug: na een KNWU-handoff blijft de conversatie bij de knwu-agent
+        # (sticky); "hoe laat start de zmc?" kreeg "geen informatie in mijn bronnen".
+        config_path = create_agents.DEFAULT_CONFIG_PATH
+        client = make_client(
+            remote_libraries=[make_lib(n, f"lib-{n}") for n in ("knwu", "regio", "club", "archive")]
+        )
+        report: create_agents.AgentReport = {"created": [], "updated": [], "errors": [], "agent_ids": {}}
+
+        with redirect_stdout(io.StringIO()):
+            rc = create_agents.run_create(
+                client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+            )
+
+        self.assertEqual(rc, 0, report["errors"])
+        updates = {c.kwargs["agent_id"]: c.kwargs for c in client.beta.agents.update.call_args_list}
+        creates = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(updates["agent-knwu-agent"]["handoffs"], ["agent-router-agent"])
+        self.assertIn("agent-router-agent", updates["agent-club-agent"]["handoffs"])
+        self.assertIn("agent-router-agent", updates["agent-regio-agent"]["handoffs"])
+        for name in ("knwu-agent", "regio-agent", "club-agent"):
+            self.assertIn("handoff naar de router-agent", " ".join(creates[name]["instructions"].split()))
+        self.assertIn("nooit terug", " ".join(creates["router-agent"]["instructions"].split()))
 
     def test_knwu_agent_noemt_verzet_in_scope(self) -> None:
         # reviewronde 1 item 2: "met welk verzet moet ik rijden?" werd door de

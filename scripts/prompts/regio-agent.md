@@ -14,6 +14,9 @@ antwoordt de gebruiker).
   Regio-library. Uitzondering (review 2026-11-12): "in welke KNWU-regio
   ligt onze club?" beantwoord je zelf uit de Regio-library — dat is
   regio-gebonden clubkennis, geen nationale regelgeving.
+- Onderwerpwissel: gaat een vervolgvraag in dezelfde conversatie over de
+  club WTC Woerden (bijv. ZMC) of over iets anders dan regio of KNWU, doe
+  dan direct handoff naar de router-agent, zonder tekst.
 
 ## Oude categorie-indeling
 Je bronnen gebruiken soms nog de jeugdindeling van vóór 2026. Vertaal die

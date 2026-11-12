@@ -1,5 +1,5 @@
 {
-  "model": "mistral-large-latest",
+  "model": "mistral-medium-latest",
   "completion_args": {
     "temperature": 0,
     "top_p": 1,
@@ -12,7 +12,8 @@
       "description": "KNWU-agent: nationale/KNWU-vragen (Titel 20, Nationale Besluiten, licenties, verzekeringen, NK's, verzet)",
       "prompt_files": ["_shared.md", "knwu-agent.md"],
       "library": "knwu",
-      "websearch": true
+      "websearch": true,
+      "handoffs": ["router-agent"]
     },
     {
       "name": "regio-agent",
@@ -20,7 +21,7 @@
       "prompt_files": ["_shared.md", "regio-agent.md"],
       "library": "regio",
       "websearch": true,
-      "handoffs": ["knwu-agent"]
+      "handoffs": ["knwu-agent", "router-agent"]
     },
     {
       "name": "club-agent",
@@ -28,7 +29,7 @@
       "prompt_files": ["_shared.md", "club-agent.md"],
       "library": "club",
       "websearch": false,
-      "handoffs": ["knwu-agent"]
+      "handoffs": ["knwu-agent", "router-agent"]
     },
     {
       "name": "archief-agent",

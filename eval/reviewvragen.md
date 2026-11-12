@@ -65,7 +65,7 @@ Controlepunten:
 
 ### S03 — Verzet
 
-Herkomst: feedbackitems 4 en 11.
+Herkomst: feedbackitems 4 en 11; reviewronde 1 item 2.
 
 Beurten:
 
@@ -75,6 +75,7 @@ Beurten:
 
 Controlepunten:
 
+- Wijst een verzetvraag NOOIT af als "buiten KNWU-regelgeving" (reviewronde 1 item 2: "met welk verzet moet ik rijden?" kreeg een doorverwijzing naar het clubsecretariaat); raadpleegt Titel 20 art. 20.1.007.
 - Bepaalt eerst de leeftijdscategorie en de discipline en geeft dan een gericht antwoord, geen overzicht van alle categorieën.
 - Veldrijden: het verzet is vrij. Weg: het maximale verzet voor die leeftijdscategorie uit Titel 20.
 - Noemt geen minimaal verzet dat niet in de bron staat.

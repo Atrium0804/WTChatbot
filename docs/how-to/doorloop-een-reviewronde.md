@@ -19,7 +19,7 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
    $env:DATABASE_PATH = "data\reviewronde-1.db"
    $env:RATE_LIMIT_PER_HOUR = "500"
    cd app
-   ..\.venv\Scripts\python -m uvicorn main:app --port 8000 --relo
+   ..\.venv\Scripts\python -m uvicorn main:app --port 8000 --reload
    ```
 
    `DATABASE_PATH` is relatief aan `app/`; `app/data/` staat in `.gitignore`.
@@ -35,11 +35,18 @@ Hoe je één [reviewronde](../../GLOSSARY.md) doorloopt: de vaste scenario's uit
    Het rapport bevat ruwe vragen en antwoorden. Zet het niet in de repo, een issue of een PR (zie [privacy-afspraken](raadpleeg-feedback-voor-triage.md#privacy-afspraken)).
 
 4. **Laat een AI het rapport analyseren.** Geef het rapport aan een AI-agent (bijvoorbeeld Copilot in deze repo) met de opdracht om per duim omlaag te bepalen:
+   
    - de oorzaak: prompt (`scripts/prompts/`), ontbrekend of verouderd document (`knowledge-documents/`), routing (verkeerde agent of handoff) of de app (contextregels in `app/context.py`);
    - een concreet voorstel voor de wijziging.
-
+   
    De AI wijzigt nog niets. Bij twijfel over de antwoordende agent: zie [Feedback raadplegen voor triage](raadpleeg-feedback-voor-triage.md) voor `scripts/trace_conversation.py`.
-
+   
+   ```
+    /diagnosing-bugs $env:TEMP\reviewronde-1.md - debug issue <nr>
+   ```
+   
+   
+   
 5. **Keur de voorstellen goed of af.** Alleen goedgekeurde voorstellen worden doorgevoerd, op een branch per ronde met een PR die naar issue #58 verwijst.
 
 6. **Werk de agents en libraries bij.** Na een promptwijziging (agents worden in place geüpdatet, de ID's in `.env` blijven gelijk):

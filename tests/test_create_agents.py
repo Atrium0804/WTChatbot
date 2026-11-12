@@ -330,6 +330,15 @@ class ProductieConfigTests(unittest.TestCase):
         calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
         self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent"])
 
+    def test_knwu_agent_noemt_verzet_in_scope(self) -> None:
+        # reviewronde 1 item 2: "met welk verzet moet ik rijden?" werd door de
+        # knwu-agent afgewezen als buiten scope. Verzet valt wél onder KNWU
+        # (Titel 20 art. 20.1.007), dus de prompt moet het expliciet noemen.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
+        self.assertIn("verzet", prompt.lower())
+        self.assertIn("20.1.007", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

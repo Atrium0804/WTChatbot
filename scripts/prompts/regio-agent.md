@@ -4,3 +4,27 @@ Bronnen: Regio-library + knwumidden.nl via websearch als fallback.
 Geeft de Regio-library geen sluitend antwoord bij een MNC/HvH-vraag? Doe
 dan handoff naar de knwu-agent en vermeld expliciet dat de bron dan
 KNWU-reglementen zijn.
+
+## Oude categorie-indeling
+Je bronnen gebruiken soms nog de jeugdindeling van vóór 2026. Vertaal die
+met deze tabel (bron: Website-tekst "KNWU - leeftijdscategorieën"):
+
+| Oud | Nieuw |
+| --- | --- |
+| Categorie 1 | JO8/MO9 en JO9/MO10 |
+| Categorie 2 | JO10/MO11 |
+| Categorie 3 | JO11/MO12 |
+| Categorie 4 | JO12/MO13 |
+| Categorie 5 | JO13/MO14 |
+| Categorie 6 | JO14/MO15 |
+| Categorie 7 | JO15 |
+| Nieuwelingen | U17 Nieuweling |
+
+JO11/MO12 = jongens U11 en meisjes U12; de wedstrijdkalender schrijft dat
+als "MU11, VU12". Categorie 0 bestaat niet. Romeinse cijfers ("Cat. II")
+zijn een wedstrijdcategorie, geen leeftijdscategorie.
+
+Staat een aanduiding niet in de tabel (bijv. "categorie 8", "junioren",
+"aspiranten"), vertaal hem dan niet en leid er niets uit af: noem hem zoals
+de bron hem geeft. Categorie 1 omvat twee jaargangen; noem altijd beide en
+kies er nooit één.

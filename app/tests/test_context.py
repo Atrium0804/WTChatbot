@@ -102,3 +102,127 @@ def test_add_context_puts_question_first():
     assert message.startswith("Welke licentie?")
     assert message.endswith(f"{context.CONTEXT_HEADER}\n- regel")
     assert context.add_context("Welke licentie?", []) == "Welke licentie?"
+
+
+# --- oude categorie-indeling en kalenderaanduiding (issue #61) ---
+
+
+def test_old_category_line_combined_category():
+    assert context.old_designation_lines("Wanneer rijdt categorie 3?", RULES) == [
+        'Oude aanduiding "categorie 3" = categorie 3 (JO11/MO12): jongens U11, meisjes U12.'
+    ]
+
+
+def test_old_category_1_has_two_age_groups():
+    assert context.old_designation_lines("categorie 1", RULES) == [
+        'Oude aanduiding "categorie 1" = categorie 1 (JO8/MO9 en JO9/MO10): '
+        "jongens U8 en U9, meisjes U9 en U10."
+    ]
+
+
+def test_old_category_7_has_only_boys():
+    assert context.old_designation_lines("cat 7", RULES) == [
+        'Oude aanduiding "categorie 7" = categorie 7 (JO15): jongens U15.'
+    ]
+
+
+def test_old_category_spellings():
+    expected = [context.old_category_line(3, RULES)]
+    for message in ("categorie 3", "Categorie 3", "cat 3", "cat. 3", "Cat.3", "CAT 3"):
+        assert context.old_designation_lines(message, RULES) == expected, message
+
+
+def test_old_category_all_numbers_translate():
+    notations = {
+        2: "JO10/MO11", 3: "JO11/MO12", 4: "JO12/MO13", 5: "JO13/MO14", 6: "JO14/MO15", 7: "JO15",
+    }
+    for number, notation in notations.items():
+        assert f"categorie {number} ({notation})" in context.old_category_line(number, RULES)
+
+
+def test_old_category_lists_and_ranges():
+    assert context.old_category_numbers("categorieën 3 en 4") == [3, 4]
+    assert context.old_category_numbers("cat. 3/4") == [3, 4]
+    assert context.old_category_numbers("categorie 2, 3 en 5") == [2, 3, 5]
+    assert context.old_category_numbers("categorie 1 t/m 3") == [1, 2, 3]
+    assert context.old_category_numbers("cat 5-7") == [5, 6, 7]
+
+
+def test_old_category_0_does_not_exist():
+    assert context.old_designation_lines("Is er een categorie 0?", RULES) == [
+        'Oude aanduiding "categorie 0" bestaat niet; de oude indeling begint bij '
+        "categorie 1 (JO8/MO9 en JO9/MO10)."
+    ]
+
+
+def test_old_category_outside_range_gives_no_line():
+    assert context.old_designation_lines("categorie 8", RULES) == []
+    assert context.old_designation_lines("categorie 2015", RULES) == []
+
+
+def test_nieuwelingen_is_u17_nieuweling():
+    expected = ['Oude aanduiding "nieuwelingen" = U17 Nieuweling.']
+    assert context.old_designation_lines("Hoe lang rijden de nieuwelingen?", RULES) == expected
+    assert context.old_designation_lines("Mijn zoon is nieuweling", RULES) == expected
+
+
+def test_calendar_pair():
+    assert context.old_designation_lines("Wedstrijd MU12, VU13 om 10:00", RULES) == [
+        'Kalenderaanduiding "MU12, VU13" = JO12/MO13: jongens U12, meisjes U13.'
+    ]
+    assert context.old_designation_lines("MU12/VU13", RULES) == context.old_designation_lines(
+        "MU12, VU13", RULES
+    )
+
+
+def test_calendar_single():
+    assert context.old_designation_lines("Wanneer start MU12?", RULES) == [
+        'Kalenderaanduiding "MU12" = JO12: jongens U12.'
+    ]
+    assert context.old_designation_lines("VU10", RULES) == [
+        'Kalenderaanduiding "VU10" = MO10: meisjes U10.'
+    ]
+    assert context.old_designation_lines("MU17", RULES) == [
+        'Kalenderaanduiding "MU17" = JO17: jongens U17 Nieuweling.'
+    ]
+
+
+def test_calendar_outside_youth_gives_no_line():
+    assert context.old_designation_lines("MU23 en VU23", RULES) == []
+
+
+def test_no_old_designation_in_new_or_unrelated_text():
+    for message in (
+        "Wanneer is de volgende wedstrijd?",
+        "Wat is een Cat. II nationale wedstrijd?",
+        "In welke categorie rijdt mijn dochter?",
+        "Mag een U13 al op de baan?",
+        "Wat mag een U17 Nieuweling verzetten?",
+        "Hoeveel U17-nieuwelingen starten er?",
+        "Welke leeftijdscategorie 3 jaar later?",
+        "JO11/MO12",
+        "geboren in 2015",
+    ):
+        assert context.old_designation_lines(message, RULES) == [], message
+
+
+def test_build_context_lines_unchanged_without_old_designation():
+    message = "Welke versnelling mag een meisje geboren in 2015?"
+    lines = context.build_context_lines(message, NOVEMBER_2026, RULES, False)
+    assert lines == [
+        context.language_line("B1"),
+        context.category_line(2015, NOVEMBER_2026, RULES),
+    ]
+
+
+def test_build_context_lines_adds_old_designation_after_birth_year():
+    lines = context.build_context_lines(
+        "Mijn zoon (2015) rijdt in categorie 3", NOVEMBER_2026, RULES, False
+    )
+    assert lines[1] == context.category_line(2015, NOVEMBER_2026, RULES)
+    assert lines[2] == context.old_category_line(3, RULES)
+    assert len(lines) == 3
+
+
+def test_old_designation_lines_deduplicate():
+    assert len(context.old_designation_lines("categorie 3, cat. 3 en categorie 3", RULES)) == 1

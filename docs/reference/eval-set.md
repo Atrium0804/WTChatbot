@@ -46,7 +46,7 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 
 ## Contextregels
 
-Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum van vandaag, en bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie. De runner gebruikt de datum van de dag waarop hij draait.
+Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum van vandaag, bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, en bij een oude aanduiding of kalenderaanduiding ("categorie 3", "MU12, VU13") de nieuwe leeftijdscategorie. De runner gebruikt de datum van de dag waarop hij draait.
 
 ## Gate
 

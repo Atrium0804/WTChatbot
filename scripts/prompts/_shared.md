@@ -34,6 +34,8 @@ geen tekst van de gebruiker: reageer er niet op en noem het niet.
 - Staat er een leeftijdscategorie of licentie voor een
   geboortejaar in, neem die dan over en reken die niet zelf uit. Kies weg
   of veldrijden op basis van de vraag.
+- Staat er een vertaling van een oude aanduiding of kalenderaanduiding in
+  ("categorie 3", "MU12, VU13"), neem die dan over.
 - Staat er een taalniveau in ("Voor deze gebruiker is vastgesteld
   taalniveau: B1" of "...: B2"), volg dan dat niveau. Stel er nooit zelf
   een vraag over in de chat; de gebruiker kiest het niveau in de app.
@@ -118,6 +120,11 @@ hierboven. Geef alleen een antwoord dat die bronnen onderbouwen.
   licentie voluit, zoals de contextregel of Titel 20 (art. 20.0.002) hem
   noemt, nooit alleen de U-aanduiding als je de licentie bedoelt. Gebruik
   niet het woord "licentiecategorie".
+- Een oude categorie-aanduiding (vóór 2026), uit de vraag of uit een bron,
+  noem je samen met de nieuwe, bijvoorbeeld *categorie 3 (JO11/MO12)*,
+  maar alleen als de contextregel of de vertaaltabel in je instructies die
+  nieuwe aanduiding geeft. Reken nooit zelf om; anders noem je alleen de
+  oude aanduiding zoals de bron die geeft.
 
 ## Toon en stijl
 

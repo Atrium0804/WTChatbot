@@ -4,6 +4,8 @@ Het model rekent een geboortejaar niet betrouwbaar om naar een categorie
 (issue #44). De regels staan in knwu_categories.json met bron en versie,
 zodat ze per seizoen bij te werken zijn; tests/test_knwu_categories.py
 vergelijkt dat bestand met de tabel in de KNWU-bibliotheek (Titel 20).
+Hetzelfde bestand bevat de vertaling van de oude categorie-indeling
+(bron: website-tekst KNWU - leeftijdscategorieën, issue #61).
 """
 
 import json
@@ -36,6 +38,25 @@ def licence(birth_year: int, year: int, rules: dict) -> str | None:
         if entry["van"] <= age <= entry["tot_en_met"]:
             return entry["naam"]
     return None
+
+
+def category_name(under: int, rules: dict) -> str | None:
+    """Volledige naam van leeftijdscategorie U<under> (bv. 17 -> "U17 Nieuweling")."""
+    for name in rules["leeftijdscategorieen"]["per_leeftijd"].values():
+        if name.split()[0] == f"U{under}":
+            return name
+    return None
+
+
+def old_category_groups(number: int, rules: dict) -> list[dict] | None:
+    """Gecombineerde categorieën van oude categorie <number>; None als die niet bestaat."""
+    return rules["oude_categorie_indeling"]["categorieen"].get(str(number))
+
+
+def combined_notation(boys: int | None, girls: int | None) -> str:
+    """Schrijfwijze van een gecombineerde categorie, bv. (11, 12) -> "JO11/MO12"."""
+    parts = [f"JO{boys}" if boys else "", f"MO{girls}" if girls else ""]
+    return "/".join(part for part in parts if part)
 
 
 def cyclocross_season(today: date) -> tuple[int, int]:

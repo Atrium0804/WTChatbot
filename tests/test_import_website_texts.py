@@ -12,7 +12,7 @@ import import_website_texts
 
 def write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    path.write_bytes(text.encode("utf-8"))
 
 
 def run(source: Path, dest: Path, apply: bool) -> list[import_website_texts.ImportAction]:
@@ -66,6 +66,15 @@ class RunImportTests(unittest.TestCase):
 
         self.assertEqual([a["status"] for a in actions], ["unchanged", "unchanged"])
         self.assertEqual((self.dest / "Trainingen.md").stat().st_mtime_ns, mtime)
+
+    def test_crlf_only_difference_counts_as_unchanged(self) -> None:
+        self.dest.mkdir(parents=True)
+        (self.dest / "Trainingen.md").write_bytes(b"# Trainingen\r\n")
+
+        actions = run(self.source, self.dest, apply=False)
+
+        statuses = {a["dest"].name: a["status"] for a in actions}
+        self.assertEqual(statuses["Trainingen.md"], "unchanged")
 
     def test_changed_source_overwrites_and_keeps_other_club_documents(self) -> None:
         write(self.dest / "Trainingen.md", "# Oud\n")

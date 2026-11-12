@@ -60,9 +60,14 @@ def plan_import(source_dir: Path, dest_dir: Path) -> list[ImportAction]:
 def compare(source: Path, dest: Path) -> Status:
     if not dest.is_file():
         return "new"
-    if dest.read_bytes() == source.read_bytes():
+    if normalize_newlines(dest.read_bytes()) == normalize_newlines(source.read_bytes()):
         return "unchanged"
     return "changed"
+
+
+def normalize_newlines(content: bytes) -> bytes:
+    # Git (core.autocrlf) kan LF in de checkout naar CRLF omzetten; dat is geen inhoudswijziging.
+    return content.replace(b"\r\n", b"\n")
 
 
 def apply_import(actions: list[ImportAction], dest_dir: Path) -> None:

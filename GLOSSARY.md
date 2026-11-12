@@ -63,7 +63,7 @@ De categorie waarin een renner start (bijv. U13, U17 Nieuweling). De categorie-i
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
 
 **Oude categorie-indeling**:
-De numerieke jeugdindeling van vóór 2026 (Categorie 1 t/m 7, daarna Nieuwelingen), die nog in regiodocumenten en bij ouders en trainers voorkomt. Elk nummer is een gecombineerde categorie: Categorie 1 = JO8/MO9 en JO9/MO10, 2 = JO10/MO11, 3 = JO11/MO12, 4 = JO12/MO13, 5 = JO13/MO14, 6 = JO14/MO15, 7 = JO15; Nieuwelingen = U17 Nieuweling. De bot noemt een oude aanduiding altijd samen met de nieuwe, bijv. "categorie 3 (JO11/MO12)", zodat de bron herkenbaar blijft.
+De numerieke jeugdindeling van vóór 2026 (Categorie 1 t/m 7, daarna Nieuwelingen), die nog in regiodocumenten en bij ouders en trainers voorkomt. Elk nummer is een gecombineerde categorie van jongens en meisjes van een verschillend geboortejaar (bijv. categorie 3 = JO11/MO12); Categorie 0 bestaat niet. De vertaling staat in de Website-tekst *KNWU - leeftijdscategorieën*. De bot noemt een oude aanduiding altijd samen met de nieuwe, bijv. "categorie 3 (JO11/MO12)", zodat de bron herkenbaar blijft.
 _Avoid_: "cat. 3" zonder de nieuwe aanduiding erbij
 
 **Veldritseizoen**:

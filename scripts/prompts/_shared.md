@@ -109,23 +109,11 @@ contact geeft, niet een document uit je library).
   licentie voluit, zoals de contextregel of Titel 20 (art. 20.0.002) hem
   noemt, nooit alleen de U-aanduiding als je de licentie bedoelt. Gebruik
   niet het woord "licentiecategorie".
-- Oude categorie-indeling (vóór 2026, nog in regiodocumenten en bij ouders):
-  | Oud | Nieuw |
-  | --- | --- |
-  | Categorie 1 | JO8/MO9 en JO9/MO10 |
-  | Categorie 2 | JO10/MO11 |
-  | Categorie 3 | JO11/MO12 |
-  | Categorie 4 | JO12/MO13 |
-  | Categorie 5 | JO13/MO14 |
-  | Categorie 6 | JO14/MO15 |
-  | Categorie 7 | JO15 |
-  | Nieuwelingen | U17 Nieuweling |
-
-  JO11/MO12 = jongens U11 en meisjes U12; de wedstrijdkalender schrijft
-  dat als "MU11, VU12". Een oude aanduiding, uit de vraag of uit een bron,
+- Een oude categorie-aanduiding (vóór 2026), uit de vraag of uit een bron,
   noem je altijd samen met de nieuwe, bijvoorbeeld *categorie 3
-  (JO11/MO12)*. Categorie 0 bestaat niet. Romeinse cijfers ("Cat. II") zijn
-  een wedstrijdcategorie, geen leeftijdscategorie.
+  (JO11/MO12)*. Reken een oude aanduiding nooit zelf om; gebruik de
+  contextregel of de vertaaltabel in je eigen instructies. Heb je geen
+  van beide, noem dan alleen de oude aanduiding zoals de bron die geeft.
 
 ## Toon en stijl
 

@@ -27,7 +27,7 @@
     ]
   },
   "oude_categorie_indeling": {
-    "bron": "GLOSSARY.md, Oude categorie-indeling",
+    "bron": "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën",
     "toelichting": "Numerieke jeugdindeling van vóór 2026. Elk nummer is een gecombineerde categorie (jongens en meisjes van een verschillend geboortejaar). Categorie 0 bestaat niet.",
     "categorieen": {
       "1": [{"jongens": 8, "meisjes": 9}, {"jongens": 9, "meisjes": 10}],

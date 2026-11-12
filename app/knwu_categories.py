@@ -5,7 +5,7 @@ Het model rekent een geboortejaar niet betrouwbaar om naar een categorie
 zodat ze per seizoen bij te werken zijn; tests/test_knwu_categories.py
 vergelijkt dat bestand met de tabel in de KNWU-bibliotheek (Titel 20).
 Hetzelfde bestand bevat de vertaling van de oude categorie-indeling
-(GLOSSARY.md, issue #61).
+(bron: website-tekst KNWU - leeftijdscategorieën, issue #61).
 """
 
 import json

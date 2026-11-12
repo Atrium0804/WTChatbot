@@ -286,6 +286,33 @@ def test_extract_text_string_content():
     assert mistral_client.extract_text(outputs) == "platte tekst"
 
 
+def test_extract_text_skips_text_before_handoff():
+    """Tekst vóór een handoff (bv. de router die 'ik geef je door' meldt) is
+    geen antwoord; alleen de agent na de laatste handoff spreekt de gebruiker
+    aan. Shape uit een echte conversatie (2026-11-12)."""
+    import mistral_client
+
+    outputs = [
+        {
+            "type": "message.output",
+            "agent_id": "ag_router",
+            "content": "Deze vraag gaat over leeftijdscategorieën, wat valt onder "
+            "KNWU-regels. Ik geef de vraag door aan de juiste agent.",
+        },
+        {
+            "type": "agent.handoff",
+            "previous_agent_name": "router-agent",
+            "next_agent_name": "knwu-agent",
+        },
+        {
+            "type": "message.output",
+            "agent_id": "ag_knwu",
+            "content": [{"type": "text", "text": "Wat is het geboortejaar van je zoon?"}],
+        },
+    ]
+    assert mistral_client.extract_text(outputs) == "Wat is het geboortejaar van je zoon?"
+
+
 def test_manifest_served_as_manifest_json(tmp_path):
     client = make_client(tmp_path)
     resp = client.get("/manifest.webmanifest")

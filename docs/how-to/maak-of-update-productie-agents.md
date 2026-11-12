@@ -33,5 +33,4 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 - Het script is idempotent: een bestaande agent met dezelfde naam wordt geüpdatet (nieuwe versie), een missende aangemaakt. Draai het opnieuw na elke prompt- of configwijziging.
 - Handoffs worden in een tweede fase naar agent-ids omgezet; een target die niet in de config staat en niet remote bestaat, is een error.
 - Na het aanmaken/updaten van agents: re-run de eval-set (`python eval/run_eval.py`) met de agent-id env-vars gezet.
-- Test-agents naast productie (`--prefix test- --model mistral-medium-latest`): zie [test-agents aanmaken en de bot lokaal reviewen](maak-test-agents-en-review-lokaal.md).
 - Van feedback naar een prompt-wijziging: zie [gebruik feedback om prompts te finetunen](gebruik-feedback-om-prompts-te-finetunen.md) (issue #55).

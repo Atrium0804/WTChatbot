@@ -55,7 +55,7 @@ MISTRAL_API_KEY=...
 MISTRAL_AGENT_ID=...        # de router-agent uit docs/system-prompt.md
 ```
 
-Lokaal tegen de test-agents: zet `ENV_FILE=.env.local` (relatief aan de repo-root); zie [test-agents aanmaken en de bot lokaal reviewen](../docs/how-to/maak-test-agents-en-review-lokaal.md).
+Er is één `.env` (repo-root lokaal, server in productie). Lokaal draai je tegen dezelfde agents als productie; zie [productie-agents aanmaken of updaten](../docs/how-to/maak-of-update-productie-agents.md).
 
 ## Deploy op de VPS (Hetzner CX22, ADR-0002)
 

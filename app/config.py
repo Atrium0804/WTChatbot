@@ -4,9 +4,8 @@ Secrets (MISTRAL_API_KEY) staan alleen in .env op de server — nooit in git.
 Zonder MISTRAL_API_KEY/MISTRAL_AGENT_ID draait de app in stub-mode (offline
 development en tests).
 
-ENV_FILE (optioneel) wijst een andere env-file aan, bv. `.env.local` met de
-ID's van de test-agents; een relatief pad geldt vanaf de repo-root. Zonder
-ENV_FILE zoekt de app zoals altijd naar `.env`.
+Laadt `.env` (override=False): de environment wint, zodat docker/CI env-vars
+direct kunnen injecteren.
 """
 
 import os
@@ -17,18 +16,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).parent
 
 
-def load_env_file(env_file: str | None, repo_root: Path) -> None:
-    """Laad `env_file` (relatief aan repo_root), of zonder waarde de standaard-.env."""
-    if not env_file:
-        load_dotenv()
-        return
-    path = repo_root / env_file
-    if not path.is_file():
-        raise RuntimeError(f"ENV_FILE bestaat niet: {path}")
-    load_dotenv(path)
-
-
-load_env_file(os.environ.get("ENV_FILE"), BASE_DIR.parent)
+load_dotenv()
 
 MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "")
 MISTRAL_AGENT_ID = os.environ.get("MISTRAL_AGENT_ID", "")

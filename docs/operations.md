@@ -21,6 +21,10 @@ De post-MVP cron-job op de VPS vergelijkt `knowledge-documents/versions.json` me
 - Server + topic: `https://ntfy.sh/wtchat-beheer-a6b2zaq7d7i2svcf1c86qpae`
 - Het topic is geheim: iedereen met het topic kan lezen en posten. Deel het alleen met beheerder en vervanger.
 
+## Eén .env
+
+Er is één env-file: `.env` in de repo-root (lokaal) of op de server. De environment wint van de file (`load_dotenv(override=False)` in de app; docker injecteert env-vars direct). Agent-ID's zijn gescoped aan de workspace van de API-key: een 404 code 3000 bij `/chat` betekent dat de agent verwijderd is of dat de key uit een andere workspace komt dan waar de agent staat.
+
 ## Mistral API-key rotatie
 
 De Mistral API-key is een volledige factureerbare sleutel en staat daarom **alleen in `.env` op de server** (fase 1: de NAS — zie [ADR-0007](adr/0007-fase-1-op-nas-achter-npm.md); einddoel: de VPS) — nooit in code of git (gedekt door de gitleaks-secrets-scan in CI, `.github/workflows/secrets-scan.yml`; `.env` is geverifieerd niet getrackt). Zie [ADR-0002](adr/0002-vps-met-eigen-proxy.md) voor de afweging.

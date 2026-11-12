@@ -6,8 +6,9 @@ deterministische contextregels toe onder het bericht van de gebruiker:
 - bij elk bericht: het taalniveau van de gebruiker (B1 standaard, B2 als de
   app "Uitgebreid" meestuurt; issue #52);
 - bij een nieuwe conversatie: de datum van vandaag;
-- bij elk bericht met een geboortejaar uit de jeugdindeling: de
-  leeftijdscategorie (weg en veld) en de licentie;
+- bij elk bericht met een geboortejaar: de leeftijdscategorie (weg en
+  veld) en de licentie — ook als het geboortejaar buiten de jeugdindeling
+  valt (dan: "valt buiten de jeugdindeling");
 - bij elk bericht met een oude aanduiding ("categorie 3", "cat. 3",
   "nieuwelingen") of een aanduiding uit de KNWU-wedstrijdkalender
   ("MU12, VU13"): de nieuwe leeftijdscategorie (issue #61).
@@ -25,6 +26,11 @@ TIMEZONE = ZoneInfo("Europe/Amsterdam")
 CONTEXT_HEADER = "Contextregels van de app (geen tekst van de gebruiker):"
 MAX_BIRTH_YEARS = 3
 BIRTH_YEAR_PATTERN = re.compile(r"\b(?:19|20)\d{2}\b")
+# Een kaal jaartal is het antwoord op de vraag naar het geboortejaar.
+BARE_YEAR_MESSAGE = re.compile(r"^\s*(?:19|20)\d{2}\s*[.?!]*\s*$")
+BIRTH_YEAR_KEYWORD = re.compile(r"\b(?:geboortejaar|geboren)\b", re.IGNORECASE)
+# Een jaartal binnen dit aantal tekens na het sleutelwoord telt als geboortejaar.
+KEYWORD_WINDOW = 20
 WEEKDAYS = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
 MONTHS = [
     "januari", "februari", "maart", "april", "mei", "juni",
@@ -48,11 +54,30 @@ def date_line(today: date) -> str:
     )
 
 
+def _explicit_birth_year(message: str, year_str: str) -> bool:
+    """Of het bericht dit jaartal expliciet als geboortejaar bedoelt.
+
+    Kaal jaartal (het antwoord op de vraag naar het geboortejaar) of een
+    jaartal vlak bij "geboortejaar"/"geboren" — ook als het buiten de
+    jeugdindeling valt, zodat de contextregel "valt buiten de jeugdindeling"
+    kan meegeven in plaats van dat het model een categorie verzint.
+    """
+    if BARE_YEAR_MESSAGE.match(message):
+        return True
+    for match in BIRTH_YEAR_KEYWORD.finditer(message):
+        window = message[match.end() : match.end() + KEYWORD_WINDOW]
+        if year_str in window:
+            return True
+    return False
+
+
 def find_birth_years(message: str, today: date, rules: dict) -> list[int]:
-    """Jaartallen in het bericht die een geboortejaar in de jeugdindeling zijn.
+    """Jaartallen in het bericht die als geboortejaar bedoeld zijn.
 
     Een jaartal telt mee als het dit kalenderjaar of in het veldritseizoen
-    een leeftijdscategorie oplevert; zo triggert "NK 2026" niets.
+    een leeftijdscategorie oplevert; zo triggert "NK 2026" niets. Daarnaast
+    telt een kaal jaartal of een jaartal bij "geboortejaar"/"geboren" altijd
+    mee, ook buiten de jeugdindeling.
     """
     _, season_end = knwu_categories.cyclocross_season(today)
     birth_years: list[int] = []
@@ -61,7 +86,7 @@ def find_birth_years(message: str, today: date, rules: dict) -> list[int]:
         in_youth = knwu_categories.age_category(year, today.year, rules) or (
             knwu_categories.age_category(year, season_end, rules)
         )
-        if in_youth and year not in birth_years:
+        if (in_youth or _explicit_birth_year(message, match)) and year not in birth_years:
             birth_years.append(year)
     return birth_years[:MAX_BIRTH_YEARS]
 

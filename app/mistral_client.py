@@ -6,7 +6,7 @@ provider vervangbaar blijft (CODING_PRINCIPLES.md).
 
 import requests
 
-DEFAULT_TIMEOUT = 60  # kortere worst-case: bij timeout direct een 502 met melding
+DEFAULT_TIMEOUT = 180  # ruimer (review 2026-11-12: websearch/handoff-runs liepen op 60s in een timeout); bij timeout direct een 502 met melding
 
 
 def extract_text(outputs: list) -> str:
@@ -15,8 +15,13 @@ def extract_text(outputs: list) -> str:
     Shape van POST /v1/conversations: outputs[]-entries met
     type == "message.output" en top-level "content" (string of list of
     chunks; alleen chunks met type == "text" zijn antwoordtekst,
-    "thinking"-chunks niet meenemen).
+    "thinking"-chunks niet meenemen). Tekst vóór de laatste
+    "agent.handoff" telt niet mee: dat is een aankondiging van de
+    doorverwijzende agent, het antwoord komt van de agent erna.
     """
+    handoffs = [i for i, out in enumerate(outputs) if out.get("type") == "agent.handoff"]
+    if handoffs:
+        outputs = outputs[handoffs[-1] + 1:]
     texts = []
     for out in outputs:
         if out.get("type") != "message.output":

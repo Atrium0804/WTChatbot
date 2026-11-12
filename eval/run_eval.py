@@ -35,9 +35,7 @@ naar eval/last_run.json; exit-code 0 bij halen van de gate, anders 1.
 Draai handmatig door de beheerder na elke library-update — NOOIT in CI
 (geen live API-calls in CI). Zie docs/reference/eval-set.md.
 
-Environment (uit .env in de repo-root, of uit de env-file in ENV_FILE,
-relatief aan de repo-root, bv. ENV_FILE=.env.local voor de test-agents;
-de env-file wint van shellvariabelen):
+Environment (uit .env in de repo-root; de file wint van shellvariabelen):
 - MISTRAL_API_KEY               (verplicht)
 - MISTRAL_AGENT_ID_KNWU / MISTRAL_AGENT_ID_REGIO / MISTRAL_AGENT_ID_CLUB
   (agent per categorie; fallback: MISTRAL_AGENT_ID)
@@ -57,7 +55,7 @@ import yaml
 from dotenv import load_dotenv
 
 EVAL_DIR = Path(__file__).parent
-ENV_PATH = EVAL_DIR.parent / (os.environ.get("ENV_FILE") or ".env")
+ENV_PATH = EVAL_DIR.parent / ".env"
 sys.path.insert(0, str(EVAL_DIR.parent / "app"))
 
 import context  # noqa: E402  (app-module: dezelfde contextregels als de proxy)
@@ -290,7 +288,11 @@ def bron_match(expected: str, bron_line: str) -> bool:
 
 
 def _canoniek(token: str) -> str:
-    """Getal-token canoniek: voorloopnullen weg, nul-decimalen weg (08,30->8,30; 10,00->10)."""
+    """Token canoniek: "art" -> "artikel" (review 2026-11-12: modellen schrijven
+    "art. 20.1.007" waar de evalset "artikel 20.1.007" verwacht), en getal-token
+    canoniek: voorloopnullen weg, nul-decimalen weg (08,30->8,30; 10,00->10)."""
+    if token == "art":
+        return "artikel"
     if not token[0].isdigit():
         return token
     parts = [p.lstrip("0") or "0" for p in token.split(",")]
@@ -384,10 +386,8 @@ def pct(n_ok: int, n_total: int) -> float:
 
 
 def main() -> int:
-    # override: na create_agents.py --apply staan nieuwe agent-ids in .env, terwijl
-    # de shell vaak nog de oude (verwijderde) ids heeft → anders 404 op elke vraag.
-    if os.environ.get("ENV_FILE") and not ENV_PATH.is_file():
-        raise RuntimeError(f"ENV_FILE bestaat niet: {ENV_PATH}")
+    # override=True: na create_agents.py --apply staan nieuwe agent-ids in .env,
+    # terwijl de shell vaak nog de oude (verwijderde) ids heeft → anders 404.
     load_dotenv(ENV_PATH, override=True)
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:

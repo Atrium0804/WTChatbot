@@ -55,6 +55,37 @@ def test_find_birth_years_includes_next_cyclocross_season():
     assert context.find_birth_years("geboren in 2022", NOVEMBER_2026, RULES) == [2022]
 
 
+def test_find_birth_years_bare_year_outside_youth():
+    # reviewronde 1: kaal jaartal als antwoord op de geboortejaar-vraag valt buiten
+    # de jeugdindeling, maar moet wél een contextregel krijgen (anders verzint het
+    # model een categorie, gezien: JO11 voor 2025)
+    assert context.find_birth_years("2025", NOVEMBER_2026, RULES) == [2025]
+    assert context.find_birth_years("2025!", NOVEMBER_2026, RULES) == [2025]
+
+
+def test_find_birth_years_explicit_birth_year_outside_youth():
+    assert context.find_birth_years("geboren in 2025", NOVEMBER_2026, RULES) == [2025]
+    # een jaartal ver van het sleutelwoord (bv. NK 2026) telt niet als geboortejaar
+    assert context.find_birth_years(
+        "Hij is geboren in 2015; wanneer is het NK 2026?", NOVEMBER_2026, RULES
+    ) == [2015]
+
+
+def test_category_line_outside_youth():
+    line = context.category_line(2025, NOVEMBER_2026, RULES)
+    assert "wegwielrennen 2026: valt buiten de jeugdindeling" in line
+    assert "veldrijden seizoen 2026-2027: valt buiten de jeugdindeling" in line
+    assert "geen jeugdlicentie" in line
+
+
+def test_build_context_lines_bare_year_outside_youth():
+    lines = context.build_context_lines("2025", NOVEMBER_2026, RULES, False)
+    assert lines == [
+        context.language_line("B1"),
+        context.category_line(2025, NOVEMBER_2026, RULES),
+    ]
+
+
 def test_category_line_road_differs_from_cyclocross_in_autumn():
     line = context.category_line(2015, NOVEMBER_2026, RULES)
     assert "wegwielrennen 2026: U12" in line

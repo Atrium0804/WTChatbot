@@ -7,7 +7,10 @@ deterministische contextregels toe onder het bericht van de gebruiker:
   app "Uitgebreid" meestuurt; issue #52);
 - bij een nieuwe conversatie: de datum van vandaag;
 - bij elk bericht met een geboortejaar uit de jeugdindeling: de
-  leeftijdscategorie (weg en veld) en de licentie.
+  leeftijdscategorie (weg en veld) en de licentie;
+- bij elk bericht met een oude aanduiding ("categorie 3", "cat. 3",
+  "nieuwelingen") of een aanduiding uit de KNWU-wedstrijdkalender
+  ("MU12, VU13"): de nieuwe leeftijdscategorie (issue #61).
 Eval-runner (eval/run_eval.py) gebruikt dezelfde functies, zodat de eval
 de productie-input spiegelt.
 """
@@ -81,6 +84,103 @@ def category_line(birth_year: int, today: date, rules: dict) -> str:
     )
 
 
+# "categorie 3", "cat. 3", "categorieën 3 en 4", "cat 1 t/m 3"; Romeinse cijfers
+# ("Cat. II nationale wedstrijd") zijn een wedstrijdcategorie en vallen erbuiten.
+OLD_CATEGORY_PATTERN = re.compile(
+    r"\b(?:categorie(?:ën|en)?|cat\.?)\s*(\d+(?:\s*(?:,|/|&|-|\ben\b|t/m)\s*\d+)*)\b",
+    re.IGNORECASE,
+)
+MAX_RANGE = 10
+# "U17 Nieuweling" is al de nieuwe naam.
+NIEUWELING_PATTERN = re.compile(r"(?<!u17[\s-])\bnieuweling", re.IGNORECASE)
+# Schrijfwijze van de KNWU-wedstrijdkalender: "MU12, VU13" = JO12/MO13.
+CALENDAR_PATTERN = re.compile(
+    r"\bMU(\d{1,2})\s*(?:[,/&]|\ben\b)?\s*VU(\d{1,2})\b|\b([MV])U(\d{1,2})\b",
+    re.IGNORECASE,
+)
+
+
+def old_category_numbers(message: str) -> list[int]:
+    """Nummers achter "categorie"/"cat." in volgorde; "1 t/m 3" en "1-3" worden 1, 2, 3."""
+    numbers: list[int] = []
+    for group in OLD_CATEGORY_PATTERN.findall(message):
+        tokens = re.findall(r"\d+|t/m|-", group)
+        for index, token in enumerate(tokens):
+            if not token.isdigit():
+                continue
+            is_range_end = index >= 2 and tokens[index - 1] in ("t/m", "-")
+            start = int(tokens[index - 2]) + 1 if is_range_end else int(token)
+            if int(token) - start > MAX_RANGE:
+                start = int(token)
+            for number in range(start, int(token) + 1):
+                if number not in numbers:
+                    numbers.append(number)
+    return numbers
+
+
+def old_category_line(number: int, rules: dict) -> str | None:
+    if number == 0:
+        first = knwu_categories.old_category_groups(1, rules)
+        notation = " en ".join(
+            knwu_categories.combined_notation(g.get("jongens"), g.get("meisjes")) for g in first
+        )
+        return (
+            'Oude aanduiding "categorie 0" bestaat niet; de oude indeling begint bij '
+            f"categorie 1 ({notation})."
+        )
+    groups = knwu_categories.old_category_groups(number, rules)
+    if not groups:
+        return None
+    notation = " en ".join(
+        knwu_categories.combined_notation(g.get("jongens"), g.get("meisjes")) for g in groups
+    )
+    return (
+        f'Oude aanduiding "categorie {number}" = categorie {number} ({notation}): '
+        f"{_boys_and_girls(groups, rules)}."
+    )
+
+
+def _boys_and_girls(groups: list[dict], rules: dict) -> str:
+    """Bijvoorbeeld "jongens U8 en U9, meisjes U9 en U10"."""
+    parts = []
+    for sex in ("jongens", "meisjes"):
+        names = [knwu_categories.category_name(g[sex], rules) for g in groups if g.get(sex)]
+        if names:
+            parts.append(f"{sex} {' en '.join(names)}")
+    return ", ".join(parts)
+
+
+def calendar_line(boys: int | None, girls: int | None, rules: dict) -> str | None:
+    """"MU12, VU13" -> JO12/MO13; None als een aanduiding buiten de jeugdindeling valt."""
+    group = {"jongens": boys, "meisjes": girls}
+    if any(age and not knwu_categories.category_name(age, rules) for age in group.values()):
+        return None
+    label = ", ".join(
+        part for part in (f"MU{boys}" if boys else "", f"VU{girls}" if girls else "") if part
+    )
+    return (
+        f'Kalenderaanduiding "{label}" = {knwu_categories.combined_notation(boys, girls)}: '
+        f"{_boys_and_girls([group], rules)}."
+    )
+
+
+def old_designation_lines(message: str, rules: dict) -> list[str]:
+    """Contextregels voor oude en kalender-aanduidingen; leeg als er geen in staat."""
+    lines = [old_category_line(number, rules) for number in old_category_numbers(message)]
+    if NIEUWELING_PATTERN.search(message):
+        name = rules["oude_categorie_indeling"]["nieuwelingen"]
+        lines.append(f'Oude aanduiding "nieuwelingen" = {name}.')
+    for boys, girls, sex, age in CALENDAR_PATTERN.findall(message):
+        if sex:
+            boys, girls = (age, "") if sex.upper() == "M" else ("", age)
+        lines.append(calendar_line(int(boys) if boys else None, int(girls) if girls else None, rules))
+    unique: list[str] = []
+    for line in lines:
+        if line and line not in unique:
+            unique.append(line)
+    return unique
+
+
 LANGUAGE_LEVELS = ("B1", "B2")
 
 
@@ -105,6 +205,7 @@ def build_context_lines(
         lines.append(date_line(today))
     for birth_year in find_birth_years(message, today, rules):
         lines.append(category_line(birth_year, today, rules))
+    lines.extend(old_designation_lines(message, rules))
     return lines
 
 

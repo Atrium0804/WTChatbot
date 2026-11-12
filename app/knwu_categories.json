@@ -25,5 +25,19 @@
       {"naam": "KNWU Licentie U13", "van": 5, "tot_en_met": 12},
       {"naam": "KNWU Licentie U17", "van": 13, "tot_en_met": 16}
     ]
+  },
+  "oude_categorie_indeling": {
+    "bron": "GLOSSARY.md, Oude categorie-indeling",
+    "toelichting": "Numerieke jeugdindeling van vóór 2026. Elk nummer is een gecombineerde categorie (jongens en meisjes van een verschillend geboortejaar). Categorie 0 bestaat niet.",
+    "categorieen": {
+      "1": [{"jongens": 8, "meisjes": 9}, {"jongens": 9, "meisjes": 10}],
+      "2": [{"jongens": 10, "meisjes": 11}],
+      "3": [{"jongens": 11, "meisjes": 12}],
+      "4": [{"jongens": 12, "meisjes": 13}],
+      "5": [{"jongens": 13, "meisjes": 14}],
+      "6": [{"jongens": 14, "meisjes": 15}],
+      "7": [{"jongens": 15}]
+    },
+    "nieuwelingen": "U17 Nieuweling"
   }
 }

@@ -108,12 +108,12 @@ class RenderReportTests(unittest.TestCase):
             }
         ]
         report = feedback_report.render_report(rows, "test-db", "2026-11-20T12:00:00+00:00")
-        self.assertIn("Feedbackgeschiedenis (2 turns, oudste eerst):", report)
-        self.assertIn("1. **Vraag:** eerste vraag", report)
-        self.assertIn("2. (laatste) **Vraag:** tweede vraag", report)
+        self.assertIn("Complete conversatie (oudste turn eerst):", report)
+        self.assertIn("**Turn 1**\n  **Vraag:** eerste vraag", report)
+        self.assertIn("**Turn 2 *(laatste)***\n  **Vraag:** tweede vraag", report)
         self.assertLess(
-            report.index("1. **Vraag:** eerste vraag"),
-            report.index("2. (laatste) **Vraag:** tweede vraag"),
+            report.index("**Vraag:** eerste vraag"),
+            report.index("**Vraag:** tweede vraag"),
         )
 
     def test_row_without_history_key_renders(self) -> None:

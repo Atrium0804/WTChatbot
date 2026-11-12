@@ -40,7 +40,7 @@
     {
       "name": "router-agent",
       "description": "Router-agent: bepaalt het vraagtype (KNWU/regio/club) en doet de handoff",
-      "prompt_files": ["router-agent.md"],
+      "prompt_files": ["_shared.md", "router-agent.md"],
       "handoffs": ["knwu-agent", "regio-agent", "club-agent"]
     }
   ]

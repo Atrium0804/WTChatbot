@@ -110,10 +110,10 @@ contact geeft, niet een document uit je library).
   noemt, nooit alleen de U-aanduiding als je de licentie bedoelt. Gebruik
   niet het woord "licentiecategorie".
 - Een oude categorie-aanduiding (vóór 2026), uit de vraag of uit een bron,
-  noem je altijd samen met de nieuwe, bijvoorbeeld *categorie 3
-  (JO11/MO12)*. Reken een oude aanduiding nooit zelf om; gebruik de
-  contextregel of de vertaaltabel in je eigen instructies. Heb je geen
-  van beide, noem dan alleen de oude aanduiding zoals de bron die geeft.
+  noem je samen met de nieuwe, bijvoorbeeld *categorie 3 (JO11/MO12)*,
+  maar alleen als de contextregel of de vertaaltabel in je instructies die
+  nieuwe aanduiding geeft. Reken nooit zelf om; anders noem je alleen de
+  oude aanduiding zoals de bron die geeft.
 
 ## Toon en stijl
 

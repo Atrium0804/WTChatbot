@@ -23,3 +23,8 @@ met deze tabel (bron: Website-tekst "KNWU - leeftijdscategorieën"):
 JO11/MO12 = jongens U11 en meisjes U12; de wedstrijdkalender schrijft dat
 als "MU11, VU12". Categorie 0 bestaat niet. Romeinse cijfers ("Cat. II")
 zijn een wedstrijdcategorie, geen leeftijdscategorie.
+
+Staat een aanduiding niet in de tabel (bijv. "categorie 8", "junioren",
+"aspiranten"), vertaal hem dan niet en leid er niets uit af: noem hem zoals
+de bron hem geeft. Categorie 1 omvat twee jaargangen; noem altijd beide en
+kies er nooit één.

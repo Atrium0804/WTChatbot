@@ -256,9 +256,10 @@ evalset:
     categorie: regio
     type: standaard
     vraag: "In welke KNWU-regio ligt WTC Woerden (Woerden, Utrecht)?"
-    verwacht_antwoord: "Midden-Oost; Utrecht"
+    verwacht_antwoord: "Midden-Oost"
     bron: "knwu.nl/over-knwu/regios | kenniscentrum.knwu.nl"
     versiedatum: "2026"
+    # "Utrecht" viel uit verwacht_antwoord (staat al in de vraag)
   - id: regio-techniekwedstrijden-2026
     taalniveau: B2
     categorie: regio

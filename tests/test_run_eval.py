@@ -227,6 +227,16 @@ class RunConversationTests(unittest.TestCase):
             self.assertEqual(run_eval.agent_names_from_env(), {"ag_r": "router-agent", "ag_k": "knwu-agent"})
 
 
+class EvalsetTests(unittest.TestCase):
+    def test_regio_nationale_knwu_vragen_hebben_knwu_bron(self) -> None:
+        # eval run 5: regio-nk-kwalificatie en regio-juiste-knwu-regio werden
+        # uit de Regio-library beantwoord (bron MNC-...); nationale
+        # KNWU-regelgeving moet een KNWU-bron als expected bron hebben.
+        entries = {e["id"]: e for e in run_eval.load_evalset(run_eval.EVAL_DIR / "evalset.yaml")}
+        self.assertIn("Nationale_Besluiten", entries["regio-nk-kwalificatie"]["bron"])
+        self.assertIn("knwu.nl", entries["regio-juiste-knwu-regio"]["bron"])
+
+
 class NormalizeTests(unittest.TestCase):
     def test_phone_number_dash_space_parens(self) -> None:
         self.assertEqual(run_eval.normalize("085-070 19 00"), run_eval.normalize("+31 (0)85 070 1900")[:0] or run_eval.normalize("085-070 19 00"))

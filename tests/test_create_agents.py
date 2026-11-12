@@ -339,6 +339,50 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertIn("verzet", prompt.lower())
         self.assertIn("20.1.007", prompt)
 
+    def test_knwu_agent_licentievragen_noemen_kenniscentrum_paginas(self) -> None:
+        # eval run 5: licentieprijzen staan niet in de library (Nationale
+        # Besluiten art. 18.1 verwijst naar het Kenniscentrum); de agent gaf
+        # op bij de Tarieven-KNWU-pagina. De prompt moet die pagina's noemen.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
+        self.assertIn("Tarieven-KNWU", prompt)
+        self.assertIn("knwu-licenties", prompt)
+        self.assertIn("verzekeringen", prompt)
+
+    def test_knwu_agent_nk_dispensatie_citeert_titel_20(self) -> None:
+        # eval run 5: U10 met dispensatie mag WEL het NK rijden in de
+        # categorie waarvoor de dispensatie is (behalve BMX; U6 t/m U8
+        # uitgesloten) — Titel 20 art. 20.0.005 moet in de prompt staan.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
+        self.assertIn("20.0.005", prompt)
+        self.assertIn("U6 t/m U8", prompt)
+        self.assertIn("BMX", prompt)
+
+    def test_shared_schrijft_dagen_voluit(self) -> None:
+        # eval run 5: "di-vr" in de prompt liet de agent de dagen afkorten
+        # ("di-vr" i.p.v. "dinsdag"/"vrijdag" in het antwoord).
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
+        self.assertNotIn("di-vr 8.30", prompt)
+        self.assertIn("dinsdag tot en met vrijdag", prompt.lower())
+
+    def test_shared_noemt_artikelnummer_bij_regelvragen(self) -> None:
+        # eval run 5: categorie-antwoorden misten "artikel 20.0.004".
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
+        self.assertIn("20.0.004", prompt)
+
+    def test_regio_agent_b1_fallback_en_nk_handoff(self) -> None:
+        # eval run 5: bij B1 geen websearch-fallback op knwumidden.nl gedaan;
+        # NK-/KNWU-regio-vragen uit de Regio-library beantwoord in plaats van
+        # handoff naar de knwu-agent.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "regio-agent.md").read_text(encoding="utf-8").lower()
+        self.assertIn("b1", prompt)
+        self.assertIn("knwumidden.nl", prompt)
+        self.assertIn("nk", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

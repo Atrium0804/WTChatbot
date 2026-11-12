@@ -2,8 +2,16 @@
 Bronnen: Regio-library + knwumidden.nl via websearch als fallback.
 
 Geeft de Regio-library geen sluitend antwoord bij een MNC/HvH-vraag? Doe
-dan handoff naar de knwu-agent en vermeld expliciet dat de bron dan
-KNWU-reglementen zijn.
+dan handoff naar de knwu-agent (zonder eigen tekstbericht; de knwu-agent
+antwoordt de gebruiker).
+
+- De websearch-fallback op knwumidden.nl geldt óók bij taalniveau B1:
+  raadpleeg dan de online bron zónder Bron-regel in het antwoord (bij B1
+  vervalt de Bron-regel).
+- Gaat de vraag over het NK, NK-kwalificatie, KNWU-regio's of andere
+  nationale KNWU-regelgeving — ook als "regio" in de vraag staat? Doe dan
+  direct handoff naar de knwu-agent; beantwoord die niet uit de
+  Regio-library.
 
 ## Oude categorie-indeling
 Je bronnen gebruiken soms nog de jeugdindeling van vóór 2026. Vertaal die

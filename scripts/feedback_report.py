@@ -127,19 +127,47 @@ def render_report(rows: list[dict], source: str, generated_at: str) -> str:
                 if row["conversation_id"]
                 else ""
             ),
-            f"- Vraag: {row['question'] or '-'}",
-            f"- Antwoord: {row['answer'] or '-'}",
-            f"- Toelichting: {row['text'] or '-'}",
         ]
         history = parse_history(row)
+        
+        # Toon de complete conversatiegeschiedenis als die beschikbaar is
         if history:
-            lines.append(f"- Feedbackgeschiedenis ({len(history)} turns, oudste eerst):")
+            lines.append("")
+            lines.append("  **Complete conversatie (oudste turn eerst):**")
             for j, turn in enumerate(history, start=1):
-                marker = " (laatste)" if j == len(history) else ""
-                lines += [
-                    f"  {j}.{marker} **Vraag:** {turn.get('question') or '-'}",
-                    f"     **Antwoord:** {turn.get('answer') or '-'}",
-                ]
+                marker = " *(laatste)*" if j == len(history) else ""
+                question = turn.get('question') or '-' 
+                answer = turn.get('answer') or '-' 
+                lines.append("")
+                lines.append(f"  ---")
+                lines.append(f"  **Turn {j}{marker}**")
+                lines.append(f"  **Vraag:** {question}")
+                lines.append("")
+                # Use code fence for bot answer
+                lines.append(f"```")
+                for answer_line in answer.split('\n'):
+                    lines.append(f"{answer_line}")
+                lines.append(f"```")
+        else:
+            # Oude feedback zonder history - toon wat we hebben
+            lines.append("")
+            lines.append(f"  ⚠️  *Onvolledige conversatie: history ontbreekt (oude feedback)*")
+            lines.append(f"  Gebruik `python scripts/trace_conversation.py {row['conversation_id']}` voor de complete conversatie.")
+            lines.append("")
+            lines.append("  **Laatste bekende turn:**")
+            lines.append(f"  **Vraag:** {row['question'] or '-'}")
+            lines.append("")
+            # Use code fence for bot answer
+            lines.append(f"```")
+            for answer_line in (row['answer'] or '-').split('\n'):
+                lines.append(f"{answer_line}")
+            lines.append(f"```")
+        
+        lines.append("")
+        if row['text'] and row['text'].strip():
+            lines.append(f">[!note]")
+            for toelichting_line in row['text'].split('\n'):
+                lines.append(f"> {toelichting_line}")
         lines.append("")
     lines.append(
         "_Retentie: rows ouder dan 30 dagen zijn automatisch gepurge'd uit de DB. "

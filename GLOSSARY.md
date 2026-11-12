@@ -2,6 +2,10 @@
 
 De kennischatbot voor wielrenclubs: beantwoordt vragen over KNWU-regelgeving, licenties, wedstrijden en clubzaken op basis van de eigen documenten (RAG), met het KNWU Kenniscentrum als online autoriteit.
 
+**Wielie**:
+De naam van de chatbot zoals gebruikers hem zien (webapp en PWA).
+_Avoid_: "Wheely", "de app"
+
 ## Bronnen en routing
 
 **Kenniscentrum**:
@@ -9,23 +13,24 @@ Het online KNWU-kenniscentrum (kenniscentrum.knwu.nl). Autoritaire bron voor **w
 _Avoid_: "de KNWU-site", "de website van de KNWU" als vage aanduiding
 
 **Bibliotheek (Library)**:
-De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vijf: de KNWU-bibliotheek, de Regio-library, de Club-library, de Algemeen-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
+De documentverzameling in Mistral Studio waarover RAG-retrieval plaatsvindt. Elke club heeft er vier: de KNWU-bibliotheek, de Regio-library, de Club-library en een archief-library met oude versies (alleen voor wijzigingsvragen).
 _Avoid_: doclib, documentmap (die termen horen bij de Vibe-spiegel, niet bij de chatbot)
 
 **Regio-library**:
 De regiodocumenten, Eerste bron voor vragen over regionale wedstrijden in regio Midden Ooost; vragen over wedstrijdregelgeving met expliciete fallback naar de KNWU-bibliotheek.
 
 **Club-library**:
-De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten). Eerste bron voor clubvragen.
+De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten en de Website-teksten). Enige bron voor clubvragen. Alleen de club-agent gebruikt deze library, ook als een document over KNWU- of regio-onderwerpen gaat.
 
-**Algemeen-library**:
-De algemene kennisdocumenten (bijv. trainingsleer, het motiveren van kinderen). Te raadplegen bij algemene vragen die geen KNWU-, regio- of clubvraag zijn.
+**Website-teksten**:
+De pagina's van de jeugdsite van WTC Woerden, beheerd als markdown in de WebsiteWTCjeugd-repo. Gelden als actuele clubinformatie en staan in de Club-library. Vervangen het raadplegen van wtcwoerden.nl, dat de bot niet kan lezen.
+_Avoid_: "wtcwoerden.nl" als bron in antwoorden, "de site"
 
 **KNWU-bibliotheek**:
 De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor vragen over KNWU, landelijke of club/regio-overkoepelende wedstrijdregels en de organisatie van nationale wedstrijden en nationaal kampioenschappen (NK).
 
 **Bronvolgorde**:
-Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen Club-library + wtcwoerden.nl.
+Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen alleen Club-library.
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
 
@@ -54,17 +59,12 @@ Het local → remote synchroniseren van `knowledge-documents/` met de bijbehoren
 ## Renners en wedstrijden
 
 **Leeftijdscategorie**:
-De categorie waarin een renner start (bijv. U13, nieuwelingen, junioren). De categorie-indeling is gebaseerd op het geboortejaar. Wedstrijden kunnen gereden worden per categorie, of met meerdere categorieen tegelijk, waarbij jongens en meisjes van een verschillend geboortejaar samen rijden (bijv jongens U9 en meisjes U10). Zo'n wedstrijdcategorie wordt dan aangeduid met 'JO9/MO10' (jongens onder 9, meisjes onder 10). Na categorie U15 komen de categorieen voor jongeren
-Als er verwezen wordt naar een categorie met een nummer, dan wordt zo'n gecombineerde categorie bedoeld:
-1 - JO9/MO10
-2 - JO10/MO11
-3 - JO11/MO12
-4 - JO12/MO13
-5 - JO13/MO14
-6 - JO14/MO15
-7 - JO15
-
+De categorie waarin een renner start (bijv. U13, U17 Nieuweling). De categorie-indeling is gebaseerd op het geboortejaar. Wedstrijden kunnen gereden worden per categorie, of met meerdere categorieën tegelijk, waarbij jongens en meisjes van een verschillend geboortejaar samen rijden (bijv. jongens U9 en meisjes U10). Zo'n gecombineerde categorie wordt aangeduid met 'JO9/MO10' (jongens onder 9, meisjes onder 10); de KNWU-wedstrijdkalender schrijft dezelfde groep als 'MU9, VU10'.
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
+
+**Oude categorie-indeling**:
+De numerieke jeugdindeling van vóór 2026 (Categorie 1 t/m 7, daarna Nieuwelingen), die nog in regiodocumenten en bij ouders en trainers voorkomt. Elk nummer is een gecombineerde categorie: Categorie 1 = JO8/MO9 en JO9/MO10, 2 = JO10/MO11, 3 = JO11/MO12, 4 = JO12/MO13, 5 = JO13/MO14, 6 = JO14/MO15, 7 = JO15; Nieuwelingen = U17 Nieuweling. De bot noemt een oude aanduiding altijd samen met de nieuwe, bijv. "categorie 3 (JO11/MO12)", zodat de bron herkenbaar blijft.
+_Avoid_: "cat. 3" zonder de nieuwe aanduiding erbij
 
 **Veldritseizoen**:
 Het wedstrijdseizoen veldrijden, dat over twee kalenderjaren loopt (Titel 20: september t/m maart). Een renner rijdt het hele veldritseizoen in de leeftijdscategorie waarin hij per 1 januari van dat seizoen valt, in het najaar dus een categorie hoger dan op de weg (bv. een jongen geboren in 2015: U12 op de weg in 2026, U13 in het veldritseizoen 2026-2027).
@@ -107,6 +107,10 @@ _Avoid_: "fout in de bron", "tegenstrijdigheid" als vage aanduiding
 **Eval-set**:
 Vaste set van ±20 typische clubvragen met verwacht antwoord en bron. Launch-gate: ≥90% correct; wordt her-run na elke Library-update.
 _Avoid_: testset, testvragen (in deze context)
+
+**Reviewronde**:
+Eén keer handmatig de vaste scenario's (beginvraag plus vervolgvragen, afgeleid van eerdere negatieve feedback) doorlopen in de lokaal draaiende bot tegen de test-agents, met beoordeling via de feedbackknop, gevolgd door een AI-analyse van die feedback en goedgekeurde verbeteringen. Rondes herhalen tot geen scenario meer een duim omlaag krijgt; de scenario's voeden later de Eval-set.
+_Avoid_: "testronde", "even testen"
 
 **Feedbackgeschiedenis**:
 De reeks laatste vraag/antwoord-paren (turns) van een conversatie die bij een duim-omlaag samen met de feedback wordt opgeslagen, puur voor triage — standaard de laatste 10 turns binnen één sessie. De laatste turn staat ook los als vraag/antwoord bij de feedback-row.

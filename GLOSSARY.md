@@ -98,7 +98,8 @@ Niveau op verzoek, gekozen in de app (gem. max 20 woorden, max 25). Bij elk B2-a
 ## Kwaliteit en beheer
 
 **Verzin niets**:
-De bot verzint nooit regels, data of bedragen; bij ontbrekende informatie, onzekerheid of conflicterende bronnen wordt dit expliciet gesignaleerd in het antwoord.
+De bot gebruikt alleen gezaghebbende bronnen en geeft alleen antwoorden die daarmee onderbouwd zijn. Hij verzint nooit regels, data of bedragen en doet geen aannames over wat de gebruiker niet gezegd heeft. Ontbreekt informatie, is de bron niet actueel of spreken bronnen elkaar tegen, zodat geen juist antwoord mogelijk is, dan zegt hij dat expliciet in het antwoord.
+_Avoid_: "best guess", "waarschijnlijk" als antwoord zonder bron
 
 **Bronconflict**:
 Een verschil over dezelfde regel tussen de reglementstekst (Titel 20, Nationale Besluiten) en een andere bron, zoals een uitlegpagina van het Kenniscentrum. De bot antwoordt volgens de reglementstekst, noemt het verschil kort in het antwoord, en het verschil wordt zonder vraagtekst gesignaleerd aan de beheerder.

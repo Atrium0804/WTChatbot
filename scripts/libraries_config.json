@@ -16,10 +16,6 @@
     {
       "name": "archive",
       "description": "Archief-library: oude documentversies, alleen voor wijzigingsvragen"
-    },
-    {
-      "name": "algemeen",
-      "description": "Algemeen-library: algemene kennisdocumenten (bijv. trainingsleer, het motiveren van kinderen), voor algemene vragen die geen KNWU-, regio- of clubvraag zijn"
     }
   ]
 }

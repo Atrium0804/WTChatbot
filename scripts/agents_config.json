@@ -24,10 +24,10 @@
     },
     {
       "name": "club-agent",
-      "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, wtcwoerden.nl), nooit fallback naar KNWU; licentievragen via handoff naar knwu-agent",
+      "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, Website-teksten), nooit fallback naar KNWU; licentievragen via handoff naar knwu-agent",
       "prompt_files": ["_shared.md", "club-agent.md"],
       "library": "club",
-      "websearch": true,
+      "websearch": false,
       "handoffs": ["knwu-agent"]
     },
     {

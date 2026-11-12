@@ -234,3 +234,7 @@ knowledge-documents/*/*.md
 # Opgeschoonde KNWU-versies en hun opschoonrapporten wel in git (#30)
 !knowledge-documents/knwu/*.md
 !knowledge-documents/review/*.md
+# Website-teksten (scripts/import_website_texts.py, #60) wel in git; de overige
+# clubdocumenten ("WTC Woerden - ...", bv. contactpersonen) blijven lokaal.
+!knowledge-documents/club/*.md
+knowledge-documents/club/WTC Woerden - *.md

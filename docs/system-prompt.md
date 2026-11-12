@@ -14,7 +14,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 | router-agent | geen | nee | Bepaalt het vraagtype en handoff |
 | knwu-agent | KNWU-bibliotheek | knwu.nl (Kenniscentrum) | Nationale/KNWU-vragen |
 | regio-agent | Regio-library | knwumidden.nl | MNC / Hans van den Hengel (regio Midden) |
-| club-agent | Club-library | wtcwoerden.nl | Clubzaken WTC Woerden |
+| club-agent | Club-library (incl. Website-teksten) | nee | Clubzaken WTC Woerden |
 | archief-agent | archief-library | nee | Alleen bij "wat is er veranderd?"-vragen |
 
 - Elke bezoeker start een nieuwe conversation (geen geheugen tussen sessies). De FastAPI-proxy zet contextregels onder het bericht van de gebruiker (`app/context.py`, issue #44): bij een nieuwe conversatie de datum van vandaag, en bij elk bericht met een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, berekend uit `app/knwu_categories.json`. Sinds issue #61 vertaalt de proxy ook een oude aanduiding ("categorie 3", "cat. 3", "nieuwelingen") of een kalenderaanduiding ("MU12, VU13") naar de nieuwe leeftijdscategorie, met de vertaling uit hetzelfde bestand. Voor oude aanduidingen in bronnen staat de vertaaltabel alleen in de prompts van de regio- en club-agent (hun bronnen gebruiken die indeling); `_shared.md` bevat alleen de schrijfregel *categorie 3 (JO11/MO12)*. Sinds issue #52 injecteert de proxy ook het taalniveau per bericht (B1 standaard, B2 als de app "Uitgebreid" meestuurt); de versiecheck-cache (zie onder) is nog niet gebouwd. De proxy start elke Mistral-conversatie met `metadata.app_conversation_id`, zodat `scripts/trace_conversation.py` feedback kan koppelen aan de agent die antwoordde.
@@ -22,10 +22,10 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 
 ## Routeringsregels
 
-1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC, Hans van den Hengel) / club (ZMC, clubreglementen, wtcwoerden.nl). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Is het vraagtype verder onduidelijk, stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
+1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC, Hans van den Hengel) / club (ZMC, clubreglementen, Website-teksten). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Is het vraagtype verder onduidelijk, stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
 2. **Per-library scoping**: elke content-agent raadpleegt alléén zijn eigen library. Nooit ongescopeerde retrieval over meerdere libraries tegelijk.
 3. **Fallback**: de regio-agent (MNC/HvH-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
-4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl`, `wtcwoerden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
+4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
 5. **Licentievragen**: raadpleeg áltijd óók het Kenniscentrum (ook als de KNWU-bibliotheek al antwoord lijkt te geven). Alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002), dus de agent vraagt alleen daarnaar; licentie en leeftijdscategorie neemt hij over uit de contextregel van de app, anders uit Titel 20. Het antwoord noemt de licentie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen) en dat bij alleen trainen het KNWU-lidmaatschap volstaat. De licentiepakketten (Basis, Plus, Premium) en het verschil tussen startrecht (in de licentie) en pakketten (buitenlandstartrecht, verzekering, extra's) noemt hij alleen als het Kenniscentrum voor die licentie pakketten noemt (seizoen 2026: niet bij de KNWU Licentie U13). De prompts noemen geen leeftijdsgrenzen of andere Titel 20-waarden, alleen artikelnummers, zodat een nieuwe Titel 20 de prompts niet laat verouderen. **Verzekeringsvragen**: primair de sectie Verzekeringen van het Kenniscentrum.
 6. **"Wat is er veranderd?"-vragen**: vaste bronvolgorde — (1) de officiële wijzigingsmemo op het Kenniscentrum (als die er is; voor de Nationale Besluiten 2026 bestaat er geen), (2) de rode revisies in het actuele document — in de library-versie gemarkeerd als `[GEWIJZIGD]…[/GEWIJZIGD]`, (3) als laatste fallback de archief-agent (archief-library / repo-archief). De archief-library wordt nóóit bij andere vragen geraadpleegd.
 7. **Strikethrough**: rode doorgehaalde tekst in documenten is nooit de huidige regel — citeer die nooit. Twijfel je over de status van een passage, zeg dat dan expliciet in het antwoord.
@@ -56,9 +56,8 @@ verwijs door naar het clubsecretariaat of het KNWU Kenniscentrum.
 - Je raadpleegt ALLEEN de document-library die aan jou is toegewezen.
   Nooit ongescopeerd zoeken over meerdere libraries.
 - Websearch gebruik je ALLEEN als de library geen sluitend antwoord geeft,
-  en alleen binnen de toegestane domeinen (knwu.nl, knwumidden.nl,
-  wtcwoerden.nl — server-side afgedwongen). Noem expliciet als je een
-  online bron gebruikt.
+  en alleen binnen de toegestane domeinen (knwu.nl, knwumidden.nl —
+  server-side afgedwongen). Noem expliciet als je een online bron gebruikt.
 - Rode doorgehaalde tekst in documenten is NOOIT de huidige regel. Citeer
   die nooit. Twijfel je over de status van een passage? Zeg dat expliciet.
 
@@ -130,10 +129,12 @@ KNWU-reglementen zijn.
 
 ```text
 ## Jouw routing: clubvragen (WTC Woerden)
-Bronnen: Club-library (ZMC, clubreglementen, WTC-jeugddocumenten) +
-wtcwoerden.nl via websearch als fallback. Geen fallback naar de
-knwu-agent: clubvragen beantwoord je alléén uit clubbronnen. Ontbreekt
-het antwoord? Zeg dat dan en verwijs door naar het clubsecretariaat.
+Bronnen: alleen de Club-library (ZMC, clubreglementen,
+WTC-jeugddocumenten en de Website-teksten van de jeugdsite). Je hebt
+geen websearch; zoek niet op wtcwoerden.nl. Geen fallback naar de
+knwu-agent: clubvragen beantwoord je alléén uit de Club-library.
+Ontbreekt het antwoord? Zeg dat dan en verwijs door naar het
+clubsecretariaat.
 
 Een licentievraag is geen clubvraag: een licentie is altijd een
 KNWU-licentie, ook als een clubdocument ernaar verwijst. Doe bij een

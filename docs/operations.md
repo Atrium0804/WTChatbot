@@ -46,7 +46,7 @@ Bij een browsergebonden chatfout: volg [chatdiagnostiek tonen op een telefoon](h
 
 ## Websearch-allowlist
 
-De websearch-tool van de agent is beperkt tot de gezaghebbende domeinen `knwu.nl` (inclusief kenniscentrum.knwu.nl), `knwumidden.nl` en `wtcwoerden.nl` — nooit het open web. Afdwinging: system prompt + eval-set, en optioneel server-side via een org-level allowlist (`/v1/web-filters`) — maar die filter is **org-breed** en treft álle applicaties in de Organization, dus alleen toe te passen als de org dedicated is voor de WTChatbot (ADR-0004, amendment 2026-11-04; in een gedeelde org: prompt-only). Zie [ADR-0004](adr/0004-websearch-beperkt-tot-kenniscentrum.md) voor de beslissing en [how-to: websearch-allowlist configureren](how-to/stel-websearch-allowlist-in.md) voor de exacte endpoints, payloads en matchregels.
+De websearch-tool van de agent is beperkt tot de gezaghebbende domeinen `knwu.nl` (inclusief kenniscentrum.knwu.nl) en `knwumidden.nl` — nooit het open web. `wtcwoerden.nl` valt erbuiten: het CMS blokkeert de bot; clubinformatie komt uit de Website-teksten in de Club-library (ADR-0004, amendment 2026-11-12). Afdwinging: system prompt + eval-set, en optioneel server-side via een org-level allowlist (`/v1/web-filters`) — maar die filter is **org-breed** en treft álle applicaties in de Organization, dus alleen toe te passen als de org dedicated is voor de WTChatbot (ADR-0004, amendment 2026-11-04; in een gedeelde org: prompt-only). Zie [ADR-0004](adr/0004-websearch-beperkt-tot-kenniscentrum.md) voor de beslissing en [how-to: websearch-allowlist configureren](how-to/stel-websearch-allowlist-in.md) voor de exacte endpoints, payloads en matchregels.
 
 ## Seizoenwissel-procedure
 

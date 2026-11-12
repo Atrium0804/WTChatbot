@@ -2,8 +2,8 @@
 
 Stappenplannen voor concrete taken. Zie de [documentatiegids](../DOCUMENTATION_GUIDE.md).
 
-- [Libraries synchroniseren met knowledge-documents](synchroniseer-libraries.md) — dry-run/`--apply` van de sync tussen `knowledge-documents/` en de Mistral-libraries (`scripts/sync_libraries.py`)
-- [Websearch-allowlist configureren](stel-websearch-allowlist-in.md) — org-level domeinfilter via `/v1/web-filters` (`knwu.nl`, `knwumidden.nl`, `wtcwoerden.nl`), zie ADR-0004
+- [Libraries synchroniseren met knowledge-documents](synchroniseer-libraries.md) — dry-run/`--apply` van de sync tussen `knowledge-documents/` en de Mistral-libraries (`scripts/sync_libraries.py`), en Website-teksten importeren in de Club-library (`scripts/import_website_texts.py`)
+- [Websearch-allowlist configureren](stel-websearch-allowlist-in.md) — org-level domeinfilter via `/v1/web-filters` (`knwu.nl`, `knwumidden.nl`), zie ADR-0004
 - [Zet de chatbot op je beginscherm (webapp/PWA)](zet-chatbot-op-je-beginscherm.md) — Android Chrome en iPhone Safari, via `https://chat.famstieltjes.nl`
 - [Chatdiagnostiek tonen op een telefoon](toon-chatdiagnostiek-op-je-telefoon.md) — opt-in browserdiagnostiek zonder chatinhoud, via `?debug=1`
 - [Chatlayout testen](test-chatlayout.md) — echte browserlayout en aanvullende apparaatcontroles

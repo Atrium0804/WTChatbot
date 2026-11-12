@@ -2,13 +2,15 @@
 status: accepted
 ---
 
-# Websearch-tool aan, scope = allowlist van de gezaghebbende domeinen (KNWU, regio, club)
+# Websearch-tool aan, scope = allowlist van de gezaghebbende domeinen (KNWU, regio)
 
-De agent mag het live web raadplegen via de websearch-tool, maar alleen via een org-level allowlist van precies drie domeinen: `knwu.nl` (inclusief kenniscentrum.knwu.nl), `knwumidden.nl` en `wtcwoerden.nl` — nooit het open web (subdomeinen matchen automatisch). Websearch is een fallback: pas als de bibliotheken geen sluitend antwoord geven. Licentievragen raadplegen sowieso altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
+De agent mag het live web raadplegen via de websearch-tool, maar alleen via een org-level allowlist van precies twee domeinen: `knwu.nl` (inclusief kenniscentrum.knwu.nl) en `knwumidden.nl` — nooit het open web (subdomeinen matchen automatisch). Websearch is een fallback: pas als de bibliotheken geen sluitend antwoord geven. Licentievragen raadplegen sowieso altijd óók het Kenniscentrum; verzekeringsvragen primair via de sectie Verzekeringen van het Kenniscentrum.
 
 _Amendment 2026-11-02 (wayfinder-ticket "Beslissing: ADR-0004 herzien — websearch-scope", map #2): scope verruimd van KNWU-only naar de drie gezaghebbende domeinen, consistent met de bronvolgorde KNWU > regio > club (GLOSSARY)._
 
 _Amendment 2026-11-04: `/v1/web-filters` blijkt org-breed te werken, niet per workspace of agent — één config (`block_by_default`) en twee lijsten per Organization (geverifieerd via de admin-guide en live met de project-key: `GET /v1/web-filters/config` → 200). Inschakelen van de allowlist beperkt daarmee álle applicaties die een key van deze Organization gebruiken, niet alleen de chatbot. Daarom: laag 1 (org-web-filter) alleen inzetten als deze Mistral-Organization exclusief voor de WTChatbot is gereserveerd — een aparte workspace isoleert niet. In een gedeelde org vallen we terug op laag 2 + 3 (system prompt + eval-set), géén open web._
+
+_Amendment 2026-11-12 (#60, onderdeel van #58): `wtcwoerden.nl` is niet langer toegestaan als websearch-bron. Het CMS van de clubsite blokkeert de bot (CloudFront-403, zie #29), dus websearch op dat domein levert niets op en lokt mislukte zoekpogingen uit. De Website-teksten van de jeugdsite (WebsiteWTCjeugd-repo) staan nu in de Club-library en vervangen de clubsite als bron; ze worden geïmporteerd met `scripts/import_website_texts.py`. De club-agent heeft daardoor geen websearch meer nodig (`websearch: false`) en beantwoordt clubvragen alleen uit de Club-library. Clubinformatie die niet in de Website-teksten of andere clubdocumenten staat, is voor de bot niet beschikbaar; de bot verwijst dan door naar het clubsecretariaat._
 
 ## Considered options
 

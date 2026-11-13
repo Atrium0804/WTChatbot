@@ -118,3 +118,66 @@ test("foutmeldingen blijven platte tekst zonder koppen", async () => {
   assert.equal(bot.children.length, 0);
   assert.ok(bot.textContent.includes("Fout ###"));
 });
+
+// --- Hyperlinks als markdown (#74) ---
+
+test("[KNWU](https://knwu.nl) wordt een klikbare <a>, geen letterlijke markdown", async () => {
+  const { elements } = chatWithAnswer("Kijk op [KNWU](https://knwu.nl) voor meer.");
+  await flush();
+  const bot = elements.messages.children[1];
+  const links = findAll(bot, (n) => n.tagName === "A");
+  assert.equal(links.length, 1);
+  assert.equal(links[0].textContent, "KNWU");
+  assert.equal(links[0].getAttribute("href"), "https://knwu.nl");
+  assert.equal(links[0].getAttribute("target"), "_blank");
+  assert.equal(links[0].getAttribute("rel"), "noopener noreferrer");
+  assert.ok(!bot.textContent.includes("]("), bot.textContent);
+  assert.ok(!bot.textContent.includes("[KNWU]"), bot.textContent);
+});
+
+test("meerdere links in één antwoord worden allemaal <a>", async () => {
+  const { elements } = chatWithAnswer("Zie [KNWU](https://knwu.nl) en [Kenniscentrum](https://kenniscentrum.knwu.nl).");
+  await flush();
+  const bot = elements.messages.children[1];
+  const links = findAll(bot, (n) => n.tagName === "A");
+  assert.equal(links.length, 2);
+  assert.deepEqual(links.map((n) => n.textContent), ["KNWU", "Kenniscentrum"]);
+});
+
+test("link in een lijstitem wordt ook een <a>", async () => {
+  const { elements } = chatWithAnswer("- [Regels](https://knwu.nl/regels)\n- [Contact](https://knwu.nl/contact)");
+  await flush();
+  const bot = elements.messages.children[1];
+  const links = findAll(bot, (n) => n.tagName === "A");
+  assert.equal(links.length, 2);
+});
+
+test("javascript: URL in een link blijft platte tekst (geen <a>)", async () => {
+  const { elements } = chatWithAnswer("Klik [hier](javascript:alert(1)) nu");
+  await flush();
+  const bot = elements.messages.children[1];
+  assert.equal(findAll(bot, (n) => n.tagName === "A").length, 0);
+  assert.ok(bot.textContent.includes("javascript:alert(1)"));
+});
+
+test("link met vet erbinnen: **vet** in linktekst werkt", async () => {
+  const { elements } = chatWithAnswer("Zie [de **regels**](https://knwu.nl).");
+  await flush();
+  const bot = elements.messages.children[1];
+  const links = findAll(bot, (n) => n.tagName === "A");
+  assert.equal(links.length, 1);
+  // de linktekst bevat de strong
+  const strong = findAll(links[0], (n) => n.tagName === "STRONG");
+  assert.equal(strong.length, 1);
+  assert.equal(strong[0].textContent, "regels");
+});
+
+test("Bron-regel met URL blijft platte tekst in span.bron (geen <a>)", async () => {
+  const { elements } = chatWithAnswer("Antwoord\nBron: [KNWU](https://knwu.nl), geraadpleegd op 2026-11-13");
+  await flush();
+  const bot = elements.messages.children[1];
+  const bron = findAll(bot, (n) => n.className === "bron");
+  assert.equal(bron.length, 1);
+  assert.equal(findAll(bron[0], (n) => n.tagName === "A").length, 0);
+  assert.ok(bron[0].textContent.includes("[KNWU](https://knwu.nl)"));
+});

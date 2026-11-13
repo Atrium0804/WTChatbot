@@ -100,6 +100,8 @@
   }
   .msg.bot p, .msg.bot ul { margin: 0.3em 0; }
   .msg.bot ul { padding-left: 1.3em; }
+  .msg.bot a { color: var(--accent-dark); text-decoration: underline; }
+  .msg.bot a:hover { color: var(--accent); }
 
   .msg .bron {
     display: block;
@@ -367,9 +369,11 @@
   }
 
   // Markdown in bot-antwoorden renderen als DOM-elementen (nooit innerHTML,
-  // dus HTML in het antwoord blijft platte tekst): koppen, **vet**, lijsten.
+  // dus HTML in het antwoord blijft platte tekst): koppen, **vet**, [links](url), lijsten.
+  // Alleen http(s)/mailto links; javascript: etc. blijven platte tekst (#74).
+  var SAFE_URL = /^(https?:\/\/|mailto:)/i;
   function setInline(el, text) {
-    var parts = text.split(/(\*\*[^*]+\*\*)/g);
+    var parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g);
     for (var i = 0; i < parts.length; i++) {
       var part = parts[i];
       if (!part) continue;
@@ -378,9 +382,19 @@
         var strong = document.createElement("strong");
         strong.textContent = bold[1];
         el.appendChild(strong);
-      } else {
-        el.appendChild(document.createTextNode(part));
+        continue;
       }
+      var link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (link && SAFE_URL.test(link[2].trim())) {
+        var a = document.createElement("a");
+        setInline(a, link[1]);
+        a.setAttribute("href", link[2].trim());
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+        el.appendChild(a);
+        continue;
+      }
+      el.appendChild(document.createTextNode(part));
     }
   }
 

@@ -426,6 +426,15 @@ class ProductieConfigTests(unittest.TestCase):
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertIn("20.0.004", prompt)
 
+    def test_doorverwijzing_gaat_naar_trainer_niet_clubsecretariaat(self) -> None:
+        # Doorverwijzen bij ontbrekend antwoord of out-of-scope gaat naar de
+        # trainer; de bot verwijst niet meer naar het clubsecretariaat.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        for name in ("_shared.md", "club-agent.md"):
+            prompt = (prompts_dir / name).read_text(encoding="utf-8").lower()
+            self.assertNotIn("clubsecretariaat", prompt, name)
+            self.assertIn("trainer", prompt, name)
+
     def test_regio_agent_b1_fallback_en_nk_handoff(self) -> None:
         # eval run 5: bij B1 geen websearch-fallback op knwumidden.nl gedaan;
         # NK-/KNWU-regio-vragen uit de Regio-library beantwoord in plaats van

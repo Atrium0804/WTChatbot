@@ -559,6 +559,58 @@
     var abortController = new AbortController();
     var timeoutTimer = setTimeout(function () { abortController.abort(); }, CHAT_TIMEOUT_MS);
     var retried = false;
+    var pollTimer = null;
+
+    function stopPolling() {
+      if (pollTimer !== null) { clearTimeout(pollTimer); pollTimer = null; }
+    }
+
+    // #85: poll de status-endpoint tot de job done/error is; toon de fase in
+    // de typing-bubble. Bij 200 (stub-mode) is er geen job_id en gaan we direct.
+    function pollStatus(jobId) {
+      pollTimer = setTimeout(function () {
+        fetch("/chat/status/" + jobId, { signal: abortController.signal })
+          .then(function (resp) {
+            if (!resp.ok) throw new Error("HTTP " + resp.status);
+            return resp.json();
+          })
+          .then(function (status) {
+            if (status.status === "done") {
+              stopPolling();
+              clearTimeout(timeoutTimer);
+              clearTypingTimers();
+              conversationId = status.conversation_id || conversationId;
+              typing.className = "msg bot";
+              setBotContent(typing, status.answer);
+              addFeedback(typing, status.answer);
+              scrollDown();
+              send.disabled = false;
+              focusQuestionOnDesktop();
+            } else if (status.status === "error") {
+              stopPolling();
+              clearTimeout(timeoutTimer);
+              clearTypingTimers();
+              typing.className = "msg error";
+              typing.textContent = status.error || "Er ging iets mis. Probeer het opnieuw.";
+              scrollDown();
+              send.disabled = false;
+              focusQuestionOnDesktop();
+            } else {
+              // toon de fase in de typing-bubble (pending/working)
+              if (status.phase) {
+                typing.textContent = status.phase;
+                scrollDown();
+              }
+              pollStatus(jobId);
+            }
+          })
+          .catch(function () {
+            // Terugval (#85): als de status-poll faalt, blijven de
+            // staged-tijdmeldingen (#84) werken; blijf pollen.
+            pollStatus(jobId);
+          });
+      }, 2000);
+    }
 
     postChat(abortController.signal)
       .catch(function (err) {
@@ -575,15 +627,25 @@
         throw err;
       })
       .then(function (body) {
-        conversationId = body.conversation_id;
-        clearTimeout(timeoutTimer);
-        clearTypingTimers();
-        typing.className = "msg bot";
-        setBotContent(typing, body.answer);
-        addFeedback(typing, body.answer);
-        scrollDown();
+        if (body.job_id) {
+          // #85: 202 — start polling; de staged-tijdmeldingen blijven als fallback
+          pollStatus(body.job_id);
+          if (body.conversation_id) conversationId = body.conversation_id;
+        } else {
+          // 200 (stub-mode): direct antwoord
+          conversationId = body.conversation_id;
+          clearTimeout(timeoutTimer);
+          clearTypingTimers();
+          typing.className = "msg bot";
+          setBotContent(typing, body.answer);
+          addFeedback(typing, body.answer);
+          scrollDown();
+          send.disabled = false;
+          focusQuestionOnDesktop();
+        }
       })
       .catch(function (err) {
+        stopPolling();
         clearTimeout(timeoutTimer);
         clearTypingTimers();
         typing.className = "msg error";
@@ -594,8 +656,6 @@
           typing.textContent = err.userMessage || "Er ging iets mis. Probeer het opnieuw.";
         }
         scrollDown();
-      })
-      .finally(function () {
         send.disabled = false;
         focusQuestionOnDesktop();
       });

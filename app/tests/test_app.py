@@ -34,11 +34,41 @@ def make_client(tmp_path: Path) -> TestClient:
     return TestClient(create_app(db_path=str(tmp_path / "test.db")))
 
 
+def _wait_for_job(client: TestClient, job_id: str, timeout: float = 5.0) -> dict:
+    """Poll /chat/status/<job> tot de job done/error is (#85)."""
+    import time as _time
+    deadline = _time.time() + timeout
+    while _time.time() < deadline:
+        resp = client.get(f"/chat/status/{job_id}")
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        if body["status"] in ("done", "error"):
+            return body
+        _time.sleep(0.01)
+    raise AssertionError(f"job {job_id} werd niet done binnen {timeout}s")
+
+
 def chat(client: TestClient, message: str, client_id: str = "test-client") -> dict:
     resp = client.post(
         "/chat", json={"message": message, "client_id": client_id}
     )
-    assert resp.status_code == 200, resp.text
+    assert resp.status_code in (200, 202), resp.text
+    if resp.status_code == 202:
+        # #85: Mistral-mode — poll de status tot done
+        result = _wait_for_job(client, resp.json()["job_id"])
+        assert result["status"] == "done", result
+        return {"conversation_id": result["conversation_id"], "answer": result["answer"]}
+    return resp.json()
+
+
+def chat_raw(client: TestClient, payload: dict) -> dict:
+    """POST /chat en give het finale body terug (handelt 202+poll af, #85)."""
+    resp = client.post("/chat", json=payload)
+    assert resp.status_code in (200, 202), resp.text
+    if resp.status_code == 202:
+        result = _wait_for_job(client, resp.json()["job_id"])
+        assert result["status"] == "done", result
+        return {"conversation_id": result["conversation_id"], "answer": result["answer"]}
     return resp.json()
 
 
@@ -53,7 +83,11 @@ def chat_in(
             "client_id": client_id,
         },
     )
-    assert resp.status_code == 200, resp.text
+    assert resp.status_code in (200, 202), resp.text
+    if resp.status_code == 202:
+        result = _wait_for_job(client, resp.json()["job_id"])
+        assert result["status"] == "done", result
+        return {"conversation_id": result["conversation_id"], "answer": result["answer"]}
     return resp.json()
 
 
@@ -509,22 +543,15 @@ def test_chat_sends_language_level_context(tmp_path, monkeypatch):
 
     calls = fake_mistral(monkeypatch)
     client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
-    resp = client.post(
-        "/chat", json={"message": "Hoeveel kost een licentie?", "client_id": "c", "language_level": "B2"}
-    )
-    assert resp.status_code == 200, resp.text
+    body = chat_raw(client, {"message": "Hoeveel kost een licentie?", "client_id": "c", "language_level": "B2"})
     assert "vastgesteld taalniveau: B2" in calls[0]["message"]
     # ook op een vervolgbericht (zonder datumregel) staat de taalniveau-regel
-    resp2 = client.post(
-        "/chat",
-        json={
-            "message": "en voor mijn dochter?",
-            "conversation_id": resp.json()["conversation_id"],
-            "client_id": "c",
-            "language_level": "B2",
-        },
-    )
-    assert resp2.status_code == 200, resp2.text
+    body2 = chat_raw(client, {
+        "message": "en voor mijn dochter?",
+        "conversation_id": body["conversation_id"],
+        "client_id": "c",
+        "language_level": "B2",
+    })
     follow_up = calls[1]["message"]
     assert "vastgesteld taalniveau: B2" in follow_up
     assert "november 2026" not in follow_up
@@ -534,14 +561,10 @@ def test_chat_language_level_defaults_to_b1(tmp_path, monkeypatch):
     calls = fake_mistral(monkeypatch)
     client = make_client(tmp_path)
     # geen language_level meegestuurd
-    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
-    assert resp.status_code == 200, resp.text
+    chat_raw(client, {"message": "vraag", "client_id": "c"})
     assert "vastgesteld taalniveau: B1" in calls[0]["message"]
     # ongeldige waarde: geen 400, maar B1
-    resp = client.post(
-        "/chat", json={"message": "vraag", "client_id": "c", "language_level": "van alles"}
-    )
-    assert resp.status_code == 200, resp.text
+    chat_raw(client, {"message": "vraag", "client_id": "c", "language_level": "van alles"})
     assert "vastgesteld taalniveau: B1" in calls[1]["message"]
 
 
@@ -710,9 +733,16 @@ def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypa
             healthz_done.append(True)  # healthz reageerde vóór de Mistral-call klaar was
             release.set()
             chat_resp = await chat_task
-            return health, chat_resp
+            # poll de job-status tot done (#85)
+            job_id = chat_resp.json()["job_id"]
+            for _ in range(500):
+                status_resp = await ac.get(f"/chat/status/{job_id}")
+                if status_resp.json()["status"] in ("done", "error"):
+                    break
+                await asyncio.sleep(0.01)
+            return health, chat_resp, status_resp
 
-    health, chat_resp = asyncio.run(run())
+    health, chat_resp, status_resp = asyncio.run(run())
 
     assert health.status_code == 200
     assert health.json() == {
@@ -720,7 +750,69 @@ def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypa
         "mistral_configured": True,
         "mistral_reachable": True,
     }
-    assert chat_resp.status_code == 200
-    assert chat_resp.json()["answer"] == "traag antwoord"
+    assert chat_resp.status_code == 202  # #85: non-blocking, direct job-id
+    assert status_resp.status_code == 200
+    assert status_resp.json()["status"] == "done"
+    assert status_resp.json()["answer"] == "traag antwoord"
     # toen de trage Mistral-call klaar was, was /healthz allang gereageerd
     assert mock_saw_healthz_done == [True]
+
+
+# --- Status-endpoint (#85) ---
+
+
+def test_chat_returns_202_with_job_id_in_mistral_mode(tmp_path, monkeypatch):
+    """#85: in Mistral-mode returnt /chat direct 202 + job_id."""
+    fake_mistral(monkeypatch)
+    client = make_client(tmp_path)
+    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
+    assert resp.status_code == 202, resp.text
+    body = resp.json()
+    assert body["job_id"]
+    assert body["conversation_id"]
+
+
+def test_status_endpoint_404_for_unknown_job(tmp_path):
+    client = make_client(tmp_path)
+    resp = client.get("/chat/status/" + "0" * 32)
+    assert resp.status_code == 404
+
+
+def test_status_endpoint_returns_done_with_answer(tmp_path, monkeypatch):
+    """#85: na afronding van de job geeft de status-endpoint done + answer."""
+    fake_mistral(monkeypatch)
+    client = make_client(tmp_path)
+    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
+    assert resp.status_code == 202
+    job_id = resp.json()["job_id"]
+    result = _wait_for_job(client, job_id)
+    assert result["status"] == "done"
+    assert result["answer"] == "antwoord"
+    assert result["conversation_id"]
+
+
+def test_status_endpoint_returns_error_on_mistral_failure(tmp_path, monkeypatch):
+    """#85: bij een fout in de background task geeft de status error."""
+    import config
+    import mistral_client
+
+    def failing_answer(**kwargs):
+        raise RuntimeError("Mistral API timeout na 180s")
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(mistral_client, "answer_question", failing_answer)
+    client = make_client(tmp_path)
+    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
+    assert resp.status_code == 202
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["status"] == "error"
+    assert "timeout" in result["error"].lower()
+
+
+def test_stub_mode_still_returns_200_synchronously(tmp_path):
+    """#85: zonder Mistral-config blijft /chat synchroon 200 (stub-mode)."""
+    client = make_client(tmp_path)
+    resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
+    assert resp.status_code == 200
+    assert "STUB" in resp.json()["answer"]

@@ -8,6 +8,7 @@ MISTRAL_API_KEY/MISTRAL_AGENT_ID draait de app in stub-mode (duidelijk gemarkeer
 Run:  uvicorn main:app --host 0.0.0.0 --port 8000   (vanuit app/)
 """
 
+import asyncio
 import re
 import time
 import uuid
@@ -94,7 +95,7 @@ def create_app(
     # In-memory state: conversaties, feedbackgeschiedenis per conversatie (rolling
     # window van de laatste FEEDBACK_HISTORY_TURNS turns, voor feedback-koppeling),
     # rate-limit buckets.
-    state: dict = {"conversations": {}, "history": {}, "buckets": {}}
+    state: dict = {"conversations": {}, "history": {}, "buckets": {}, "jobs": {}}
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
@@ -124,6 +125,50 @@ def create_app(
                 response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
+    async def _run_chat_job(
+        job_id: str,
+        conversation_id: str,
+        message: str,
+        context_message: str,
+        mistral_conv_id: str | None,
+    ) -> None:
+        """Background task (#85): draait de Mistral-call off-loop en slaat het
+        resultaat op in de job-state. De /chat-status endpoint leest die state."""
+        job = state["jobs"][job_id]
+        job["status"] = "working"
+        job["phase"] = "Wielie denkt na…"
+        try:
+            new_conv_id, answer = await run_in_threadpool(
+                mistral_client.answer_question,
+                api_key=config.MISTRAL_API_KEY,
+                agent_id=config.MISTRAL_AGENT_ID,
+                base_url=config.MISTRAL_CONVERSATIONS_URL,
+                message=context_message,
+                conversation_id=mistral_conv_id or None,
+                metadata={"app_conversation_id": conversation_id},
+            )
+            state["conversations"][conversation_id] = new_conv_id
+            answer, bronconflicts = split_bronconflict_markers(answer)
+            for marker in bronconflicts:
+                store.save_feedback(
+                    db,
+                    rating="bronconflict",
+                    conversation_id=conversation_id,
+                    text=marker[: config.FEEDBACK_MAX_TEXT_LENGTH],
+                )
+            turns = state["history"].setdefault(
+                conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
+            )
+            turns.append({"question": message, "answer": answer})
+            job["status"] = "done"
+            job["phase"] = "Klaar"
+            job["answer"] = answer
+            job["conversation_id"] = conversation_id
+        except Exception as exc:
+            job["status"] = "error"
+            job["phase"] = "Fout"
+            job["error"] = f"Er ging iets mis bij het ophalen van het antwoord. Probeer het opnieuw. ({exc})"
+
     @app.post("/chat")
     async def chat(payload: ChatRequest):
         message = payload.message.strip()
@@ -146,6 +191,7 @@ def create_app(
             )
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
+            # #85: 202 + job-id; de Mistral-call draait in een background task.
             mistral_conv_id = state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
                 message,
@@ -154,29 +200,27 @@ def create_app(
                 new_conversation=not mistral_conv_id,
                 language_level=payload.language_level,
             )
-            try:
-                # Blocking requests-call: off-loop draaien, anders blokkeert één
-                # trage agent-run (tot DEFAULT_TIMEOUT=180s) de hele event loop (#80).
-                mistral_conv_id, answer = await run_in_threadpool(
-                    mistral_client.answer_question,
-                    api_key=config.MISTRAL_API_KEY,
-                    agent_id=config.MISTRAL_AGENT_ID,
-                    base_url=config.MISTRAL_CONVERSATIONS_URL,
-                    message=context.add_context(message, context_lines),
-                    conversation_id=mistral_conv_id or None,
-                    metadata={"app_conversation_id": conversation_id},
+            job_id = uuid.uuid4().hex
+            state["jobs"][job_id] = {
+                "status": "pending",
+                "phase": "Wielie denkt na…",
+                "created_at": time.time(),
+            }
+            asyncio.create_task(
+                _run_chat_job(
+                    job_id,
+                    conversation_id,
+                    message,
+                    context.add_context(message, context_lines),
+                    mistral_conv_id,
                 )
-            except Exception as exc:
-                return JSONResponse(
-                    {"error": f"Er ging iets mis bij het ophalen van het antwoord. Probeer het opnieuw. ({exc})"},
-                    status_code=502,
-                )
-            state["conversations"][conversation_id] = mistral_conv_id
-        else:
-            answer = stub_answer(message)
-        # bronconflict-marker (#47): uit het antwoord halen vóór de gebruiker het
-        # ziet (en vóór opslag in de feedbackgeschiedenis); per regel één row
-        # zonder vraagtekst
+            )
+            return JSONResponse(
+                {"job_id": job_id, "conversation_id": conversation_id},
+                status_code=202,
+            )
+        # stub-mode: synchroon antwoord (handig voor offline development en tests)
+        answer = stub_answer(message)
         answer, bronconflicts = split_bronconflict_markers(answer)
         for marker in bronconflicts:
             store.save_feedback(
@@ -190,6 +234,21 @@ def create_app(
         )
         turns.append({"question": message, "answer": answer})
         return {"conversation_id": conversation_id, "answer": answer}
+
+    @app.get("/chat/status/{job_id}")
+    async def chat_status(job_id: str):
+        """#85: poll-endpoint voor de achtergrond-job van /chat. Geeft status +
+        phase terug; bij 'done' ook het antwoord, bij 'error' de foutmelding."""
+        job = state["jobs"].get(job_id)
+        if not job:
+            return JSONResponse({"error": "Onbekende job."}, status_code=404)
+        result: dict = {"status": job["status"], "phase": job.get("phase", "")}
+        if job["status"] == "done":
+            result["answer"] = job.get("answer", "")
+            result["conversation_id"] = job.get("conversation_id", "")
+        elif job["status"] == "error":
+            result["error"] = job.get("error", "Er ging iets mis.")
+        return result
 
     @app.post("/feedback")
     async def feedback(payload: FeedbackRequest):

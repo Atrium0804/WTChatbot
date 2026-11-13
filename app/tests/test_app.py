@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+import config  # noqa: E402
 import store  # noqa: E402
 from main import create_app  # noqa: E402
 
@@ -74,9 +75,11 @@ def test_chat_too_long_413(tmp_path):
     assert resp.status_code == 413
 
 
-def test_rate_limit_per_client_id(tmp_path):
+def test_rate_limit_per_client_id(tmp_path, monkeypatch):
+    # limiet expliciet, los van de default in config.py
+    monkeypatch.setattr(config, "RATE_LIMIT_PER_HOUR", 3)
     client = make_client(tmp_path)
-    for i in range(10):
+    for i in range(3):
         resp = client.post("/chat", json={"message": f"vraag {i}", "client_id": "deze"})
         assert resp.status_code == 200, resp.text
     resp = client.post("/chat", json={"message": "eentje te veel", "client_id": "deze"})

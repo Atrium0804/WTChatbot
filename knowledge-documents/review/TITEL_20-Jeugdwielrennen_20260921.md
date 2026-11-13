@@ -102,3 +102,108 @@ Geen.
 
 - rijdend op parcours 1 ~~rijdt in de categorieën 1, 2 en 3~~. Bij parcours 2 en
 - parcours 1 . Bij ~~de categorieën 4, 5, 6,7~~ parcours 2 en 3
+
+## Gevonden koppen (95)
+
+- p2 ALGEMENE BEPALINGEN
+  - p2 20.0.001 Toepasbaarheid
+  - p2 20.0.002 Categorieën Jeugdlicenties en KNWU-lidmaatschap
+  - p2 20.0.003 KNWU-lidmaatschap
+  - p3 20.0.004 Categorie-indeling
+  - p4 20.0.005 Dispensatie
+  - p4 20.0.006 Combinatie van categorieën
+  - p4 20.0.007 Chipverwerking
+  - p4 20.0.008
+  - p5 20.0.009
+  - p5 20.0.010
+  - p5 20.0.011
+  - p5 20.0.012
+- p6 Hoofdstuk 1 : WEDSTRIJDEN, ALGEMEEN
+  - p6 20.1.001 Afhalen rugnummers
+  - p6 20.1.002
+  - p6 20.1.003 Aantallen deelnemers
+  - p7 20.1.004 Startprocedure
+  - p7 20.1.005 Wedstrijdkleding
+  - p7 20.1.006
+  - p8 20.1.007
+  - p8 20.1.008 Verzetten controle
+  - p9 20.1.009
+  - p9 20.1.010
+  - p9 20.1.011 Individuele prijzen
+  - p9 20.1.012 Clubprijzen
+  - p9 20.1.013 Premies
+  - p9 20.1.014 Buitenlandse wedstrijden
+  - p10 20.1.015
+  - p10 20.1.016 Twee wedstrijden op 1 dag niet toegestaan
+  - p10 20.1.017 Fietshouding
+  - p10 20.1.018 Boetes en straffen
+- p11 Hoofdstuk 2 : WEDSTRIJDEN OP DE WEG
+  - p11 20.2.001 Wedstrijdvormen
+  - p11 20.2.002
+  - p11 20.2.003
+  - p11 20.2.004 Maximale wedstrijdafstanden
+  - p11 20.2.005
+  - p12 20.2.006 Verzorging tijdens wegwedstrijden
+  - p12 20.2.007
+  - p12 20.2.008 NK Weg Jeugd
+  - p13 20.2.009 Materiaal
+- p14 Hoofdstuk 3 : BAANWIELRENNEN
+  - p14 20.3.001 Licentiecategorieën
+  - p14 20.3.002 Transponders
+  - p14 20.3.003 Wedstrijdvormen
+  - p14 20.3.004 Team Sprint
+  - p15 20.3.005 Ploegenachtervolging
+  - p15 20.3.006 Richtlijnen wedstrijdafstanden
+  - p15 20.3.007 Maximalen afstanden
+  - p16 20.3.009 Wedstrijduitleg
+  - p16 20.3.010 Pistoolschot
+  - p17 20.3.011
+  - p17 20.3.012 Rugnummer
+  - p17 20.3.013
+  - p17 20.3.014 Dubbel contract
+  - p18 20.3.015 Materiaal
+  - p18 20.3.016 Erkend Incident
+- p19 Hoofdstuk 4 : MOUNTAINBIKE WEDSTRIJDEN
+  - p19 20.4.001 Parcours
+  - p19 20.4.002 Wedstrijdduur
+  - p19 20.4.003 De Start
+  - p19 20.4.004 De Finish
+  - p19 20.4.005 Verzorging/Technische zone
+  - p20 20.4.006
+  - p20 20.4.007 Begeleidende start
+  - p20 20.4.008 Begeleidende Voor en Achter rijder
+  - p20 20.4.009 Fiets en Materiaalcontrole
+  - p21 20.4.010 Verzorging en/of Technische assistentie
+  - p21 20.4.011
+- p22 Hoofdstuk 5 : VELDRIT WEDSTRIJDEN
+  - p22 20.5.001 Parkoers
+  - p22 20.5.002 Pauze
+  - p22 20.5.003 Wedstrijdafstanden
+  - p22 20.5.004
+  - p22 20.5.005 Verzorging bij veldritten
+  - p23 20.5.007 NK Veldrijden Jeugd
+  - p23 20.5.006
+- p24 Hoofdstuk 6 : BMX RACING
+- p26 Hoofdstuk 20 : AANVULLEND ORGANISATOREN
+  - p26 20.20.001 Algemene bepalingen
+  - p26 20.20.002
+  - p26 20.20.003
+  - p26 20.20.004
+  - p26 20.20.005
+- p27 Hoofdstuk 21 : SPORTSTIMULERINGS ACTIVITEITEN JEUGD
+  - p27 20.21.001 Doelstelling
+  - p27 20.21.002 Algemeen
+  - p27 20.21.003 Afstemming KNWU
+  - p27 20.21.004 Loopfietsen
+  - p27 20.21.005 Leeftijden
+  - p27 20.21.006 De loopfiets
+  - p27 20.21.007 Verplichte valhelm
+  - p27 20.21.008 Afstanden en parcours
+  - p28 20.21.009 Aanmelding, inschrijfgeld en prijzen
+## Niet in de library (buiten scope)
+
+- Hoofdstuk 3 : BAANWIELRENNEN
+- Hoofdstuk 4 : MOUNTAINBIKE WEDSTRIJDEN
+- Hoofdstuk 6 : BMX RACING
+- Hoofdstuk 20 : AANVULLEND ORGANISATOREN
+- Hoofdstuk 21 : SPORTSTIMULERINGS ACTIVITEITEN JEUGD

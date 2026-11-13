@@ -27,7 +27,7 @@ MISTRAL_CONVERSATIONS_URL = os.environ.get(
 DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "wtchat.db"))
 
 MAX_QUESTION_LENGTH = int(os.environ.get("MAX_QUESTION_LENGTH", "1000"))
-RATE_LIMIT_PER_HOUR = int(os.environ.get("RATE_LIMIT_PER_HOUR", "10"))
+RATE_LIMIT_PER_HOUR = int(os.environ.get("RATE_LIMIT_PER_HOUR", "20"))
 RATE_WINDOW_SECONDS = 3600
 FEEDBACK_RETENTION_DAYS = int(os.environ.get("FEEDBACK_RETENTION_DAYS", "30"))
 # Bij duim-omlaag slaan we de laatste FEEDBACK_HISTORY_TURNS turns (vraag/antwoord)

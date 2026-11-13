@@ -281,10 +281,25 @@ class FetchSnapshotTests(unittest.TestCase):
             self.assertFalse(inside.exists())
         # geen scp (sftp ziet /volume1 niet), maar ssh met server-side .backup + cat + rm
         self.assertEqual(used_cmd[0], "ssh")
+        self.assertEqual(used_cmd[1:3], ["-p", "22"])  # standaardpoort 22
         self.assertIn(".backup", used_cmd[-1])
         self.assertIn("cat", used_cmd[-1])
         self.assertIn("rm -f", used_cmd[-1])
         self.assertIn(".feedback-snapshot.db", used_cmd[-1])
+
+    def test_ssh_custom_port_passed_with_p(self) -> None:
+        source_db = make_db(Path(tempfile.mkdtemp()))
+        used_cmd: list[str] = []
+
+        def fake_run(cmd: list[str], stdout: object = None, **kwargs: object) -> object:
+            used_cmd.extend(cmd)
+            stdout.write(Path(source_db).read_bytes())  # type: ignore[attr-defined]
+            return type("Proc", (), {"returncode": 0, "stderr": b""})()
+
+        with patch("subprocess.run", side_effect=fake_run):
+            with feedback_report.fetch_snapshot("nas.local", "/pad/wtchat.db", nas_port=2222):
+                pass
+        self.assertEqual(used_cmd[:3], ["ssh", "-p", "2222"])
 
     def test_corrupt_snapshot_raises_and_cleans_up(self) -> None:
         def fake_run(cmd: list[str], stdout: object = None, **kwargs: object) -> object:

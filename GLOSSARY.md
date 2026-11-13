@@ -22,15 +22,25 @@ De regiodocumenten, Eerste bron voor vragen over regionale wedstrijden in regio 
 **Club-library**:
 De clubdocumenten van WTC Woerden (ZMC, clubreglementen, WTC-jeugddocumenten en de Website-teksten). Enige bron voor clubvragen. Alleen de club-agent gebruikt deze library, ook als een document over KNWU- of regio-onderwerpen gaat.
 
+**ZMC (Zaterdagmiddagcompetitie)**:
+De clubcompetitie van WTC Woerden op zaterdagmiddag, met een eigen indeling in groepen op leeftijd en ervaring in plaats van de KNWU-leeftijdscategorieën. Niet de MNC. Info en reglement staan in de Club-library.
+
+**MNC (Midden Nederland Competitie)**:
+De regionale wedstrijdreeks in regio Midden. Er zijn twee MNC's: de MNC Veldrijden (cross) en de MNC wegwielrennen. Niet de ZMC. Hoort bij de Regio-library.
+
+**MNC wegwielrennen**:
+De MNC voor het wegwielrennen in regio Midden. Niet de MNC Veldrijden.
+_Avoid_: Hans van den Hengel Competitie, HvH (gebruikers mogen deze namen wel gebruiken; de bot noemt het MNC wegwielrennen)
+
 **Website-teksten**:
 De pagina's van de jeugdsite van WTC Woerden, beheerd als markdown in de WebsiteWTCjeugd-repo. Gelden als actuele clubinformatie en staan in de Club-library. Vervangen het raadplegen van wtcwoerden.nl, dat de bot niet kan lezen.
 _Avoid_: "wtcwoerden.nl" als bron in antwoorden, "de site"
 
 **KNWU-bibliotheek**:
-De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden). Enige toegestane bron, naast het Kenniscentrum, voor vragen over KNWU, landelijke of club/regio-overkoepelende wedstrijdregels en de organisatie van nationale wedstrijden en nationaal kampioenschappen (NK).
+De nationale regelgevingsdocumenten (Titel 20, Nationale Besluiten, Handboek Veldrijden), alleen de hoofdstukken met algemene bepalingen, wegwielrennen en veldrijden. Enige toegestane bron, naast het Kenniscentrum, voor vragen over KNWU, landelijke of club/regio-overkoepelende wedstrijdregels en de organisatie van nationale wedstrijden en nationaal kampioenschappen (NK).
 
 **Bronvolgorde**:
-Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC, Hans van den Hengel) eerst Regio-library (fallback KNWU); clubvragen alleen Club-library.
+Vaste drie-wegs routering per vraagtype: KNWU-vragen alleen KNWU-bibliotheek en/of Kenniscentrum; regio-vragen (MNC Veldrijden, MNC wegwielrennen) eerst Regio-library (fallback KNWU); clubvragen alleen Club-library.
 _Avoid_: "zoek overal", ongescopeerde retrieval
 
 
@@ -40,11 +50,15 @@ Regelgeving-PDF's bevatten doorgestreepte (vervallen) en nieuw toegevoegde tekst
 _Avoid_: "de schone versie" (die bestaat niet; bedoel je onze eigen afgeleide tekst, zeg dan opgeschoonde versie)
 
 **Opgeschoonde versie**:
-De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd, tabellen als markdown-tabel. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
+De markdown die wij zelf van een KNWU-PDF met zichtbare revisies maken: doorgestreepte tekst eruit, rode tekst gemarkeerd als gewijzigd, tabellen als markdown-tabel en koppen met hun kopjespad; Titel 20 en de Nationale Besluiten staan er per hoofdstuk in, als één bestand per hoofdstuk. Staat in de actuele library in plaats van het PDF; het is geen officiële KNWU-publicatie.
 _Avoid_: "schone versie", "gecleande PDF"
 
+**Kopjespad**:
+De reeks bovenliggende koppen die elke kop in een opgeschoonde versie meekrijgt (bijv. "2. WEGWIELRENNEN › … › NK Weg Jeugd › Landelijk Jeugd Toernooi(LJT)"), zodat een losse passage herkenbaar blijft naar discipline en paragraaf.
+_Avoid_: "breadcrumb", "kopregel"
+
 **Opschoonrapport**:
-Het rapport dat `scripts/clean_pdf.py` naast elke opgeschoonde versie schrijft (`knowledge-documents/review/`): bovenaan de twijfelgevallen die een mens afvinkt, daaronder alle weggehaalde stukken per pagina met context.
+Het rapport dat `scripts/clean_pdf.py` naast elke opgeschoonde versie schrijft (`knowledge-documents/review/`): bovenaan de twijfelgevallen die een mens afvinkt, daaronder alle weggehaalde stukken per pagina met context en onderaan de gevonden koppen.
 
 **Twijfelgeval**:
 Een plek in het opschoonrapport waar het script mogelijk iets mist of te veel weghaalt: doorgehaalde letters of cijfers die niet rood zijn (een los doorgehaald opsommingsteken telt niet), een bijna-doorhaling (rode tekst met een lijn net buiten de doorhaalband, blijft staan), of rode tekst in een document zonder enige gevonden doorhaling.

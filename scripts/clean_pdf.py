@@ -5,18 +5,26 @@ getekende doorhaallijn en gewijzigde tekst in rood. Tekstextractie verliest
 beide, waardoor de agent doorgehaalde waarden als geldend leest. Dit script
 maakt er markdown van waarin doorgehaalde tekst ontbreekt en rode tekst
 tussen [GEWIJZIGD] en [/GEWIJZIGD] staat. Tabellen worden markdown-tabellen,
-zodat de kolombetekenis blijft (#33).
+zodat de kolombetekenis blijft (#33). Koppen worden markdown-koppen met het
+volledige kopjespad (bijv. "2. WEGWIELRENNEN › … › NK Weg Jeugd › LJT"), zodat
+elke chunk in de library zijn discipline en paragraaf draagt; welke opmaak een
+kop is, staat per document in scripts/kopprofielen.json.
 
 Gebruik:
     python scripts/clean_pdf.py <pdf> [<pdf> ...] --out <map> [--review <map>]
+                                [--kopprofielen <json>] [--split]
 
-Per PDF ontstaat <map>/<bestandsnaam zonder .pdf>.md, plus een opschoonrapport
-met dezelfde naam in de reviewmap (standaard knowledge-documents/review/).
-Het rapport somt per pagina alle weggehaalde stukken op en zet bovenaan de
-twijfelgevallen die een mens moet nalopen (issue #30).
+Per PDF ontstaat <map>/<bestandsnaam zonder .pdf>.md, met --split één bestand
+per hoofdstuk: <map>/<bestandsnaam zonder .pdf> - <hoofdstuk>.md (behalve de
+hoofdstukken die het kopprofiel als buiten_scope noemt). Daarnaast een
+opschoonrapport met dezelfde naam in de reviewmap (standaard
+knowledge-documents/review/). Het rapport somt per pagina alle weggehaalde
+stukken op, zet bovenaan de twijfelgevallen die een mens moet nalopen (issue
+#30) en eindigt met de gevonden koppen.
 """
 
 import argparse
+import json
 import re
 import sys
 import unicodedata
@@ -27,7 +35,10 @@ import pymupdf
 
 GEWIJZIGD_OPEN = "[GEWIJZIGD]"
 GEWIJZIGD_SLUIT = "[/GEWIJZIGD]"
+# pymupdf-spanvlag voor vet lettertype.
+VET_VLAG = 16
 DEFAULT_REVIEW_DIR = Path(__file__).resolve().parents[1] / "knowledge-documents" / "review"
+DEFAULT_KOPPROFIELEN = Path(__file__).resolve().parent / "kopprofielen.json"
 CONTEXT_WOORDEN = 4
 # Hoogte van een lijn als fractie van de tekenhoogte (0 = bovenkant). Gemeten in
 # de KNWU-PDF's (#30): doorhalingen op 0,5-0,65; onderstrepingen en tabelranden
@@ -113,6 +124,12 @@ class _Teken(NamedTuple):
     weg: bool
     rood: bool
     bijna: bool = False
+
+
+class _Kop(NamedTuple):
+    niveau: int
+    tekst: str
+    pagina: int
 
 
 # pymupdf zet naast tabelranden smalle opvulcellen (~5pt); echte cellen zijn breder.
@@ -228,7 +245,7 @@ def _stukken(tekens: list[_Teken], kenmerk) -> list[tuple[int, int]]:
     return reeksen
 
 
-def _rapport(naam: str, twijfels: list[str], weggehaald: dict[int, list[str]]) -> str:
+def _rapport(naam: str, twijfels: list[str], weggehaald: dict[int, list[str]], koppen: list[_Kop] | None) -> str:
     regels = [f"# Opschoonrapport: {naam}", "", "## Twijfelgevallen", ""]
     regels += [f"- [ ] {t}" for t in twijfels] or ["Geen."]
     regels.append("")
@@ -236,23 +253,189 @@ def _rapport(naam: str, twijfels: list[str], weggehaald: dict[int, list[str]]) -
     regels += [f"## Weggehaalde stukken ({aantal} op {len(weggehaald)} pagina's)", ""]
     for pagina, stukken in weggehaald.items():
         regels += [f"### Pagina {pagina}", ""] + [f"- {s}" for s in stukken] + [""]
+    if koppen is not None:
+        # Ingesprongen per niveau, zodat een mens de nesting bij een documentwissel kan nalopen.
+        regels += [f"## Gevonden koppen ({len(koppen)})", ""]
+        regels += [f"{'  ' * (k.niveau - 1)}- p{k.pagina} {_zonder_markering(k.tekst)}" for k in koppen]
+        regels.append("")
     return "\n".join(regels)
 
 
-def opschonen(path: Path) -> tuple[str, str]:
-    """(opgeschoonde markdown, opschoonrapport in markdown) voor één PDF."""
+class _Regel(NamedTuple):
+    segmenten: list[tuple[str, bool]]
+    niveau: int | None
+    vet: bool
+    titel_erbij: bool = False
+
+
+# Langere reeksen vette regels zijn een opsomming of nadruk, geen kop (bijv. de NK-lijst in NB 2.4.1).
+MAX_KOPREGELS = 2
+MAX_KOPLENGTE = 80
+
+
+def _kopregel(tekst: str, grootte: float, vet: bool, profiel: dict | None) -> dict | None:
+    """De eerste profielregel die bij deze regel past, anders None.
+
+    Een vette zin of zinsrest (begint met een kleine letter of is langer dan
+    MAX_KOPLENGTE) is nadruk in lopende tekst, geen kop.
+    """
+    if not profiel or not vet or not tekst or tekst[0].islower() or len(tekst) > MAX_KOPLENGTE:
+        return None
+    for regel in profiel["koppen"]:
+        if round(grootte) != regel["grootte"]:
+            continue
+        if "patroon" in regel and not re.search(regel["patroon"], tekst):
+            continue
+        if regel.get("hoofdletters") and (tekst != tekst.upper() or not any(c.isalpha() for c in tekst)):
+            continue
+        return regel
+    return None
+
+
+def _regel_info(spans: list[dict], segmenten: list[tuple[str, bool]], profiel: dict | None) -> _Regel:
+    gevuld = [s for s in spans if any(c["c"].strip() for c in s["chars"])]
+    vet = bool(gevuld) and all(s["flags"] & VET_VLAG for s in gevuld)
+    grootte = gevuld[0]["size"] if gevuld else 0.0
+    tekst = " ".join("".join(c for c, _ in segmenten).split())
+    kopregel = _kopregel(tekst, grootte, vet, profiel) or {}
+    return _Regel(segmenten, kopregel.get("niveau"), vet and bool(tekst), kopregel.get("titel_erbij", False))
+
+
+def _vette_reeksen(regels: list[_Regel]) -> list[list[_Regel]]:
+    """Groepeer opeenvolgende vette regels; elke niet-vette regel is een eigen groep."""
+    groepen: list[list[_Regel]] = []
+    for regel in regels:
+        if regel.vet and groepen and groepen[-1][-1].vet:
+            groepen[-1].append(regel)
+        else:
+            groepen.append([regel])
+    return groepen
+
+
+def _kop(reeks: list[_Regel], pagina: int) -> _Kop:
+    """Eén kop uit de vette regels; de regel die het profiel herkende (bijv. het
+    artikelnummer) komt voorop."""
+    geordend = sorted(reeks, key=lambda r: r.niveau is None)
+    segmenten = [s for r in geordend for s in r.segmenten + [(" ", False)]]
+    niveau = min(r.niveau for r in reeks if r.niveau is not None)
+    return _Kop(niveau, " ".join(_blok_naar_tekst(segmenten).split()), pagina)
+
+
+def _kopgroepen(reeks: list[_Regel]) -> list[list[_Regel]]:
+    """Regels die samen één kop of één stuk tekst vormen. Een opsomming blijft tekst;
+    alleen een profielregel met `titel_erbij` (Titel 20: nummer + titel) neemt de
+    aangrenzende vette regel in de kop op."""
+    if len(reeks) > MAX_KOPREGELS:
+        return [reeks]
+    if any(r.titel_erbij for r in reeks):
+        return [reeks]
+    return [[r] for r in reeks]
+
+
+def _blok_elementen(regels: list[_Regel], pagina: int) -> list[str | _Kop]:
+    """Splits een tekstblok in lopende tekst en koppen."""
+    elementen: list[str | _Kop] = []
+    lopend: list[tuple[str, bool]] = []
+    for reeks in _vette_reeksen(regels):
+        for groep in _kopgroepen(reeks):
+            is_kop = len(groep) <= MAX_KOPREGELS and any(r.niveau is not None for r in groep)
+            if not is_kop:
+                lopend += [s for r in groep for s in r.segmenten]
+                continue
+            tekst = _blok_naar_tekst(lopend)
+            if tekst:
+                elementen.append(tekst)
+            lopend = []
+            elementen.append(_kop(groep, pagina))
+    tekst = _blok_naar_tekst(lopend)
+    if tekst:
+        elementen.append(tekst)
+    return elementen
+
+
+def _zonder_markering(tekst: str) -> str:
+    return tekst.replace(GEWIJZIGD_OPEN, "").replace(GEWIJZIGD_SLUIT, "")
+
+
+def _zonder_weggelaten(elementen: list, profiel: dict | None) -> list:
+    """Laat secties weg waarvan de kop een `weglaten`-patroon uit het profiel heeft
+    (bijv. de inhoudsopgave), tot de volgende kop van hetzelfde of een hoger niveau."""
+    patronen = (profiel or {}).get("weglaten", [])
+    resultaat, weglaten_tot = [], None
+    for element in elementen:
+        if isinstance(element, _Kop):
+            if weglaten_tot is not None and element.niveau <= weglaten_tot:
+                weglaten_tot = None
+            if weglaten_tot is None and any(re.search(p, _zonder_markering(element.tekst)) for p in patronen):
+                weglaten_tot = element.niveau
+        if weglaten_tot is None:
+            resultaat.append(element)
+    return resultaat
+
+
+def _markdown(elementen: list) -> str:
+    """Elementen als markdown; een kop krijgt het pad van zijn bovenliggende koppen."""
+    delen, pad = [], {}
+    for element in elementen:
+        if isinstance(element, _Kop):
+            pad = {niveau: tekst for niveau, tekst in pad.items() if niveau < element.niveau}
+            koptekst = " › ".join([pad[n] for n in sorted(pad)] + [element.tekst])
+            pad[element.niveau] = _zonder_markering(element.tekst)
+            delen.append(f"{'#' * element.niveau} {koptekst}")
+        elif isinstance(element, _Tabel):
+            delen.append(element.markdown())
+        else:
+            delen.append(element)
+    return "\n\n".join(d for d in delen if d) + "\n"
+
+
+def opschonen(path: Path, profiel: dict | None = None) -> tuple[str, str]:
+    """(opgeschoonde markdown, opschoonrapport in markdown) voor één PDF.
+
+    Met een kopprofiel worden koppen markdown-koppen met het volledige pad.
+    """
+    elementen, rapport = _elementen_en_rapport(path, profiel)
+    return _markdown(elementen), rapport
+
+
+def hoofdstukken(path: Path, profiel: dict) -> tuple[list[tuple[str | None, str]], str]:
+    """([(hoofdstuktitel, markdown), ...], opschoonrapport): één deel per kop van niveau 1.
+
+    Tekst vóór het eerste hoofdstuk (titelpagina) hoort bij het eerste deel; zonder
+    hoofdstukkoppen is er één deel zonder titel. Hoofdstukken waarvan de titel past
+    bij een `buiten_scope`-patroon uit het profiel vallen weg en staan in het rapport.
+    """
+    elementen, rapport = _elementen_en_rapport(path, profiel)
+    delen: list[tuple[str | None, list]] = [(None, [])]
+    for element in elementen:
+        if isinstance(element, _Kop) and element.niveau == 1:
+            titel = _zonder_markering(element.tekst)
+            if delen[-1][0] is None and len(delen) == 1:
+                delen[0] = (titel, delen[0][1])
+            else:
+                delen.append((titel, []))
+        delen[-1][1].append(element)
+    patronen = profiel.get("buiten_scope", [])
+    buiten = [titel for titel, _ in delen if titel and any(re.search(p, titel) for p in patronen)]
+    if buiten:
+        rapport += "\n".join(["## Niet in de library (buiten scope)", ""] + [f"- {t}" for t in buiten] + [""])
+    return [(titel, _markdown(deel)) for titel, deel in delen if titel not in buiten], rapport
+
+
+def _elementen_en_rapport(path: Path, profiel: dict | None) -> tuple[list, str]:
     doc = pymupdf.open(path)
-    paginas = []
+    elementen: list[str | _Tabel | _Kop] = []
     weggehaald: dict[int, list[str]] = {}
     twijfels: list[str] = []
     for page in doc:
         lijnen = _doorhaallijnen(page)
         tabellen = _tabellen(page)
-        blokken: list[str | _Tabel] = []
+        blokken: list[str | _Tabel | _Kop] = []
         for blok in page.get_text("rawdict")["blocks"]:
-            segmenten: list[tuple[str, bool]] = []
+            regels: list[_Regel] = []
             tekens: list[_Teken] = []
             for regel in blok.get("lines", []):
+                segmenten: list[tuple[str, bool]] = []
                 geraakte_cellen: set[tuple[_Tabel, _Cel]] = set()
                 for span in regel["spans"]:
                     rood = _rood(span["color"])
@@ -273,6 +456,7 @@ def opschonen(path: Path) -> tuple[str, str]:
                 for tabel, cel in geraakte_cellen:
                     tabel.segmenten[cel].append(("\n", False))
                 tekens.append(_Teken(" ", False, False))
+                regels.append(_regel_info(regel["spans"], segmenten, profiel if not geraakte_cellen else None))
             pagina = page.number + 1
             for start, eind in _stukken(tekens, lambda t: t.weg):
                 stuk = _context(tekens, start, eind)
@@ -283,24 +467,41 @@ def opschonen(path: Path) -> tuple[str, str]:
                     twijfels.append(f"Pagina {pagina}, doorgehaald maar niet rood: {stuk}")
             for start, eind in _stukken(tekens, lambda t: t.bijna):
                 twijfels.append(f"Pagina {pagina}, bijna-doorhaling (blijft staan): {_context(tekens, start, eind)}")
-            tekst = _blok_naar_tekst(segmenten)
-            if tekst:
-                blokken.append(tekst)
-        delen = [b.markdown() if isinstance(b, _Tabel) else b for b in blokken]
-        paginas.append("\n\n".join(d for d in delen if d))
-    tekst = "\n\n".join(p for p in paginas if p) + "\n"
+            blokken += _blok_elementen(regels, pagina)
+        elementen += blokken
+    elementen = _zonder_weggelaten(elementen, profiel)
+    tekst = _markdown(elementen)
     if GEWIJZIGD_OPEN in tekst and not weggehaald:
         twijfels.insert(
             0,
             "Rode tekst maar geen enkele doorhaling gevonden: haalt de KNWU in deze versie "
             "anders door (bijv. via lettertype-opmaak)? Controleer de PDF.",
         )
-    return tekst, _rapport(path.name, twijfels, weggehaald)
+    koppen = [e for e in elementen if isinstance(e, _Kop)] if profiel else None
+    if profiel and not koppen:
+        twijfels.insert(0, "Kopprofiel gebruikt, maar geen enkele kop gevonden: past het profiel nog bij de opmaak?")
+    return elementen, _rapport(path.name, twijfels, weggehaald, koppen)
 
 
 def clean_pdf(path: Path) -> str:
     """Markdown-tekst van de PDF zonder doorgehaalde tekst, rood gemarkeerd."""
     return opschonen(path)[0]
+
+
+def kopprofiel(naam: str, profielen_pad: Path) -> dict | None:
+    """Het kopprofiel waarvan de sleutel het langste voorvoegsel van `naam` is."""
+    if not profielen_pad.exists():
+        return None
+    profielen = json.loads(profielen_pad.read_text(encoding="utf-8"))
+    passend = [sleutel for sleutel in profielen if naam.startswith(sleutel)]
+    return profielen[max(passend, key=len)] if passend else None
+
+
+def _bestandsnaam(stem: str, hoofdstuk: str | None) -> str:
+    if hoofdstuk is None:
+        return f"{stem}.md"
+    veilig = " ".join(re.sub(r'[<>:"/\\|?*]', "-", hoofdstuk).split()).rstrip(". ")
+    return f"{stem} - {veilig}.md"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -313,16 +514,30 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_REVIEW_DIR,
         help=f"map voor de opschoonrapporten (standaard: {DEFAULT_REVIEW_DIR})",
     )
+    parser.add_argument(
+        "--kopprofielen",
+        type=Path,
+        default=DEFAULT_KOPPROFIELEN,
+        help=f"kopprofielen per document (standaard: {DEFAULT_KOPPROFIELEN})",
+    )
+    parser.add_argument("--split", action="store_true", help="één .md-bestand per hoofdstuk (kop van niveau 1)")
     args = parser.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
     args.review.mkdir(parents=True, exist_ok=True)
     for pdf in args.pdfs:
-        tekst, rapport = opschonen(pdf)
-        doel = args.out / (pdf.stem + ".md")
-        doel.write_text(tekst, encoding="utf-8")
+        profiel = kopprofiel(pdf.stem, args.kopprofielen)
+        if args.split and profiel:
+            delen, rapport = hoofdstukken(pdf, profiel)
+        else:
+            tekst, rapport = opschonen(pdf, profiel)
+            delen = [(None, tekst)]
+        for hoofdstuk, tekst in delen:
+            doel = args.out / _bestandsnaam(pdf.stem, hoofdstuk)
+            doel.write_text(tekst, encoding="utf-8")
+            print(f"{pdf} -> {doel}")
         rapport_pad = args.review / (pdf.stem + ".md")
         rapport_pad.write_text(rapport, encoding="utf-8")
-        print(f"{pdf} -> {doel} (rapport: {rapport_pad})")
+        print(f"rapport: {rapport_pad}{'' if profiel else ' (geen kopprofiel gevonden)'}")
     return 0
 
 

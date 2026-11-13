@@ -379,6 +379,9 @@ class ProductieConfigTests(unittest.TestCase):
         for name in ("knwu-agent", "regio-agent", "club-agent"):
             self.assertIn("handoff naar de router-agent", " ".join(creates[name]["instructions"].split()))
         self.assertIn("nooit terug", " ".join(creates["router-agent"]["instructions"].split()))
+        router_prompt = " ".join(creates["router-agent"]["instructions"].split())
+        self.assertIn("ZMC", router_prompt)
+        self.assertIn("handoff naar de club-agent", router_prompt)
 
     def test_knwu_agent_noemt_verzet_in_scope(self) -> None:
         # reviewronde 1 item 2: "met welk verzet moet ik rijden?" werd door de
@@ -422,6 +425,15 @@ class ProductieConfigTests(unittest.TestCase):
         prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertIn("20.0.004", prompt)
+
+    def test_doorverwijzing_gaat_naar_trainer_niet_clubsecretariaat(self) -> None:
+        # Doorverwijzen bij ontbrekend antwoord of out-of-scope gaat naar de
+        # trainer; de bot verwijst niet meer naar het clubsecretariaat.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        for name in ("_shared.md", "club-agent.md"):
+            prompt = (prompts_dir / name).read_text(encoding="utf-8").lower()
+            self.assertNotIn("clubsecretariaat", prompt, name)
+            self.assertIn("trainer", prompt, name)
 
     def test_regio_agent_b1_fallback_en_nk_handoff(self) -> None:
         # eval run 5: bij B1 geen websearch-fallback op knwumidden.nl gedaan;

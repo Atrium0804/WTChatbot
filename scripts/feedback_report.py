@@ -9,7 +9,7 @@ Usage:
     python scripts/feedback_report.py                          # lokale dev-DB (app/data/wtchat.db)
     python scripts/feedback_report.py --db pad/naar/wtchat.db  # expliciete lokale DB
     python scripts/feedback_report.py --fetch --nas-host <ssh-target> \
-        [--nas-path /volume1/docker/wtchatbot/data/wtchat.db]
+        [--nas-path /volume1/docker/wtchatbot/data/wtchat.db] [--nas-port 22]
 
 Output: eerst counters (per rating, plus per week), daarna de negatieve
 feedback (feedbackgeschiedenis met turns, laatste vraag/antwoord, toelichting),
@@ -245,13 +245,13 @@ def load_rows(db_path: str | Path) -> list[dict]:
 
 
 @contextlib.contextmanager
-def fetch_snapshot(nas_host: str, nas_path: str) -> Iterator[Path]:
+def fetch_snapshot(nas_host: str, nas_path: str, nas_port: int = 22) -> Iterator[Path]:
     """Haal een consistente snapshot van de NAS-DB op via ssh; check integriteit; ruim op.
 
     Via het shell-kanaal (scp/sftp ziet /volume1 op de Synology niet): de NAS
     maakt met sqlite3 een .backup-snapshot naast de DB, we cat-en die in dezelfde
     ssh-call en verwijderen de remote snapshot direct weer. Lokaal staat de kopie
-    in een tempfile dat na gebruik wordt opgeruimd. Vereist: sqlite3 op de NAS.
+    in een tempfile dat na gebruik wordt opgeruimd. Vereist: sqlite3 op de NAS. De poort gaat mee als ssh -p (standaard 22).
     """
     fd, tmp = tempfile.mkstemp(prefix="wtchat-snapshot-", suffix=".db")
     os.close(fd)
@@ -264,13 +264,13 @@ def fetch_snapshot(nas_host: str, nas_path: str) -> Iterator[Path]:
     try:
         with open(tmp_path, "wb") as out:
             proc = subprocess.run(
-                ["ssh", nas_host, remote_cmd],
+                ["ssh", "-p", str(nas_port), nas_host, remote_cmd],
                 stdout=out,
                 stderr=subprocess.PIPE,
             )
         if proc.returncode != 0:
             raise SystemExit(
-                f"error: ophalen van {nas_host}:{nas_path} mislukt: "
+                f"error: ophalen van {nas_host}:{nas_port}:{nas_path} mislukt: "
                 f"{proc.stderr.decode(errors='replace').strip()}"
             )
         check_integrity(tmp_path)
@@ -291,6 +291,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--nas-host", help="ssh-target van de NAS (bij --fetch verplicht)")
     parser.add_argument("--nas-path", default=NAS_DEFAULT_PATH, help="DB-pad op de NAS")
+    parser.add_argument("--nas-port", type=int, default=22, help="ssh-poort van de NAS (default: 22)")
     args = parser.parse_args(argv)
 
     # Windows-console (cp1252) kan niet alle tekens uit feedback tonen — niet crashen
@@ -301,9 +302,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.fetch:
         if not args.nas_host:
             parser.error("--fetch vereist --nas-host")
-        with fetch_snapshot(args.nas_host, args.nas_path) as snap:
+        with fetch_snapshot(args.nas_host, args.nas_path, args.nas_port) as snap:
             rows = load_rows(snap)
-            print(render_report(rows, f"{args.nas_host}:{args.nas_path} (snapshot)", generated_at))
+            print(render_report(rows, f"{args.nas_host}:{args.nas_port}:{args.nas_path} (snapshot)", generated_at))
     else:
         db = args.db or str(DEFAULT_DB)
         rows = load_rows(db)

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Deploy de WTChatbot naar de Synology NAS (nas.fritz.box) via scp/ssh.
+    Deploy de WTChatbot naar de Synology NAS (standaard beheerder@famstieltjes.nl, zie -NasHost) via scp/ssh.
 
 .DESCRIPTION
     Kopieert naar /volume1/docker/wtchatbot/ op de NAS:
@@ -12,6 +12,8 @@
       .\scripts\deploy-nas.ps1 -Apply       # echt scp-en naar de NAS
       .\scripts\deploy-nas.ps1 -Apply -Up   # scp, daarna `docker compose up -d --build`
                                             # (de NAS buildt zelf; kan een paar minuten duren)
+      .\scripts\deploy-nas.ps1 -Apply -NasPort 2222   # bij afwijkende ssh-poort (default 22)
+      .\scripts\deploy-nas.ps1 -Apply -NasHost beheerder@nas.fritz.box   # andere ssh-target (default beheerder@famstieltjes.nl)
 
     Secrets (.env) en data (data/) worden NOOIT gekopieerd — die leven alleen op de NAS.
     .env maak je handmatig aan op de NAS: MISTRAL_API_KEY + MISTRAL_AGENT_ID (zie app/README.md).
@@ -21,12 +23,14 @@
 [CmdletBinding()]
 param(
     [switch]$Apply,
-    [switch]$Up
+    [switch]$Up,
+    [int]$NasPort = 22,   # ssh-poort van de NAS (default 22)
+    [string]$NasHost = 'beheerder@nas.fritz.box'   # ssh-target (user@host)
 )
 
 $ErrorActionPreference = 'Stop'
 
-$NasHost = 'beheerder@nas.fritz.box'
+# $NasHost komt uit -NasHost --nas-port 271
 $NasRoot = '/volume1/docker'          # shell path op de NAS (NOT de /docker sftp chroot path)
 $Docker  = 'sudo -n /usr/local/bin/docker'
 $Service = 'wtchatbot'
@@ -60,9 +64,10 @@ foreach ($f in $AppFiles) {
 function Send-One([string]$Local, [string]$Remote) {
     $remoteDir = $Remote.Substring(0, $Remote.LastIndexOf('/'))
     if ($Apply) {
-        ssh $NasHost "mkdir -p `"$remoteDir`""
+        ssh -p $NasPort $NasHost "mkdir -p `"$remoteDir`""
         # -O forces the legacy SCP protocol, which uses the real shell path (SFTP is chrooted differently).
-        scp -O (Join-Path $RepoDir $Local) "${NasHost}:${Remote}"
+        # scp gebruikt -P (hoofdletter) voor de poort; ssh gebruikt -p.
+        scp -O -P $NasPort (Join-Path $RepoDir $Local) "${NasHost}:${Remote}"
         if ($LASTEXITCODE -ne 0) { throw "scp failed for $Local (exit $LASTEXITCODE)" }
         Write-Host "  sent: $Local -> $Remote"
     } else {
@@ -76,8 +81,8 @@ foreach ($f in $Files) {
 
 # static/ (chat-UI) als hele map kopiëren.
 if ($Apply) {
-    ssh $NasHost "mkdir -p `"$NasRoot/$Service/app`""
-    scp -O -r (Join-Path $AppSrc 'static') "${NasHost}:${NasRoot}/${Service}/app/"
+    ssh -p $NasPort $NasHost "mkdir -p `"$NasRoot/$Service/app`""
+    scp -O -P $NasPort -r (Join-Path $AppSrc 'static') "${NasHost}:${NasRoot}/${Service}/app/"
     if ($LASTEXITCODE -ne 0) { throw "scp failed for app/static (exit $LASTEXITCODE)" }
     Write-Host "  sent: app/static -> $NasRoot/$Service/app/static"
 } else {
@@ -86,7 +91,7 @@ if ($Apply) {
 
 if ($Apply -and $Up) {
     Write-Host ">>> Building + starting $Service on the NAS (build op de NAS kan een paar minuten duren)..."
-    ssh $NasHost "cd $NasRoot/$Service && $Docker compose up -d --build"
+    ssh -p $NasPort $NasHost "cd $NasRoot/$Service && $Docker compose up -d --build"
     if ($LASTEXITCODE -ne 0) { throw "compose up failed for $Service (exit $LASTEXITCODE)" }
 }
 

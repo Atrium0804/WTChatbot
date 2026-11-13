@@ -27,11 +27,10 @@ The user handles deployment. Keep working on the same issue branch and preserve 
 ## Existing artifacts to read, not recreate
 
 - [Coding principles](../../CODING_PRINCIPLES.md) and [contribution workflow](../../CONTRIBUTING.md).
-- [Diagnostics procedure and status-bar trial](../how-to/toon-chatdiagnostiek-op-je-telefoon.md).
 - [Browser tests and device-check limitations](../how-to/test-chatlayout.md).
-- [App shell](../../app/static/index.html), [viewport fitter](../../app/static/viewport.js), [diagnostics](../../app/static/debug.js), and [service worker](../../app/static/sw.js): inspect the handoff commit for implementation details.
+- [App shell](../../app/static/index.html), [viewport fitter](../../app/static/viewport.js), and [service worker](../../app/static/sw.js): inspect the handoff commit for implementation details.
 - [Real-browser regression coverage](../../app/tests/test_layout.py).
-- [Shell/configuration tests](../../app/tests/test_app.py), [JavaScript diagnostic tests](../../app/tests/test_debug.cjs), and [DOM harness](../../app/tests/chat_dom.cjs).
+- [Shell/configuration tests](../../app/tests/test_app.py) and [DOM harness](../../app/tests/chat_dom.cjs).
 - [Test dependencies](../../app/requirements-dev.txt) and [app setup](../../app/README.md).
 
 The existing branding/icon work is already in earlier commits. Preserve the Wielie name and club colours.

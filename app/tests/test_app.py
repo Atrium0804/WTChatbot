@@ -343,18 +343,6 @@ def test_service_worker_served_as_javascript(tmp_path):
         assert path in body
 
 
-def test_debug_script_served_before_chat_initialization(tmp_path):
-    client = make_client(tmp_path)
-    html = client.get("/?debug=1").text
-    assert html.index('<script src="/debug.js"></script>') < html.index(
-        'document.dispatchEvent(new Event("chat:init-start"))'
-    )
-    resp = client.get("/debug.js")
-    assert resp.status_code == 200
-    assert "javascript" in resp.headers["content-type"]
-    assert '"/debug.js"' in client.get("/sw.js").text
-
-
 def test_icons_served_as_png(tmp_path):
     client = make_client(tmp_path)
     for name in (

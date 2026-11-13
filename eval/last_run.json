@@ -1,0 +1,1215 @@
+{
+  "summary": {
+    "totaal": 33,
+    "ok": 13,
+    "pct": 39.4,
+    "per_categorie": {
+      "knwu": {
+        "ok": 9,
+        "totaal": 21,
+        "pct": 42.9
+      },
+      "club": {
+        "ok": 3,
+        "totaal": 6,
+        "pct": 50.0
+      },
+      "regio": {
+        "ok": 1,
+        "totaal": 6,
+        "pct": 16.7
+      }
+    },
+    "harde_gate": {
+      "types": [
+        "strikethrough",
+        "websearch"
+      ],
+      "ok": 3,
+      "totaal": 8
+    },
+    "gate_gehaald": false
+  },
+  "resultaten": [
+    {
+      "id": "knwu-licentie-pakketten",
+      "categorie": "knwu",
+      "type": "websearch",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "[kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13](https://kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13) en [kenniscentrum.knwu.nl/nl_NL/knwu-licenties/knwu-wedstrijdlicentie-u17](https://kenniscentrum.knwu.nl/nl_NL/knwu-licenties/knwu-wedstrijdlicentie-u17), geraadpleegd op 12 november 2026",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "wedstrijden",
+        "internationa",
+        "verzeker"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?",
+      "verwacht_antwoord": "Basis; Plus; Premium; 26; 72; 135; wedstrijden; internationa; verzeker",
+      "verwachte_bron": "kenniscentrum.knwu.nl/knwu-licenties",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De KNWU kent voor jeugd in 2026 de volgende licentiepakketten en tarieven:\n\n- **KNWU Licentie U13**: €26,- (één pakket, voor alle renners in de leeftijdscategorieën U6 t/m U13).\n- **KNWU Licentie U17**: drie pakketten:\n  - Basis: €26,-\n  - Plus: €72,-\n  - Premium: €135,-\n\nBron: [kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13](https://kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13) en [kenniscentrum.knwu.nl/nl_NL/knwu-licenties/knwu-wedstrijdlicentie-u17](https://kenniscentrum.knwu.nl/nl_NL/knwu-licenties/knwu-wedstrijdlicentie-u17), geraadpleegd op 12 november 2026",
+      "trace": [
+        {
+          "vraag": "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-licentie-u13-geen-pakketten",
+      "categorie": "knwu",
+      "type": "websearch",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.002, 20.0.004) en [Stappenplan aanvragen wedstrijdlicentie - KNWU](https://kenniscentrum.knwu.nl/nl_NL/voor-renners/stappenplan-aanvragen-wedstrijdlicentie), geraadpleegd op 12-11-2026.",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "26"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Welke licentie en welk licentiepakket heeft mijn dochter nodig? Ze is geboren in 2016.",
+      "verwacht_antwoord": "KNWU Licentie U13; 26",
+      "verwachte_bron": "kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13 | TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "72; 135",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Een meisje geboren in 2016 heeft in 2026 een **KNWU Licentie U13** en rijdt in leeftijdscategorie **U11 (wegwielrennen)** en **U12 (veldrijden, seizoen 2026-2027)**. De KNWU Licentie U13 kent één variant, zonder pakketten zoals Basis, Plus of Premium.\n\nWil zij alleen trainen? Dan volstaat het KNWU-lidmaatschap.\n\nBron: TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.002, 20.0.004) en [Stappenplan aanvragen wedstrijdlicentie - KNWU](https://kenniscentrum.knwu.nl/nl_NL/voor-renners/stappenplan-aanvragen-wedstrijdlicentie), geraadpleegd op 12-11-2026.",
+      "trace": [
+        {
+          "vraag": "Welke licentie en welk licentiepakket heeft mijn dochter nodig? Ze is geboren in 2016.",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verzekering-dekking",
+      "categorie": "knwu",
+      "type": "websearch",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "[kenniscentrum.knwu.nl/nl_NL/voor-renners/veelgestelde-vragen-nieuwe-structuur](https://kenniscentrum.knwu.nl/nl_NL/voor-renners/veelgestelde-vragen-nieuwe-structuur), geraadpleegd op 12 november 2026",
+      "bron_ok": false,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat is er verzekerd bij een Basis-licentie versus een Premium-licentie?",
+      "verwacht_antwoord": "aansprakelijk; Basis; Premium; wereldwijd",
+      "verwachte_bron": "kenniscentrum.knwu.nl/verzekeringen",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Bij een **Basis-licentie** (KNWU Licentie U17 en 17+) ben je verzekerd op wedstrijden waar je met dat pakket mag starten, maar alleen binnen Nederland.\n\nBij een **Premium-licentie** (KNWU Licentie U17 en 17+) ben je **wereldwijd verzekerd met wedstrijddekking** en kun je ook in het buitenland deelnemen aan wedstrijden. Daarnaast ontvang je een fysieke licentiepas en kun je wereldwijd gebruikmaken van de aansprakelijkheidsverzekering.\n\nBron: [kenniscentrum.knwu.nl/nl_NL/voor-renners/veelgestelde-vragen-nieuwe-structuur](https://kenniscentrum.knwu.nl/nl_NL/voor-renners/veelgestelde-vragen-nieuwe-structuur), geraadpleegd op 12 november 2026",
+      "trace": [
+        {
+          "vraag": "Wat is er verzekerd bij een Basis-licentie versus een Premium-licentie?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verzet-u15",
+      "categorie": "knwu",
+      "type": "strikethrough",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
+      "verwacht_antwoord": "6,70; U15; artikel 20.1.007",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "6,55",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Het maximaal toegestane verzet voor jongens U15 bij wegwielrennen is **6,70 meter** (art. 20.1.007).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "trace": [
+        {
+          "vraag": "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verzet-u11",
+      "categorie": "knwu",
+      "type": "strikethrough",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?",
+      "verwacht_antwoord": "5,90; U11; artikel 20.1.007",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "5,78",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Het maximaal toegestane verzet voor jongens U11 bij wegwielrennen is **5,90 meter** (art. 20.1.007).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "trace": [
+        {
+          "vraag": "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verzet-u17",
+      "categorie": "knwu",
+      "type": "strikethrough",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?",
+      "verwacht_antwoord": "7,68; U17; nieuwelingen; artikel 20.1.007",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "7,01",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Het maximaal toegestane verzet voor U17 (nieuwelingen) bij wegwielrennen is **7,68 meter** (art. 20.1.007).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.1.007)",
+      "trace": [
+        {
+          "vraag": "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-inschrijfgeld-jeugd",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "Nationale_Besluiten_20260918.md, versie 2026-09-18 (art. 2.1.1, N1.2.054.12) en Handboek Veldrijden Jeugd 2026-2027.md, versie 2026-2027",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "120 uur"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat zijn de geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden en wat geldt bij bijschrijven?",
+      "verwacht_antwoord": "nihil; 3,50; 120 uur; 10",
+      "verwachte_bron": "Nationale_Besluiten_20260918",
+      "versiedatum": "2026-09-18",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden (U17) zijn als volgt:\n\n- **Jeugd (U7–U15)**: nihil (behalve voor vakantiekampen: € 5,– per renner per dag/wedstrijdonderdeel).\n- **U17 (Nieuwelingen, M/J)**: € 3,50 per renner per dag/wedstrijdonderdeel voor individuele criteriums en tijdritten.\n\nBij **bijschrijven** (na sluiting van de inschrijving, maar uiterlijk 45 minuten voor de start van de betreffende categorie) geldt:\n- Voor **jeugdveldritten**: € 5,– per bijschrijving.\n- Voor **wegwedstrijden** (inclusief jeugd en U17): de organisator mag het inschrijfgeld verhogen met maximaal € 10,– per deelnemer. Dit bedrag vervalt aan de organisator.\n\n---\nBron: Nationale_Besluiten_20260918.md, versie 2026-09-18 (art. 2.1.1, N1.2.054.12) en Handboek Veldrijden Jeugd 2026-2027.md, versie 2026-2027",
+      "trace": [
+        {
+          "vraag": "Wat zijn de geadviseerde inschrijfgelden voor jeugd- en nieuwelingenwedstrijden en wat geldt bij bijschrijven?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-nk-dispensatie-u10",
+      "categorie": "knwu",
+      "type": "strikethrough",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.0.005) en Nationale_Besluiten_20260918.md, versie 2026-09-18",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "ja",
+        "BMX"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Mag een renner van categorie U10 die dispensatie heeft om in een categorie lager te rijden, meedoen aan het NK?",
+      "verwacht_antwoord": "ja; categorie waarvoor; U6 t/m U8; BMX",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "niet kwalificeren",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Nee, een renner van categorie U10 mag **niet** meedoen aan het NK als hij/zij dispensatie heeft om in een lagere categorie te rijden. Volgens Titel 20, art. 20.0.005, mogen renners met dispensatie om in een lagere categorie te rijden wel deelnemen aan het NK in die lagere categorie, **behalve** als het gaat om U6 t/m U8. U10 valt hierbuiten, maar de regel geldt specifiek voor U6 t/m U8. Echter, in de Nationale Besluiten staat expliciet: *\"In geval men toestemming van de wedstrijdcoördinator heeft om een U-categorie lager te rijden of een U-categorie hoger te rijden, dan dient deze ook in de lagere of hogere categorie deel te nemen aan het NK. Zoals eerder vernoemd in de procedure zijn U6 t/m U8 hiervoor uitgesloten.\"* Dit betekent dat U10-wedloopers **wel** in de lagere categorie aan het NK mogen deelnemen, mits de dispensatie is verleend en de lagere categorie niet U6, U7 of U8 is.\n\n**Correctie:** U10 mag **wel** meedoen aan het NK in de lagere categorie waarvoor de dispensatie is verleend, zolang die lagere categorie niet U6, U7 of U8 is.\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 (art. 20.0.005) en Nationale_Besluiten_20260918.md, versie 2026-09-18",
+      "trace": [
+        {
+          "vraag": "Mag een renner van categorie U10 die dispensatie heeft om in een categorie lager te rijden, meedoen aan het NK?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-actuele-versie-titel20",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21; kenniscentrum.knwu.nl/regelgeving/reglementen-en-jaarlijkse-besluiten, geraadpleegd op 12-11-2026",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Welke versie van Titel 20 Jeugdwielrennen is leidend en waar controleer ik dat?",
+      "verwacht_antwoord": "21-09-2026; kenniscentrum; leidend",
+      "verwachte_bron": "kenniscentrum.knwu.nl/regelgeving",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De leidende versie van **Titel 20 Jeugdwielrennen** is de versie van **september 2026**, zoals gepubliceerd op het KNWU Kenniscentrum: [*TITEL 20-Jeugd in de wielersport.pdf (versie september 2026)*](https://kenniscentrum.knwu.nl/regelgeving/reglementen-en-jaarlijkse-besluiten).\n\nJe controleert de actuele versie altijd op: [kenniscentrum.knwu.nl/regelgeving/reglementen-en-jaarlijkse-besluiten](https://kenniscentrum.knwu.nl/regelgeving/reglementen-en-jaarlijkse-besluiten).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21; kenniscentrum.knwu.nl/regelgeving/reglementen-en-jaarlijkse-besluiten, geraadpleegd op 12-11-2026",
+      "trace": [
+        {
+          "vraag": "Welke versie van Titel 20 Jeugdwielrennen is leidend en waar controleer ik dat?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-wijziging-nationale-besluiten",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "Nationale_Besluiten_20260918.md, versie 2026-09-18",
+      "bron_ok": false,
+      "missende_kernfeiten": [
+        "wijzigingsmemo"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat is er gewijzigd in de Nationale Besluiten 2026 ten opzichte van de vorige versie?",
+      "verwacht_antwoord": "geen; wijzigingsmemo; gewijzigd",
+      "verwachte_bron": "kenniscentrum.knwu.nl/regelgeving",
+      "versiedatum": "2026-09-18",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De wijzigingen in de **Nationale Besluiten 2026** (versie 18-09-2026) ten opzichte van eerdere versies zijn onder andere:\n\n- **Digitale lidmaatschapspassen** en **vereenvoudigde licentieaanvragen** zijn geïntroduceerd.\n- **Specifieke regels voor jeugdcategorieën** zijn aangescherpt, waaronder de toepassing van Titel 20 (jeugdreglement) voor U17 (Nieuwelingen) en de verduidelijking dat U17 tot de jeugdcategorie behoren.\n- **Verzetregels**: Een overzicht van maximale verzetten per discipline en jeugdcategorie is opgenomen in Titel 20, artikel 20.1.007. Bij combinatiewedstrijden is het toegestaan om met het verzet van de hoogste categorie te rijden, mits dit in nationale wedstrijden plaatsvindt.\n- **Criteriums**: Veel criteriums worden nu verreden volgens de formule als rit in lijn, met individuele deelname. Premiesprints vinden plaats op de finishlijn en worden aangekondigd via de microfoon.\n- **Straffenbarema**: Het straffenbarema uit Titel 12 is vervangen door een straffenbarema dat aansluit bij de sanctietabel van de UCI.\n- **BMX**: Dispensatiemogelijkheden voor renners vanaf 12 jaar voor nationale wedstrijden (geen C1) zijn geïntroduceerd, mits aangevraagd voor 1 maart 2026.\n- **Materiaal**: De funklasse-wedstrijden zijn vervallen en vallen nu onder klasse 5-wedstrijden.\n- **Startopstelling**: Bij wedstrijden voor U17 (Nieuwelingen) en Junioren vindt de startopstelling plaats via loting.\n- **Rugnummers**: In nationale wedstrijden voor U17 (Nieuwelingen) en Junioren (M/V) is het dragen van één rugnummer voldoende (in plaats van twee).\n- **Kwalificatie NK**: De methode ‘2de route’ om te kwalificeren voor het NK via deelname aan nationale en regiowedstrijden blijft gehandhaafd.\n- **Daglicentie**: Deelname aan nationale wedstrijden is mogelijk met een **daglicentie 17+** (gewijzigd).\n- **Laatste wedstrijd van het seizoen**: Deze wordt op zaterdag verreden in plaats van zondag.\n- **Cruiser klasse**: Deze is opnieuw ingedeeld na een enquête.\n- **Kwalificatie NK-EK-WK**: Bij niet-voldoende deelname van Championship vrouwen op een Nationale Competitie wedstrijd, wordt deze samengevoegd met Vrouwen 17+. Het prijzengeld wordt alleen aan de top 3 van de gecombineerde klasse uitgereikt\n.\n\n---\n**Wil je een overzicht van deze wijzigingen in begrijpelijk Nederlands (B1) om te delen met leden of ouders?**\n\nBron: Nationale_Besluiten_20260918.md, versie 2026-09-18",
+      "trace": [
+        {
+          "vraag": "Wat is er gewijzigd in de Nationale Besluiten 2026 ten opzichte van de vorige versie?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-bronconflict-u17-nieuweling",
+      "categorie": "knwu",
+      "type": "websearch",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke leeftijdscategorie rijdt een renner die in 2026 15 jaar wordt met een KNWU Licentie U17?",
+      "verwacht_antwoord": "U17; nieuweling",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl/knwu-licenties",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "[BRONCONFLICT]",
+      "marker_gevonden": false,
+      "antwoord": "Een renner die in 2026 15 jaar wordt, rijdt in de leeftijdscategorie **U17 (Nieuweling)** (art. 20.0.004).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21",
+      "trace": [
+        {
+          "vraag": "In welke leeftijdscategorie rijdt een renner die in 2026 15 jaar wordt met een KNWU Licentie U17?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-contact",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "https://www.knwu.nl/contact, geraadpleegd op 12 november 2026",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Hoe kan ik de KNWU bereiken als ik conflicterende informatie tegenkom?",
+      "verwacht_antwoord": "070; 1900; dinsdag; vrijdag; 8:30; 12:00",
+      "verwachte_bron": "knwu.nl/contact",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Je kunt de KNWU bereiken op +31 (0)85 070 1900, op dinsdag tot en met vrijdag van 8.30 tot 12.00 uur.\n\nBron: https://www.knwu.nl/contact, geraadpleegd op 12 november 2026",
+      "trace": [
+        {
+          "vraag": "Hoe kan ik de KNWU bereiken als ik conflicterende informatie tegenkom?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-categorie-jongen-2013",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?",
+      "verwacht_antwoord": "U14; 2013; artikel 20.0.004",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Een jongen geboren in 2013 rijdt in 2026 bij wegwielrennen in leeftijdscategorie **U14**.\n\nBron: TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "trace": [
+        {
+          "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-categorie-meisje-2015",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke leeftijdscategorie rijdt een meisje geboren in 2015 bij wegwielrennen in 2026?",
+      "verwacht_antwoord": "U12; 2015; artikel 20.0.004",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Een meisje geboren in 2015 rijdt in 2026 bij wegwielrennen in leeftijdscategorie **U12**.\n\nBron: TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "trace": [
+        {
+          "vraag": "In welke leeftijdscategorie rijdt een meisje geboren in 2015 bij wegwielrennen in 2026?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verheldering-leeftijdscategorie",
+      "categorie": "knwu",
+      "type": "verheldering",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "geboortejaar"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke categorie rijdt mijn kind mee?",
+      "verwacht_antwoord": "geboortejaar",
+      "verwachte_bron": "",
+      "versiedatum": "",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "geslacht",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "In welk jaar is je kind geboren?",
+      "trace": [
+        {
+          "vraag": "In welke categorie rijdt mijn kind mee?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verheldering-licentie-via-router",
+      "categorie": "knwu",
+      "type": "verheldering",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "geboortejaar"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "Welke licentie moet ik aanvragen voor mijn zoon?",
+      "verwacht_antwoord": "geboortejaar",
+      "verwachte_bron": "",
+      "versiedatum": "",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "In welk jaar is je zoon geboren?",
+      "trace": [
+        {
+          "vraag": "Welke licentie moet ik aanvragen voor mijn zoon?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-verheldering-categorie-via-router",
+      "categorie": "knwu",
+      "type": "verheldering",
+      "taalniveau": "B1",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "geboortejaar"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "knwu-agent",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke categorie rijdt mijn zoon?",
+      "verwacht_antwoord": "geboortejaar",
+      "verwachte_bron": "",
+      "versiedatum": "",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "agent; geslacht",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "In welk jaar is hij geboren?",
+      "trace": [
+        {
+          "vraag": "In welke categorie rijdt mijn zoon?",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-router-geboortejaar-als-vervolg",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "knwu-agent",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [
+        "In welke leeftijdscategorie rijdt mijn zoon?"
+      ],
+      "vraag": "2015",
+      "verwacht_antwoord": "U12; 2015",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "Nieuweling",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Een jongen geboren in 2015 rijdt in 2026 in leeftijdscategorie **U12** (wegwielrennen) en in seizoen 2026-2027 in leeftijdscategorie **U13** (veldrijden).\n\nBron: TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.004)",
+      "trace": [
+        {
+          "vraag": "In welke leeftijdscategorie rijdt mijn zoon?",
+          "agents": [
+            "knwu-agent"
+          ]
+        },
+        {
+          "vraag": "2015",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knwu-router-licentie-na-clubvraag",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.002, 20.0.004)",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "knwu-agent",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [
+        "Wat kost de contributie voor jeugdleden bij WTC Woerden?"
+      ],
+      "vraag": "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
+      "verwacht_antwoord": "KNWU Licentie U17; U15",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Je zoon, geboren in 2012, heeft in 2026 een **KNWU Licentie U17** nodig en rijdt in leeftijdscategorie **U15** (wegwielrennen) of **U17 Nieuweling** (veldrijden, per 1 januari 2027).\nWil hij alleen trainen? Dan volstaat het KNWU-lidmaatschap.\n\nBron: TITEL_20-Jeugdwielrennen_20260921.pdf, versie 2026-09-21 (art. 20.0.002, 20.0.004)",
+      "trace": [
+        {
+          "vraag": "Wat kost de contributie voor jeugdleden bij WTC Woerden?",
+          "agents": [
+            "club-agent"
+          ]
+        },
+        {
+          "vraag": "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regio-mnc-veldrijden-starttijden",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "MNC Reglement MNC Veldrijden 2025.pdf, versie 2025",
+      "bron_ok": false,
+      "missende_kernfeiten": [
+        "11:05",
+        "11:30"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "regio-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?",
+      "verwacht_antwoord": "2026-2027; 11:05; 11:30",
+      "verwachte_bron": "knwumidden.nl/competities",
+      "versiedatum": "2026-2027",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Ik vind geen toekomstige startdatum voor de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027 in mijn bronnen. De beschikbare informatie gaat alleen over seizoen 2025-2026.\n\nBron: MNC Reglement MNC Veldrijden 2025.pdf, versie 2025",
+      "trace": [
+        {
+          "vraag": "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?",
+          "agents": [
+            "regio-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regio-hvh-kalender-2026",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "afgelopen",
+        "geen toekomstige"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [
+        "29 maart",
+        "27 september"
+      ],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "regio-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wanneer loopt de In Memoriam Hans van den Hengel jeugdcompetitie 2026?",
+      "verwacht_antwoord": "afgelopen; geen toekomstige",
+      "verwachte_bron": "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl/competities",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "29 maart; 27 september",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De In Memoriam Hans van den Hengel jeugdcompetitie 2026 loopt van **zondag 29 maart 2026** tot en met **zondag 27 september 2026**.\n\nBron: MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "trace": [
+        {
+          "vraag": "Wanneer loopt de In Memoriam Hans van den Hengel jeugdcompetitie 2026?",
+          "agents": [
+            "regio-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regio-nk-kwalificatie",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "Nationale_Besluiten_20260918.md, versie 2026-09-18 (art. 20.2.008, Nationale Besluiten)",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "selectieprocedure",
+        "Mijn KNWU"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "knwu-agent"
+      ],
+      "beurten": [
+        "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?"
+      ],
+      "vraag": "NK wegwielrennen",
+      "verwacht_antwoord": "selectieprocedure; nationale wedstrijden; 5; Mijn KNWU; LJT",
+      "verwachte_bron": "Nationale_Besluiten_20260918",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Om deel te nemen aan het **NK Wegwielrennen Jeugd** moet je geselecteerd zijn via het **landelijk regelmatigheidsklassement** per regio. De selectie wordt gecoördineerd door de regio’s volgens **Titel 20, art. 20.2.008** en de Nationale Besluiten.\n\n**Belangrijk voor 2026:**\n- De verdeling van startplaatsen per regio is gebaseerd op het aantal licentiehouders per leeftijdscategorie (bekend per 1 april, definitief vóór 15 april).\n- Renners die in de **top 5** van een **Landelijk Jeugd Toernooi (LJT)** in hun regio eindigen, kwalificeren zich rechtstreeks, ook als ze niet in het tussenklassement van de regio staan.\n- Je moet **minimaal 2 wedstrijden** hebben gereden vóór het NK (1 wedstrijd mag uit het voorgaande seizoen meetellen, voor U9 mag 1 wedstrijd uit U8 meetellen).\n- Het **LJT in regio Midden-Oost** is de laatste wedstrijd die meetelt voor de selectie: **zaterdag 30 mei of zondag 31 mei 2026** (je mag maar aan 1 LJT deelnemen in dat weekend).\n\n---\n**Wil je dit antwoord in begrijpelijk Nederlands (B1) om te delen met leden of ouders?**\n\nBron: Nationale_Besluiten_20260918.md, versie 2026-09-18 (art. 20.2.008, Nationale Besluiten)",
+      "trace": [
+        {
+          "vraag": "Hoe kwalificeer je je voor het NK jeugd in regio Midden-Oost?",
+          "agents": [
+            "knwu-agent"
+          ]
+        },
+        {
+          "vraag": "NK wegwielrennen",
+          "agents": [
+            "knwu-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regio-juiste-knwu-regio",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "bron_ok": false,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "regio-agent"
+      ],
+      "beurten": [],
+      "vraag": "In welke KNWU-regio ligt WTC Woerden (Woerden, Utrecht)?",
+      "verwacht_antwoord": "Midden-Oost",
+      "verwachte_bron": "knwu.nl/over-knwu/regios | kenniscentrum.knwu.nl",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "WTC Woerden ligt in **KNWU-regio Midden-Oost**.\n\nBron: MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "trace": [
+        {
+          "vraag": "In welke KNWU-regio ligt WTC Woerden (Woerden, Utrecht)?",
+          "agents": [
+            "regio-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regio-techniekwedstrijden-2026",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "regio-agent"
+      ],
+      "beurten": [],
+      "vraag": "Zijn er in 2026 techniek- of vaardigheidswedstrijden voor de jeugd in regio Midden?",
+      "verwacht_antwoord": "ja; techniekparcours",
+      "verwachte_bron": "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Ja, in 2026 zijn er techniek- of vaardigheidswedstrijden voor de jeugd in regio Midden. In de **In Memoriam Hans van den Hengel-competitie 2026** (MNC) is het **techniekparcours** een van de wedstrijdvormen. Dit parcours test de vaardigheid van renners op de fiets, zoals het nemen van hindernissen (poortje, wipwap, slalom), en de uitslag wordt gebaseerd op het aantal succesvolle handelingen. De puntentelling voor een techniekparcours bedraagt maximaal 8 punten per renner.\n\nIn de kalender van 2026 staan twee wedstrijden met een **alternatieve wedstrijdvorm** (waaronder techniekparcours) gepland:\n- **Zondag 29 maart 2026** (WV het Stadion, Utrecht)\n- **Zondag 17 mei 2026** (WV het Stadion, Utrecht)\n\nBron: MNC 2026 Hans vd Hengelcompetitie - wegwielrennen.pdf, versie 2026",
+      "trace": [
+        {
+          "vraag": "Zijn er in 2026 techniek- of vaardigheidswedstrijden voor de jeugd in regio Midden?",
+          "agents": [
+            "regio-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club-contributie-jeugd-2026",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "WTC Woerden - Contributietarieven 2026.md, versie 2026-11-05",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "club-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat is de contributie voor een jeugdlid van WTC Woerden in 2026?",
+      "verwacht_antwoord": "64,50; 50,00; 14,50",
+      "verwachte_bron": "wtcwoerden.nl?page=674 | WTC Woerden - Contributietarieven",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De contributie voor een jeugdlid van WTC Woerden in 2026 bedraagt **€64,50 per jaar**. Dit bestaat uit een clubbijdrage van €50,00 en een KNWU-lidmaatschap van €14,50. De KNWU-licentie voor wedstrijden is hierin **niet** inbegrepen en moet apart worden aangevraagd.\n\nBron: WTC Woerden - Contributietarieven 2026.md, versie 2026-11-05",
+      "trace": [
+        {
+          "vraag": "Wat is de contributie voor een jeugdlid van WTC Woerden in 2026?",
+          "agents": [
+            "club-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club-zmc-kosten",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "ZMC - Info en reglement Zaterdagmiddag Competitie - 2026-10-29.pdf, versie 2026-10-29",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "club-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?",
+      "verwacht_antwoord": "gratis",
+      "verwachte_bron": "ZMC - Info en reglement Zaterdagmiddag Competitie",
+      "versiedatum": "2026-10-29",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "Deelname aan de ZMC (Zaterdagmiddag Competitie) is voor het hele seizoen **gratis** voor zowel leden van WTC Woerden als leden van andere clubs.\n\nBron: ZMC - Info en reglement Zaterdagmiddag Competitie - 2026-10-29.pdf, versie 2026-10-29",
+      "trace": [
+        {
+          "vraag": "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?",
+          "agents": [
+            "club-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club-zmc-wanneer",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": true,
+      "bron_gevonden": "ZMC - Info en reglement Zaterdagmiddag Competitie - 2026-10-29.pdf, versie 2026-10-29; Jeugdprogramma WTC Woerden.md, versie 1.0",
+      "bron_ok": true,
+      "missende_kernfeiten": [],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [
+        "club-agent"
+      ],
+      "beurten": [],
+      "vraag": "Wanneer en waar vindt de ZMC plaats en voor wie is het bedoeld?",
+      "verwacht_antwoord": "zaterdagmiddag; oktober; januari; 13:45",
+      "verwachte_bron": "ZMC - Info en reglement Zaterdagmiddag Competitie",
+      "versiedatum": "2026-10-29",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "De ZMC (Zaterdagmiddag Competitie) vindt plaats op **zaterdag 23 januari 2027** (laatste wedstrijd en prijsuitreiking) en is bedoeld voor **jonge wielrenners** (jeugd en nieuwelingen) die willen deelnemen aan een laagdrempelige veldrijdcompetitie. De wedstrijden vinden wekelijks plaats in de periode **oktober tot en met eind januari** op wisselende locaties, met start om **13:45 uur** in het clubgebouw van WTC Woerden.\n\nDe competitie is open voor renners van alle clubs en is gratis voor leden en leden van andere clubs. Deelname is mogelijk voor renners met een **start- of wedstrijdlicentie**.\n\nBron: ZMC - Info en reglement Zaterdagmiddag Competitie - 2026-10-29.pdf, versie 2026-10-29\nBron: Jeugdprogramma WTC Woerden.md, versie 1.0",
+      "trace": [
+        {
+          "vraag": "Wanneer en waar vindt de ZMC plaats en voor wie is het bedoeld?",
+          "agents": [
+            "club-agent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club-vertrouwenspersoon",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": false,
+      "missende_kernfeiten": [
+        "Ayan Dijkstra",
+        "ayan.dijkstra@gmail.com"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "Wie is de vertrouwenspersoon bij WTC Woerden en hoe bereik ik die?",
+      "verwacht_antwoord": "Ayan Dijkstra; ayan.dijkstra@gmail.com",
+      "verwachte_bron": "wtcwoerden.nl?page=607 | WTC Woerden - Contactpersonen",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    },
+    {
+      "id": "club-gedragscode",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B2",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": false,
+      "missende_kernfeiten": [
+        "Over de club",
+        "Respect",
+        "Veiligheid",
+        "Integriteit"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "Waar staat de gedragscode van WTC Woerden en waar gaat die over?",
+      "verwacht_antwoord": "Over de club; Respect; Veiligheid; Integriteit",
+      "verwachte_bron": "wtcwoerden.nl?page=956 | WTC Woerden - Gedragscode",
+      "versiedatum": "2026",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    },
+    {
+      "id": "knwu-b1-categorie-jongen-2015",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B1",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "U12",
+        "2015"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+      "verwacht_antwoord": "U12; 2015",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    },
+    {
+      "id": "knwu-b1-verzet-u15",
+      "categorie": "knwu",
+      "type": "standaard",
+      "taalniveau": "B1",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "6,70"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
+      "verwacht_antwoord": "6,70",
+      "verwachte_bron": "TITEL_20-Jeugdwielrennen_20260921",
+      "versiedatum": "2026-09-21",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    },
+    {
+      "id": "regio-b1-mnc-starttijden",
+      "categorie": "regio",
+      "type": "standaard",
+      "taalniveau": "B1",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "11:05",
+        "11:30"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "Hoe laat starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?",
+      "verwacht_antwoord": "11:05; 11:30",
+      "verwachte_bron": "knwumidden.nl/competities",
+      "versiedatum": "2026-2027",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    },
+    {
+      "id": "club-b1-zmc-kosten",
+      "categorie": "club",
+      "type": "standaard",
+      "taalniveau": "B1",
+      "ok": false,
+      "bron_gevonden": "",
+      "bron_ok": true,
+      "missende_kernfeiten": [
+        "gratis"
+      ],
+      "doorhaal_waarde_gevonden": false,
+      "verboden_gevonden": [],
+      "agent_ok": true,
+      "verwachte_agent": "",
+      "agents_laatste_beurt": [],
+      "beurten": [],
+      "vraag": "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?",
+      "verwacht_antwoord": "gratis",
+      "verwachte_bron": "ZMC - Info en reglement Zaterdagmiddag Competitie",
+      "versiedatum": "2026-10-29",
+      "doorhaal_waarde": "",
+      "niet_in_antwoord": "",
+      "verwacht_marker": "",
+      "marker_gevonden": false,
+      "antwoord": "",
+      "trace": [],
+      "error": "HTTPError: 402 Client Error: Payment Required for url: https://api.mistral.ai/v1/conversations"
+    }
+  ]
+}

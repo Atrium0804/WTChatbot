@@ -20,6 +20,9 @@
 #   versiedatum:       Verwachte versie/datum van de bron
 #   doorhaal_waarde:   (alleen type=strikethrough) de superseded waarde uit
 #                      de rode revisie — mag NIET in het antwoord voorkomen
+#   verwacht_marker:   (optioneel, #47) bv. "[BRONCONFLICT]" — moet in de RUWE
+#                      agent-output staan (de proxy stript de marker voor de
+#                      gebruiker); checkt los van de kernfeiten
 #   niet_in_antwoord:  (optioneel) woorden gescheiden door ";" die NIET in het
 #                      antwoord mogen staan (bv. een routeringsvraag of
 #                      overbodige verheldervragen)
@@ -130,6 +133,19 @@ evalset:
     verwacht_antwoord: "geen; wijzigingsmemo; gewijzigd"
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-18"
+  - id: knwu-bronconflict-u17-nieuweling
+    taalniveau: B2
+    categorie: knwu
+    type: websearch
+    vraag: "In welke leeftijdscategorie rijdt een renner die in 2026 15 jaar wordt met een KNWU Licentie U17?"
+    # Titel 20 (art. 20.0.004) noemt 15 en 16 jaar "U17 Nieuweling"; de
+    # Kenniscentrum-pagina voor de U17-licentie noemt U16 en U17 (#47).
+    # Het antwoord moet de Titel 20-waarde noemen én eindigen op een
+    # [BRONCONFLICT]-markerregel (zit in de ruwe agent-output).
+    verwacht_antwoord: "U17; nieuweling"
+    verwacht_marker: "[BRONCONFLICT]"
+    bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl/knwu-licenties"
+    versiedatum: "2026-09-21"
   - id: knwu-contact
     taalniveau: B2
     categorie: knwu

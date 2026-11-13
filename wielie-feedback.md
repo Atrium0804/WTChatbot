@@ -1,21 +1,21 @@
 # Feedback-rapport
 
-Gegenereerd: 2026-11-11T22:25:59.858621+00:00 — bron: beheerder@nas.fritz.box:/volume1/docker/wtchatbot/data/wtchat.db (snapshot)
+Gegenereerd: 2026-11-12T23:04:44.077936+00:00 — bron: beheerder@nas.fritz.box:/volume1/docker/wtchatbot/data/wtchat.db (snapshot)
 
 ## Counters
 
 | rating | aantal |
 | --- | ---: |
-| negative | 22 |
+| negative | 24 |
 | positive | 3 |
-| **totaal** | **25** |
+| **totaal** | **27** |
 
 Per week (UTC):
 
 | week | positive | negative |
 | --- | ---: | ---: |
 | 2026-W45 | 2 | 9 |
-| 2026-W46 | 1 | 13 |
+| 2026-W46 | 1 | 15 |
 
 ## Triage — negatieve feedback (oudste eerst)
 
@@ -1254,5 +1254,96 @@ Bronnen:
 >[!note]
 > het antwoord was onjuist, fietswissel is bij de jeugd niet toegestaan. Regels voor volwassenen (nieuwelingen/junioren/masters/??) kunnen anders zijn. De chatbot is gericht op de jeugd.
 
+### 23 — 2026-11-12T12:13:48.823493+00:00
+- Conversation: `181ca8128f294a15b62c1c5bcd8cce16` (agent-trace: `python scripts/trace_conversation.py 181ca8128f294a15b62c1c5bcd8cce16`)
+
+  **Complete conversatie (oudste turn eerst):**
+
+  ---
+  **Turn 1 *(laatste)***
+  **Vraag:** Kan een renner zonder licentie deelnemen aan de zmc?
+
+```
+Ik zoek het op voor je. Een moment.
+Voor deelname aan de **ZMC (Zomer Mountainbike Cup)** of **elke andere KNWU-wedstrijd** is een **KNWU-licentie verplicht**. Dit geldt voor alle leeftijden en categorieën, zowel voor jeugd als nieuwelingen.
+
+- Een renner zonder licentie mag **niet** deelnemen aan de ZMC.
+- Voor jeugdwedstrijden (bijv. U6 t/m U17) is een **jeugdlicentie** of **daglicentie** nodig, afhankelijk van de wedstrijdklasse.
+- Een KNWU-lidmaatschap alleen is **niet voldoende** voor deelname aan wedstrijden; hiervoor is altijd een (dag)licentie nodig
+.
+
+---
+Wil je weten hoe je een licentie aanvraagt?
+```
+
+>[!note]
+> Betekenis van zmc wordt verzonnen
+
+### 24 — 2026-11-12T12:19:16.694977+00:00
+- Conversation: `181ca8128f294a15b62c1c5bcd8cce16` (agent-trace: `python scripts/trace_conversation.py 181ca8128f294a15b62c1c5bcd8cce16`)
+
+  **Complete conversatie (oudste turn eerst):**
+
+  ---
+  **Turn 1**
+  **Vraag:** Kan een renner zonder licentie deelnemen aan de zmc?
+
+```
+Ik zoek het op voor je. Een moment.
+Voor deelname aan de **ZMC (Zomer Mountainbike Cup)** of **elke andere KNWU-wedstrijd** is een **KNWU-licentie verplicht**. Dit geldt voor alle leeftijden en categorieën, zowel voor jeugd als nieuwelingen.
+
+- Een renner zonder licentie mag **niet** deelnemen aan de ZMC.
+- Voor jeugdwedstrijden (bijv. U6 t/m U17) is een **jeugdlicentie** of **daglicentie** nodig, afhankelijk van de wedstrijdklasse.
+- Een KNWU-lidmaatschap alleen is **niet voldoende** voor deelname aan wedstrijden; hiervoor is altijd een (dag)licentie nodig
+.
+
+---
+Wil je weten hoe je een licentie aanvraagt?
+```
+
+  ---
+  **Turn 2**
+  **Vraag:** Ik bedoel de zmc, clubwedstrijd
+
+```
+Voor de **ZMC (clubwedstrijd van WTC Woerden)** geldt:
+
+Je **moet** een KNWU-licentie hebben om mee te doen. Zonder licentie mag je **niet** starten. Dit geldt voor alle leeftijden, ook voor jeugd en nieuwelingen.
+
+Je kunt wel een **daglicentie** kopen als je geen vaste licentie hebt. Die kun je online regelen via [MijnKNWU](https://www.knwu.nl).
+```
+
+  ---
+  **Turn 3**
+  **Vraag:** En kan een aspirant lid dat ook?
+
+```
+Voor een **aspirant lid** (iemand die nog geen volledig lid is van WTC Woerden) geldt:
+
+- **Aspirant leden mogen niet meedoen aan wedstrijden**, ook niet aan de ZMC.
+- Je moet eerst **volledig lid** worden van WTC Woerden en een **KNWU-licentie** hebben om mee te mogen doen aan wedstrijden.
+```
+
+  ---
+  **Turn 4 *(laatste)***
+  **Vraag:** Vat samen
+
+```
+Voor deelname aan de **ZMC (clubwedstrijd WTC Woerden)** geldt het volgende:
+
+- **Een KNWU-licentie is verplicht** voor alle deelnemers, ongeacht leeftijd of categorie (jeugd, nieuwelingen, etc.).
+- **Aspirant leden** (die nog geen volledig lid zijn van WTC Woerden) mogen **niet** deelnemen aan wedstrijden, inclusief de ZMC.
+- Een **daglicentie** is een optie als je geen vaste licentie hebt. Deze kun je online aanvragen via [MijnKNWU](https://www.knwu.nl).
+
+Bron: TITEL_20-Jeugdwielrennen_20260921.md, versie 2026-09-21 en Nationale_Besluiten_20260918.md, versie 2026-09-18.
+```
+
+>[!note]
+> Een marrkdown link wordt als tekst weergegeven
+
+
+## Bronconflicten
+
+Geen bronconflicten gemeld binnen de retentieperiode (30 dagen).
 _Retentie: rows ouder dan 30 dagen zijn automatisch gepurge'd uit de DB. Ruwe feedback niet kopiëren naar git/tickets — alleen geanonimiseerd vastleggen in LEARNINGS.md._
 

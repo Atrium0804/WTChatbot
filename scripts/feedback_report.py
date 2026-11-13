@@ -70,6 +70,29 @@ def negative_rows(rows: list[dict]) -> list[dict]:
     )
 
 
+def bronconflict_rows(rows: list[dict]) -> list[dict]:
+    """Bronconflict-rows (#47): rating 'bronconflict' — géén negatieve feedback."""
+    return [r for r in rows if r["rating"] == "bronconflict"]
+
+
+def summarize_bronconflicten(rows: list[dict]) -> list[dict]:
+    """Groepeer identieke bronconflicten (op marker-text): aantal + laatste melding.
+
+    Sorteer: meeste meldingen eerst, daarna nieuwste melding eerst.
+    """
+    groups: dict[str, dict] = {}
+    for r in bronconflict_rows(rows):
+        text = (r.get("text") or "").strip()
+        if not text:
+            continue
+        ts = r.get("timestamp") or ""
+        g = groups.setdefault(text, {"text": text, "aantal": 0, "laatste": ""})
+        g["aantal"] += 1
+        if ts > g["laatste"]:
+            g["laatste"] = ts
+    return sorted(groups.values(), key=lambda g: (g["aantal"], g["laatste"]), reverse=True)
+
+
 def parse_history(row: dict) -> list[dict]:
     """Parse de history-JSON-kolom (lijst turns {question, answer}, oudste eerst).
 
@@ -169,6 +192,24 @@ def render_report(rows: list[dict], source: str, generated_at: str) -> str:
             for toelichting_line in row['text'].split('\n'):
                 lines.append(f"> {toelichting_line}")
         lines.append("")
+
+    # sectie bronconflicten (#47): gegroepeerd, tellers los van negatieve feedback
+    conflicten = summarize_bronconflicten(rows)
+    lines += ["", "## Bronconflicten", ""]
+    if not conflicten:
+        lines.append("Geen bronconflicten gemeld binnen de retentieperiode (30 dagen).")
+    else:
+        lines += [
+            "Identieke conflicten gegroepeerd (marker zonder vraagtekst, zie #47).",
+            "",
+            "| bronconflict | aantal | laatste melding |",
+            "| --- | ---: | --- |",
+        ]
+        for g in conflicten:
+            # de marker bevat zelf '|' — escape in de tabelcel
+            escaped = g["text"].replace("|", "\\|")
+            lines.append(f"| {escaped} | {g['aantal']} | {g['laatste']} |")
+
     lines.append(
         "_Retentie: rows ouder dan 30 dagen zijn automatisch gepurge'd uit de DB. "
         "Ruwe feedback niet kopiëren naar git/tickets — alleen geanonimiseerd vastleggen in LEARNINGS.md._"

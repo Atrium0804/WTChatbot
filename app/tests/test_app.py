@@ -456,10 +456,11 @@ def test_cache_control_headers(tmp_path):
     assert "cache-control" not in resp.headers
 
 
-def test_mistral_timeout_default_60():
+def test_mistral_timeout_default_180():
+    # review 2026-11-12: websearch/handoff-runs liepen op de 60s in een timeout
     import mistral_client
 
-    assert mistral_client.DEFAULT_TIMEOUT == 60
+    assert mistral_client.DEFAULT_TIMEOUT == 180
 
 
 def test_index_shows_thinking_message(tmp_path):
@@ -561,3 +562,104 @@ def test_chat_feedback_history_keeps_raw_question(tmp_path, monkeypatch):
     )
     rows = store.all_feedback(str(tmp_path / "test.db"))
     assert rows[-1]["question"] == "Mijn zoon is van 2015"
+
+
+# --- Bronconflict-marker (#47) ---
+
+MARKER = (
+    "[BRONCONFLICT] TITEL_20 art. 20.0.004: U17 Nieuweling | "
+    "https://kenniscentrum.knwu.nl/knwu-licenties/knwu-wedstrijdlicentie-u17: U16 en U17"
+)
+# wat er in de DB-rij `text` staat: de inhoud van de markerregel, zonder the tag zelf
+MARKER_CONTENT = MARKER.removeprefix("[BRONCONFLICT]").strip()
+
+
+def fake_mistral_answer(monkeypatch, answer: str) -> None:
+    import config
+    import mistral_client
+
+    def answer_question(**kwargs):
+        return "conv-1", answer
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(mistral_client, "answer_question", answer_question)
+
+
+def test_save_feedback_bronconflict_stores_marker_text_only(tmp_path):
+    db = str(tmp_path / "test.db")
+    store.init_db(db)
+    store.save_feedback(db, rating="bronconflict", conversation_id="c1", text=MARKER_CONTENT)
+    rows = store.all_feedback(db)
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["rating"] == "bronconflict"
+    assert row["conversation_id"] == "c1"
+    assert row["text"] == MARKER_CONTENT
+    # privacy: géén vraag/antwoord/history bij een bronconflict
+    assert row["question"] is None
+    assert row["answer"] is None
+    assert row["history"] is None
+
+
+def test_chat_strips_bronconflict_marker_and_stores_row(tmp_path, monkeypatch):
+    fake_mistral_answer(monkeypatch, f"U17 Nieuweling volgens Titel 20.\n\nBron: TITEL_20.pdf\n\n{MARKER}")
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    body = chat(client, "Welke leeftijdscategorie is een 15-jarige in 2026?")
+    # de gebruiker ziet de markerregel niet
+    assert "BRONCONFLICT" not in body["answer"]
+    assert "U17 Nieuweling" in body["answer"]
+    rows = store.all_feedback(db)
+    assert len(rows) == 1
+    assert rows[0]["rating"] == "bronconflict"
+    assert rows[0]["text"] == MARKER_CONTENT
+    assert rows[0]["conversation_id"] == body["conversation_id"]
+    assert rows[0]["question"] is None
+    assert rows[0]["answer"] is None
+
+
+def test_chat_without_marker_stores_no_bronconflict_row(tmp_path, monkeypatch):
+    fake_mistral_answer(monkeypatch, "Gewoon antwoord.\n\nBron: TITEL_20.pdf")
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    body = chat(client, "vraag")
+    assert body["answer"] == "Gewoon antwoord.\n\nBron: TITEL_20.pdf"
+    assert store.all_feedback(db) == []
+
+
+def test_chat_multiple_markers_one_row_each(tmp_path, monkeypatch):
+    fake_mistral_answer(
+        monkeypatch,
+        f"Antwoord.\n\n{MARKER}\n\n[BRONCONFLICT] Nationale_Besluiten art. 18.1: X | https://voorbeeld.nl: Y",
+    )
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    body = chat(client, "vraag")
+    assert "BRONCONFLICT" not in body["answer"]
+    rows = store.all_feedback(db)
+    assert len(rows) == 2
+    assert all(r["rating"] == "bronconflict" for r in rows)
+    assert rows[0]["text"] == MARKER_CONTENT
+    assert rows[1]["text"] == "Nationale_Besluiten art. 18.1: X | https://voorbeeld.nl: Y"
+
+
+def test_bronconflict_marker_not_in_feedback_history(tmp_path, monkeypatch):
+    fake_mistral_answer(monkeypatch, f"Antwoord met conflict.\n\n{MARKER}")
+    db = str(tmp_path / "test.db")
+    client = make_client(tmp_path)
+    conv = chat(client, "vraag")
+    client.post(
+        "/feedback",
+        json={"conversation_id": conv["conversation_id"], "rating": "negative", "text": "toch fout"},
+    )
+    rows = store.all_feedback(db)
+    assert len(rows) == 2
+    conflict_row = next(r for r in rows if r["rating"] == "bronconflict")
+    negative_row = next(r for r in rows if r["rating"] == "negative")
+    assert conflict_row["text"] == MARKER_CONTENT  # alleen de marker, géén vraag/antwoord
+    assert conflict_row["question"] is None and conflict_row["answer"] is None
+    # de marker zit ook niet in de feedbackgeschiedenis
+    assert "BRONCONFLICT" not in (negative_row["answer"] or "")
+    history = json.loads(negative_row["history"])
+    assert "BRONCONFLICT" not in history[0]["answer"]

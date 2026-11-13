@@ -5,6 +5,9 @@ bij een duim-omlaag; bij een duim-omhoog alleen een teller (rating + timestamp).
 Bij een duim-omlaag slaan we además de laatste turn (question/answer) ook de
 feedbackgeschiedenis op: de `history`-kolom bevat een JSON-array met de
 laatste turns (vraag/antwoord), zie ADR-0008.
+Bronconflicten (#47): rating "bronconflict" slaat ALLEEN de markerregel op
+(rating + timestamp + conversation_id + text) — géén question/answer/history,
+zelfde privacy-precedent als out-of-scope-signalering.
 Retentie: FEEDBACK_RETENTION_DAYS (30), daarna automatische purge.
 Geen IP-adressen — die slaan we überhaupt niet op.
 """
@@ -63,7 +66,8 @@ def save_feedback(
     history: list[dict] | None = None,
 ) -> None:
     """Sla feedback op. `history` is een lijst turns ({question, answer}), oudste
-    eerst; wordt als JSON in de history-kolom bewaard (alleen bij negative)."""
+    eerst; wordt als JSON in de history-kolom bewaard (alleen bij negative).
+    Zie de module-docstring voor de privacy-regel per rating."""
     timestamp = datetime.now(timezone.utc).isoformat()
     with connect(db_path) as conn:
         if rating == "negative":
@@ -72,6 +76,12 @@ def save_feedback(
                 "INSERT INTO feedback (timestamp, rating, conversation_id, question, answer, text, history)"
                 " VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (timestamp, rating, conversation_id, question, answer, text, history_json),
+            )
+        elif rating == "bronconflict":
+            # bronconflict: alleen de markerregel, zónder vraagtekst (#47)
+            conn.execute(
+                "INSERT INTO feedback (timestamp, rating, conversation_id, text) VALUES (?, ?, ?, ?)",
+                (timestamp, rating, conversation_id, text),
             )
         else:
             # duim-omhoog: kale teller, géén content

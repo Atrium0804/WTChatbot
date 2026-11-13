@@ -419,6 +419,43 @@ class KernfeitGrenzenTests(unittest.TestCase):
         self.assertEqual(self.missing("artikel 20.1.007", "max 6,70 meter (art. 20.1.007)"), [])
 
 
+class VerwachtMarkerTests(unittest.TestCase):
+    """Optioneel veld `verwacht_marker` (#47): de [BRONCONFLICT]-markerregel moet
+    in de ruwe agent-output staan (de eval-runner ziet de ruwe output; de proxy
+    strip't de marker pas voor de gebruiker)."""
+
+    def marker_entry(self) -> dict:
+        e = entry("x-y", "U17; nieuweling", "TITEL_20.pdf")
+        e["verwacht_marker"] = "[BRONCONFLICT]"
+        return e
+
+    def test_marker_aanwezig_is_ok(self) -> None:
+        antwoord = (
+            "U17 Nieuweling volgens Titel 20.\n"
+            "[BRONCONFLICT] TITEL_20 art. 20.0.004: U17 Nieuweling | https://kenniscentrum.knwu.nl/x: U16 en U17\n\n"
+            "Bron: TITEL_20.pdf"
+        )
+        result = run_eval.check_entry(self.marker_entry(), antwoord)
+        self.assertTrue(result["ok"], result)
+        self.assertTrue(result["marker_gevonden"])
+
+    def test_marker_afwezig_faalt(self) -> None:
+        result = run_eval.check_entry(self.marker_entry(), "U17 Nieuweling.\n\nBron: TITEL_20.pdf")
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["marker_gevonden"])
+
+    def test_zonder_verwacht_marker_geen_marker_check(self) -> None:
+        result = run_eval.check_entry(entry("x-y", "U17", "TITEL_20.pdf"), "U17.\n\nBron: TITEL_20.pdf")
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(result["verwacht_marker"], "")
+
+    def test_evalset_bevat_bronconflict_entry_met_marker(self) -> None:
+        evalset = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        e = {x["id"]: x for x in evalset}["knwu-bronconflict-u17-nieuweling"]
+        self.assertEqual(e["verwacht_marker"], "[BRONCONFLICT]")
+        self.assertIn("U17", e["verwacht_antwoord"])
+
+
 class EnvTests(unittest.TestCase):
     def test_env_bestand_wint_van_verouderde_shellvariabele(self) -> None:
         import os

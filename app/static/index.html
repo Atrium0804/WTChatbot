@@ -506,38 +506,93 @@
     send.disabled = true;
     addMessage("user", question);
     var typing = addMessage("bot typing", "Wielie denkt na…");
+    // Voortgangsindicatie in de typing-bubble (#84): direct "Wielie denkt na…",
+    // na ~15s "Ik zoek in de reglementen…", na ~45s "Dit duurt langer dan
+    // normaal, nog even geduld…".
+    var TYPING_STAGES = [
+      { at: 15000, text: "Ik zoek in de reglementen…" },
+      { at: 45000, text: "Dit duurt langer dan normaal, nog even geduld…" }
+    ];
+    var CHAT_TIMEOUT_MS = 120000;
+    var typingTimers = [];
+    for (var i = 0; i < TYPING_STAGES.length; i++) {
+      (function (stage) {
+        typingTimers.push(setTimeout(function () {
+          typing.textContent = stage.text;
+          scrollDown();
+        }, stage.at));
+      })(TYPING_STAGES[i]);
+    }
+    function clearTypingTimers() {
+      typingTimers.forEach(clearTimeout);
+      typingTimers = [];
+    }
     document.dispatchEvent(new Event("chat:messages-rendered"));
-    fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: question,
-        conversation_id: conversationId || "",
-        client_id: clientId,
-        language_level: languageLevel
-      })
-    })
-      .then(function (resp) {
+
+    // AbortController na ~120s (#84); max. één automatische retry, ALLEEN bij
+    // een netwerkfout — NIET na een read-timeout (Mistral kan de beurt dan al
+    // verwerkt hebben; een retry zou een dubbele beurt opleveren).
+    function postChat(signal) {
+      return fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: question,
+          conversation_id: conversationId || "",
+          client_id: clientId,
+          language_level: languageLevel
+        }),
+        signal: signal
+      }).then(function (resp) {
         return resp.json().catch(function () { return {}; }).then(function (body) {
           if (!resp.ok) {
             var err = new Error("HTTP " + resp.status);
             err.userMessage = body.error;
+            err.isAbort = false;
             throw err;
           }
           return body;
         });
+      });
+    }
+
+    var abortController = new AbortController();
+    var timeoutTimer = setTimeout(function () { abortController.abort(); }, CHAT_TIMEOUT_MS);
+    var retried = false;
+
+    postChat(abortController.signal)
+      .catch(function (err) {
+        // Alleen bij een netwerkfout (geen response ontvangen) automatisch
+        // één keer retryen — niet na een abort/read-timeout.
+        if (!retried && err.name !== "AbortError" && !err.userMessage) {
+          retried = true;
+          var retryController = new AbortController();
+          var retryTimer = setTimeout(function () { retryController.abort(); }, CHAT_TIMEOUT_MS);
+          return postChat(retryController.signal).finally(function () {
+            clearTimeout(retryTimer);
+          });
+        }
+        throw err;
       })
       .then(function (body) {
         conversationId = body.conversation_id;
+        clearTimeout(timeoutTimer);
+        clearTypingTimers();
         typing.className = "msg bot";
         setBotContent(typing, body.answer);
         addFeedback(typing, body.answer);
         scrollDown();
       })
       .catch(function (err) {
+        clearTimeout(timeoutTimer);
+        clearTypingTimers();
         typing.className = "msg error";
-        // Alleen de eigen foutmelding van de server tonen, nooit technische browserteksten.
-        typing.textContent = err.userMessage || "Er ging iets mis. Probeer het opnieuw.";
+        if (err.name === "AbortError") {
+          typing.textContent = "Dit duurt ongewoon lang — probeer het opnieuw.";
+        } else {
+          // Alleen de eigen foutmelding van de server tonen, nooit technische browserteksten.
+          typing.textContent = err.userMessage || "Er ging iets mis. Probeer het opnieuw.";
+        }
         scrollDown();
       })
       .finally(function () {

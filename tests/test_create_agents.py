@@ -336,6 +336,45 @@ class RunCreateTests(unittest.TestCase):
         self.assertTrue(any("bestaat-niet" in e for e in report["errors"]))
         client.beta.agents.create.assert_not_called()
 
+    def test_per_agent_model_override_lands_in_payload(self) -> None:
+        # #83: een agent met "model" in de config krijgt die in de payload;
+        # agents zonder override houden de globale default.
+        router = self.router_agent()
+        router["model"] = "mistral-medium-latest"
+        config_path = self.make_config([self.knwu_agent(), router])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(rc, 0, report["errors"])
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        # knwu-agent heeft geen override -> globale default
+        self.assertEqual(calls["knwu-agent"]["model"], "mistral-large-4")
+        # router-agent heeft een override -> die wint
+        self.assertEqual(calls["router-agent"]["model"], "mistral-medium-latest")
+
+    def test_load_config_rejects_non_string_per_agent_model(self) -> None:
+        # #83: een per-agent model dat geen string is, wordt afgekeurd
+        with tempfile.TemporaryDirectory() as tmp:
+            data = minimal_config()
+            data["agents"][0]["model"] = 123
+            path = write_json(Path(tmp), "agents_config.json", data)
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.load_config(path)
+            self.assertIn("model", str(ctx.exception))
+
+    def test_productie_config_router_agent_heeft_kleiner_model(self) -> None:
+        # #83: in de productieconfig staat de router-agent op een kleiner model,
+        # de content-agents (knwu/regio/club/archief) op de default.
+        config = create_agents.load_config(create_agents.DEFAULT_CONFIG_PATH)
+        agents = {a["name"]: a for a in config["agents"]}
+        self.assertEqual(agents["router-agent"].get("model"), "mistral-medium-latest")
+        for name in ("knwu-agent", "regio-agent", "club-agent", "archief-agent"):
+            self.assertNotIn("model", agents[name], name)
+
 
 class ProductieConfigTests(unittest.TestCase):
     """De echte agents_config.json + prompts, met een fake client."""
@@ -444,6 +483,24 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertIn("b1", prompt)
         self.assertIn("knwumidden.nl", prompt)
         self.assertIn("nk", prompt)
+
+    def test_shared_batcht_document_library_calls_parallel(self) -> None:
+        # #81: alle document_library-opvragingen in één parallelle batch,
+        # max 2 retrievingsrondes, geen tussentekst.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8").lower()
+        self.assertIn("parallelle batch", prompt)
+        self.assertIn("meerdere tool-calls", prompt)
+        self.assertIn("maximaal 2 retrievingsrondes", prompt)
+        self.assertIn("tussendoor", prompt)
+
+    def test_knwu_agent_noemt_expliciete_hoofdstukken_bij_nk_vragen(self) -> None:
+        # #81: bij NK/deelnamerechten-vragen de waarschijnlijke hoofdstukken
+        # expliciet noemen in de eerste batch.
+        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
+        self.assertIn("Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md", prompt)
+        self.assertIn("2. WEGWIELRENNEN.md", prompt)
 
 
 if __name__ == "__main__":

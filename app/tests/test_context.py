@@ -257,3 +257,55 @@ def test_build_context_lines_adds_old_designation_after_birth_year():
 
 def test_old_designation_lines_deduplicate():
     assert len(context.old_designation_lines("categorie 3, cat. 3 en categorie 3", RULES)) == 1
+
+
+# --- leeftijd in jaren ("kind van 6") -> geboortejaar-range (issue #82) ---
+
+
+def test_find_ages_in_years_digit():
+    assert context.find_ages_in_years("mag een kind van 6 meedoen?") == [6]
+    assert context.find_ages_in_years("mijn dochter is 8 jaar oud") == [8]
+    assert context.find_ages_in_years("een 12-jarige mag") == [12]
+
+
+def test_find_ages_in_years_dutch_number_word():
+    assert context.find_ages_in_years("mijn kind is zes jaar") == [6]
+    assert context.find_ages_in_years("een zevenjarige") == [7]
+
+
+def test_find_ages_in_years_no_false_positives():
+    assert context.find_ages_in_years("Wanneer is het NK 2026?") == []
+    assert context.find_ages_in_years("Hoeveel kost een licentie in 2026?") == []
+    assert context.find_ages_in_years("Categorie 3 rijdt om 10:00") == []
+
+
+def test_birth_years_for_age():
+    # in 2026: 6 jaar -> geboren 2019 of 2020
+    assert context.birth_years_for_age(6, NOVEMBER_2026) == [2020, 2019]
+    assert context.birth_years_for_age(12, NOVEMBER_2026) == [2014, 2013]
+
+
+def test_build_context_lines_age_in_years_adds_category():
+    lines = context.build_context_lines(
+        "mag een kind van 6 meedoen met nationale wedstrijden?", NOVEMBER_2026, RULES, False
+    )
+    #除了 taalniveau-regel: categorie-regels voor beide mogelijke geboortejaren
+    category_lines = [l for l in lines if l.startswith("Geboortejaar")]
+    assert len(category_lines) == 2
+    assert any("Geboortejaar 2020" in l for l in category_lines)
+    assert any("Geboortejaar 2019" in l for l in category_lines)
+    # 2020 -> U7 in 2026, 2019 -> U8 in 2026
+    assert any("U7" in l for l in category_lines)
+    assert any("U8" in l for l in category_lines)
+
+
+def test_build_context_lines_zes_jaar():
+    lines = context.build_context_lines("mijn kind is zes jaar oud", NOVEMBER_2026, RULES, False)
+    category_lines = [l for l in lines if l.startswith("Geboortejaar")]
+    assert len(category_lines) == 2
+    assert any("Geboortejaar 2020" in l for l in category_lines)
+
+
+def test_build_context_lines_no_age_no_extra_lines():
+    lines = context.build_context_lines("Wanneer is het NK 2026?", NOVEMBER_2026, RULES, False)
+    assert lines == [context.language_line("B1")]

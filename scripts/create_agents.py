@@ -49,6 +49,7 @@ class AgentConfig(TypedDict, total=False):
     library: str | None
     websearch: bool
     handoffs: list[str]
+    model: str  # optionele per-agent model-override (#83); default = config["model"]
 
 
 class Config(TypedDict, total=False):
@@ -84,6 +85,11 @@ def load_config(path: Path) -> Config:
                 raise SystemExit(f"error: config {path}: agent entry missing '{key}': {entry}")
         if not isinstance(entry["prompt_files"], list) or not entry["prompt_files"]:
             raise SystemExit(f"error: config {path}: 'prompt_files' must be a non-empty list: {entry}")
+        # #83: optionele per-agent model-override moet een string zijn
+        if "model" in entry and not isinstance(entry["model"], str):
+            raise SystemExit(
+                f"error: config {path}: per-agent 'model' must be a string: {entry}"
+            )
     data.setdefault("prompts_folder", "prompts")
     return data
 
@@ -231,7 +237,8 @@ def run_create(
                 continue
 
         payload: dict = {
-            "model": config["model"],
+            # #83: per-agent model-override; default is de globale config["model"]
+            "model": agent.get("model", config["model"]),
             "name": name,
             "description": agent["description"],
             "instructions": instructions,

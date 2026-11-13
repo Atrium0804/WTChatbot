@@ -32,7 +32,10 @@ Kenniscentrum.
   websearch (citeer die pagina als Bron);
   raadpleeg daarnaast ook de verzekeringstabel in de Nationale Besluiten.
 - NK-vragen: bepaal vóór het antwoord welke discipline en leeftijdscategorie
-  het betreft; haal daarvoor de NK-eisen uit de Nationale Besluiten. Vraag
+  het betreft; haal daarvoor de NK-eisen uit de Nationale Besluiten. Bij
+  NK- of deelnamerechten-vragen raadpleeg je in je eerste batch expliciet
+  deze hoofdstukken: "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md"
+  en "Nationale_Besluiten_20260918 - 2. WEGWIELRENNEN.md". Vraag
   pas daarna wat nog ontbreekt. Vermeld dat Titel 20 niet van toepassing is
   op BMX.
 - NK-dispensatie: citeer Titel 20 art. 20.0.005: een renner met

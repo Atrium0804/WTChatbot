@@ -37,6 +37,47 @@ MONTHS = [
     "juli", "augustus", "september", "oktober", "november", "december",
 ]
 
+# Leeftijd in jaren: "kind van 6", "6 jaar oud", "zes jaar", "een 6-jarige" (#82).
+DUTCH_NUMBERS = {
+    "nul": 0, "een": 1, "twee": 2, "drie": 3, "vier": 4, "vijf": 5,
+    "zes": 6, "zeven": 7, "acht": 8, "negen": 9, "tien": 10, "elf": 11,
+    "twaalf": 12, "dertien": 13, "veertien": 14, "vijftien": 15, "zestien": 16,
+    "zeventien": 17, "achttien": 18,
+}
+AGE_YEAR_PATTERNS = [
+    re.compile(rf"\b(?:kind|zoon|dochter|klein(?:kind)?|neef|nicht)\s+van\s+(\d+|{'|'.join(DUTCH_NUMBERS)})\b", re.IGNORECASE),
+    re.compile(rf"\b(\d+|{'|'.join(DUTCH_NUMBERS)})\s+jaar(?:\s+oud)?\b", re.IGNORECASE),
+    re.compile(rf"\b(?:een\s+)?(\d+|{'|'.join(DUTCH_NUMBERS)})\s*-?\s*jarige\b", re.IGNORECASE),
+]
+
+
+def _parse_age(token: str) -> int | None:
+    token = token.lower()
+    if token.isdigit():
+        return int(token)
+    return DUTCH_NUMBERS.get(token)
+
+
+def find_ages_in_years(message: str) -> list[int]:
+    """Leeftijden in jaren in het bericht (#82): "kind van 6" -> [6]."""
+    ages: list[int] = []
+    for pattern in AGE_YEAR_PATTERNS:
+        for match in pattern.finditer(message):
+            age = _parse_age(match.group(1))
+            if age is not None and 0 <= age <= 18 and age not in ages:
+                ages.append(age)
+    return ages
+
+
+def birth_years_for_age(age: int, today: date) -> list[int]:
+    """Mogelijke geboortejaren bij een leeftijd in jaren (#82).
+
+    Iemand van `age` jaar in `today.year` is geboren in today.year - age of
+    today.year - age - 1 (vóór of na de verjaardag).
+    """
+    year = today.year
+    return [year - age, year - age - 1]
+
 
 def today_in_netherlands() -> date:
     return datetime.now(TIMEZONE).date()
@@ -230,6 +271,13 @@ def build_context_lines(
         lines.append(date_line(today))
     for birth_year in find_birth_years(message, today, rules):
         lines.append(category_line(birth_year, today, rules))
+    # Leeftijd in jaren ("kind van 6") -> mogelijke geboortejaren (#82)
+    seen_birth_years = set(find_birth_years(message, today, rules))
+    for age in find_ages_in_years(message):
+        for birth_year in birth_years_for_age(age, today):
+            if birth_year not in seen_birth_years:
+                seen_birth_years.add(birth_year)
+                lines.append(category_line(birth_year, today, rules))
     lines.extend(old_designation_lines(message, rules))
     return lines
 

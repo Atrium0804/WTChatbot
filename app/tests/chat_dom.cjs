@@ -77,6 +77,11 @@ function setup(
     document, window, location: { search }, Event, crypto,
     sessionStorage,
     navigator: {}, console: { warn() {} },
+    // Fake timers:circus captain — avoids keeping the Node process alive for
+    // the 120s chat-timeout. Tests die hun timers zelf willen afvuren, kunnen
+    // setTimeout/clearTimeout/AbortController in de context overschrijven vóór
+    // runChat (zie test_typing_stages.cjs).
+    setTimeout: () => 0, clearTimeout: () => {}, AbortController,
     fetch: (url, options) => {
       requests.push({ url, options });
       return new Promise(() => {});

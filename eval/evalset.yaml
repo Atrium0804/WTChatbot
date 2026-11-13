@@ -311,6 +311,19 @@ evalset:
     verwacht_antwoord: "U12; 2015"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
+  - id: knwu-leeftijd-in-jaren-kind-van-6
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    via: router
+    vraag: "Mag een kind van 6 meedoen met nationale wedstrijden?"
+    # #82: de app zet een contextregel met geboortejaar-range (2019 of 2020),
+    # dus de agent stelt geen verhelderingsvraag naar het geboortejaar
+    verwacht_antwoord: "U7; U8; 2019; 2020; artikel 20.0.004"
+    niet_in_antwoord: "geboortejaar?; In welk jaar"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+    verwachte_agent: knwu-agent
   - id: regio-b1-mnc-starttijden
     taalniveau: B1
     categorie: regio

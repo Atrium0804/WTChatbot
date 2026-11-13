@@ -4,7 +4,6 @@ const { readFileSync } = require("node:fs");
 const { join } = require("node:path");
 const vm = require("node:vm");
 
-const debugSource = readFileSync(join(__dirname, "..", "static", "debug.js"), "utf8");
 const html = readFileSync(join(__dirname, "..", "static", "index.html"), "utf8");
 const chatSource = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 
@@ -83,7 +82,6 @@ function setup(
       return new Promise(() => {});
     },
   });
-  vm.runInContext(debugSource, context);
   return { document, window, elements, context, requests };
 }
 
@@ -91,4 +89,4 @@ function runChat(context) {
   vm.runInContext(chatSource, context);
 }
 
-module.exports = { setup, runChat, chatSource, debugSource };
+module.exports = { setup, runChat, chatSource };

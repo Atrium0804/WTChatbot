@@ -101,33 +101,6 @@ def test_composer_follows_visible_viewport_offset_during_focus(page: Page, shell
     assert_composer_visible(page)
 
 
-def test_diagnostics_distinguish_page_scroll_from_visible_viewport_offset(page: Page, shell_url: str) -> None:
-    open_shell(page, shell_url + "?debug=1")
-    page.set_viewport_size({"width": 390, "height": 448})
-    page.evaluate("""
-        () => {
-            Object.assign(visualViewport, {
-                height: 448, offsetTop: 349, pageTop: 698, pageLeft: 0
-            });
-            visualViewport.dispatchEvent(new Event("resize"));
-            window.scrollTo(0, 349);
-            visualViewport.dispatchEvent(new Event("scroll"));
-        }
-    """)
-    page.wait_for_function("""
-        () => {
-            const lines = document.querySelector("#chat-debug").textContent.split("\\n");
-            const snapshots = lines.filter(line => line.startsWith("[DEBUG-54] {"));
-            const snapshot = JSON.parse(snapshots.at(-1).slice("[DEBUG-54] ".length));
-            return snapshot.scroll?.y === 349 && snapshot.scroll.x === 0 &&
-                snapshot.viewport.top === 349 && snapshot.viewport.pageTop === 698 &&
-                snapshot.viewport.pageLeft === 0 && snapshot.bodyTop === "349px" &&
-                snapshot.body.top === 0 && snapshot.layout.width === 390 &&
-                snapshot.layout.height === 448;
-        }
-    """, timeout=3000)
-
-
 def test_composer_recovers_on_pageshow_without_a_resize_event(page: Page, shell_url: str) -> None:
     open_shell(page, shell_url)
     page.evaluate("""

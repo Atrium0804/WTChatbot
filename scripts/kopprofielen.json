@@ -1,0 +1,34 @@
+{
+  "_toelichting": "Kopprofielen voor scripts/clean_pdf.py. Sleutel = voorvoegsel van de PDF-bestandsnaam. Per kopregel: niveau, grootte (afgeronde lettergrootte in pt, alleen vette regels), optioneel patroon (regex), hoofdletters en titel_erbij (een aangrenzende vette regel in hetzelfde blok hoort bij de kop, zoals de artikeltitel in Titel 20). De eerste passende regel wint. buiten_scope: patronen voor hoofdstuktitels die met --split niet in de library komen (de bot behandelt alleen wegwielrennen en veldrijden voor de jeugd). Controleer na een documentwissel de sectie 'Gevonden koppen' in het opschoonrapport.",
+  "Nationale_Besluiten": {
+    "koppen": [
+      {"niveau": 1, "grootte": 20},
+      {"niveau": 2, "grootte": 15},
+      {"niveau": 3, "grootte": 11, "patroon": "^\\d+\\.\\d+\\.\\d+"},
+      {"niveau": 4, "grootte": 13},
+      {"niveau": 4, "grootte": 12, "patroon": "^NK\\b"},
+      {"niveau": 4, "grootte": 11, "hoofdletters": true},
+      {"niveau": 5, "grootte": 12}
+    ],
+    "weglaten": ["^INHOUDSOPGAVE$"],
+    "buiten_scope": ["^(3|4|6|7|8|9|10|11|12|13|14|15|16|17|18)\\. "]
+  },
+  "TITEL_20-Jeugdwielrennen": {
+    "koppen": [
+      {"niveau": 1, "grootte": 16},
+      {"niveau": 2, "grootte": 11, "patroon": "^20\\.\\d+\\.\\d{3}\\b", "titel_erbij": true}
+    ],
+    "weglaten": ["^INHOUDSOPGAVE$"],
+    "buiten_scope": ["^Hoofdstuk (3|4|6|20|21) :"]
+  },
+  "Handboek Veldrijden Jeugd": {
+    "koppen": [
+      {"niveau": 1, "grootte": 20},
+      {"niveau": 2, "grootte": 16},
+      {"niveau": 2, "grootte": 15},
+      {"niveau": 3, "grootte": 14},
+      {"niveau": 3, "grootte": 13}
+    ],
+    "weglaten": ["^INHOUDSOPGAVE$"]
+  }
+}

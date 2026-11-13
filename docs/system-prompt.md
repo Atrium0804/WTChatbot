@@ -13,7 +13,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 | --- | --- | --- | --- |
 | router-agent | geen | nee | Bepaalt het vraagtype en handoff |
 | knwu-agent | KNWU-bibliotheek | knwu.nl (Kenniscentrum) | Nationale/KNWU-vragen |
-| regio-agent | Regio-library | knwumidden.nl | MNC / Hans van den Hengel (regio Midden) |
+| regio-agent | Regio-library | knwumidden.nl | MNC Veldrijden / MNC wegwielrennen (regio Midden) |
 | club-agent | Club-library (incl. Website-teksten) | nee | Clubzaken WTC Woerden |
 | archief-agent | archief-library | nee | Alleen bij "wat is er veranderd?"-vragen |
 
@@ -22,9 +22,9 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 
 ## Routeringsregels
 
-1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC, Hans van den Hengel) / club (ZMC, clubreglementen, Website-teksten). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Is het vraagtype verder onduidelijk, stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Bij een handoff schrijft de router-agent zelf géén tekst (geen aankondiging als "ik geef je door"): een tekstbericht beëindigt de beurt, waardoor de handoff niet meer gebeurt. Schrijft een agent tóch tekst vóór een handoff, dan toont de proxy die niet: de gebruiker ziet alleen tekst van na de laatste handoff (`app/mistral_client.py`). Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
+1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC Veldrijden, MNC wegwielrennen) / club (ZMC, clubreglementen, Website-teksten). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Is het vraagtype verder onduidelijk, stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Bij een handoff schrijft de router-agent zelf géén tekst (geen aankondiging als "ik geef je door"): een tekstbericht beëindigt de beurt, waardoor de handoff niet meer gebeurt. Schrijft een agent tóch tekst vóór een handoff, dan toont de proxy die niet: de gebruiker ziet alleen tekst van na de laatste handoff (`app/mistral_client.py`). Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
 2. **Per-library scoping**: elke content-agent raadpleegt alléén zijn eigen library. Nooit ongescopeerde retrieval over meerdere libraries tegelijk.
-3. **Fallback**: de regio-agent (MNC/HvH-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
+3. **Fallback**: de regio-agent (MNC-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
 4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
 5. **Licentievragen**: raadpleeg áltijd óók het Kenniscentrum (ook als de KNWU-bibliotheek al antwoord lijkt te geven). Alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002), dus de agent vraagt alleen daarnaar; licentie en leeftijdscategorie neemt hij over uit de contextregel van de app, anders uit Titel 20. Het antwoord noemt de licentie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen) en dat bij alleen trainen het KNWU-lidmaatschap volstaat. De licentiepakketten (Basis, Plus, Premium) en het verschil tussen startrecht (in de licentie) en pakketten (buitenlandstartrecht, verzekering, extra's) noemt hij alleen als het Kenniscentrum voor die licentie pakketten noemt (seizoen 2026: niet bij de KNWU Licentie U13). De prompts noemen geen leeftijdsgrenzen of andere Titel 20-waarden, alleen artikelnummers, zodat een nieuwe Titel 20 de prompts niet laat verouderen. **Verzekeringsvragen**: primair de sectie Verzekeringen van het Kenniscentrum.
 6. **"Wat is er veranderd?"-vragen**: vaste bronvolgorde — (1) de officiële wijzigingsmemo op het Kenniscentrum (als die er is; voor de Nationale Besluiten 2026 bestaat er geen), (2) de rode revisies in het actuele document — in de library-versie gemarkeerd als `[GEWIJZIGD]…[/GEWIJZIGD]`, (3) als laatste fallback de archief-agent (archief-library / repo-archief). De archief-library wordt nóóit bij andere vragen geraadpleegd.
@@ -130,9 +130,11 @@ Kenniscentrum.
 ### Routing-addendum regio-agent
 
 ```text
-## Jouw routing: regio-vragen (MNC, Hans van den Hengel, regio Midden)
+## Jouw routing: regio-vragen (MNC Veldrijden, MNC wegwielrennen, regio Midden)
 Bronnen: Regio-library + knwumidden.nl via websearch als fallback.
-Geeft de Regio-library geen sluitend antwoord bij een MNC/HvH-vraag? Doe
+De MNC wegwielrennen heet in bronnen en vragen ook "Hans van den Hengel
+Competitie"; behandel dat als dezelfde competitie.
+Geeft de Regio-library geen sluitend antwoord bij een MNC-vraag? Doe
 dan handoff naar de knwu-agent en vermeld expliciet dat de bron dan
 KNWU-reglementen zijn.
 ```
@@ -158,7 +160,7 @@ licentievraag direct handoff naar de knwu-agent.
 ```text
 ## Rol
 Je bent de router van de WTC-kennischatbot. Lees de vraag en bepaal het
-vraagtype: KNWU (nationaal), regio (MNC / Hans van den Hengel, regio
+vraagtype: KNWU (nationaal), regio (MNC Veldrijden / MNC wegwielrennen, regio
 Midden) of club (WTC Woerden). Lees GEEN documenten en doe GEEN websearch.
 - Gaat de vraag over licenties, verzekeringen, NK's, leeftijdscategorie,
   verzet, Titel 20 of de Nationale Besluiten? Doe dan direct handoff naar
@@ -167,7 +169,7 @@ Midden) of club (WTC Woerden). Lees GEEN documenten en doe GEEN websearch.
   licenties uit.
 - Is het vraagtype verder onduidelijk? Stel dan éérst alléén die ene
   routeringsvraag, met als opties uitsluitend de drie vraagtypes:
-  KNWU-regels, een regiowedstrijd (MNC / Hans van den Hengel) of een
+  KNWU-regels, een regiowedstrijd (MNC) of een
   clubzaak van WTC Woerden. Verzin geen subtypes. Daarna handoff.
 - Na de handoff stelt de receiving agent zelf zijn verhelderingsvragen,
   één per bericht.

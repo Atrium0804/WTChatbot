@@ -9,9 +9,9 @@ Een nieuwe KNWU-versie raakt meer dan de bibliotheek: de app, de eval-set en de 
 
 ## 1. Document vervangen
 
-Volg [sync-libraries.md](../../../docs/how-to/sync-libraries.md), sectie "Document vervangen (seizoenwissel)", stappen 1–4 (archiveren, opgeschoonde versie, opschoonrapport, `versions.json`).
+Volg [synchroniseer-libraries.md](../../../docs/how-to/synchroniseer-libraries.md), sectie "Document vervangen (seizoenwissel)", stappen 1–4 (archiveren, opgeschoonde versie per hoofdstuk, opschoonrapport inclusief gevonden koppen, `versions.json`).
 
-**Klaar als:** de oude versie staat in `knowledge-documents/archive/`, de nieuwe in `knowledge-documents/knwu/`, elk twijfelgeval in het opschoonrapport is afgevinkt en `versions.json` noemt de nieuwe versiedatum.
+**Klaar als:** de oude versie staat in `knowledge-documents/archive/`, de nieuwe in `knowledge-documents/knwu/` (Titel 20 en Nationale Besluiten per hoofdstuk), elk twijfelgeval in het opschoonrapport is afgevinkt, de koppen in het rapport kloppen en `versions.json` noemt de nieuwe versiedatum.
 
 ## 2. Regelwijzigingen inventariseren
 
@@ -31,7 +31,7 @@ Zijn artikelnummers verschoven, zoek dan op de kop ("Categorie-indeling", "Categ
 
 ## 3. Categorie-lookup bijwerken
 
-Werk `app/knwu_categories.json` bij: `bron` (nieuwe bestandsnaam), `versie`, `leeftijdscategorieen` en `licenties`.
+Werk `app/knwu_categories.json` bij: `bron` (het Titel 20-hoofdstukbestand met art. 20.0.002 en 20.0.004, nu `... - ALGEMENE BEPALINGEN.md`), `versie`, `leeftijdscategorieen` en `licenties`.
 
 **Klaar als:** `python -m pytest tests/test_knwu_categories.py -q` groen is.
 

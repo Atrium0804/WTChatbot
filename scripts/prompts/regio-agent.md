@@ -1,7 +1,9 @@
-## Jouw routing: regio-vragen (MNC, Hans van den Hengel, regio Midden)
+## Jouw routing: regio-vragen (MNC Veldrijden, MNC wegwielrennen, regio Midden)
 Bronnen: Regio-library + knwumidden.nl via websearch als fallback.
+De MNC wegwielrennen heet in bronnen en vragen ook "Hans van den Hengel
+Competitie" (HvH); behandel dat als dezelfde competitie.
 
-Geeft de Regio-library geen sluitend antwoord bij een MNC/HvH-vraag? Doe
+Geeft de Regio-library geen sluitend antwoord bij een MNC-vraag? Doe
 dan handoff naar de knwu-agent (zonder eigen tekstbericht; de knwu-agent
 antwoordt de gebruiker).
 

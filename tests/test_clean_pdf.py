@@ -1,3 +1,4 @@
+import json
 import re
 import sys
 import tempfile
@@ -131,6 +132,81 @@ class CliTests(unittest.TestCase):
         self.assertEqual(clean_pdf.DEFAULT_REVIEW_DIR, ROOT / "knowledge-documents" / "review")
 
 
+class SplitTests(unittest.TestCase):
+    """--split: één bestand per hoofdstuk, zodat de bestandsnaam (die Mistral bij elke
+    chunk meegeeft) de discipline draagt."""
+
+    def test_split_schrijft_een_bestand_per_hoofdstuk(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            map_ = Path(tmp)
+            pdf = map_ / "NB_20260918.pdf"
+            maak_kop_pdf(pdf, [
+                ("Titelpagina", 11, False),
+                ("INHOUDSOPGAVE", 20, True),
+                ("1. ALGEMEEN ..... 4", 11, False),
+                ("1. ALGEMEEN", 20, True),
+                ("Over licenties.", 11, False),
+                ("Hoofdstuk 2 : WEG", 20, True),
+                ("2.4 NATIONALE KAMPIOENSCHAPPEN", 15, True),
+                ("Over het NK.", 11, False),
+            ])
+            profielen = map_ / "kopprofielen.json"
+            profielen.write_text(json.dumps({"NB": PROFIEL}), encoding="utf-8")
+            out = map_ / "knwu"
+
+            code = clean_pdf.main([
+                str(pdf), "--out", str(out), "--review", str(map_ / "review"),
+                "--kopprofielen", str(profielen), "--split",
+            ])
+
+            self.assertEqual(code, 0)
+            namen = sorted(p.name for p in out.iterdir())
+            self.assertEqual(namen, ["NB_20260918 - 1. ALGEMEEN.md", "NB_20260918 - Hoofdstuk 2 - WEG.md"])
+            eerste = (out / namen[0]).read_text(encoding="utf-8")
+            tweede = (out / namen[1]).read_text(encoding="utf-8")
+            self.assertTrue(eerste.startswith("Titelpagina\n\n# 1. ALGEMEEN\n"))
+            self.assertNotIn("INHOUDSOPGAVE", eerste)
+            self.assertTrue(tweede.startswith("# Hoofdstuk 2 : WEG\n"))
+            self.assertIn("## Hoofdstuk 2 : WEG › 2.4 NATIONALE KAMPIOENSCHAPPEN", tweede)
+            self.assertTrue((map_ / "review" / "NB_20260918.md").exists())
+
+    def test_zonder_split_een_bestand_met_koppen_uit_het_profiel(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            map_ = Path(tmp)
+            pdf = map_ / "NB_20260918.pdf"
+            maak_kop_pdf(pdf, [("1. ALGEMEEN", 20, True), ("Over licenties.", 11, False)])
+            profielen = map_ / "kopprofielen.json"
+            profielen.write_text(json.dumps({"NB": PROFIEL}), encoding="utf-8")
+
+            clean_pdf.main([
+                str(pdf), "--out", str(map_ / "knwu"), "--review", str(map_ / "review"),
+                "--kopprofielen", str(profielen),
+            ])
+
+            self.assertIn("# 1. ALGEMEEN\n", (map_ / "knwu" / "NB_20260918.md").read_text(encoding="utf-8"))
+
+    def test_hoofdstuk_buiten_scope_krijgt_geen_bestand_maar_staat_in_het_rapport(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            map_ = Path(tmp)
+            pdf = map_ / "NB_20260918.pdf"
+            maak_kop_pdf(pdf, [
+                ("1. ALGEMEEN", 20, True), ("Over licenties.", 11, False),
+                ("4. MOUNTAINBIKE", 20, True), ("Over het LJC.", 11, False),
+            ])
+            profielen = map_ / "kopprofielen.json"
+            profielen.write_text(json.dumps({"NB": {**PROFIEL, "buiten_scope": [r"^4\. "]}}), encoding="utf-8")
+            out = map_ / "knwu"
+
+            clean_pdf.main([
+                str(pdf), "--out", str(out), "--review", str(map_ / "review"),
+                "--kopprofielen", str(profielen), "--split",
+            ])
+
+            self.assertEqual([p.name for p in out.iterdir()], ["NB_20260918 - 1. ALGEMEEN.md"])
+            rapport = (map_ / "review" / "NB_20260918.md").read_text(encoding="utf-8")
+            self.assertIn("## Niet in de library (buiten scope)\n\n- 4. MOUNTAINBIKE", rapport)
+
+
 def maak_pdf_pagina(page: pymupdf.Page) -> None:
     page.insert_text((72, 100), "U11", fontsize=11)
     page.insert_text((120, 100), "5,78", fontsize=11, color=(1, 0, 0))
@@ -218,6 +294,172 @@ class TitelTwintigTests(unittest.TestCase):
         # Kolommen: Jongens | Meisjes | Wegwielrennen | Baanwielrennen | Veldrijden (#33)
         self.assertIn("| Jongens | Meisjes | Wegwielrennen | Baanwielrennen | Veldrijden |", self.tekst)
         self.assertIn("| U11 | U12 | 5,90 meter | 5,78 meter | vrij |", self.tekst)
+
+
+PROFIEL = {
+    "koppen": [
+        {"niveau": 1, "grootte": 20},
+        {"niveau": 2, "grootte": 15},
+        {"niveau": 3, "grootte": 11, "patroon": r"^\d+\.\d+\.\d+"},
+    ],
+    "weglaten": ["^INHOUDSOPGAVE$"],
+}
+
+
+def maak_kop_pdf(path: Path, regels: list[tuple[str, int, bool]]) -> None:
+    """Eén pagina met (tekst, lettergrootte, vet)-regels onder elkaar, elk een eigen blok."""
+    doc = pymupdf.open()
+    page = doc.new_page()
+    y = 60
+    for tekst, grootte, vet in regels:
+        page.insert_text((72, y), tekst, fontsize=grootte, fontname="hebo" if vet else "helv")
+        y += grootte + 16
+    doc.save(path)
+
+
+class KopTests(unittest.TestCase):
+    """Koppen uit de PDF-opmaak als markdown-kop met het volledige pad, zodat elke chunk
+    zijn discipline en paragraaf draagt (feedback NK weg jeugd, 2026-11-13)."""
+
+    def opschonen(self, regels: list[tuple[str, int, bool]], profiel: dict | None = PROFIEL) -> str:
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf = Path(tmp) / "doc.pdf"
+            maak_kop_pdf(pdf, regels)
+            return clean_pdf.opschonen(pdf, profiel)[0]
+
+    def test_kop_krijgt_het_pad_van_bovenliggende_koppen(self) -> None:
+        tekst = self.opschonen([
+            ("2. WEGWIELRENNEN", 20, True),
+            ("2.4 NATIONALE KAMPIOENSCHAPPEN", 15, True),
+            ("2.4.3 SELECTIEPROCEDURES NK WEG", 11, True),
+            ("De selectie gaat via de regio.", 11, False),
+        ])
+        self.assertIn("# 2. WEGWIELRENNEN\n", tekst)
+        self.assertIn("## 2. WEGWIELRENNEN › 2.4 NATIONALE KAMPIOENSCHAPPEN\n", tekst)
+        self.assertIn(
+            "### 2. WEGWIELRENNEN › 2.4 NATIONALE KAMPIOENSCHAPPEN › 2.4.3 SELECTIEPROCEDURES NK WEG\n",
+            tekst,
+        )
+        self.assertIn("De selectie gaat via de regio.", tekst)
+
+    def test_titel_en_artikelnummer_in_een_blok_worden_een_kop_met_nummer_voorop(self) -> None:
+        profiel = {"koppen": [{"niveau": 2, "grootte": 11, "patroon": r"^20\.\d+\.\d{3}$", "titel_erbij": True}]}
+        tekst = self.opschonen(
+            [("Categorie-indeling\n20.0.004", 11, True), ("De jeugd wordt onderverdeeld.", 11, False)],
+            profiel,
+        )
+        self.assertIn("## 20.0.004 Categorie-indeling\n", tekst)
+        self.assertNotIn("\nCategorie-indeling\n", tekst)
+
+    def test_zonder_titel_erbij_blijft_een_vet_tussenkopje_lopende_tekst(self) -> None:
+        profiel = {"koppen": [{"niveau": 4, "grootte": 11, "hoofdletters": True}]}
+        tekst = self.opschonen([("NK WEG MASTERS\nAanmelden", 11, True), ("Tijdig aanmelden.", 11, False)], profiel)
+        self.assertIn("#### NK WEG MASTERS\n\nAanmelden", tekst)
+
+    def test_opsomming_van_drie_vette_regels_is_geen_kop(self) -> None:
+        profiel = {"koppen": [{"niveau": 4, "grootte": 11, "patroon": "^NK "}]}
+        tekst = self.opschonen(
+            [("NK WEG JUNIOR MEN\nNK WEG U17 JONGENS\nNK WEG JEUGD", 11, True), ("Aan het NK Weg ...", 11, False)],
+            profiel,
+        )
+        self.assertNotIn("#", tekst)
+        self.assertIn("NK WEG JEUGD", tekst)
+
+    def test_hoofdletterregel_herkent_alleen_vette_regels_in_hoofdletters(self) -> None:
+        profiel = {"koppen": [{"niveau": 4, "grootte": 11, "hoofdletters": True}]}
+        tekst = self.opschonen(
+            [("JEUGD", 11, True), ("Let op: dit is nadruk.", 11, True), ("20260921", 11, True), ("Gewone tekst.", 11, False)],
+            profiel,
+        )
+        self.assertIn("#### JEUGD\n", tekst)
+        self.assertNotIn("# Let op", tekst)
+        self.assertNotIn("# 20260921", tekst)
+
+    def test_zinsrest_en_lange_zin_in_vet_zijn_geen_kop(self) -> None:
+        profiel = {"koppen": [{"niveau": 5, "grootte": 12}]}
+        lange_zin = "Na het NK veldrijden zijn er 6 weken puntloze wedstrijden, deze tellen niet mee voor de"
+        tekst = self.opschonen(
+            [("Landelijk Jeugd Toernooi(LJT)", 12, True), ("deelnemen in dit weekend", 12, True),
+             (lange_zin, 12, True), ("Gewone tekst.", 11, False)],
+            profiel,
+        )
+        self.assertIn("##### Landelijk Jeugd Toernooi(LJT)\n", tekst)
+        self.assertNotIn("# deelnemen", tekst)
+        self.assertNotIn("# Na het NK", tekst)
+
+    def test_inhoudsopgave_valt_weg_tot_de_volgende_kop_van_hetzelfde_niveau(self) -> None:
+        tekst = self.opschonen([
+            ("Titelpagina", 11, False),
+            ("INHOUDSOPGAVE", 20, True),
+            ("1.1 KALENDERS .......... 4", 15, True),
+            ("2. WEGWIELRENNEN .......... 15", 11, False),
+            ("2. WEGWIELRENNEN", 20, True),
+            ("Inhoud van het hoofdstuk.", 11, False),
+        ])
+        self.assertNotIn("INHOUDSOPGAVE", tekst)
+        self.assertNotIn("..........", tekst)
+        self.assertIn("Titelpagina", tekst)
+        self.assertIn("# 2. WEGWIELRENNEN\n\nInhoud van het hoofdstuk.", tekst)
+
+    def rapport(self, regels: list[tuple[str, int, bool]], profiel: dict | None = PROFIEL) -> str:
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf = Path(tmp) / "doc.pdf"
+            maak_kop_pdf(pdf, regels)
+            return clean_pdf.opschonen(pdf, profiel)[1]
+
+    def test_rapport_toont_gevonden_koppen_ingesprongen_per_niveau(self) -> None:
+        rapport = self.rapport([("2. WEGWIELRENNEN", 20, True), ("2.4 NATIONALE KAMPIOENSCHAPPEN", 15, True)])
+        koppen = rapport.split("## Gevonden koppen (2)")[1]
+        self.assertIn("- p1 2. WEGWIELRENNEN\n  - p1 2.4 NATIONALE KAMPIOENSCHAPPEN", koppen)
+
+    def test_profiel_zonder_gevonden_koppen_is_een_twijfelgeval(self) -> None:
+        rapport = self.rapport([("Alleen gewone tekst.", 11, False)])
+        twijfels = rapport.split("## Weggehaalde stukken")[0]
+        self.assertIn("geen enkele kop gevonden", twijfels)
+
+    def test_zonder_profiel_geen_koppensectie(self) -> None:
+        self.assertNotIn("Gevonden koppen", self.rapport([("2. WEGWIELRENNEN", 20, True)], profiel=None))
+
+
+def kop_boven(tekst: str, fragment: str) -> str:
+    """De dichtstbijzijnde markdown-kop vóór `fragment`."""
+    voor = tekst[: tekst.index(fragment)]
+    return [r for r in voor.splitlines() if r.startswith("#")][-1]
+
+
+class EchteKoppenTests(unittest.TestCase):
+    """Koppen in de echte KNWU-PDF's met scripts/kopprofielen.json (feedback NK weg jeugd)."""
+
+    @staticmethod
+    def opgeschoond(patroon: str) -> str:
+        kandidaten = sorted((ROOT / "knowledge-documents").glob(f"*/{patroon}*.pdf"))
+        if not kandidaten:
+            raise unittest.SkipTest(f"{patroon}.pdf niet lokaal aanwezig")
+        profiel = clean_pdf.kopprofiel(kandidaten[0].stem, clean_pdf.DEFAULT_KOPPROFIELEN)
+        tekst = clean_pdf.opschonen(kandidaten[0], profiel)[0]
+        return tekst.replace(GEW, "").replace(GEW_SLUIT, "")
+
+    def test_nationale_besluiten(self) -> None:
+        tekst = self.opgeschoond("Nationale_Besluiten_20260918")
+        ljt = kop_boven(tekst, "Het LJT is onderdeel van de selectieprocedure")
+        self.assertIn("2. WEGWIELRENNEN", ljt)
+        self.assertIn("› NK Weg Jeugd ›", ljt)
+        self.assertTrue(ljt.endswith("Landelijk Jeugd Toernooi(LJT)"), ljt)
+        mtb = kop_boven(tekst, "Voor deelname aan het NK mountainbike jeugd")
+        self.assertIn("4. MOUNTAINBIKE", mtb)
+        self.assertTrue(mtb.endswith("› JEUGD"), mtb)
+        self.assertIn("2.4.1 ALGEMEEN", kop_boven(tekst, "Aan het NK Weg kan alleen worden deelgenomen"))
+        self.assertNotIn("INHOUDSOPGAVE", tekst)
+
+    def test_titel_twintig(self) -> None:
+        tekst = self.opgeschoond("TITEL_20-Jeugdwielrennen_20260921")
+        nk = kop_boven(tekst, "Uitnodiging tot deelname aan de nationale kampioenschappen")
+        self.assertIn("Hoofdstuk 2 : WEDSTRIJDEN OP DE WEG", nk)
+        self.assertTrue(nk.endswith("20.2.008 NK Weg Jeugd"), nk)
+        categorie = kop_boven(tekst, "De categorie jeugd wordt onderverdeeld")
+        self.assertIn("ALGEMENE BEPALINGEN", categorie)
+        self.assertTrue(categorie.endswith("20.0.004 Categorie-indeling"), categorie)
+        self.assertNotIn("INHOUDSOPGAVE", tekst)
 
 
 class HandboekRapportTests(unittest.TestCase):

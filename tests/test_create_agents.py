@@ -379,6 +379,9 @@ class ProductieConfigTests(unittest.TestCase):
         for name in ("knwu-agent", "regio-agent", "club-agent"):
             self.assertIn("handoff naar de router-agent", " ".join(creates[name]["instructions"].split()))
         self.assertIn("nooit terug", " ".join(creates["router-agent"]["instructions"].split()))
+        router_prompt = " ".join(creates["router-agent"]["instructions"].split())
+        self.assertIn("ZMC", router_prompt)
+        self.assertIn("handoff naar de club-agent", router_prompt)
 
     def test_knwu_agent_noemt_verzet_in_scope(self) -> None:
         # reviewronde 1 item 2: "met welk verzet moet ik rijden?" werd door de

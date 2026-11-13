@@ -36,7 +36,7 @@
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 18 knwu / 5 regio / 5 club (28 vragen, 4 via de router) + 4 extra
+# Verdeling: 19 knwu / 5 regio / 5 club (29 vragen, 4 via de router) + 4 extra
 # B1-vragen onderaan (taalniveau B1, zonder bron-check). Harde 100%-gate op type
 # strikethrough (min. 3) en websearch (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
@@ -232,6 +232,18 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl"
     versiedatum: "2026-09-21"
     verwachte_agent: knwu-agent
+  - id: knwu-nk-weg-jeugd-kwalificatie
+    taalniveau: B2
+    categorie: knwu
+    type: standaard
+    vraag: "Hoe kwalificeert mijn zoon (geboren in 2015) zich voor het NK wegwielrennen?"
+    # feedback 2026-11-13: het LJT en de eis van minimaal 2 wedstrijden (NB 2.4.3, NK Weg
+    # Jeugd) ontbraken, en het LJC-klassement van mountainbike werd ingemengd. De uitkomst
+    # wisselt per run: draai deze vraag bij twijfel een paar keer.
+    verwacht_antwoord: "selectieprocedure; LJT; 2 wedstrijden"
+    niet_in_antwoord: "LJC"
+    bron: "Nationale_Besluiten_20260918"
+    versiedatum: "2026-09-18"
 
   # --- Regio Midden (5) ---
   - id: regio-mnc-veldrijden-starttijden

@@ -1,5 +1,5 @@
 {
-  "model": "mistral-medium-latest",
+  "model": "mistral-large-latest",
   "completion_args": {
     "temperature": 0,
     "top_p": 1,
@@ -17,7 +17,7 @@
     },
     {
       "name": "regio-agent",
-      "description": "Regio-agent: MNC / Hans van den Hengel-vragen regio Midden, fallback naar knwu-agent",
+      "description": "Regio-agent: MNC Veldrijden / MNC wegwielrennen (ook Hans van den Hengel Competitie), regio Midden, fallback naar knwu-agent",
       "prompt_files": ["_shared.md", "regio-agent.md"],
       "library": "regio",
       "websearch": true,

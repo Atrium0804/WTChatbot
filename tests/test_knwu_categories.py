@@ -40,13 +40,15 @@ def parse_licences(document: str) -> list[dict]:
 class TestKnwuCategoriesMatchTitel20(unittest.TestCase):
     def setUp(self):
         self.rules = json.loads(RULES_PATH.read_text(encoding="utf-8"))
-        documents = sorted(KNWU_DIR.glob("TITEL_20*.md"))
-        self.assertEqual(len(documents), 1, f"verwacht precies één Titel 20 in {KNWU_DIR}")
-        self.document_path = documents[0]
+        # Titel 20 staat per hoofdstuk in de bibliotheek; art. 20.0.002 en 20.0.004
+        # staan in het hoofdstuk ALGEMENE BEPALINGEN.
+        self.document_path = KNWU_DIR / self.rules["bron"]
+        self.assertTrue(self.document_path.exists(), f"bron {self.rules['bron']} niet gevonden in {KNWU_DIR}")
         self.document = strip_markers(self.document_path.read_text(encoding="utf-8"))
 
     def test_source_is_current_library_version(self):
-        self.assertEqual(Path(self.rules["bron"]).stem, self.document_path.stem)
+        versies = {p.name.split(" - ")[0] for p in KNWU_DIR.glob("TITEL_20*.md")}
+        self.assertEqual(versies, {self.document_path.name.split(" - ")[0]}, f"verwacht één Titel 20-versie in {KNWU_DIR}")
 
     def test_age_categories_match(self):
         self.assertEqual(

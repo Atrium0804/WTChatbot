@@ -6,7 +6,7 @@ Versie 3.0: september 2026
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 1 VAN 22
 
-VOORAF
+# VOORAF
 
 Het voor u liggende handboek is enerzijds bedoeld als hulpmiddel bij de organisatie van een jeugd veldrit
 wedstrijd, anderzijds is dit handboek van belang voor deelnemers aan deze wedstrijden. In dit handboek
@@ -30,147 +30,7 @@ KNWU Commissie Offroad, Jury & Reglementen
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 2 VAN 22
 
-INHOUDSOPGAVE
-
-VOORAF ................................................................................................................................................ 1
-
-VELDRIJDEN LANDELIJKE JEUGD WEDSTRIJDEN .................................................................................. 4
-
-KALENDER 2026-2027.............................................................................................................................................. 4
-
-DE INSCHRIJVING ................................................................................................................................. 4
-
-CATEGORIE-INDELING 2026-2027 ........................................................................................................................... 4
-
-LICENTIE ................................................................................................................................................................... 4
-
-INSCHRIJVEN ............................................................................................................................................................ 5
-
-INSCHRIJFGELD ........................................................................................................................................................ 5
-
-INSCHRIJFPROCEDURE ............................................................................................................................................. 5
-
-BIJSCHRIJVEN ........................................................................................................................................................... 5
-
-PUBLICATIE DEELNEMERSLIJST ................................................................................................................................ 5
-
-AFMELDEN ............................................................................................................................................................... 5
-
-RUGNUMMERS ........................................................................................................................................................ 5
-
-TRANSPONDER ........................................................................................................................................................ 6
-
-HET WEDSTRIJDVERLOOP .................................................................................................................... 6
-
-HELMPLICHT ............................................................................................................................................................ 6
-
-MATERIAAL- EN FIETSCONTROLE ............................................................................................................................ 6
-
-VERZETCONTROLE ................................................................................................................................................... 7
-
-STARTOPSTELLING ................................................................................................................................................... 7
-
-DE START ................................................................................................................................................................. 7
-
-MATERIAALZONE ..................................................................................................................................................... 7
-
-VERZORGING EN TECHNISCHE ASSISTENTIE ............................................................................................................ 7
-
-WEDSTRIJDDUUR ..................................................................................................................................................... 8
-
-PRIJZEN, HULDIGINGEN EN KLASSEMENT ........................................................................................... 9
-
-PRIJZEN DAGUITSLAG .............................................................................................................................................. 9
-
-HULDIGING .............................................................................................................................................................. 9
-
-REGELMATIGHEIDSKLASSEMENT ............................................................................................................................ 9
-
-STARTVOLGORDE ........................................................................................... FOUT! BLADWIJZER NIET GEDEFINIEERD.
-
-NEDERLANDS KAMPIOENSCHAP ........................................................................................................ 10
-
-STARTVOLGORDE NK ................................................................................................................................................... 11
-
-DE WEDSTRIJDAANVRAAG ................................................................................................................. 11
-
-ALGEMEEN ............................................................................................................................................................. 11
-
-REGISTRATIEPROCEDURE KALENDER .................................................................................................................... 11
-
-HET PARCOURS .................................................................................................................................. 11
-
-EISEN AAN HET PARCOURS .................................................................................................................................... 11
-
-DE STARTLOCATIE .................................................................................................................................................. 13
-
-STARTVAK/OPSTELLING ............................................................................................................................................... 14
-
-HANDBOEK JEUGD VELDRIJDEN 2026-2027
-3 VAN 22
-
-DE FINISHLOCATIE ................................................................................................................................................. 14
-
-PARCOURSAFBAKENING ........................................................................................................................................ 14
-
-VEILIGE AFBAKENINGEN ........................................................................................................................................ 14
-
-PARCOURSCONTROLE ........................................................................................................................................... 14
-
-PARCOURSWACHT ................................................................................................................................................. 15
-
-PARCOURSWACHT “START” .................................................................................................................................. 15
-
-PUBLIEKSVRIENDELIJKHEID ................................................................................................................................... 15
-
-DE OFFICIAL ........................................................................................................................................ 15
-
-OFFICIAL OPSTELLING ............................................................................................................................................ 15
-
-SPEAKER(S) ............................................................................................................................................................ 16
-
-OFFICIALVERGOEDING........................................................................................................................................... 16
-
-TAKEN EN VERANTWOORDELIJKHEID VAN HET OFFICIALSTEAM .......................................................................... 16
-
-INFORMEREN VAN DE OFFICIALS .......................................................................................................................... 16
-
-OFFICIALSVERGADERING ....................................................................................................................................... 16
-
-OFFICIALWAGEN/ -TENT ........................................................................................................................................ 16
-
-VERZORGING ......................................................................................................................................................... 17
-
-UITSLAGVERWERKING EN PROTESTEN .................................................................................................................. 17
-
-DIVERSEN ........................................................................................................................................... 18
-
-DE ORGANISATOR .................................................................................................................................................. 18
-
-INSCHRIJVINGEN/ UITSLAGVERWERKING ............................................................................................................. 18
-
-VRIJWILLIGERS VAN DE ORGANISATIE EN VRIJWILLIGERSLIJST/ EHBO ................................................................. 18
-
-ONSPORTIVITEIT .................................................................................................................................................... 18
-
-GEBRUIK BEELTENIS DEELNEMERS/BEGELEIDERS ................................................................................................. 18
-
-KLEDING ................................................................................................................................................................. 18
-
-SLOTBEPALING ................................................................................................................................... 18
-
-BIJLAGES ............................................................................................................................................. 19
-
-BIJLAGE 1: INFORMATIE EN WEDSTRIJDDATA ....................................................................................................... 19
-
-BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE ................................................................................................ 20
-
-BIJLAGE 3: GEDRAGSCODE .................................................................................................................................... 22
-
-HANDBOEK JEUGD VELDRIJDEN 2026-2027
-4 VAN 22
-
-VELDRIJDEN LANDELIJKE JEUGD WEDSTRIJDEN
+# VELDRIJDEN LANDELIJKE JEUGD WEDSTRIJDEN
 
 De nationale veldrit wedstrijden is een initiatief van de KNWU om de doorstroom van regionale competitie
 naar de nationale competitie voor de jeugd te bevorderen. De nationale wedstrijden zullen zowel qua
@@ -179,13 +39,14 @@ De basis voor de wedstrijden draait om fietsen. Hiermee bedoelen we dat een comp
 wanneer er op een laagdrempelige manier voor alle losse jeugdcategorieën volgens de reglementen
 afgewerkte wedstrijd is gehouden.
 
-KALENDER 2026-2027
+## VELDRIJDEN LANDELIJKE JEUGD WEDSTRIJDEN › KALENDER 2026-2027
+
 De kalender van het veldritseizoen 2026-2027 kun je terug vinden op:
 https://kenniscentrum.knwu.nl/competities4/kalender-veldrijden-2026-2027
 
-DE INSCHRIJVING
+# DE INSCHRIJVING
 
-[GEWIJZIGD]CATEGORIE-INDELING 2026-2027[/GEWIJZIGD]
+## DE INSCHRIJVING › [GEWIJZIGD]CATEGORIE-INDELING 2026-2027[/GEWIJZIGD]
 
 | [GEWIJZIGD]CAT[/GEWIJZIGD] | [GEWIJZIGD]Jongens geboren in 2019 en meisjes geboren in 2018 en 2019[/GEWIJZIGD] |
 | --- | --- |
@@ -214,7 +75,8 @@ De categorie, waartoe de licentiehouder voor baan- en veldritwedstrijden op de n
 kalender het gehele baan- en veldritseizoen (september – maart) behoort, is de categorie waarop hij/zij
 vanaf 1 januari in dat seizoen reglementair behoort.
 
-LICENTIE
+## DE INSCHRIJVING › LICENTIE
+
 Om deel te kunnen nemen aan de veldrit wedstrijden dien je een KNWU licentie U13/U17 te hebben.
 
 Let op! Een licentie is geldig gedurende een kalender jaar. Zorg ervoor dat je vóór januari van het
@@ -225,21 +87,24 @@ HANDBOEK JEUGD VELDRIJDEN 2026-2027
 
 Meer informatie over het aanvragen van een licentie vind je op de website van de KNWU.
 
-INSCHRIJVEN
+## DE INSCHRIJVING › INSCHRIJVEN
+
 De inschrijfperiode staat standaard op 7 weken voorafgaande de wedstrijd open via mijnknwu. De
 inschrijving sluit 5 dagen/120 uur voor aanvangstijdstip desbetreffende categorie (behalve als anders
 aangegeven).
 
-INSCHRIJFGELD
+## DE INSCHRIJVING › INSCHRIJFGELD
+
 Het inschrijfgeld wordt door de organisatie bepaald en is verwerkt in de inschrijfmodule
 Indien er geen inschrijfgeld betaald hoeft te worden, zal het ook hier zichtbaar zijn. Voor een jeugdveldrit
 geldt een maximaal bedrag van €5,= per wedstrijd.
 
-INSCHRIJFPROCEDURE
+## DE INSCHRIJVING › INSCHRIJFPROCEDURE
+
 De wedstrijden staan open voor KNWU Jeugd wedstrijdlicentiehouders of leden van een buitenlandse UCI
 erkende federatie met een gelijkwaardige wedstrijdlicentie.
 
-BIJSCHRIJVEN
+## DE INSCHRIJVING › BIJSCHRIJVEN
 
 
 Bijschrijven na sluiting inschrijving via mijnknwu is mogelijk tot uiterlijk 45 minuten voor de start van
@@ -249,24 +114,28 @@ Als je je hebt bijgeschreven start je achteraan
 
 [GEWIJZIGD]Voor bijschrijven wordt een bedrag van €5,= betaald.[/GEWIJZIGD]
 
-PUBLICATIE DEELNEMERSLIJST
+## DE INSCHRIJVING › PUBLICATIE DEELNEMERSLIJST
+
 De deelnemerslijsten zijn te vinden op MijnKNWU onder de desbetreffende wedstrijden.
 
-AFMELDEN
+## DE INSCHRIJVING › AFMELDEN
+
 Afmelden dient, tot sluiting van de inschrijving, in het inschrijfsysteem zelf te gebeuren. Daarna kan door
 middel van een e-mail naar desbetreffende organisatie worden afgemeld.
 
 Let Op: Niet afmelden kan tot sancties leiden: Strafpunten, achteraan starten bij een volgende
 wedstrijd, e.a. vastgesteld door de juryvoorzitter in overleg met de verantwoordelijke organisator.
 
-RUGNUMMERS
+## DE INSCHRIJVING › RUGNUMMERS
+
 Het toekennen van rugnummers geschiedt door de organisatie. Het rugnummer dient tenminste 45min
 voor aanvang van de wedstrijd opgehaald te worden.
 
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 6 VAN 22
 
-TRANSPONDER
+## DE INSCHRIJVING › TRANSPONDER
+
 Bij de jeugd veldrit wedstrijden wordt er gebruik gemaakt van een chipmeting (transponder). Transponders
 kunnen worden gekocht via de website van MyLaps. Wanneer je niet in bezit bent van een werkende
 transponder kun je deze huren bij de wedstrijd. De kosten hiervoor zijn €10,-
@@ -278,15 +147,17 @@ transponder kunnen er betreffende de uitslag en/of registratie geen rechten word
 
 Meer informatie over transponders is te vinden op de website van de KNWU.
 
-HET WEDSTRIJDVERLOOP
+# HET WEDSTRIJDVERLOOP
 
-HELMPLICHT
+## HET WEDSTRIJDVERLOOP › HELMPLICHT
+
 Er geldt een helmplicht voor iedereen die zich tijdens de wedstrijd en/ of het inrijden of uitrijden fietsend op
 het parcours begeeft. Mocht men zich niet houden aan deze regel dan volgt er direct een sanctie doordat de
 renner achteraan het deelnemersveld moet starten. In het slechtste geval kan de officialsvoorzitter een
 startverbod opleggen.
 
-MATERIAAL- EN FIETSCONTROLE
+## HET WEDSTRIJDVERLOOP › MATERIAAL- EN FIETSCONTROLE
+
 Voor aanvang van de wedstrijd kan er materiaalcontrole plaatsvinden. Dit is ter beoordeling van de officials
 of organisatie. Materiaalcontrole kan ook na afloop van de wedstrijd plaatsvinden.
 Het is niet toegestaan om deel te nemen met mountainbikes
@@ -303,10 +174,12 @@ Bij afkeuring krijgt de deelnemer in overleg met de officials, in principe de ka
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 7 VAN 22
 
-VERZETCONTROLE
+## HET WEDSTRIJDVERLOOP › VERZETCONTROLE
+
 [GEWIJZIGD]De verzetcontrole is vanaf seizoen 2026-2027 afgeschaft.[/GEWIJZIGD]
 
-STARTOPSTELLING
+## HET WEDSTRIJDVERLOOP › STARTOPSTELLING
+
 De startvolgorde voor de wedstrijden in 2026-2027 als volgt plaats:
 
 -
@@ -318,7 +191,8 @@ Na 1 december, wordt de startopstelling bepaald door het regelmatigheidsklasseme
 Jeugd 2026-2027. Voor de startopstelling geldt dat beste resultaten van maximaal 10 verreden
 wedstrijden in het regelmatigheidsklassement meetelt.
 
-DE START
+## HET WEDSTRIJDVERLOOP › DE START
+
 Alle renners worden verzocht 15 minuten voor de start van de wedstrijd bij het startvak aanwezig zijn en in
 visgraat op te stellen. De official zal de renners 1 voor 1 oproepen naar de startlijn. Het startsignaal wordt
 gegeven door middel van een duidelijk fluitsignaal of startschot. De starter roept “start binnen 1 minuut”,
@@ -329,11 +203,12 @@ In geval van een calamiteit of valpartij binnen het startvak, zal de start, alle
 worden afgebroken door een daartoe aangestelde parcourswacht of officials.
 (Zie ook onder “Startvak” en “Parcourswachten”)
 
-MATERIAALZONE
+## HET WEDSTRIJDVERLOOP › MATERIAALZONE
+
 Fietswissel bij de jeugd is niet toegestaan.
 Er mag alleen in de materiaalzone het defect verholpen worden, of van wiel gewisseld worden.
 
-VERZORGING EN TECHNISCHE ASSISTENTIE
+## HET WEDSTRIJDVERLOOP › VERZORGING EN TECHNISCHE ASSISTENTIE
 
 
 Langs het gehele parcours is technische assistentie, door omstanders, voor kleine reparaties (b.v.
@@ -358,7 +233,8 @@ technische assistentiezone(s)
 Categorie 1 t/m 4 mogen geen bidons op de fiets hebben, deze kunnen wel aangegeven worden in
 de verzorgings-, voedings-, technische assistentiezone(s).
 
-WEDSTRIJDDUUR
+## HET WEDSTRIJDVERLOOP › WEDSTRIJDDUUR
+
 Het is voor de beleving van de jeugd van groot belang dat eenieder een leuke wedstrijd kan fietsen van
 voldoende omvang. Vanuit veiligheid en medische overwegingen is een te grote overschrijding van de bij elke
 categorie horende wedstrijdduur echter niet wenselijk. Op basis van de in dit handboek opgenomen
@@ -378,13 +254,15 @@ ronde deelnemers met een te grote achterstand uit de wedstrijd te nemen (zij wor
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 9 VAN 22
 
-PRIJZEN, HULDIGINGEN EN KLASSEMENT
+# PRIJZEN, HULDIGINGEN EN KLASSEMENT
 
-PRIJZEN DAGUITSLAG
+## PRIJZEN, HULDIGINGEN EN KLASSEMENT › PRIJZEN DAGUITSLAG
+
 Voor de daguitslag geldt dat er één daguitslag is. De dagprijzen dienen in de vorm van een beker of medaille
 te zijn voor (tenminste) de eerste drie jongens en eerste drie meisjes.
 
-HULDIGING
+## PRIJZEN, HULDIGINGEN EN KLASSEMENT › HULDIGING
+
 Als een prijswinnaar (minimaal de eerste drie jongens en eerste drie meisjes), zonder medeweten van de
 organisatie én/of zonder geldige reden, afwezig is tijdens de huldiging zal de prijs/herinnering niet worden
 uitgereikt of nagestuurd. De uitslag van de betreffende afwezige deelnemer blijft wel gehandhaafd.
@@ -393,7 +271,8 @@ Tip aan de organisatie: Besteedt voldoende aandacht aan de huldiging. Probeer er
 maken, zodat er een goede sfeer en beleving ontstaat. Zowel bij de deelnemers (prijswinnaars) als
 publiek.
 
-REGELMATIGHEIDSKLASSEMENT
+## PRIJZEN, HULDIGINGEN EN KLASSEMENT › REGELMATIGHEIDSKLASSEMENT
+
 Het regelmatigheidsklassement veldrijden wordt bijgehouden op de website www.knwu.nl en in MijnKNWU.
 Voor het regelmatigheidsklassement veldrijden tellen alle nationale jeugd veldrit wedstrijden mee in het
 seizoen 2026-2027 behalve het NK . De KNWU behoudt zich echter het recht voor om, in overleg met de
@@ -462,7 +341,7 @@ aan het NK.
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 10 VAN 22
 
-NEDERLANDS KAMPIOENSCHAP
+# NEDERLANDS KAMPIOENSCHAP
 
 Bij de jeugd zal voor zowel jongens als meisjes een apart nationaal kampioenschap worden verreden
 volgens de categorie waarin men uitkomt. Ingeval het aantal deelnemers dermate weinig is, dan kan een
@@ -480,7 +359,8 @@ Om deel te nemen aan het NK dient men minimaal 1 nationale wedstrijd gereden heb
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 11 VAN 22
 
-STARTVOLGORDE NK
+### NEDERLANDS KAMPIOENSCHAP › STARTVOLGORDE NK
+
 De startvolgorde wordt bepaald door het regelmatigheidsklassement van het jeugd veldrijden. Zie het
 kopje “Regelmatigheidsklassement”.
 
@@ -493,9 +373,10 @@ Het Nederlands Kampioenschap is geen onderdeel van het klassement. Het Nederland
 wordt georganiseerd door een (toegewezen) organisatie in samenwerking met de KNWU. De
 inschrijfprocedure voor het NK veldrijden jeugd zal door KNWU vindt plaats via mijnknwu.
 
-DE WEDSTRIJDAANVRAAG
+# DE WEDSTRIJDAANVRAAG
 
-ALGEMEEN
+## DE WEDSTRIJDAANVRAAG › ALGEMEEN
+
 Om een evenement te kunnen organiseren, is het van belang dat je als organisatie zelfstandig vooraf de
 vergunning regelt via de provincie, gemeente en/of Staatsbosbeheer en dat je over een geschikt parcours
 beschikt.
@@ -508,7 +389,8 @@ Meer specifieke veldrit richtlijnen staan vermeld in het veldrit reglement Titel
 Een nieuw parcours dient altijd eerst door de coördinator offroad en de regio wedstrijdcoördinator te worden
 gekeurd. Hier is de regio wedstrijdcoördinator eindverantwoordelijke.
 
-REGISTRATIEPROCEDURE KALENDER
+## DE WEDSTRIJDAANVRAAG › REGISTRATIEPROCEDURE KALENDER
+
 Organisatoren die hun wedstrijd op de nationale veldrit kalender willen hebben, dienen deze vóór de
 deadline aan te melden op mijnknwu. De oproep voor de kalender wordt gestuurd vanuit
 wedstrijden@knwu.nl. In deze e-mail vind je meer informatie de deadline voor het aanmelden van de
@@ -519,9 +401,10 @@ Ben je nieuw als organisatie, stuur dan een e-mail naar wedstrijden@knwu.nl.
 Let op: Naast de voorkeursdatum moet er ook een alternatieve datum op worden gegeven
 (uitwijkdatum).
 
-HET PARCOURS
+# HET PARCOURS
 
-EISEN AAN HET PARCOURS
+## HET PARCOURS › EISEN AAN HET PARCOURS
+
 Bij de bouw van een parcours dient men er rekening te houden dat elk parcours betreffende lengte en
 intensiteit/ moeilijkheidsgraad zo is ingericht dat de verschillende categorieën het parcours(ronden) binnen
 een bepaalde tijd kunnen afleggen. In het onderstaande overzicht vind je de indicatie van de wedstrijdduur
@@ -587,7 +470,8 @@ gevolg. Indien men hindernissen in het parcours aanwezig laat zijn dienen deze v
 de wedstrijdcoördinator en/of op de wedstrijddag bekeken te worden door de juryvoorzitter en/of (indien
 ook aanwezig) veldritcoördinator of aanwezig offroad commissielid.
 
-DE STARTLOCATIE
+## HET PARCOURS › DE STARTLOCATIE
+
 Vanwege de langere startprocedure dient de startlocatie afzonderlijk van de finish gecreëerd te worden en
 zich niet op het parcours te bevinden. Zo kan het opstellen van de renners al worden gedaan tijdens de finish
 van de voorgaande categorie.
@@ -600,23 +484,26 @@ startlijn zitten.[/GEWIJZIGD]
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 14 VAN 22
 
-STARTVAK/OPSTELLING
+### HET PARCOURS › DE STARTLOCATIE › STARTVAK/OPSTELLING
+
 De start vindt plaats vanuit een startvak. Een startvak dient minimaal 5 meter breed te zijn, zodat er
 minimaal 5 renners op een rij kunnen staan. In het startvak worden om de 1,5 meter startlijnen
 aangebracht waarachter de deelnemers opgesteld worden. De official bepaald hoeveel renners er naast
 elkaar staan. Dit is afhankelijk van de breedte van het startvak. Er wordt opgesteld op volgorde van de
 loting tot en met 1 december, of na 1 december het regelmatigheidsklassement.
 
-DE FINISHLOCATIE
+## HET PARCOURS › DE FINISHLOCATIE
+
 De finish moet liggen aan een rechte, vlakke of stijgende weg en moet vanaf ca. 50 meter voor tot ca. 20
 meter na de finish ca. 4 meter breed zijn. Vanuit de officialswagen/ -tent moeten de officials de deelnemers
 zowel kunnen zien aankomen als kunnen volgen. Direct na de finish moeten deelnemers snel het parcours
 kunnen verlaten, zodat deelnemers niet direct na de finish stil komen te staan.
 
-PARCOURSAFBAKENING
+## HET PARCOURS › PARCOURSAFBAKENING
+
 Het is belangrijk dat er een veilige en duidelijke afbakening is van het parcours.
 
-VEILIGE AFBAKENINGEN
+## HET PARCOURS › VEILIGE AFBAKENINGEN
 
 
 Denk aan de veiligheid van de deelnemers door gebruik van ‘veilige’ afbakeningen, het omzeilen van
@@ -626,7 +513,8 @@ Daarnaast is een goede bereikbaarheid van het parcours voor de diverse hulpdiens
 Afzetpaaltjes langs het parcours dienen minimaal een hoogte te hebben van 80 cm. en mogen geen
 scherpe uitsteeksels of een platte kop hebben. Het advies is aluminium of pvc met een ronde krul.
 
-PARCOURSCONTROLE
+## HET PARCOURS › PARCOURSCONTROLE
+
 Het parcours wordt vóór de wedstrijd geïnspecteerd door de officialvoorzitter. Bespreek vooraf met de
 officialvoorzitter wanneer dit plaatsvindt. Mochten er wijzigingen aangebracht moeten worden dat je hier
 als organisatie nog tijd voor hebt. De parcoursinspectie gebeurt op de wedstrijddag.
@@ -634,7 +522,8 @@ als organisatie nog tijd voor hebt. De parcoursinspectie gebeurt op de wedstrijd
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 15 VAN 22
 
-PARCOURSWACHT
+## HET PARCOURS › PARCOURSWACHT
+
 De organisatie dient te zorgen voor ruim voldoende en duidelijke herkenbare parcourswachten. Een
 parcourswacht is verantwoordelijk voor:
 
@@ -658,12 +547,14 @@ buiten de daarvoor aangewezen locatie(s)
 Controleren of deelnemers zich houden aan het verbod op inrijden en parcoursverkenning buiten
 de daarvoor aangewezen tijden.
 
-PARCOURSWACHT “START”
+## HET PARCOURS › PARCOURSWACHT “START”
+
 In geval van een calamiteit of valpartij binnen het startvak zal de start, alleen op aanwijzing van de officials,
 worden afgebroken door een daartoe aangestelde parcourswacht of official. De official beslist of er een
 herstart plaats zal vinden of dat de wedstrijd beëindigd wordt.
 
-PUBLIEKSVRIENDELIJKHEID
+## HET PARCOURS › PUBLIEKSVRIENDELIJKHEID
+
 Veldrijden wordt vaak gezien als een publieksonvriendelijke sport, waarbij veel wordt verwezen naar de
 gemiddeld lange ronden en de hoge rondetijden. Om de aantrekkelijkheid van het veldrijden voor het publiek
 te verhogen zijn echter een aantal dingen mogelijk.
@@ -681,9 +572,10 @@ zal men dat als laatste onthouden en veelal minder enthousiast op het evenement 
 het ergste geval zal men zelfs besluiten een volgende keer niet meer af te reizen naar uw evenement
 of dat van een collega organisator.
 
-DE OFFICIAL
+# DE OFFICIAL
 
-OFFICIAL OPSTELLING
+## DE OFFICIAL › OFFICIAL OPSTELLING
+
 De officials worden opgesteld door de officialcoördinator van de regio waar de wedstrijd gehouden wordt.
 Het officialteam dient bij voorkeur te bestaan uit max 5 leden (voorzitter, aankomstrechter, 1 MYLAPS
 operator, 1 wedstrijdcommissaris en een speaker) en uit ten minste 3 officiële KNWU-juryleden. Het
@@ -701,28 +593,33 @@ eventuele wensen bij de wedstrijdcoördinator neerlegt, eventueel door ook voorl
 te sturen. Dit om problemen op de wedstrijddag te voorkomen en duidelijkheid over en weer te
 scheppen!
 
-SPEAKER(S)
+## DE OFFICIAL › SPEAKER(S)
+
 De Speaker wordt door de officialcoördinator aangewezen. Als de organisatie een voorkeurspeaker
 heeft dan kan dit minimaal 3 maanden voor de wedstrijd aangegeven worden bij de
 [GEWIJZIGD]official[/GEWIJZIGD]coördinator. De organisator heeft, in overleg met de [GEWIJZIGD]official[/GEWIJZIGD]coördinator, de mogelijkheid om
 zelf een extra, tweede speaker te contracteren.
 
-OFFICIALVERGOEDING
+## DE OFFICIAL › OFFICIALVERGOEDING
+
 Voor de vergoedingen van de officials wordt verwezen naar de nationale besluiten op ons kenniscentrum.
 (Zie pagina 14 “Juryvergoedingen algemeen”).
 
-TAKEN EN VERANTWOORDELIJKHEID VAN HET OFFICIALSTEAM
+## DE OFFICIAL › TAKEN EN VERANTWOORDELIJKHEID VAN HET OFFICIALSTEAM
+
 Het officialsteam is primair verantwoordelijk voor een goed en veilig wedstrijdverloop. Het toepassen van de
 geldende reglementen en aanvullende bepalingen (o.a. uit dit handboek), het opmaken, per categorie, van
 een volledig daguitslag en verzorgt, in samenwerking met de organisatie, de huldiging (speaker), bediening
 MYLAPS-registratie, het meenemen van de (huur)chips en het verwerken van uitslagen.
 
-INFORMEREN VAN DE OFFICIALS
+## DE OFFICIAL › INFORMEREN VAN DE OFFICIALS
+
 Minimaal één week voorafgaand aan de wedstrijd dient de organisatie de officialsvoorzitter uitvoerig te
 informeren over alle bijzonderheden van de betreffende wedstrijd (routebeschrijving, plattegrond parcours,
 parcours lengte etc.).
 
-OFFICIALSVERGADERING
+## DE OFFICIAL › OFFICIALSVERGADERING
+
 De organisatie dient aan het officialsteam een aparte ruimte ter beschikking te stellen waar zowel voor als
 na de wedstrijd een officialsvergadering gehouden kan worden. De officialsvoorzitter bepaalt wanneer deze
 vergaderingen plaatsvinden en kan de organisatie verzoeken de opgestelde officials voor deze vergadering
@@ -733,7 +630,8 @@ vergadering ruim aandacht te schenken aan alle bijzonderheden, en met name ook d
 wedstrijdtijden. Ook ontvangt de [GEWIJZIGD]wedstrijdcoördinator[/GEWIJZIGD] van de organisatie de volledig ingevulde
 vrijwilligerslijst.
 
-OFFICIALWAGEN/ -TENT
+## DE OFFICIAL › OFFICIALWAGEN/ -TENT
+
 Er moet een officialwagen/ -tent ter beschikking worden gesteld, die wind- en waterdicht is. Daarnaast moet
 er een rondebel en rondebord zijn voorzien en dienen er voldoende tafels en stoelen aanwezig te zijn. De
 opstelling dient zodanig te zijn dat de official de deelnemers zowel kan zien aankomen als kan volgen. Het is
@@ -743,11 +641,13 @@ kan bewegen.
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 17 VAN 22
 
-VERZORGING
+## DE OFFICIAL › VERZORGING
+
 De organisatie dient te zorgen voor een goede verzorging (koffie, thee, limonade/ water, lunchpakket) van
 de officials en indien aanwezig, één lid van de Commissie Offroad.
 
-UITSLAGVERWERKING EN PROTESTEN
+## DE OFFICIAL › UITSLAGVERWERKING EN PROTESTEN
+
 De uitslag wordt duidelijk zichtbaar voor alle deelnemers gepubliceerd. Eventuele protesten op de uitslag
 dienen binnen een half uur (30 minuten) na publicatie ingediend te worden bij de official voorzitter. De
 ingediende protesten worden eerst behandeld alvorens de uitslag officieel wordt.
@@ -762,26 +662,29 @@ gedurende de protesttijd (30 minuten) na de wedstrijd aanwezig te blijven.
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 18 VAN 22
 
-DIVERSEN
+# DIVERSEN
 
-DE ORGANISATOR
+## DIVERSEN › DE ORGANISATOR
+
 De organisator wordt vertegenwoordigd door de wedstrijdcoördinator van de vereniging. Deze is voor alle
 afgevaardigden van de KNWU de contactpersoon. Hij/zij is dan ook aanwezig bij de officialsvergadering
 voorafgaand én na afloop van de wedstrijd. De officialsvoorzitter is op de dag wedstrijdleider.
 
-INSCHRIJVINGEN/ UITSLAGVERWERKING
+## DIVERSEN › INSCHRIJVINGEN/ UITSLAGVERWERKING
+
 Inschrijvingen, deelname en uitslagenverwerking wordt gedaan met software die door de KNWU beschikbaar
 is gesteld aan de officials. Hoewel de officials ter plaatse aanwezig zijn en assisteren kan dat niet van worden
 verwacht. De verantwoordelijkheid ligt bij de organisatie.
 
-VRIJWILLIGERS VAN DE ORGANISATIE EN VRIJWILLIGERSLIJST/ EHBO
+## DIVERSEN › VRIJWILLIGERS VAN DE ORGANISATIE EN VRIJWILLIGERSLIJST/ EHBO
+
 Medewerkers van de organisatie en EHBO dienen duidelijk herkenbaar te zijn. Hiervoor is het dragen van
 hesjes dan wel speciale signalerende kleding een vereiste!
 
 Ten behoeve van de KNWU-verzekering dienen alle vrijwilligers opgenomen te zijn in een vrijwilligerslijst.
 Deze wordt aan de Officials overhandigd en dient desgevraagd te kunnen worden getoond.
 
-ONSPORTIVITEIT
+## DIVERSEN › ONSPORTIVITEIT
 
 
 Onsportiviteit van deelnemers en/of begeleiders richting officials, overige deelnemers, publiek en/of
@@ -795,18 +698,20 @@ parcourswacht.
 
 Mocht bovenstaande voorkomen, dient de officials dit op te nemen in het officialsrapport
 
-GEBRUIK BEELTENIS DEELNEMERS/BEGELEIDERS
+## DIVERSEN › GEBRUIK BEELTENIS DEELNEMERS/BEGELEIDERS
+
 Deelnemers en begeleiders gaan akkoord met het gebruik en publicatie van hun beeltenis en, voor de
 organisatie relevante persoonlijke gegevens, in druk, foto, film, video, websites etc. voor promotie-,
 publicitaire en informerende doeleinden van de organiserende verenigingen zonder hiervoor vergoeding te
 vragen.
 
-KLEDING
+## DIVERSEN › KLEDING
+
 Voor de wedstrijden is het kledingreglement van de KNWU bepalend. Er wordt dus van de deelnemers
 verwacht, dat zij in verenigingskleding deelnemen aan de wedstrijden. Ook op het podium verschijnen de
 deelnemers in de kleding van de vereniging waarvoor men uitkomt en b.v. niet in een spijkerbroek.
 
-SLOTBEPALING
+# SLOTBEPALING
 
 In alle gevallen waarin voorliggend handboek niet voorziet beslist:
 
@@ -818,11 +723,12 @@ m.b.t. de serie van wedstrijden : de commissie Offroad
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 19 VAN 22
 
-BIJLAGES
+# BIJLAGES
 
-BIJLAGE 1: INFORMATIE EN WEDSTRIJDDATA
+## BIJLAGES › BIJLAGE 1: INFORMATIE EN WEDSTRIJDDATA
 
-Communicatiepunt Jeugd veldrijden (Wedstrijden):
+## BIJLAGES › Communicatiepunt Jeugd veldrijden (Wedstrijden):
+
 Algemene opmerkingen, opbouwende kritiek, commentaar, vragen, klachten of andersoortige problemen
 met betrekking tot de wedstrijden, het wedstrijdverloop of organisatie kunt u, per e-mail, melden aan het
 communicatiepunt jeugd veldrijden: veldrijden@knwu.nl. Het communicatiepunt zal trachten zo spoedig
@@ -831,8 +737,10 @@ mogelijk te reageren.
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 20 VAN 22
 
-BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE
-Vergunningen en toestemmingen
+## BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE
+
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Vergunningen en toestemmingen
+
 Toestemming gemeente
 
 
@@ -849,7 +757,7 @@ Omwonenden, andere gebruikers waarschuwen
 
 ____________
 
-KNWU
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › KNWU
 
 Keuring parcours door officials
 
@@ -883,7 +791,8 @@ Vrijwilligerslijst
 
 ____________
 
-Infrastructuur
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Infrastructuur
+
 Kleedgelegenheid, toiletten en douches regelen
 
 
@@ -922,7 +831,8 @@ Inrichten Materiaal- en fietscontrole
 
 ____________
 
-Officials
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Officials
+
 Official bus (incl. ronde bord en –bel) bestellen
 
 
@@ -952,7 +862,8 @@ Verzorging officials regelen (lunchpakketten, diner ect.)
 
 ____________
 
-Huldiging
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Huldiging
+
 Ronde miss/mister aanwezig
 
 
@@ -976,7 +887,8 @@ Ereprijzen voor aanwezig
 
 ____________
 
-Inschrijving
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Inschrijving
+
 Computer/printer en kopieerapparaat regelen/installeren
 
 ____________
@@ -1007,7 +919,8 @@ ____________
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 21 VAN 22
 
-Parcoursafzetting
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Parcoursafzetting
+
 Geluid bestellen/schriftelijk bevestigen
 
 
@@ -1058,7 +971,8 @@ Doorlooptijd per cat. Toetsen en evt. parcours aanpassen
 
 ____________
 
-Medische voorzieningen
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Medische voorzieningen
+
 Ambulance (binnen 15 min.)
 
 
@@ -1121,7 +1035,8 @@ Uitslagen verzenden (ANP, regionale kranten etc.)
 
 ____________
 
-Diversen
+### BIJLAGES › BIJLAGE 2: VOORBEELD CHECKLIST ORGANISATIE › Diversen
+
 Aspirant lidmaatschap regelen
 
 
@@ -1146,7 +1061,8 @@ ____________
 HANDBOEK JEUGD VELDRIJDEN 2026-2027
 22 VAN 22
 
-BIJLAGE 3: GEDRAGSCODE
+## BIJLAGES › BIJLAGE 3: GEDRAGSCODE
+
 De KNWU heeft samen met de NTFU, Staatsbosbeheer en Vereniging voor Natuurmonumenten de volgende
 gedragsregels in het bos afgesproken. Deze regels dienen ervoor om zo lang mogelijk in het bos veldritten,
 veldtoertochten en mountainbikewedstrijden te kunnen organiseren. Wij verwachten van onze leden dat zij

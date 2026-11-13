@@ -36,15 +36,24 @@
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 22 knwu / 6 regio / 7 club (35 vragen; 5 via de router, 5 met
+# Verdeling: 16 knwu / 5 regio / 6 club (27 vragen; 5 via de router, 4 met
 # taalniveau B1). Harde 100%-gate op type strikethrough (min. 3) en websearch
 # (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
 # Q7); na eval run 3 handmatig gecontroleerd tegen PDF en live bronnen (#28).
+# Review 2026-11-13: set ingekrompen van 35 naar 27 vragen. Verwijderd als
+# dubbel/overlappend: knwu-verzet-u11 (derde verzet-vraag, zelfde artikel 20.1.007),
+# knwu-b1-verzet-u15 (B1-twin van knwu-verzet-u15), knwu-categorie-meisje-2015
+# (derde vraag die 2015 -> U12 oplost), knwu-verheldering-leeftijdscategorie
+# (directe twin van de router-variant), knwu-wijziging-nationale-besluiten
+# (overlapt knwu-actuele-versie-titel20), knwu-nk-weg-jeugd-kwalificatie
+# (overlapt regio-nk-kwalificatie en wisselde per run), regio-mnc-veldrijden-
+# starttijden en club-zmc-kosten (B2-twins van de B1-varianten; B1 is sinds
+# issue #52 de productiestandaard). Strikethrough staat nu op het minimum van 3.
 
 evalset:
-  # --- KNWU (10) ---
+  # --- KNWU ---
   - id: knwu-licentie-pakketten
     taalniveau: B2
     categorie: knwu
@@ -82,15 +91,6 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "6,55"
-  - id: knwu-verzet-u11
-    taalniveau: B2
-    categorie: knwu
-    type: strikethrough
-    vraag: "Wat is het maximaal toegestane verzet voor jongens U11 bij wegwielrennen?"
-    verwacht_antwoord: "5,90; U11; artikel 20.1.007"
-    bron: "TITEL_20-Jeugdwielrennen_20260921"
-    versiedatum: "2026-09-21"
-    doorhaal_waarde: "5,78"
   - id: knwu-verzet-u17
     taalniveau: B2
     categorie: knwu
@@ -125,14 +125,6 @@ evalset:
     verwacht_antwoord: "21-09-2026; kenniscentrum; leidend"
     bron: "kenniscentrum.knwu.nl/regelgeving"
     versiedatum: "2026-09-21"
-  - id: knwu-wijziging-nationale-besluiten
-    taalniveau: B2
-    categorie: knwu
-    type: standaard
-    vraag: "Wat is er gewijzigd in de Nationale Besluiten 2026 ten opzichte van de vorige versie?"
-    verwacht_antwoord: "geen; wijzigingsmemo; gewijzigd"
-    bron: "kenniscentrum.knwu.nl/regelgeving"
-    versiedatum: "2026-09-18"
   - id: knwu-bronconflict-u17-nieuweling
     taalniveau: B2
     categorie: knwu
@@ -162,22 +154,6 @@ evalset:
     verwacht_antwoord: "U14; 2013; artikel 20.0.004"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
-  - id: knwu-categorie-meisje-2015
-    taalniveau: B2
-    categorie: knwu
-    type: standaard
-    vraag: "In welke leeftijdscategorie rijdt een meisje geboren in 2015 bij wegwielrennen in 2026?"
-    verwacht_antwoord: "U12; 2015; artikel 20.0.004"
-    bron: "TITEL_20-Jeugdwielrennen_20260921"
-    versiedatum: "2026-09-21"
-  - id: knwu-verheldering-leeftijdscategorie
-    taalniveau: B2
-    categorie: knwu
-    type: verheldering
-    vraag: "In welke categorie rijdt mijn kind mee?"
-    # één vraag per bericht (#38): eerst het geboortejaar, geslacht pas daarna
-    verwacht_antwoord: "geboortejaar"
-    niet_in_antwoord: "geslacht"
   - id: knwu-verheldering-licentie-via-router
     taalniveau: B2
     categorie: knwu
@@ -247,28 +223,8 @@ evalset:
     bron: "Een fiets en pedalen uitzoeken"
     versiedatum: "1.7"
     verwachte_agent: club-agent
-  - id: knwu-nk-weg-jeugd-kwalificatie
-    taalniveau: B2
-    categorie: knwu
-    type: standaard
-    vraag: "Hoe kwalificeert mijn zoon (geboren in 2015) zich voor het NK wegwielrennen?"
-    # feedback 2026-11-13: het LJT en de eis van minimaal 2 wedstrijden (NB 2.4.3, NK Weg
-    # Jeugd) ontbraken, en het LJC-klassement van mountainbike werd ingemengd. De uitkomst
-    # wisselt per run: draai deze vraag bij twijfel een paar keer.
-    verwacht_antwoord: "selectieprocedure; LJT; 2 wedstrijden"
-    niet_in_antwoord: "LJC"
-    bron: "Nationale_Besluiten_20260918"
-    versiedatum: "2026-09-18"
 
-  # --- Regio Midden (5) ---
-  - id: regio-mnc-veldrijden-starttijden
-    taalniveau: B2
-    categorie: regio
-    type: standaard
-    vraag: "Wanneer starten de jeugdcategorieën bij de MNC veldrijden in seizoen 2026-2027?"
-    verwacht_antwoord: "2026-2027; 11:05; 11:30"
-    bron: "knwumidden.nl/competities"
-    versiedatum: "2026-2027"
+  # --- Regio Midden ---
   - id: regio-hvh-kalender-2026
     taalniveau: B2
     categorie: regio
@@ -312,7 +268,7 @@ evalset:
     bron: "MNC 2026 Hans vd Hengelcompetitie - wegwielrennen | knwumidden.nl"
     versiedatum: "2026"
 
-  # --- Club WTC Woerden (5) ---
+  # --- Club WTC Woerden ---
   - id: club-contributie-jeugd-2026
     taalniveau: B2
     categorie: club
@@ -321,14 +277,6 @@ evalset:
     verwacht_antwoord: "64,50; 50,00; 14,50"
     bron: "wtcwoerden.nl?page=674 | WTC Woerden - Contributietarieven"
     versiedatum: "2026"
-  - id: club-zmc-kosten
-    taalniveau: B2
-    categorie: club
-    type: standaard
-    vraag: "Wat kost deelname aan de ZMC (Zaterdagmiddag Competitie)?"
-    verwacht_antwoord: "gratis"
-    bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
-    versiedatum: "2026-10-29"
   - id: club-zmc-wanneer
     taalniveau: B2
     categorie: club
@@ -361,14 +309,6 @@ evalset:
     type: standaard
     vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?"
     verwacht_antwoord: "U12; 2015"
-    bron: "TITEL_20-Jeugdwielrennen_20260921"
-    versiedatum: "2026-09-21"
-  - id: knwu-b1-verzet-u15
-    taalniveau: B1
-    categorie: knwu
-    type: standaard
-    vraag: "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?"
-    verwacht_antwoord: "6,70"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: regio-b1-mnc-starttijden

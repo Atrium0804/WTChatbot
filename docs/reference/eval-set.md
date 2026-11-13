@@ -24,7 +24,7 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
 | `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
-Huidige verdeling: 35 vragen — 22 knwu, 6 regio, 7 club; 24 standaard, 4 strikethrough, 4 websearch, 3 verheldering. 5 vragen gaan via de router, waarvan 2 met `beurten` en 4 met `verwachte_agent` (issue #44). Alle entries hebben expliciet `taalniveau: B2`, behalve de 5 B1-vragen (issue #52).
+Huidige verdeling: 27 vragen — 16 knwu, 5 regio, 6 club; 18 standaard, 3 strikethrough, 4 websearch, 2 verheldering. 5 vragen gaan via de router, waarvan 2 met `beurten` en 4 met `verwachte_agent` (issue #44). Alle entries hebben expliciet `taalniveau: B2`, behalve de 4 B1-vragen (issue #52).
 
 Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 

@@ -352,7 +352,8 @@ class CheckEntryRun3Tests(unittest.TestCase):
 
 # Oordeel per vraag uit de handmatige review van run 3 (#28): True = het
 # antwoord is inhoudelijk goed mét juiste bron. De entries zelf komen uit
-# eval/evalset.yaml, zodat evalset en test niet uit elkaar lopen.
+# eval/evalset.yaml, zodat evalset en test niet uit elkaar lopen; bij het
+# verwijderen van een entry uit de evalset (review 2026-11-13) ook hier het id schrappen.
 RUN3_OORDEEL = {
     # false negatives van de oude matcher/evalset
     "club-zmc-wanneer": True,
@@ -361,15 +362,12 @@ RUN3_OORDEEL = {
     "knwu-inschrijfgeld-jeugd": True,
     "knwu-nk-dispensatie-u10": True,
     "knwu-actuele-versie-titel20": True,
-    "knwu-wijziging-nationale-besluiten": True,
-    "regio-mnc-veldrijden-starttijden": True,
     # regel gewijzigd 2026-11-12: antwoorden mogen geen datums in het verleden
     # bevatten; het run-3-antwoord (met 29 maart t/m 27 september) faalt nu dus
     "regio-hvh-kalender-2026": False,
     "regio-juiste-knwu-regio": True,
     "regio-techniekwedstrijden-2026": True,
     # true positives
-    "club-zmc-kosten": True,
     "knwu-verzet-u15": True,
     "knwu-verzet-u17": True,
     # true negatives: moeten blijven falen
@@ -377,7 +375,6 @@ RUN3_OORDEEL = {
     "club-contributie-jeugd-2026": False,
     "club-vertrouwenspersoon": False,
     "club-gedragscode": False,
-    "knwu-verzet-u11": False,
     "regio-nk-kwalificatie": False,
 }
 

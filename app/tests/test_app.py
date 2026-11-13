@@ -3,11 +3,13 @@
 Draai: .venv\Scripts\python -m pytest app/tests   (vanuit repo-root; de project-venv installeer je met app\requirements-dev.txt)
 """
 
+import asyncio
 import json
 import os
 import sqlite3
 import sys
 import tempfile
+import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -654,3 +656,71 @@ def test_bronconflict_marker_not_in_feedback_history(tmp_path, monkeypatch):
     assert "BRONCONFLICT" not in (negative_row["answer"] or "")
     history = json.loads(negative_row["history"])
     assert "BRONCONFLICT" not in history[0]["answer"]
+
+
+# --- Non-blocking event loop (#80) ---
+
+
+def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypatch):
+    """#80: de blocking Mistral-call draait off-loop (run_in_threadpool). Tijdens
+    een trage answer_question moet een gelijktijdige GET /healthz reageren vóórdat
+    de Mistral-call klaar is. Bewust een ordering-assert (geen wall-clock):
+    deterministisch, en faalt nog steeds tegen de blocking variant uit HEAD."""
+    import httpx
+
+    import config
+    import mistral_client
+
+    release = threading.Event()
+    mock_started = threading.Event()
+    healthz_done: list[bool] = []
+    mock_saw_healthz_done: list[bool] = []
+
+    def slow_answer_question(**kwargs):
+        mock_started.set()
+        # safety-timeout: bij een regressie (blocking call in de event loop) faalt
+        # de assert onderaan in plaats van dat de test blijft hangen
+        release.wait(timeout=5)
+        mock_saw_healthz_done.append(bool(healthz_done))
+        return "conv-slow", "traag antwoord"
+
+    def instant_check_reachable(**kwargs):
+        return True
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(mistral_client, "answer_question", slow_answer_question)
+    monkeypatch.setattr(mistral_client, "check_reachable", instant_check_reachable)
+
+    app = create_app(db_path=str(tmp_path / "t.db"))
+
+    async def run():
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+            chat_task = asyncio.create_task(
+                ac.post("/chat", json={"message": "trage vraag", "client_id": "c1"})
+            )
+            # wacht tot de gemockte Mistral-call echt begonnen is (in de buggy
+            # variant blokkeert die call de loop en draait deze poll pas erna)
+            for _ in range(500):
+                if mock_started.is_set():
+                    break
+                await asyncio.sleep(0.01)
+            health = await ac.get("/healthz")
+            healthz_done.append(True)  # healthz reageerde vóór de Mistral-call klaar was
+            release.set()
+            chat_resp = await chat_task
+            return health, chat_resp
+
+    health, chat_resp = asyncio.run(run())
+
+    assert health.status_code == 200
+    assert health.json() == {
+        "status": "ok",
+        "mistral_configured": True,
+        "mistral_reachable": True,
+    }
+    assert chat_resp.status_code == 200
+    assert chat_resp.json()["answer"] == "traag antwoord"
+    # toen de trage Mistral-call klaar was, was /healthz allang gereageerd
+    assert mock_saw_healthz_done == [True]

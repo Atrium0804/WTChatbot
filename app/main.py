@@ -20,6 +20,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from starlette.concurrency import run_in_threadpool
 
 import config
 import context
@@ -154,7 +155,10 @@ def create_app(
                 language_level=payload.language_level,
             )
             try:
-                mistral_conv_id, answer = mistral_client.answer_question(
+                # Blocking requests-call: off-loop draaien, anders blokkeert één
+                # trage agent-run (tot DEFAULT_TIMEOUT=180s) de hele event loop (#80).
+                mistral_conv_id, answer = await run_in_threadpool(
+                    mistral_client.answer_question,
                     api_key=config.MISTRAL_API_KEY,
                     agent_id=config.MISTRAL_AGENT_ID,
                     base_url=config.MISTRAL_CONVERSATIONS_URL,
@@ -227,8 +231,11 @@ def create_app(
         configured = bool(config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID)
         reachable = False
         if configured:
-            reachable = mistral_client.check_reachable(
-                api_key=config.MISTRAL_API_KEY, base_url=config.MISTRAL_CONVERSATIONS_URL
+            # idem: blocking requests.get off-loop (#80)
+            reachable = await run_in_threadpool(
+                mistral_client.check_reachable,
+                api_key=config.MISTRAL_API_KEY,
+                base_url=config.MISTRAL_CONVERSATIONS_URL,
             )
         return {
             "status": "ok",

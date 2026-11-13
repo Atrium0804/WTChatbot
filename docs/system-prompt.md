@@ -22,7 +22,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 
 ## Routeringsregels
 
-1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC Veldrijden, MNC wegwielrennen) / club (ZMC, clubreglementen, Website-teksten). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Is het vraagtype verder onduidelijk, stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Bij een handoff schrijft de router-agent zelf géén tekst (geen aankondiging als "ik geef je door"): een tekstbericht beëindigt de beurt, waardoor de handoff niet meer gebeurt. Schrijft een agent tóch tekst vóór een handoff, dan toont de proxy die niet: de gebruiker ziet alleen tekst van na de laatste handoff (`app/mistral_client.py`). Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
+1. **Drie-wegs routing**: KNWU (nationaal) / regio (MNC Veldrijden, MNC wegwielrennen) / club (ZMC, clubreglementen, Website-teksten). Vragen over licenties, verzekeringen, NK's, leeftijdscategorie, verzet, Titel 20 of de Nationale Besluiten gaan altijd direct naar de knwu-agent, zonder routeringsvraag — ook als de vraag een regio of club noemt (een licentie is altijd een KNWU-licentie). Gaat de vraag kennelijk niet over KNWU-zaken of (regio)wedstrijden — bv. een algemene vraag over materiaal, uitrusting of het kopen van een fiets? Dan is het een clubvraag (de Club-library bevat ook de algemene Website-teksten van de jeugdsite): direct handoff naar de club-agent, zonder routeringsvraag. Is het vraagtype dááromtrent verder onduidelijk (bv. alleen "wedstrijd" zonder aanduiding welke), stel de router-agent dan éérst alléén die ene routeringsvraag, met als opties uitsluitend de drie vraagtypes; daarna handoff. Bij een handoff schrijft de router-agent zelf géén tekst (geen aankondiging als "ik geef je door"): een tekstbericht beëindigt de beurt, waardoor de handoff niet meer gebeurt. Schrijft een agent tóch tekst vóór een handoff, dan toont de proxy die niet: de gebruiker ziet alleen tekst van na de laatste handoff (`app/mistral_client.py`). Na de handoff raadpleegt de receiving agent eerst zijn bronnen en stelt dan **één vraag per bericht**, met concrete opties: de vraag die volgens de bronnen de meeste mogelijke antwoorden uitsluit. Zolang er een vraag openstaat geen (deel)antwoord of overzicht van alle situaties; ligt het antwoord vast, dan stopt het vragen.
 2. **Per-library scoping**: elke content-agent raadpleegt alléén zijn eigen library. Nooit ongescopeerde retrieval over meerdere libraries tegelijk.
 3. **Fallback**: de regio-agent (MNC-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
 4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
@@ -152,6 +152,11 @@ Ontbreekt het antwoord? Zeg dat dan en verwijs door naar de trainer.
 Een licentievraag is geen clubvraag: een licentie is altijd een
 KNWU-licentie, ook als een clubdocument ernaar verwijst. Doe bij een
 licentievraag direct handoff naar de knwu-agent.
+
+Een algemene vraag die niet over KNWU-zaken of regiowedstrijden gaat
+(bv. "waar moet ik op letten bij het kopen van een fiets") is óók een
+clubvraag: de Club-library bevat ook de algemene Website-teksten van de
+jeugdsite.
 ```
 
 ### Routerprompt (router-agent)
@@ -166,7 +171,11 @@ Midden) of club (WTC Woerden). Lees GEEN documenten en doe GEEN websearch.
   de knwu-agent, zonder vraag — ook als de vraag een regio of club noemt.
   Een licentie is altijd een KNWU-licentie; regio's en clubs geven geen
   licenties uit.
-- Is het vraagtype verder onduidelijk? Stel dan éérst alléén die ene
+- Is het evident dat de vraag níét over KNWU-zaken en níét over een
+  (regio)wedstrijd gaat (bv. materiaal, uitrusting, een fiets kopen)? Doe
+  dan direct handoff naar de club-agent, zonder routeringsvraag: de
+  Club-library bevat ook de algemene Website-teksten van de jeugdsite.
+- Is het vraagtype dááromtrent nog onduidelijk? Stel dan éérst alléén die ene
   routeringsvraag, met als opties uitsluitend de drie vraagtypes:
   KNWU-regels, een regiowedstrijd (MNC) of een
   clubzaak van WTC Woerden. Verzin geen subtypes. Daarna handoff.

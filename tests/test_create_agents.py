@@ -367,11 +367,11 @@ class RunCreateTests(unittest.TestCase):
             self.assertIn("model", str(ctx.exception))
 
     def test_productie_config_router_agent_heeft_kleiner_model(self) -> None:
-        # #83: in de productieconfig staat de router-agent op een kleiner model,
+        # #83/#88: in de productieconfig staat de router-agent op een kleiner model,
         # de content-agents (knwu/regio/club/archief) op de default.
         config = create_agents.load_config(create_agents.DEFAULT_CONFIG_PATH)
         agents = {a["name"]: a for a in config["agents"]}
-        self.assertEqual(agents["router-agent"].get("model"), "mistral-medium-latest")
+        self.assertEqual(agents["router-agent"].get("model"), "mistral-small-latest")
         for name in ("knwu-agent", "regio-agent", "club-agent", "archief-agent"):
             self.assertNotIn("model", agents[name], name)
 
@@ -393,7 +393,7 @@ class ProductieConfigTests(unittest.TestCase):
 
         self.assertEqual(rc, 0, report["errors"])
         calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
-        self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent"])
+        self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent", "agent-regio-agent"])
 
     def test_knwu_agent_kan_doorverwijzen_na_onderwerpwissel(self) -> None:
         # Bug: na een KNWU-handoff blijft de conversatie bij de knwu-agent
@@ -412,13 +412,21 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertEqual(rc, 0, report["errors"])
         updates = {c.kwargs["agent_id"]: c.kwargs for c in client.beta.agents.update.call_args_list}
         creates = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
-        self.assertEqual(updates["agent-knwu-agent"]["handoffs"], ["agent-router-agent"])
-        self.assertIn("agent-router-agent", updates["agent-club-agent"]["handoffs"])
-        self.assertIn("agent-router-agent", updates["agent-regio-agent"]["handoffs"])
+        # handoffs zitten bij create óf in de deferred-cycle-update; merge tot eindstaat
+        final_handoffs = {name: c.get("handoffs") for name, c in creates.items()}
+        for agent_id, c in updates.items():
+            if "handoffs" in c:
+                final_handoffs[agent_id.removeprefix("agent-")] = c["handoffs"]
+        # #88: geen return-handoff naar de router; experts handoffen direct naar elkaar
+        self.assertEqual(final_handoffs["knwu-agent"], ["agent-regio-agent", "agent-club-agent"])
+        self.assertEqual(final_handoffs["club-agent"], ["agent-knwu-agent", "agent-regio-agent"])
+        self.assertEqual(final_handoffs["regio-agent"], ["agent-knwu-agent", "agent-club-agent"])
         for name in ("knwu-agent", "regio-agent", "club-agent"):
-            self.assertIn("handoff naar de router-agent", " ".join(creates[name]["instructions"].split()))
-        self.assertIn("nooit terug", " ".join(creates["router-agent"]["instructions"].split()))
+            prompt = " ".join(creates[name]["instructions"].split())
+            self.assertNotIn("router-agent", prompt)
+            self.assertIn("direct handoff naar", prompt)
         router_prompt = " ".join(creates["router-agent"]["instructions"].split())
+        self.assertIn("voordeur", router_prompt)
         self.assertIn("ZMC", router_prompt)
         self.assertIn("handoff naar de club-agent", router_prompt)
 

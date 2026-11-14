@@ -62,14 +62,14 @@ test("202 + status done: poll toont fase en dan het antwoord", async () => {
   });
   submitQuestion(env, "vraag");
   await settle();
-  // vuur de eerste poll-timer af (2000ms)
-  env.fireTimers(2000);
+  // vuur de eerste poll-timer af (POLL_INTERVAL_MS = 500ms)
+  env.fireTimers(500);
   await settle();
   await settle();
   // typing-bubble toont de phase
   assert.equal(lastMessage(env).className, "msg bot typing");
   // vuur de tweede poll af
-  env.fireTimers(2000);
+  env.fireTimers(500);
   await settle();
   await settle();
   await settle();
@@ -90,7 +90,7 @@ test("202 + status error: toon de foutmelding", async () => {
   });
   submitQuestion(env, "vraag");
   await settle();
-  env.fireTimers(2000);
+  env.fireTimers(500);
   await settle();
   await settle();
   await settle();
@@ -132,7 +132,7 @@ test("status-poll faalt: terugval op staged-tijdmeldingen (#84)", async () => {
   submitQuestion(env, "vraag");
   await settle();
   // poll faalt -> staged timer zou nog steeds werken
-  env.fireTimers(2000); // poll timer (faalt)
+  env.fireTimers(500); // poll timer (faalt)
   await settle();
   env.fireTimers(15000); // staged message timer
   assert.equal(lastMessage(env).textContent, "Ik zoek in de reglementen…");

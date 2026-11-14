@@ -528,6 +528,9 @@
       { at: 45000, text: "Dit duurt langer dan normaal, nog even geduld…" }
     ];
     var CHAT_TIMEOUT_MS = 120000;
+    // Poll-interval voor /chat/status: 500ms, zodat een klaar antwoord niet
+    // tot ~2s op de volgende poll hoeft te wachten.
+    var POLL_INTERVAL_MS = 500;
     var typingTimers = [];
     for (var i = 0; i < TYPING_STAGES.length; i++) {
       (function (stage) {
@@ -623,7 +626,7 @@
             // staged-tijdmeldingen (#84) werken; blijf pollen.
             pollStatus(jobId);
           });
-      }, 2000);
+      }, POLL_INTERVAL_MS);
     }
 
     postChat(abortController.signal)

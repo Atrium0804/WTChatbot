@@ -48,6 +48,22 @@ def category_name(under: int, rules: dict) -> str | None:
     return None
 
 
+def max_gear(category: str, discipline: str, rules: dict) -> float | str | None:
+    """Maximaal toegestaan verzet (art. 20.1.007) voor een leeftijdscategorie.
+
+    `category` is bv. "U13" of "U17 Nieuweling" (uit age_category); `discipline`
+    is "weg", "baan" of "veld". Geeft meters (float), "vrij" of None (NVT) terug.
+    """
+    per_category = rules["verzetten"]["per_categorie"]
+    if category not in per_category:
+        token = category.split()[0]
+        category = next((name for name in per_category if name.split()[0] == token), category)
+    entry = per_category.get(category)
+    if not entry:
+        return None
+    return entry.get(discipline)
+
+
 def old_category_groups(number: int, rules: dict) -> list[dict] | None:
     """Gecombineerde categorieën van oude categorie <number>; None als die niet bestaat."""
     return rules["oude_categorie_indeling"]["categorieen"].get(str(number))

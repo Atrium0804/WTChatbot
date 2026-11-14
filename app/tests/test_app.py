@@ -496,11 +496,20 @@ def test_index_shows_thinking_message(tmp_path):
 
 
 def fake_mistral(monkeypatch) -> list[dict]:
-    """Zet de app in Mistral-mode met een gemockte answer_question; geef de calls."""
+    """Zet de app in Mistral-mode met gemockte intake + stream_answer (#91/#93);
+    geef de stream-calls. De intake-fallback routeert naar de router."""
     import config
+    import intake
     import mistral_client
 
     calls: list[dict] = []
+
+    def classify_message(**kwargs):
+        return dict(intake.FALLBACK)
+
+    def stream_answer(**kwargs):
+        calls.append(kwargs)
+        return "mistral-conv-1", "antwoord"
 
     def answer_question(**kwargs):
         calls.append(kwargs)
@@ -508,6 +517,8 @@ def fake_mistral(monkeypatch) -> list[dict]:
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(intake, "classify_message", classify_message)
+    monkeypatch.setattr(mistral_client, "stream_answer", stream_answer)
     monkeypatch.setattr(mistral_client, "answer_question", answer_question)
     return calls
 
@@ -531,7 +542,12 @@ def test_chat_follow_up_adds_category_but_no_date(tmp_path, monkeypatch):
     calls = fake_mistral(monkeypatch)
     client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     first = chat(client, "In welke leeftijdscategorie rijdt mijn zoon?")
+    # #91: een kaal jaartal als vervolg is zélf een deterministische bypass
+    # (direct app-antwoord, geen Mistral-call) — zie test_lookup_bypass_follow_up
     chat_in(client, first["conversation_id"], "2015", "test-client")
+    # een vervolgvraag mét jaartal die méér vraagt dan het kale feit gaat wél
+    # naar de agent, mét categorie-contextregel maar zonder datumregel
+    chat_in(client, first["conversation_id"], "2015, en mag hij dan meedoen aan het NK?", "test-client")
     follow_up = calls[1]["message"]
     assert calls[1]["conversation_id"] == "mistral-conv-1"
     assert "november 2026" not in follow_up
@@ -592,13 +608,19 @@ MARKER_CONTENT = MARKER.removeprefix("[BRONCONFLICT]").strip()
 
 def fake_mistral_answer(monkeypatch, answer: str) -> None:
     import config
+    import intake
     import mistral_client
+
+    def stream_answer(**kwargs):
+        return "conv-1", answer
 
     def answer_question(**kwargs):
         return "conv-1", answer
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(intake, "classify_message", lambda **kwargs: dict(intake.FALLBACK))
+    monkeypatch.setattr(mistral_client, "stream_answer", stream_answer)
     monkeypatch.setattr(mistral_client, "answer_question", answer_question)
 
 
@@ -692,6 +714,7 @@ def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypa
     import httpx
 
     import config
+    import intake
     import mistral_client
 
     release = threading.Event()
@@ -699,7 +722,7 @@ def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypa
     healthz_done: list[bool] = []
     mock_saw_healthz_done: list[bool] = []
 
-    def slow_answer_question(**kwargs):
+    def slow_stream_answer(**kwargs):
         mock_started.set()
         # safety-timeout: bij een regressie (blocking call in de event loop) faalt
         # de assert onderaan in plaats van dat de test blijft hangen
@@ -712,7 +735,8 @@ def test_chat_does_not_block_healthz_during_slow_mistral_call(tmp_path, monkeypa
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
-    monkeypatch.setattr(mistral_client, "answer_question", slow_answer_question)
+    monkeypatch.setattr(intake, "classify_message", lambda **kwargs: dict(intake.FALLBACK))
+    monkeypatch.setattr(mistral_client, "stream_answer", slow_stream_answer)
     monkeypatch.setattr(mistral_client, "check_reachable", instant_check_reachable)
 
     app = create_app(db_path=str(tmp_path / "t.db"))
@@ -794,14 +818,16 @@ def test_status_endpoint_returns_done_with_answer(tmp_path, monkeypatch):
 def test_status_endpoint_returns_error_on_mistral_failure(tmp_path, monkeypatch):
     """#85: bij een fout in de background task geeft de status error."""
     import config
+    import intake
     import mistral_client
 
-    def failing_answer(**kwargs):
+    def failing_stream(**kwargs):
         raise RuntimeError("Mistral API timeout na 180s")
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
-    monkeypatch.setattr(mistral_client, "answer_question", failing_answer)
+    monkeypatch.setattr(intake, "classify_message", lambda **kwargs: dict(intake.FALLBACK))
+    monkeypatch.setattr(mistral_client, "stream_answer", failing_stream)
     client = make_client(tmp_path)
     resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
     assert resp.status_code == 202
@@ -816,3 +842,268 @@ def test_stub_mode_still_returns_200_synchronously(tmp_path):
     resp = client.post("/chat", json={"message": "vraag", "client_id": "c"})
     assert resp.status_code == 200
     assert "STUB" in resp.json()["answer"]
+
+
+# --- Deterministische bypass + intake-route + fasen (#88/#91/#93) ---
+
+
+def test_lookup_bypass_in_mistral_mode_returns_200_direct(tmp_path, monkeypatch):
+    """#91: pure lookup in Mistral-mode -> synchroon 200, 0 LLM-calls, geen job."""
+    from datetime import date
+
+    import config
+    import intake
+    import mistral_client
+
+    calls: list[dict] = []
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(
+        intake, "classify_message", lambda **kw: calls.append(("intake", kw)) or dict(intake.FALLBACK)
+    )
+    monkeypatch.setattr(
+        mistral_client, "stream_answer", lambda **kw: calls.append(("stream", kw)) or ("conv", "x")
+    )
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    resp = client.post(
+        "/chat",
+        json={
+            "message": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+            "client_id": "c",
+        },
+    )
+    assert resp.status_code == 200  # geen 202/job: het antwoord verschijnt direct
+    assert "U12" in resp.json()["answer"]
+    assert "2015" in resp.json()["answer"]
+    assert calls == []  # 0 LLM-calls
+
+
+def test_lookup_bypass_follow_up_bare_year(tmp_path, monkeypatch):
+    """#91 besluit 5: een kaal jaartal midden in een gesprek bypasst toch direct."""
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = chat(client, "In welke leeftijdscategorie rijdt mijn zoon?")
+    assert len(calls) == 1  # eerste vraag ging naar de agent
+    resp = client.post(
+        "/chat",
+        json={"message": "2015", "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert resp.status_code == 200
+    assert "U12" in resp.json()["answer"]
+    assert len(calls) == 1  # geen extra Mistral-call voor de lookup
+
+
+def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):
+    from datetime import date
+
+    import config
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    resp = client.post(
+        "/chat",
+        json={
+            "message": "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
+            "client_id": "c",
+            "language_level": "B2",
+        },
+    )
+    assert resp.status_code == 200
+    answer = resp.json()["answer"]
+    assert "KNWU Licentie U17" in answer
+    assert "Bron:" in answer
+    assert "artikel 20.0.002" in answer
+
+
+def test_intake_completed_lookup_bypasses_inside_job(tmp_path, monkeypatch):
+    """#91: als de regex-lookup data mist maar de intake ze aanvult, bypasst de
+    job alsnog (template-antwoord, geen conversation-call)."""
+    from datetime import date
+
+    import config
+    import intake
+    import mistral_client
+
+    stream_calls: list[dict] = []
+
+    def classify(**kwargs):
+        return {
+            "intentie": "lookup",
+            "domein": "knwu",
+            "discipline": "onbekend",
+            "geboortejaar": 2012,
+            "leeftijd": None,
+            "confidence": 0.9,
+        }
+
+    def stream(**kwargs):
+        stream_calls.append(kwargs)
+        return "conv-x", "mag niet gebeuren"
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(intake, "classify_message", classify)
+    monkeypatch.setattr(mistral_client, "stream_answer", stream)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    resp = client.post("/chat", json={"message": "Welke licentie heb ik nodig?", "client_id": "c"})
+    assert resp.status_code == 202
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["status"] == "done"
+    assert result["route"] == "bypass"
+    assert "KNWU Licentie U17" in result["answer"]
+    assert stream_calls == []  # de Mistral-conversation startte niet
+
+
+def test_direct_to_expert_route_uses_expert_env_id(tmp_path, monkeypatch):
+    """#88/#91: intake met hoge confidence start direct bij de expert, niet bij de router."""
+    import config
+    import intake
+    import mistral_client
+
+    stream_calls: list[dict] = []
+
+    def classify(**kwargs):
+        return {
+            "intentie": "regelgeving",
+            "domein": "club",
+            "discipline": "onbekend",
+            "geboortejaar": None,
+            "leeftijd": None,
+            "confidence": 0.95,
+        }
+
+    def stream(**kwargs):
+        stream_calls.append(kwargs)
+        return "conv-c", "clubantwoord"
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(
+        config, "EXPERT_AGENT_IDS", {"knwu": "ag_knwu", "regio": "", "club": "ag_club", "archief": ""}
+    )
+    monkeypatch.setattr(intake, "classify_message", classify)
+    monkeypatch.setattr(mistral_client, "stream_answer", stream)
+    client = make_client(tmp_path)
+    body = chat(client, "Wat kost de contributie bij WTC Woerden?")
+    assert body["answer"] == "clubantwoord"
+    assert stream_calls[0]["agent_id"] == "ag_club"  # direct-to-expert, router overgeslagen
+    assert stream_calls[0]["prompt_cache_key"] == config.PROMPT_CACHE_KEY
+
+
+def test_router_route_when_confidence_low(tmp_path, monkeypatch):
+    import config
+    import intake
+    import mistral_client
+
+    stream_calls: list[dict] = []
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "ag_knwu", "regio": "", "club": "", "archief": ""})
+    monkeypatch.setattr(
+        intake,
+        "classify_message",
+        lambda **kw: {**dict(intake.FALLBACK), "domein": "knwu", "confidence": 0.4},
+    )
+    monkeypatch.setattr(
+        mistral_client, "stream_answer", lambda **kw: stream_calls.append(kw) or ("conv-r", "routerantwoord")
+    )
+    client = make_client(tmp_path)
+    resp = client.post("/chat", json={"message": "Iets vaags over een wedstrijd", "client_id": "c"})
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["status"] == "done"
+    assert result["route"] == "router"
+    assert stream_calls[0]["agent_id"] == "router-id"
+
+
+def test_job_phases_follow_sse_events(tmp_path, monkeypatch):
+    """#93: de background-job zet SSE-events om in job["phase"]; /chat/status toont ze.
+    Eén gedeelde event loop (zoals de trage-call-test): onder TestClient wordt een
+    nog-lopende background task bij einde van het request gecanceld."""
+    import asyncio as _asyncio
+    import time as _time
+
+    import httpx
+
+    import config
+    import intake
+    import mistral_client
+    import phases
+
+    def classify(**kwargs):
+        return dict(intake.FALLBACK)
+
+    def stream(**kwargs):
+        on_event = kwargs["on_event"]
+        for event, data in [
+            ("agent.handoff.done", {"next_agent_name": "knwu-agent"}),
+            ("tool.execution.started", {"name": "document_library"}),
+            ("tool.execution.started", {"name": "web_search"}),
+            ("message.output.delta", {"content": "Antwoord"}),
+        ]:
+            on_event(event, data)
+            _time.sleep(0.05)  # poll-interval (10ms) moet de fasen kunnen zien
+        return "conv-x", "Antwoord"
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(intake, "classify_message", classify)
+    monkeypatch.setattr(mistral_client, "stream_answer", stream)
+    app = create_app(db_path=str(tmp_path / "t.db"))
+
+    async def run():
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post("/chat", json={"message": "vraag", "client_id": "c"})
+            assert resp.status_code == 202
+            job_id = resp.json()["job_id"]
+            seen: list[str] = []
+            for _ in range(500):
+                body = (await ac.get(f"/chat/status/{job_id}")).json()
+                if body["phase"] not in seen:
+                    seen.append(body["phase"])
+                if body["status"] in ("done", "error"):
+                    return body, seen
+                await _asyncio.sleep(0.01)
+            raise AssertionError("job werd niet done binnen 5s")
+
+    result, seen = _asyncio.run(run())
+    assert result["status"] == "done"
+    assert seen == [
+        phases.PHASE_LEES,
+        phases.PHASE_KNWU,
+        phases.PHASE_WEB,
+        phases.PHASE_OPSTELLEN,
+        phases.PHASE_KLAAR,
+    ]
+    assert result["route"] == "router"
+
+
+def test_stream_start_error_falls_back_to_non_streaming(tmp_path, monkeypatch):
+    """#93: als de SSE-call niet start, valt de job terug op de non-streaming call."""
+    import config
+    import intake
+    import mistral_client
+
+    fallback_calls: list[dict] = []
+
+    def broken_stream(**kwargs):
+        raise mistral_client.StreamStartError("Mistral API niet bereikbaar")
+
+    def answer_question(**kwargs):
+        fallback_calls.append(kwargs)
+        return "conv-fb", "fallback antwoord"
+
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(intake, "classify_message", lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(mistral_client, "stream_answer", broken_stream)
+    monkeypatch.setattr(mistral_client, "answer_question", answer_question)
+    client = make_client(tmp_path)
+    body = chat(client, "vraag")
+    assert body["answer"] == "fallback antwoord"
+    assert len(fallback_calls) == 1
+    assert fallback_calls[0]["prompt_cache_key"] == config.PROMPT_CACHE_KEY

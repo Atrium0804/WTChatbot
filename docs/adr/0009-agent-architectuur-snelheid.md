@@ -43,7 +43,7 @@ prompt caching aan (cached input = 10% van de prijs). De architectuur is switchb
 - Router-call is ~90% goedkoper per token dan de oude medium-router.
 - Trade-off: een small router is zwakker bij vage vragen — gecompenseerd door de
   light-model intake in de app (#91) die bij lage confidence de router inschakelt.
-- `agents_config.json` wordt bij de implementatie gemigreerd naar
+- `agents_config.json` is gemigreerd naar
   `scripts/architectures/huidig.json`; de prompts in `scripts/prompts/` zijn al
   aangepast (geen return-handoff, direct expert→expert, lookups via de contextregel).
 - ADR-0006 (verzettencalculator, post-MVP) raakt de deterministische max-verzet-lookup

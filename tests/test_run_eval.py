@@ -1,6 +1,9 @@
+import os
 import sys
 import unittest
+from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "eval"))
 
@@ -388,7 +391,11 @@ class Run3ReviewTests(unittest.TestCase):
         self.assertTrue(set(RUN3_OORDEEL) <= set(by_id))
         for eid, oordeel in RUN3_OORDEEL.items():
             with self.subTest(id=eid):
-                result = run_eval.check_entry(by_id[eid], RUN3[eid])
+                # run-3-antwoorden kwamen uit de agent-flow (vóór #91); de
+                # route-check (#92) telt daarom niet mee voor deze historische run
+                result = run_eval.check_entry(
+                    by_id[eid], RUN3[eid], route=by_id[eid].get("verwacht_route", "")
+                )
                 self.assertEqual(result["ok"], oordeel, result)
 
 
@@ -689,3 +696,143 @@ class EvalsetSchemaTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PlanEntryTests(unittest.TestCase):
+    """#92: plan_entry spiegelt de route-beslissing van de app (bypass/direct/router)."""
+
+    def setUp(self) -> None:
+        from datetime import date
+
+        self.rules = run_eval.knwu_categories.load_rules()
+        self.today = date(2026, 11, 9)
+
+    def test_bypass_bij_pure_lookup_zonder_intake_call(self) -> None:
+        entry = {
+            "id": "x",
+            "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+        }
+        with patch.object(run_eval.intake, "classify_message") as classify:
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        classify.assert_not_called()  # bypass gebeurt vóór de intake, 0 LLM-calls
+        self.assertEqual(plan["route"], "bypass")
+        self.assertIsNone(plan["agent_id"])
+        self.assertEqual(plan["lookup"]["kind"], "categorie")
+
+    def test_via_router_forceert_router(self) -> None:
+        entry = {"id": "x", "vraag": "Hoe zit het met die wedstrijd?", "via": "router"}
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}):
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "router")
+        self.assertEqual(plan["agent_id"], "ag_router")
+
+    def test_intake_direct_to_expert_bij_hoge_confidence(self) -> None:
+        entry = {"id": "x", "vraag": "Wat kost de contributie bij WTC Woerden?"}
+        intake_result = {
+            "intentie": "regelgeving",
+            "domein": "club",
+            "discipline": "onbekend",
+            "geboortejaar": None,
+            "leeftijd": None,
+            "confidence": 0.95,
+        }
+        env = {"MISTRAL_AGENT_ID": "ag_router", "MISTRAL_AGENT_ID_CLUB": "ag_club"}
+        with patch.dict(os.environ, env), patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ):
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "direct-club")
+        self.assertEqual(plan["agent_id"], "ag_club")
+        self.assertGreaterEqual(plan["intake_ms"], 0.0)
+
+    def test_intake_lage_confidence_route_router(self) -> None:
+        entry = {"id": "x", "vraag": "Iets vaags over een wedstrijd"}
+        intake_result = {
+            "intentie": "onbekend",
+            "domein": "club",
+            "discipline": "onbekend",
+            "geboortejaar": None,
+            "leeftijd": None,
+            "confidence": 0.3,
+        }
+        env = {"MISTRAL_AGENT_ID": "ag_router", "MISTRAL_AGENT_ID_CLUB": "ag_club"}
+        with patch.dict(os.environ, env), patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ):
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "router")
+        self.assertEqual(plan["agent_id"], "ag_router")
+
+    def test_intake_can_lookup_compleet_maken(self) -> None:
+        # regex vindt geen geboortejaar, de intake wel -> toch bypass
+        entry = {"id": "x", "vraag": "Welke licentie heb ik nodig?"}
+        intake_result = {
+            "intentie": "lookup",
+            "domein": "knwu",
+            "discipline": "onbekend",
+            "geboortejaar": 2012,
+            "leeftijd": None,
+            "confidence": 0.9,
+        }
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}), patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ):
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "bypass")
+        self.assertEqual(plan["lookup"]["birth_year"], 2012)
+
+
+class RouteAssertionTests(unittest.TestCase):
+    """#92: verwacht_route assert de gespiegde route in check_entry."""
+
+    def entry(self, **kw) -> dict:
+        base = {
+            "id": "x",
+            "categorie": "knwu",
+            "type": "standaard",
+            "vraag": "Vraag?",
+            "verwacht_antwoord": "U12",
+            "bron": "doc.pdf",
+            "taalniveau": "B2",
+        }
+        base.update(kw)
+        return base
+
+    def test_matchende_route_is_ok(self) -> None:
+        result = run_eval.check_entry(self.entry(verwacht_route="bypass"), "U12\n\nBron: doc.pdf", [], route="bypass")
+        self.assertTrue(result["ok"])
+        self.assertTrue(result["route_ok"])
+        self.assertEqual(result["route"], "bypass")
+
+    def test_mismatchende_route_faalt(self) -> None:
+        result = run_eval.check_entry(self.entry(verwacht_route="router"), "U12\n\nBron: doc.pdf", [], route="bypass")
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["route_ok"])
+
+    def test_zonder_verwacht_route_geen_route_check(self) -> None:
+        result = run_eval.check_entry(self.entry(), "U12\n\nBron: doc.pdf", [], route="bypass")
+        self.assertTrue(result["ok"])
+        self.assertTrue(result["route_ok"])
+
+
+class BypassTemplateEvalsetTests(unittest.TestCase):
+    """#92: alle evalset-entries met verwacht_route: bypass moeten met het
+    productie-template-antwoord (lookups.render_lookup_answer) de checks halen."""
+
+    def test_bypass_entries_halen_checks_met_template(self) -> None:
+        from datetime import date
+
+        entries = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        rules = run_eval.knwu_categories.load_rules()
+        today = date(2026, 11, 9)
+        bypass_entries = [e for e in entries if e.get("verwacht_route") == "bypass"]
+        self.assertGreaterEqual(len(bypass_entries), 4)  # oa. de 2 baseline-lookup-vragen
+        for e in bypass_entries:
+            with self.subTest(e["id"]):
+                lookup = run_eval.lookups.match_lookup(e["vraag"], today, rules)
+                self.assertIsNotNone(lookup, "geen lookup gedetecteerd")
+                antwoord = run_eval.lookups.render_lookup_answer(
+                    lookup, e["vraag"], rules, today, e.get("taalniveau", "B1")
+                )
+                result = run_eval.check_entry(e, antwoord, [], route="bypass")
+                self.assertTrue(result["ok"], f"{e['id']}: {result}")

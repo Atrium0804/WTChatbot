@@ -21,6 +21,7 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 | `verwacht_marker` | string | nee | Marker die in de **ruwe agent-output** moet voorkomen, bijv. `[BRONCONFLICT]` (#47). De proxy stript de marker vóór de gebruiker hem ziet, dus in productie-antwoorden is hij weg; de eval-runner draait offline en ziet de ruwe output |
 | `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
 | `via` | enum | nee | Alleen `router`: de vraag gaat naar de router-agent (`MISTRAL_AGENT_ID`) in plaats van de categorie-agent, dus end-to-end met handoff |
+| `verwacht_route` | enum | nee | Assert de productie-route van de app (#92): `bypass` (deterministische lookup, 0 LLM-calls), `direct-<domein>` (direct-to-expert via de light intake) of `router`. Mismatch = FAIL |
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
 | `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
@@ -40,14 +41,19 @@ Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 4. **Verboden woorden**: geen van de woorden uit `niet_in_antwoord` mag in het antwoord voorkomen; `last_run.json` toont ze onder `verboden_gevonden`.
 5. **Verheldering** (`type: verheldering`): de bron-check vervalt; de kernfeiten (de wedervraag) en eventueel `niet_in_antwoord` tellen.
 6. **Agent** (alleen met `verwachte_agent`): de agent die het antwoord op `vraag` gaf moet de verwachte agent zijn. De naam komt uit `agent_id` van de `message.output` in de response, vertaald via de `MISTRAL_AGENT_ID*`-variabelen.
+7. **Route** (alleen met `verwacht_route`, #92): de route die de runner spiegelt uit de app (`bypass` | `direct-<domein>` | `router`) moet gelijk zijn aan `verwacht_route`.
 
 Een vraag is "correct mét correcte bron" als alle checks slagen.
 
-Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord en een `trace`: per beurt de vraag en de agent(s) die antwoordden.
+Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord, een `trace` (per beurt de vraag, de agent(s) die antwoordden en `duur_ms`), en per vraag `route`, `duur_ms`, `llm_calls` (aantal `message.output`-calls in de laatste beurt; 0 bij `bypass`) en `intake_ms` (de light-intake-call, #91). In de summary staat per route een aggregatie (`per_route`: n, ok, gemiddelde_duur_ms, llm_calls_totaal) — daarmee zijn de 4 baseline-vragen (#92: 2 lookup, 2 library) vóór/na de snelheidsflow direct vergelijkbaar.
 
 ## Contextregels
 
 Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum van vandaag, bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, en bij een oude aanduiding of kalenderaanduiding ("categorie 3", "MU12, VU13") de nieuwe leeftijdscategorie. De runner gebruikt de datum van de dag waarop hij draait.
+
+## Route spiegelen (#91/#92)
+
+De runner spiegelt de route-beslissing van de app per vraag (`plan_entry` in `run_eval.py`, zelfde functies als productie — `app/lookups.py` + `app/intake.py`): eerst de deterministische lookup; bij een pure lookup-vraag met complete data is de route `bypass` en komt het antwoord uit hetzelfde template als de app (`lookups.render_lookup_answer`, bron+versie+artikel bij B2, geen `Bron:`-regel bij B1), zonder conversation te starten. Anders geldt `via: router` als vaste router-route, en start de runner de light intake (1 call naar `mistral-small-latest`, `MISTRAL_CHAT_COMPLETIONS_URL`/`MISTRAL_INTAKE_MODEL`) en laat `intake.decide_route` direct-to-expert (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`) of router beslissen.
 
 ## Gate
 

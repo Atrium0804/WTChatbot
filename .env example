@@ -5,4 +5,11 @@ MISTRAL_AGENT_ID_REGIO=
 MISTRAL_AGENT_ID_CLUB=
 MISTRAL_AGENT_ID_ARCHIEF=
 
+# Optioneel — licht-model intake + direct-to-expert (#88/#91, ADR-0009)
+# MISTRAL_CHAT_COMPLETIONS_URL=https://api.mistral.ai/v1/chat/completions
+# MISTRAL_INTAKE_MODEL=mistral-small-latest
+# INTAKE_TIMEOUT=30
+# INTAKE_CONFIDENCE_THRESHOLD=0.8
+# PROMPT_CACHE_KEY=wtchatbot-v1
+
 RATE_LIMIT_PER_HOUR=

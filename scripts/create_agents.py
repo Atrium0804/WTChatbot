@@ -1,8 +1,10 @@
 """Create or update the production Mistral agents of the WTChatbot MVP.
 
-Reads agents_config.json: model, completion_args and the agent list (name,
-description, prompt files, optional library, websearch flag, handoffs).
-Prompt texts live in separate files under prompts_folder (CODING_PRINCIPLES).
+Reads an architecture variant JSON (default: via the `active` pointer,
+scripts/architectures/active -> <naam>.json, #95): model, completion_args
+and the agent list (name, description, prompt files, optional library,
+websearch flag, handoffs). Prompt texts live in separate files under
+prompts_folder (relative to the variant file; CODING_PRINCIPLES).
 
 An existing remote agent with the same name is updated, a missing one is
 created — the script is idempotent. Handoffs are resolved to agent ids in a
@@ -39,7 +41,38 @@ except ModuleNotFoundError:
 import sync_libraries
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_CONFIG_PATH = SCRIPT_DIR / "agents_config.json"
+ARCHITECTURES_DIR = SCRIPT_DIR / "architectures"
+ACTIVE_POINTER_PATH = ARCHITECTURES_DIR / "active"
+
+
+def active_config_path(architectures_dir: Path = ARCHITECTURES_DIR) -> Path:
+    """Pad naar de actieve architectuur-variant via de `active`-pointer (#95).
+
+    `active` is een plat tekstbestand met de variantnaam (bv. "huidig");
+    de variant staat in <architectures_dir>/<naam>.json. Switchen = andere
+    naam in `active` + redeploy; agent-namen blijven identiek, dus de
+    .env-agent-ids blijven geldig.
+    """
+    pointer = architectures_dir / "active"
+    try:
+        name = pointer.read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        raise SystemExit(f"error: active-pointer niet gevonden: {pointer}")
+    if not name:
+        raise SystemExit(f"error: active-pointer is leeg: {pointer}")
+    path = architectures_dir / f"{name}.json"
+    if not path.is_file():
+        variants = sorted(p.stem for p in architectures_dir.glob("*.json"))
+        raise SystemExit(
+            f"error: variant '{name}' bestaat niet ({path}); "
+            f"beschikbare varianten: {variants or 'geen'}"
+        )
+    return path
+
+
+def default_config_path() -> Path:
+    """Config-pad van de actieve variant (#95); --config override't dit."""
+    return active_config_path()
 
 
 class AgentConfig(TypedDict, total=False):
@@ -283,7 +316,12 @@ def run_create(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Create/update the production Mistral agents.")
     parser.add_argument("--apply", action="store_true", help="execute changes (default: dry-run)")
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="path to config JSON")
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=None,
+        help="path to a variant JSON (default: via scripts/architectures/active, #95)",
+    )
     args = parser.parse_args()
 
     load_dotenv()
@@ -292,9 +330,10 @@ def main() -> int:
         print("error: MISTRAL_API_KEY is not set; check .env", file=sys.stderr)
         return 2
     client = Mistral(api_key=api_key)
-    config = load_config(args.config)
+    config_path = args.config or default_config_path()
+    config = load_config(config_path)
     report: AgentReport = {"created": [], "updated": [], "errors": [], "agent_ids": {}}
-    return run_create(client, config, apply=args.apply, report=report, config_path=args.config)
+    return run_create(client, config, apply=args.apply, report=report, config_path=config_path)
 
 
 if __name__ == "__main__":

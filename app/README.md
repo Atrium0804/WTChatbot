@@ -35,6 +35,22 @@ uvicorn main:app --reload --port 8000
 Zonder `MISTRAL_API_KEY` + `MISTRAL_AGENT_ID` answered `/chat` met een
 duidelijk gemarkeerd STUB-antwoord — geen API-key nodig om te ontwikkelen.
 
+## Flow per bericht (ADR-0009, #86/#88/#91/#93)
+
+1. **Deterministische lookup** (`lookups.py`): een pure feitelijke vraag
+   (leeftijdscategorie, licentie, maximaal verzet, oude categorie-indeling)
+   met complete data krijgt direct een template-antwoord uit
+   `knwu_categories.json` — 0 LLM-calls, synchroon 200, géén fase.
+2. Anders: 202 + background job. De **light intake** (`intake.py`, 1 call
+   naar `mistral-small-latest`) classificeert de vraag; `decide_route` kiest
+   **direct-to-expert** (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id
+   uit `MISTRAL_AGENT_ID_<DOMEIN>`) of de **router**.
+3. De Mistral-call streamt (SSE, `mistral_client.stream_answer`); events
+   worden in de job omgezet in **fasen** (`phases.py`, teksten als
+   "Ik doorzoek de KNWU-regelgeving…"); de UI pollt `/chat/status/{job_id}`
+   en toont de fase in de typing-bubble. Prompt caching staat aan
+   (`PROMPT_CACHE_KEY`).
+
 ## Tests
 
 ```bash

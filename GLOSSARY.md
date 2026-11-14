@@ -70,6 +70,29 @@ _Avoid_: "kennismap", "documentenmap"
 **Sync**:
 Het local → remote synchroniseren van `knowledge-documents/` met de bijbehorende Mistral-libraries: de submapnaam is gelijk aan de librarynaam, en remote documenten zonder lokale tegenhanger worden uit de actieve library verwijderd. Archiveren van oude versies gebeurt handmatig (zie ADR-0005).
 
+## Architectuur en flow (snelheid)
+
+**Agent-architectuur**:
+Kern van ADR-0009: een kleine router-agent (`mistral-small-latest`) als voordeur, domeinexperts (knwu/regio/club/archief) op `mistral-large-latest`, direct expert→expert handoffs (geen return-handoff), geen aparte zoek-agents, en de app-side intake + deterministische bypass. Switchbaar via de active-pointer (`scripts/architectures/active`, #95).
+
+**Route**:
+De weg die een bericht door de app nimmt (#91): `bypass` (deterministische lookup, direct app-antwoord), `direct-<domein>` (direct-to-expert na intake met hoge confidence) of `router` (via de router-agent). Gelogd in `/chat/status` (`route`) en in de eval (`verwacht_route`, `per_route` in `last_run.json`).
+
+**Deterministische bypass**:
+Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een template (bron+versie+artikel bij B2) — zonder LLM-call; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek.
+
+**Intake (light-model intake)**:
+Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de regex-lookup de route.
+
+**Direct-to-expert**:
+De app start een conversatie direct bij de domeinexpert (via `MISTRAL_AGENT_ID_KNWU`/`_REGIO`/`_CLUB`/`_ARCHIEF`) als de intake het domein met confidence ≥ drempel (`INTAKE_CONFIDENCE_THRESHOLD`, default 0,8) bepaalt — de router-call wordt zo bespaard.
+
+**Fase**:
+De zichtbare stap in de typing-indicator (#93): "Ik lees je vraag…", "Ik bereken de leeftijdscategorie…", "Ik doorzoek de KNWU-regelgeving…", "Ik doorzoek de regio-/clubdocumenten…", "Ik raadpleeg kenniscentrum.knwu.nl…", "Ik stel je antwoord op…". De background-job zet SSE-events (`stream: true`) om in `job["phase"]` (`app/phases.py`); de UI pollt `/chat/status`. Bij een deterministische bypass géén fase — het antwoord verschijnt direct.
+
+**Active-pointer**:
+`scripts/architectures/active` — plat tekstbestand met de naam van de actieve architectuur-variant (`<naam>.json` in dezelfde map). Switchen = andere naam + redeploy; agent-namen blijven identiek, dus `.env`-ids blijven geldig (#95).
+
 ## Renners en wedstrijden
 
 **Leeftijdscategorie**:

@@ -5,6 +5,11 @@ De Mistral API-key staat alleen in .env op de server. Zonder
 MISTRAL_API_KEY/MISTRAL_AGENT_ID draait de app in stub-mode (duidelijk gemarkeerd)
 — handig voor offline development en tests.
 
+Flow per bericht (#88/#91/#93): deterministische lookup (lookups.py) -> bij een
+pure feitelijke vraag direct app-antwoord zonder LLM-call; anders 202 + background
+job met light-model intake (intake.py), route direct-to-expert of router, en een
+streaming Mistral-call wier SSE-events de fase in /chat/status voeden (phases.py).
+
 Run:  uvicorn main:app --host 0.0.0.0 --port 8000   (vanuit app/)
 """
 
@@ -25,8 +30,11 @@ from starlette.concurrency import run_in_threadpool
 
 import config
 import context
+import intake
 import knwu_categories
+import lookups
 import mistral_client
+import phases
 import store
 
 STATIC_DIR = config.BASE_DIR / "static"
@@ -90,6 +98,11 @@ def create_app(
     store.init_db(db)
     store.purge_old(db, config.FEEDBACK_RETENTION_DAYS)
     category_rules = knwu_categories.load_rules()
+    # #88/#91: expert-ids voor direct-to-expert; agent-id -> naam voor de fase-mapping
+    expert_agent_ids = {k: v for k, v in config.EXPERT_AGENT_IDS.items() if v}
+    agent_names = {agent_id: f"{domein}-agent" for domein, agent_id in expert_agent_ids.items()}
+    if config.MISTRAL_AGENT_ID:
+        agent_names[config.MISTRAL_AGENT_ID] = "router-agent"
 
     app = FastAPI(title="WTChatbot")
     # In-memory state: conversaties, feedbackgeschiedenis per conversatie (rolling
@@ -125,29 +138,105 @@ def create_app(
                 response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
+    def _direct_response(conversation_id: str, message: str, answer: str) -> dict:
+        """Synchroon 200-antwoord: stub-mode óf deterministische bypass (#91)."""
+        answer, bronconflicts = split_bronconflict_markers(answer)
+        for marker in bronconflicts:
+            store.save_feedback(
+                db,
+                rating="bronconflict",
+                conversation_id=conversation_id,
+                text=marker[: config.FEEDBACK_MAX_TEXT_LENGTH],
+            )
+        turns = state["history"].setdefault(
+            conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
+        )
+        turns.append({"question": message, "answer": answer})
+        return {"conversation_id": conversation_id, "answer": answer}
+
     async def _run_chat_job(
         job_id: str,
         conversation_id: str,
         message: str,
         context_message: str,
         mistral_conv_id: str | None,
+        vandaag: date,
+        language_level: str,
     ) -> None:
-        """Background task (#85): draait de Mistral-call off-loop en slaat het
-        resultaat op in de job-state. De /chat-status endpoint leest die state."""
+        """Background task (#85 + #91/#93): light intake + route + streaming
+        Mistral-call off-loop; SSE-events worden omgezet in job["phase"].
+        De /chat/status endpoint leest die state."""
         job = state["jobs"][job_id]
         job["status"] = "working"
-        job["phase"] = "Wielie denkt na…"
+        job["phase"] = phases.PHASE_LEES
         try:
-            new_conv_id, answer = await run_in_threadpool(
-                mistral_client.answer_question,
+            # #91: light intake (1 kleine call) + regex-lookup bepalen de route
+            intake_result = await run_in_threadpool(
+                intake.classify_message,
                 api_key=config.MISTRAL_API_KEY,
-                agent_id=config.MISTRAL_AGENT_ID,
-                base_url=config.MISTRAL_CONVERSATIONS_URL,
-                message=context_message,
-                conversation_id=mistral_conv_id or None,
-                metadata={"app_conversation_id": conversation_id},
+                base_url=config.MISTRAL_CHAT_COMPLETIONS_URL,
+                model=config.MISTRAL_INTAKE_MODEL,
+                message=message,
+                timeout=config.INTAKE_TIMEOUT,
             )
-            state["conversations"][conversation_id] = new_conv_id
+            route = intake.decide_route(
+                message=message,
+                today=vandaag,
+                rules=category_rules,
+                intake_result=intake_result,
+                expert_agent_ids=expert_agent_ids,
+                threshold=config.INTAKE_CONFIDENCE_THRESHOLD,
+            )
+            job["route"] = route["route"] + (
+                f"-{route['domein']}" if route["route"] == "direct" else ""
+            )
+            if route["route"] == "bypass":
+                # deterministische lookup met complete data: direct app-antwoord,
+                # de Mistral-conversation start niet (#88/#91)
+                job["phase"] = phases.PHASE_BEREKEN
+                answer = lookups.render_lookup_answer(
+                    route["lookup"], message, category_rules, vandaag, language_level
+                )
+                new_conv_id = mistral_conv_id or ""
+            else:
+                agent_id = route.get("agent_id") or config.MISTRAL_AGENT_ID
+                current_agent = agent_names.get(agent_id, "")
+                job["phase"] = phases.fase_voor_startagent(current_agent)
+
+                def on_event(event: str, data: dict) -> None:
+                    nonlocal current_agent
+                    mapping = phases.phase_for_event(event, data, current_agent)
+                    if mapping is not None:
+                        new_phase, current_agent = mapping
+                        job["phase"] = new_phase
+
+                try:
+                    new_conv_id, answer = await run_in_threadpool(
+                        mistral_client.stream_answer,
+                        api_key=config.MISTRAL_API_KEY,
+                        agent_id=agent_id,
+                        base_url=config.MISTRAL_CONVERSATIONS_URL,
+                        message=context_message,
+                        conversation_id=mistral_conv_id or None,
+                        metadata={"app_conversation_id": conversation_id},
+                        prompt_cache_key=config.PROMPT_CACHE_KEY,
+                        on_event=on_event,
+                    )
+                except mistral_client.StreamStartError:
+                    # stream startte niet: val terug op de non-streaming call (#93)
+                    job["phase"] = phases.PHASE_OPSTELLEN
+                    new_conv_id, answer = await run_in_threadpool(
+                        mistral_client.answer_question,
+                        api_key=config.MISTRAL_API_KEY,
+                        agent_id=agent_id,
+                        base_url=config.MISTRAL_CONVERSATIONS_URL,
+                        message=context_message,
+                        conversation_id=mistral_conv_id or None,
+                        metadata={"app_conversation_id": conversation_id},
+                        prompt_cache_key=config.PROMPT_CACHE_KEY,
+                    )
+            if new_conv_id:
+                state["conversations"][conversation_id] = new_conv_id
             answer, bronconflicts = split_bronconflict_markers(answer)
             for marker in bronconflicts:
                 store.save_feedback(
@@ -161,12 +250,12 @@ def create_app(
             )
             turns.append({"question": message, "answer": answer})
             job["status"] = "done"
-            job["phase"] = "Klaar"
+            job["phase"] = phases.PHASE_KLAAR
             job["answer"] = answer
             job["conversation_id"] = conversation_id
         except Exception as exc:
             job["status"] = "error"
-            job["phase"] = "Fout"
+            job["phase"] = phases.PHASE_FOUT
             job["error"] = f"Er ging iets mis bij het ophalen van het antwoord. Probeer het opnieuw. ({exc})"
 
     @app.post("/chat")
@@ -190,12 +279,22 @@ def create_app(
                 status_code=429,
             )
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
+        vandaag = today()
+        # #91: pure lookup met complete data -> direct app-antwoord (0 LLM-calls,
+        # géén job/fase — de snelheid is zo direct zichtbaar), ook midden in een
+        # bestaand gesprek
+        lookup = lookups.match_lookup(message, vandaag, category_rules)
+        if lookup:
+            answer = lookups.render_lookup_answer(
+                lookup, message, category_rules, vandaag, payload.language_level
+            )
+            return _direct_response(conversation_id, message, answer)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
-            # #85: 202 + job-id; de Mistral-call draait in een background task.
+            # #85: 202 + job-id; intake + Mistral-call draaien in een background task.
             mistral_conv_id = state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
                 message,
-                today(),
+                vandaag,
                 category_rules,
                 new_conversation=not mistral_conv_id,
                 language_level=payload.language_level,
@@ -203,7 +302,7 @@ def create_app(
             job_id = uuid.uuid4().hex
             state["jobs"][job_id] = {
                 "status": "pending",
-                "phase": "Wielie denkt na…",
+                "phase": phases.PHASE_LEES,
                 "created_at": time.time(),
             }
             asyncio.create_task(
@@ -213,6 +312,8 @@ def create_app(
                     message,
                     context.add_context(message, context_lines),
                     mistral_conv_id,
+                    vandaag,
+                    payload.language_level,
                 )
             )
             return JSONResponse(
@@ -220,20 +321,7 @@ def create_app(
                 status_code=202,
             )
         # stub-mode: synchroon antwoord (handig voor offline development en tests)
-        answer = stub_answer(message)
-        answer, bronconflicts = split_bronconflict_markers(answer)
-        for marker in bronconflicts:
-            store.save_feedback(
-                db,
-                rating="bronconflict",
-                conversation_id=conversation_id,
-                text=marker[: config.FEEDBACK_MAX_TEXT_LENGTH],
-            )
-        turns = state["history"].setdefault(
-            conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
-        )
-        turns.append({"question": message, "answer": answer})
-        return {"conversation_id": conversation_id, "answer": answer}
+        return _direct_response(conversation_id, message, stub_answer(message))
 
     @app.get("/chat/status/{job_id}")
     async def chat_status(job_id: str):
@@ -243,6 +331,8 @@ def create_app(
         if not job:
             return JSONResponse({"error": "Onbekende job."}, status_code=404)
         result: dict = {"status": job["status"], "phase": job.get("phase", "")}
+        if job.get("route"):
+            result["route"] = job["route"]
         if job["status"] == "done":
             result["answer"] = job.get("answer", "")
             result["conversation_id"] = job.get("conversation_id", "")

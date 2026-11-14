@@ -4,9 +4,17 @@ Alle LLM/API-aanroepen zitten hier, zodat tests deze laag kunnen mocken en de
 provider vervangbaar blijft (CODING_PRINCIPLES.md).
 """
 
+import json
+
 import requests
 
 DEFAULT_TIMEOUT = 180  # ruimer (review 2026-11-12: websearch/handoff-runs liepen op 60s in een timeout); bij timeout direct een 502 met melding
+
+
+class StreamStartError(RuntimeError):
+    """De streaming-call startte niet (connect/HTTP-fout vóór het eerste
+    event) — veilig om op terug te vallen op de non-streaming call, want
+    Mistral heeft dan niets verwerkt (#93)."""
 
 
 def extract_text(outputs: list) -> str:
@@ -44,27 +52,34 @@ def answer_question(
     message: str,
     conversation_id: str | None = None,
     metadata: dict | None = None,
+    prompt_cache_key: str | None = None,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> tuple[str, str]:
-    """Stuur een bericht naar de agent; geef (mistral_conversation_id, antwoordtekst).
+    """Stuur een bericht naar de agent (non-streaming); geef (mistral_conversation_id, antwoordtekst).
 
     `metadata` gaat alleen mee bij het starten van een conversatie (bv. de
     app-conversation-id, zodat scripts/trace_conversation.py feedback aan de
-    Mistral-geschiedenis kan koppelen).
+    Mistral-geschiedenis kan koppelen). `prompt_cache_key` zet prompt caching
+    aan (#88 besluit 6; gecachte input kost 10%).
     """
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     try:
         if conversation_id:
+            body: dict = {"inputs": message}
+            if prompt_cache_key:
+                body["prompt_cache_key"] = prompt_cache_key
             resp = requests.post(
                 f"{base_url}/{conversation_id}",
                 headers=headers,
-                json={"inputs": message},
+                json=body,
                 timeout=timeout,
             )
         else:
             body = {"agent_id": agent_id, "inputs": message}
             if metadata:
                 body["metadata"] = metadata
+            if prompt_cache_key:
+                body["prompt_cache_key"] = prompt_cache_key
             resp = requests.post(base_url, headers=headers, json=body, timeout=timeout)
     except requests.Timeout as exc:
         raise RuntimeError(f"Mistral API timeout na {timeout}s — probeer het opnieuw") from exc
@@ -77,6 +92,107 @@ def answer_question(
     data = resp.json()
     new_id = data.get("conversation_id") or conversation_id or ""
     return new_id, extract_text(data.get("outputs", []))
+
+
+def stream_answer(
+    *,
+    api_key: str,
+    agent_id: str,
+    base_url: str,
+    message: str,
+    conversation_id: str | None = None,
+    metadata: dict | None = None,
+    prompt_cache_key: str | None = None,
+    on_event=None,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> tuple[str, str]:
+    """POST /v1/conversations met stream: true; consumeer de SSE server-side (#90/#93).
+
+    `on_event(event_type, data)` wordt per SSE-event aangeroepen (de #85-job
+    zet ze om in fase-teksten). Geef (mistral_conversation_id, antwoordtekst);
+    de tekst telt alleen message.output.delta-chunks ná de laatste
+    agent.handoff.done (zelfde regel als extract_text). Bij een connect/HTTP-
+    fout vóór het eerste event raise StreamStartError (veilig om non-
+    streaming te retryen); mid-stream fouten raise RuntimeError.
+    """
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    url = f"{base_url}/{conversation_id}" if conversation_id else base_url
+    body: dict = {"inputs": message, "stream": True}
+    if not conversation_id:
+        body["agent_id"] = agent_id
+        if metadata:
+            body["metadata"] = metadata
+    if prompt_cache_key:
+        body["prompt_cache_key"] = prompt_cache_key
+    try:
+        # (connect, read)-tuple: een stille stream mag niet de hele read-timeout hangen (#90)
+        resp = requests.post(
+            url, headers=headers, json=body, timeout=(10, timeout), stream=True
+        )
+        resp.raise_for_status()
+    except requests.Timeout as exc:
+        raise StreamStartError(
+            f"Mistral API timeout na {timeout}s — probeer het opnieuw"
+        ) from exc
+    except requests.HTTPError as exc:
+        raise StreamStartError(
+            f"Mistral API error {resp.status_code}: {resp.text[:200]}"
+        ) from exc
+    except requests.RequestException as exc:
+        raise StreamStartError(f"Mistral API niet bereikbaar: {exc}") from exc
+
+    conv_id = conversation_id or ""
+    chunks: list[str] = []  # deltas ná de laatste handoff
+    kept: list[dict] = []  # fallback: outputs + handoffs in non-stream-vorm
+    try:
+        for raw in resp.iter_lines(decode_unicode=True):
+            if not raw or not raw.startswith("data:"):
+                continue
+            try:
+                payload = json.loads(raw[len("data:"):].strip())
+            except json.JSONDecodeError:
+                continue
+            event = str(payload.get("event") or "")
+            data = payload.get("data") or {}
+            if not isinstance(data, dict):
+                continue
+            if on_event is not None:
+                try:
+                    on_event(event, data)
+                except Exception:
+                    pass  # fase-mapping mag nooit de stream breken
+            if event == "conversation.response.started":
+                conv_id = data.get("conversation_id") or conv_id
+            elif event == "agent.handoff.done":
+                kept.append({"type": "agent.handoff", **data})
+                chunks = []
+            elif event == "message.output.delta":
+                content = data.get("content", "")
+                texts = (
+                    [content]
+                    if isinstance(content, str)
+                    else [
+                        c.get("text", "")
+                        for c in content
+                        if isinstance(c, dict) and c.get("type") == "text"
+                    ]
+                    if isinstance(content, list)
+                    else []
+                )
+                chunks.extend(texts)
+                kept.append({"type": "message.output", "content": texts})
+            elif event == "message.output.done":
+                kept.append({"type": "message.output", **data})
+            elif event == "conversation.response.error":
+                raise RuntimeError(
+                    f"Mistral stream error: {data.get('message', 'onbekende fout')}"
+                )
+    except RuntimeError:
+        raise
+    except requests.RequestException as exc:
+        raise RuntimeError(f"Mistral stream afgebroken: {exc}") from exc
+    text = "".join(chunks) if chunks else extract_text(kept)
+    return conv_id, text
 
 
 def check_reachable(*, api_key: str, base_url: str, timeout: int = 10) -> bool:

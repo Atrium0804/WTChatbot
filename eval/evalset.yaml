@@ -28,6 +28,10 @@
 #                      overbodige verheldervragen)
 #   via:               (optioneel, alleen "router") vraag end-to-end via de
 #                      router-agent in plaats van de categorie-agent
+#   verwacht_route:    (optioneel, #92) assert de productie-route van de app:
+#                      "bypass" (deterministische lookup, 0 LLM-calls),
+#                      "direct-<domein>" (direct-to-expert via light intake)
+#                      of "router"; mismatch = FAIL
 #   beurten:           (optioneel) lijst eerdere gebruikersberichten in
 #                      dezelfde conversatie, vóór `vraag`; alleen het
 #                      antwoord op `vraag` wordt gecheckt
@@ -55,6 +59,7 @@
 evalset:
   # --- KNWU ---
   - id: knwu-licentie-pakketten
+    # baseline-vraag #92 (library/websearch): route via intake, duur_ms/llm_calls in last_run
     taalniveau: B2
     categorie: knwu
     type: websearch
@@ -83,6 +88,7 @@ evalset:
     bron: "kenniscentrum.knwu.nl/verzekeringen"
     versiedatum: "2026"
   - id: knwu-verzet-u15
+    verwacht_route: bypass  # #92: pure lookup -> direct app-antwoord, 0 LLM-calls
     taalniveau: B2
     categorie: knwu
     type: strikethrough
@@ -92,6 +98,7 @@ evalset:
     versiedatum: "2026-09-21"
     doorhaal_waarde: "6,55"
   - id: knwu-verzet-u17
+    verwacht_route: bypass  # #92: pure lookup -> direct app-antwoord, 0 LLM-calls
     taalniveau: B2
     categorie: knwu
     type: strikethrough
@@ -147,6 +154,7 @@ evalset:
     bron: "knwu.nl/contact"
     versiedatum: "2026"
   - id: knwu-categorie-jongen-2013
+    verwacht_route: bypass  # #92: pure lookup -> direct app-antwoord, 0 LLM-calls
     taalniveau: B2
     categorie: knwu
     type: standaard
@@ -155,6 +163,7 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-verheldering-licentie-via-router
+    verwacht_route: router  # #92: via: router forceert de router-route
     taalniveau: B2
     categorie: knwu
     type: verheldering
@@ -165,6 +174,7 @@ evalset:
     verwacht_antwoord: "geboortejaar"
     niet_in_antwoord: "MNC; Hans van den Hengel; WTC Woerden; discipline; geslacht"
   - id: knwu-verheldering-categorie-via-router
+    verwacht_route: router  # #92: via: router forceert de router-route
     taalniveau: B1
     categorie: knwu
     type: verheldering
@@ -182,10 +192,11 @@ evalset:
   # knwu-router-verzet-na-regiovraag verwijderd (review 2026-11-12): dubbel met
   # de andere verzet-vragen; er zijn voldoende verzet-vragen in de set
   - id: knwu-router-geboortejaar-als-vervolg
+    # #91 besluit 5: een kaal jaartal als vervolg bypasst direct (geen router meer)
+    verwacht_route: bypass
     taalniveau: B2
     categorie: knwu
     type: standaard
-    via: router
     beurten:
       - "In welke leeftijdscategorie rijdt mijn zoon?"
     vraag: "2015"
@@ -194,12 +205,12 @@ evalset:
     niet_in_antwoord: "Nieuweling"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
-    verwachte_agent: knwu-agent
   - id: knwu-router-licentie-na-clubvraag
+    # #91 besluit 5 + baseline-vraag #92 (lookup): licentie+geboortejaar -> direct app-antwoord
+    verwacht_route: bypass
     taalniveau: B2
     categorie: knwu
     type: standaard
-    via: router
     beurten:
       - "Wat kost de contributie voor jeugdleden bij WTC Woerden?"
     vraag: "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012."
@@ -207,12 +218,12 @@ evalset:
     verwacht_antwoord: "KNWU Licentie U17; U15"
     bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl"
     versiedatum: "2026-09-21"
-    verwachte_agent: knwu-agent
   # --- Club via de router: algemene vraag zonder KNWU-/regio-trefwoorden ---
   # De router moet direct handoff doen naar de club-agent, zonder
   # routeringsvraag: de Club-library bevat ook de algemene Website-teksten
   # van de jeugdsite (bv. "Een fiets en pedalen uitzoeken")
   - id: club-router-fiets-kopen
+    verwacht_route: router  # #92: via: router forceert de router-route
     taalniveau: B2
     categorie: club
     type: standaard
@@ -270,6 +281,7 @@ evalset:
 
   # --- Club WTC Woerden ---
   - id: club-contributie-jeugd-2026
+    # baseline-vraag #92 (library/RAG): route via intake, duur_ms/llm_calls in last_run
     taalniveau: B2
     categorie: club
     type: standaard
@@ -304,6 +316,7 @@ evalset:
 
   # --- B1-vragen (taalniveau B1 = standaard, issue #52): kort antwoord, géén Bron-regel ---
   - id: knwu-b1-categorie-jongen-2015
+    verwacht_route: bypass  # #92: baseline-vraag (lookup); B1 -> geen Bron-regel in het template
     taalniveau: B1
     categorie: knwu
     type: standaard
@@ -312,6 +325,7 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-leeftijd-in-jaren-kind-van-6
+    verwacht_route: router  # #92: "mag meedoen" is een reglementvraag, geen pure lookup
     taalniveau: B1
     categorie: knwu
     type: standaard

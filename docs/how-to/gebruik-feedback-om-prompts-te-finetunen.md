@@ -31,7 +31,7 @@ Deze how-to beschrijft de hele loop van gebruikersfeedback naar een aantoonbare 
    ```
 
    De rode run is het bewijs dat het patroon echt bestaat.
-4. **Wijzig de prompt of de agent-configuratie.** Pas het bestand aan in `scripts/prompts/` (`_shared.md` geldt voor alle content-agents, de per-agent bestanden voor agent-specifieke regels) of `scripts/agents_config.json` (model, `completion_args`, handoffs, libraries). Wijzig `docs/system-prompt.md` niet — dat is de spec; de werkende kopieën staan in `scripts/prompts/` (zie [maak-of-update-productie-agents](maak-of-update-productie-agents.md)).
+4. **Wijzig de prompt of de agent-configuratie.** Pas het bestand aan in `scripts/prompts/` (`_shared.md` geldt voor alle content-agents, de per-agent bestanden voor agent-specifieke regels) of de actieve variant `scripts/architectures/huidig.json` (model, `completion_args`, handoffs, libraries; switchen via `scripts/architectures/active`, zie #95). Wijzig `docs/system-prompt.md` niet — dat is de spec; de werkende kopieën staan in `scripts/prompts/` (zie [maak-of-update-productie-agents](maak-of-update-productie-agents.md)).
 5. **Deploy de agents.** Eerst dry-run (default), controleer welke agents worden aangemaakt vs. geüpdatet, voer dan uit:
 
    ```bash

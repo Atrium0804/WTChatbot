@@ -23,6 +23,31 @@ MISTRAL_AGENT_ID = os.environ.get("MISTRAL_AGENT_ID", "")
 MISTRAL_CONVERSATIONS_URL = os.environ.get(
     "MISTRAL_CONVERSATIONS_URL", "https://api.mistral.ai/v1/conversations"
 )
+# Chat Completions API voor de light-model intake (#91)
+MISTRAL_CHAT_COMPLETIONS_URL = os.environ.get(
+    "MISTRAL_CHAT_COMPLETIONS_URL", "https://api.mistral.ai/v1/chat/completions"
+)
+
+# Expert-agent-ids voor direct-to-expert (#88/#91); leeg = niet
+# geconfigureerd, dan start de conversatie altijd bij de router.
+MISTRAL_AGENT_ID_KNWU = os.environ.get("MISTRAL_AGENT_ID_KNWU", "")
+MISTRAL_AGENT_ID_REGIO = os.environ.get("MISTRAL_AGENT_ID_REGIO", "")
+MISTRAL_AGENT_ID_CLUB = os.environ.get("MISTRAL_AGENT_ID_CLUB", "")
+MISTRAL_AGENT_ID_ARCHIEF = os.environ.get("MISTRAL_AGENT_ID_ARCHIEF", "")
+EXPERT_AGENT_IDS = {
+    "knwu": MISTRAL_AGENT_ID_KNWU,
+    "regio": MISTRAL_AGENT_ID_REGIO,
+    "club": MISTRAL_AGENT_ID_CLUB,
+    "archief": MISTRAL_AGENT_ID_ARCHIEF,
+}
+
+# Light-model intake (#91): klein model, drempel voor direct-to-expert.
+MISTRAL_INTAKE_MODEL = os.environ.get("MISTRAL_INTAKE_MODEL", "mistral-small-latest")
+INTAKE_TIMEOUT = int(os.environ.get("INTAKE_TIMEOUT", "30"))
+INTAKE_CONFIDENCE_THRESHOLD = float(os.environ.get("INTAKE_CONFIDENCE_THRESHOLD", "0.8"))
+
+# Prompt caching aan (#88 besluit 6): gecachte input kost 10%.
+PROMPT_CACHE_KEY = os.environ.get("PROMPT_CACHE_KEY", "wtchatbot-v1")
 
 DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "wtchat.db"))
 

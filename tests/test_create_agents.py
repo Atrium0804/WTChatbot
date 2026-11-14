@@ -70,6 +70,57 @@ class LoadConfigTests(unittest.TestCase):
                 create_agents.load_config(path)
 
 
+class ActivePointerTests(unittest.TestCase):
+    """#95: scripts/architectures/active wijst naar de actieve variant."""
+
+    def _dir(self, tmp: str, pointer_text: str, variants=("huidig", "oud")) -> Path:
+        d = Path(tmp) / "architectures"
+        d.mkdir()
+        for v in variants:
+            (d / f"{v}.json").write_text("{}", encoding="utf-8")
+        (d / "active").write_text(pointer_text, encoding="utf-8")
+        return d
+
+    def test_resolves_variant_via_pointer(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            d = self._dir(tmp, "oud\n")
+            self.assertEqual(create_agents.active_config_path(d), d / "oud.json")
+
+    def test_missing_pointer_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "architectures"
+            d.mkdir()
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.active_config_path(d)
+            self.assertIn("active-pointer", str(ctx.exception))
+
+    def test_empty_pointer_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            d = self._dir(tmp, "  \n")
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.active_config_path(d)
+            self.assertIn("leeg", str(ctx.exception))
+
+    def test_dangling_pointer_lists_available_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            d = self._dir(tmp, "bestaat-niet")
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.active_config_path(d)
+            self.assertIn("bestaat-niet", str(ctx.exception))
+            self.assertIn("huidig", str(ctx.exception))
+
+    def test_productie_pointer_is_huidig_en_laadt(self) -> None:
+        path = create_agents.default_config_path()
+        self.assertEqual(path, create_agents.ARCHITECTURES_DIR / "huidig.json")
+        config = create_agents.load_config(path)
+        # prompts_folder is relatief t.o.v. de variant (scripts/architectures/)
+        self.assertEqual(config["prompts_folder"], "../prompts")
+        names = {a["name"] for a in config["agents"]}
+        self.assertEqual(
+            names, {"router-agent", "knwu-agent", "regio-agent", "club-agent", "archief-agent"}
+        )
+
+
 class BuildToolsTests(unittest.TestCase):
     def test_library_and_websearch_produce_expected_tools(self) -> None:
         agent = {"name": "knwu-agent", "library": "knwu", "websearch": True}
@@ -369,7 +420,7 @@ class RunCreateTests(unittest.TestCase):
     def test_productie_config_router_agent_heeft_kleiner_model(self) -> None:
         # #83/#88: in de productieconfig staat de router-agent op een kleiner model,
         # de content-agents (knwu/regio/club/archief) op de default.
-        config = create_agents.load_config(create_agents.DEFAULT_CONFIG_PATH)
+        config = create_agents.load_config(create_agents.default_config_path())
         agents = {a["name"]: a for a in config["agents"]}
         self.assertEqual(agents["router-agent"].get("model"), "mistral-small-latest")
         for name in ("knwu-agent", "regio-agent", "club-agent", "archief-agent"):
@@ -377,10 +428,10 @@ class RunCreateTests(unittest.TestCase):
 
 
 class ProductieConfigTests(unittest.TestCase):
-    """De echte agents_config.json + prompts, met een fake client."""
+    """De echte actieve variant (via architectures/active) + prompts, met een fake client."""
 
     def test_club_agent_zet_licentievragen_door_naar_knwu_agent(self) -> None:
-        config_path = create_agents.DEFAULT_CONFIG_PATH
+        config_path = create_agents.default_config_path()
         client = make_client(
             remote_libraries=[make_lib(n, f"lib-{n}") for n in ("knwu", "regio", "club", "archive")]
         )
@@ -398,7 +449,7 @@ class ProductieConfigTests(unittest.TestCase):
     def test_knwu_agent_kan_doorverwijzen_na_onderwerpwissel(self) -> None:
         # Bug: na een KNWU-handoff blijft de conversatie bij de knwu-agent
         # (sticky); "hoe laat start de zmc?" kreeg "geen informatie in mijn bronnen".
-        config_path = create_agents.DEFAULT_CONFIG_PATH
+        config_path = create_agents.default_config_path()
         client = make_client(
             remote_libraries=[make_lib(n, f"lib-{n}") for n in ("knwu", "regio", "club", "archive")]
         )
@@ -434,7 +485,7 @@ class ProductieConfigTests(unittest.TestCase):
         # reviewronde 1 item 2: "met welk verzet moet ik rijden?" werd door de
         # knwu-agent afgewezen als buiten scope. Verzet valt wél onder KNWU
         # (Titel 20 art. 20.1.007), dus de prompt moet het expliciet noemen.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
         self.assertIn("verzet", prompt.lower())
         self.assertIn("20.1.007", prompt)
@@ -443,7 +494,7 @@ class ProductieConfigTests(unittest.TestCase):
         # eval run 5: licentieprijzen staan niet in de library (Nationale
         # Besluiten art. 18.1 verwijst naar het Kenniscentrum); de agent gaf
         # op bij de Tarieven-KNWU-pagina. De prompt moet die pagina's noemen.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
         self.assertIn("Tarieven-KNWU", prompt)
         self.assertIn("knwu-licenties", prompt)
@@ -453,7 +504,7 @@ class ProductieConfigTests(unittest.TestCase):
         # eval run 5: U10 met dispensatie mag WEL het NK rijden in de
         # categorie waarvoor de dispensatie is (behalve BMX; U6 t/m U8
         # uitgesloten) — Titel 20 art. 20.0.005 moet in de prompt staan.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
         self.assertIn("20.0.005", prompt)
         self.assertIn("U6 t/m U8", prompt)
@@ -462,21 +513,21 @@ class ProductieConfigTests(unittest.TestCase):
     def test_shared_schrijft_dagen_voluit(self) -> None:
         # eval run 5: "di-vr" in de prompt liet de agent de dagen afkorten
         # ("di-vr" i.p.v. "dinsdag"/"vrijdag" in het antwoord).
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertNotIn("di-vr 8.30", prompt)
         self.assertIn("dinsdag tot en met vrijdag", prompt.lower())
 
     def test_shared_noemt_artikelnummer_bij_regelvragen(self) -> None:
         # eval run 5: categorie-antwoorden misten "artikel 20.0.004".
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertIn("20.0.004", prompt)
 
     def test_doorverwijzing_gaat_naar_trainer_niet_clubsecretariaat(self) -> None:
         # Doorverwijzen bij ontbrekend antwoord of out-of-scope gaat naar de
         # trainer; de bot verwijst niet meer naar het clubsecretariaat.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         for name in ("_shared.md", "club-agent.md"):
             prompt = (prompts_dir / name).read_text(encoding="utf-8").lower()
             self.assertNotIn("clubsecretariaat", prompt, name)
@@ -486,7 +537,7 @@ class ProductieConfigTests(unittest.TestCase):
         # eval run 5: bij B1 geen websearch-fallback op knwumidden.nl gedaan;
         # NK-/KNWU-regio-vragen uit de Regio-library beantwoord in plaats van
         # handoff naar de knwu-agent.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "regio-agent.md").read_text(encoding="utf-8").lower()
         self.assertIn("b1", prompt)
         self.assertIn("knwumidden.nl", prompt)
@@ -495,7 +546,7 @@ class ProductieConfigTests(unittest.TestCase):
     def test_shared_batcht_document_library_calls_parallel(self) -> None:
         # #81: alle document_library-opvragingen in één parallelle batch,
         # max 2 retrievingsrondes, geen tussentekst.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8").lower()
         self.assertIn("parallelle batch", prompt)
         self.assertIn("meerdere tool-calls", prompt)
@@ -505,7 +556,7 @@ class ProductieConfigTests(unittest.TestCase):
     def test_knwu_agent_noemt_expliciete_hoofdstukken_bij_nk_vragen(self) -> None:
         # #81: bij NK/deelnamerechten-vragen de waarschijnlijke hoofdstukken
         # expliciet noemen in de eerste batch.
-        prompts_dir = create_agents.DEFAULT_CONFIG_PATH.parent / "prompts"
+        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
         self.assertIn("Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md", prompt)
         self.assertIn("2. WEGWIELRENNEN.md", prompt)

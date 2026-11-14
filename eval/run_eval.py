@@ -15,6 +15,9 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
 - `via: router` (optioneel): de vraag gaat naar de router-agent
   (MISTRAL_AGENT_ID) in plaats van de categorie-agent, dus end-to-end met
   handoff; de vraag telt mee in de score van zijn categorie
+- `verwacht_route` (optioneel, #92): assert de productie-route van de app —
+  `bypass` (deterministische lookup, 0 LLM-calls), `direct-<domein>`
+  (direct-to-expert via de light intake) of `router`; mismatch = FAIL
 - `beurten` (optioneel): eerdere gebruikersberichten in dezelfde
   conversatie, vóór `vraag`; alleen het antwoord op `vraag` wordt gecheckt
 - `verwachte_agent` (optioneel): naam van de agent die het antwoord op
@@ -47,6 +50,7 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import date
 from pathlib import Path
 
@@ -59,9 +63,16 @@ ENV_PATH = EVAL_DIR.parent / ".env"
 sys.path.insert(0, str(EVAL_DIR.parent / "app"))
 
 import context  # noqa: E402  (app-module: dezelfde contextregels als de proxy)
+import intake  # noqa: E402  (#91: light intake, zelfde route-beslissing als de app)
 import knwu_categories  # noqa: E402
+import lookups  # noqa: E402  (#91: deterministische bypass, zelfde templates als de app)
 
 API_URL = "https://api.mistral.ai/v1/conversations"
+CHAT_COMPLETIONS_URL = os.environ.get(
+    "MISTRAL_CHAT_COMPLETIONS_URL", "https://api.mistral.ai/v1/chat/completions"
+)
+INTAKE_MODEL = os.environ.get("MISTRAL_INTAKE_MODEL", "mistral-small-latest")
+INTAKE_CONFIDENCE_THRESHOLD = float(os.environ.get("INTAKE_CONFIDENCE_THRESHOLD", "0.8"))
 GATE_PCT = 90.0
 HARD_GATE_TYPES = {"strikethrough", "websearch"}
 AGENT_ENV_PREFIX = "MISTRAL_AGENT_ID"
@@ -101,6 +112,62 @@ def agent_id_for(entry: dict) -> str:
             f"MISTRAL_AGENT_ID_{categorie.upper()} of MISTRAL_AGENT_ID"
         )
     return key
+
+
+def expert_agent_ids_from_env() -> dict[str, str]:
+    """Domein -> expert-agent-id uit de env (zelfde vars als de app, #88)."""
+    return {
+        domein: os.environ.get(f"MISTRAL_AGENT_ID_{domein.upper()}", "")
+        for domein in ("knwu", "regio", "club", "archief")
+    }
+
+
+def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
+    """Spiegel de productie-route van de app per evalvraag (#91/#92).
+
+    Zelfde volgorde als app/main.py: eerst de deterministische lookup
+    (bypass, 0 LLM-calls, geen conversation), anders `via: router` (vaste
+    router-route om end-to-end handoff te testen), anders de light intake
+    (1 kleine call) met decide_route -> direct-<domein> of router.
+    """
+    vraag = entry["vraag"]
+    lookup = lookups.match_lookup(vraag, today, rules)
+    if lookup:
+        return {"route": "bypass", "agent_id": None, "lookup": lookup, "intake_ms": 0.0}
+    if entry.get("via") == "router":
+        return {
+            "route": "router",
+            "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
+            "lookup": None,
+            "intake_ms": 0.0,
+        }
+    t0 = time.monotonic()
+    intake_result = intake.classify_message(
+        api_key=api_key,
+        base_url=CHAT_COMPLETIONS_URL,
+        model=INTAKE_MODEL,
+        message=vraag,
+        timeout=30,
+    )
+    intake_ms = round((time.monotonic() - t0) * 1000, 1)
+    route = intake.decide_route(
+        message=vraag,
+        today=today,
+        rules=rules,
+        intake_result=intake_result,
+        expert_agent_ids=expert_agent_ids_from_env(),
+        threshold=INTAKE_CONFIDENCE_THRESHOLD,
+    )
+    if route["route"] == "bypass":
+        return {"route": "bypass", "agent_id": None, "lookup": route["lookup"], "intake_ms": intake_ms}
+    if route["route"] == "direct":
+        return {
+            "route": f"direct-{route['domein']}",
+            "agent_id": route["agent_id"],
+            "lookup": None,
+            "intake_ms": intake_ms,
+        }
+    return {"route": "router", "agent_id": os.environ.get("MISTRAL_AGENT_ID"), "lookup": None, "intake_ms": intake_ms}
 
 
 def extract_text(outputs: list[dict]) -> str:
@@ -216,6 +283,7 @@ def play_conversation(
     trace: list[dict] = []
     outputs: list[dict] = []
     for message in entry.get("beurten", []) + [entry["vraag"]]:
+        beurt_t0 = time.monotonic()
         lines = context.build_context_lines(
             message,
             today,
@@ -232,10 +300,14 @@ def play_conversation(
             conversation_id=conversation_id,
         )
         if error:
-            return {"antwoord": "", "trace": trace, "error": error}
+            return {"antwoord": "", "trace": trace, "error": error, "duur_ms": 0.0}
         conversation_id = response.get("conversation_id") or conversation_id
         outputs = response.get("outputs", [])
-        trace.append({"vraag": message, "agents": answering_agents(outputs, agent_names)})
+        trace.append({
+            "vraag": message,
+            "agents": answering_agents(outputs, agent_names),
+            "duur_ms": round((time.monotonic() - beurt_t0) * 1000, 1),
+        })
     return {"antwoord": extract_text(outputs), "trace": trace, "error": ""}
 
 
@@ -327,9 +399,12 @@ def kernfeit_gevonden(feit: str, antwoord: str) -> bool:
     return True
 
 
-def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> dict:
+def check_entry(
+    entry: dict, antwoord: str, trace: list[dict] | None = None, route: str = ""
+) -> dict:
     """Beoordeel het antwoord op `vraag`; `trace` (per beurt de agents) is
-    nodig voor de `verwachte_agent`-check."""
+    nodig voor de `verwachte_agent`-check; `route` (#92) voor de
+    `verwacht_route`-check (bypass | direct-<domein> | router)."""
     trace = trace or []
     bron_line = extract_bron(antwoord)
     norm_antwoord = normalize(antwoord)
@@ -357,6 +432,9 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
     agents_laatste_beurt = trace[-1]["agents"] if trace else []
     verwachte_agent = entry.get("verwachte_agent", "")
     agent_ok = not verwachte_agent or verwachte_agent in agents_laatste_beurt
+    # #92: `verwacht_route` assert de productie-route van de app (bypass | direct-<domein> | router)
+    verwachte_route = entry.get("verwacht_route", "")
+    route_ok = not verwachte_route or (route == verwachte_route)
     ok = (
         bron_ok
         and agent_ok
@@ -364,6 +442,7 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
         and not missing
         and not doorhaal_gevonden
         and not verboden_gevonden
+        and route_ok
     )
     return {
         "id": entry["id"],
@@ -378,6 +457,9 @@ def check_entry(entry: dict, antwoord: str, trace: list[dict] | None = None) -> 
         "verboden_gevonden": verboden_gevonden,
         "agent_ok": agent_ok,
         "verwachte_agent": verwachte_agent,
+        "route": route,
+        "verwachte_route": entry.get("verwacht_route", ""),
+        "route_ok": route_ok,
         "agents_laatste_beurt": agents_laatste_beurt,
         # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
         "beurten": entry.get("beurten", []),
@@ -411,13 +493,33 @@ def main() -> int:
     agent_names = agent_names_from_env()
     results = []
     for entry in entries:
-        run = run_conversation(entry, agent_id_for(entry), api_key, today, rules, agent_names)
-        result = check_entry(entry, run["antwoord"], run["trace"])
+        # #92: spiegel de productie-route (bypass / direct-<domein> / router)
+        t0 = time.monotonic()
+        plan = plan_entry(entry, api_key, today, rules)
+        if plan["route"] == "bypass":
+            # deterministische bypass: geen conversation, template-antwoord uit
+            # dezelfde app-functie als productie (0 LLM-calls voor de vraag)
+            run = {
+                "antwoord": lookups.render_lookup_answer(
+                    plan["lookup"], entry["vraag"], rules, today, entry.get("taalniveau", "B1")
+                ),
+                "trace": [],
+                "error": "",
+                "llm_calls": 0,
+            }
+        else:
+            run = run_conversation(entry, plan["agent_id"], api_key, today, rules, agent_names)
+            run["llm_calls"] = len(run["trace"][-1]["agents"]) if run["trace"] else 0
+        result = check_entry(entry, run["antwoord"], run["trace"], route=plan["route"])
+        result["route"] = plan["route"]
+        result["duur_ms"] = round((time.monotonic() - t0) * 1000, 1)
+        result["llm_calls"] = run.get("llm_calls", 0)
+        result["intake_ms"] = plan["intake_ms"]
         if run["error"]:
             result["ok"] = False
             result["error"] = run["error"]
         results.append(result)
-        print(f"[{'OK ' if result['ok'] else 'FAIL'}] {entry['id']}")
+        print(f"[{'OK ' if result['ok'] else 'FAIL'}] {entry['id']} ({plan['route']}, {result['duur_ms']}ms, {result['llm_calls']} calls)")
 
     total = len(results)
     ok = sum(1 for r in results if r["ok"])
@@ -431,11 +533,25 @@ def main() -> int:
         }
     hard = [r for r in results if r["type"] in HARD_GATE_TYPES]
     hard_ok = sum(1 for r in hard if r["ok"])
+    # #92: aggregatie per route, zodat de 4 baseline-vragen vóór/na de
+    # snelheidsflow direct vergelijkbaar zijn (duur_ms, llm_calls, route)
+    per_route: dict[str, dict] = {}
+    for route in {r.get("route", "") for r in results}:
+        subset = [r for r in results if r.get("route", "") == route]
+        per_route[route] = {
+            "n": len(subset),
+            "ok": sum(1 for r in subset if r["ok"]),
+            "gemiddelde_duur_ms": round(
+                sum(r.get("duur_ms", 0) for r in subset) / len(subset), 1
+            ) if subset else 0.0,
+            "llm_calls_totaal": sum(r.get("llm_calls", 0) for r in subset),
+        }
     summary = {
         "totaal": total,
         "ok": ok,
         "pct": pct(ok, total),
         "per_categorie": per_categorie,
+        "per_route": per_route,
         "harde_gate": {"types": sorted(HARD_GATE_TYPES), "ok": hard_ok, "totaal": len(hard)},
         "gate_gehaald": (
             pct(ok, total) >= GATE_PCT

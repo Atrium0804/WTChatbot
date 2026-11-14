@@ -5,7 +5,7 @@
     "top_p": 1,
     "response_format": { "type": "text" }
   },
-  "prompts_folder": "prompts",
+  "prompts_folder": "../prompts",
   "agents": [
     {
       "name": "knwu-agent",

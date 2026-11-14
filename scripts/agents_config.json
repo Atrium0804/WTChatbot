@@ -13,7 +13,7 @@
       "prompt_files": ["_shared.md", "knwu-agent.md"],
       "library": "knwu",
       "websearch": true,
-      "handoffs": ["router-agent"]
+      "handoffs": ["regio-agent", "club-agent"]
     },
     {
       "name": "regio-agent",
@@ -21,7 +21,7 @@
       "prompt_files": ["_shared.md", "regio-agent.md"],
       "library": "regio",
       "websearch": true,
-      "handoffs": ["knwu-agent", "router-agent"]
+      "handoffs": ["knwu-agent", "club-agent"]
     },
     {
       "name": "club-agent",
@@ -29,7 +29,7 @@
       "prompt_files": ["_shared.md", "club-agent.md"],
       "library": "club",
       "websearch": false,
-      "handoffs": ["knwu-agent", "router-agent"]
+      "handoffs": ["knwu-agent", "regio-agent"]
     },
     {
       "name": "archief-agent",
@@ -42,7 +42,7 @@
       "name": "router-agent",
       "description": "Router-agent: bepaalt het vraagtype (KNWU/regio/club) en doet de handoff",
       "prompt_files": ["_shared.md", "router-agent.md"],
-      "model": "mistral-medium-latest",
+      "model": "mistral-small-latest",
       "handoffs": ["knwu-agent", "regio-agent", "club-agent"]
     }
   ]

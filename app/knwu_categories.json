@@ -22,21 +22,131 @@
   "licenties": {
     "artikel": "20.0.002",
     "indeling": [
-      {"naam": "KNWU Licentie U13", "van": 5, "tot_en_met": 12},
-      {"naam": "KNWU Licentie U17", "van": 13, "tot_en_met": 16}
+      {
+        "naam": "KNWU Licentie U13",
+        "van": 5,
+        "tot_en_met": 12
+      },
+      {
+        "naam": "KNWU Licentie U17",
+        "van": 13,
+        "tot_en_met": 16
+      }
     ]
+  },
+  "verzetten": {
+    "artikel": "20.1.007",
+    "bron": "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md",
+    "versie": "2026-09-21",
+    "toelichting": "Maximaal toegestaan verzet (afgerolde afstand per omwenteling, in meters) per leeftijdscategorie en discipline. NVT = null; veldrijden U9 en ouder = \"vrij\" (vanaf seizoen 2026-2027 is de verzetcontrole in het veldrijden afgeschaft, zie Handboek Veldrijden Jeugd). Baan is voor Wielie buiten scope maar staat erbij voor de drift-check.",
+    "per_categorie": {
+      "U6": {
+        "weg": 5.5,
+        "baan": null,
+        "veld": null
+      },
+      "U7": {
+        "weg": 5.5,
+        "baan": null,
+        "veld": null
+      },
+      "U8": {
+        "weg": 5.5,
+        "baan": null,
+        "veld": null
+      },
+      "U9": {
+        "weg": 5.5,
+        "baan": 5.46,
+        "veld": "vrij"
+      },
+      "U10": {
+        "weg": 5.5,
+        "baan": 5.46,
+        "veld": "vrij"
+      },
+      "U11": {
+        "weg": 5.9,
+        "baan": 5.78,
+        "veld": "vrij"
+      },
+      "U12": {
+        "weg": 5.9,
+        "baan": 5.78,
+        "veld": "vrij"
+      },
+      "U13": {
+        "weg": 6.3,
+        "baan": 6.14,
+        "veld": "vrij"
+      },
+      "U14": {
+        "weg": 6.3,
+        "baan": 6.14,
+        "veld": "vrij"
+      },
+      "U15": {
+        "weg": 6.7,
+        "baan": 6.55,
+        "veld": "vrij"
+      },
+      "U17 Nieuweling": {
+        "weg": 7.68,
+        "baan": 7.41,
+        "veld": "vrij"
+      }
+    },
+    "combinatiewedstrijden": "In nationale combinatiewedstrijden mag het verzet van de hoogste categorie worden gereden; bij een aparte uitslag geldt het verzet van de eigen categorie (art. 20.1.007)."
   },
   "oude_categorie_indeling": {
     "bron": "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën",
     "toelichting": "Numerieke jeugdindeling van vóór 2026. Elk nummer is een gecombineerde categorie (jongens en meisjes van een verschillend geboortejaar). Categorie 0 bestaat niet.",
     "categorieen": {
-      "1": [{"jongens": 8, "meisjes": 9}, {"jongens": 9, "meisjes": 10}],
-      "2": [{"jongens": 10, "meisjes": 11}],
-      "3": [{"jongens": 11, "meisjes": 12}],
-      "4": [{"jongens": 12, "meisjes": 13}],
-      "5": [{"jongens": 13, "meisjes": 14}],
-      "6": [{"jongens": 14, "meisjes": 15}],
-      "7": [{"jongens": 15}]
+      "1": [
+        {
+          "jongens": 8,
+          "meisjes": 9
+        },
+        {
+          "jongens": 9,
+          "meisjes": 10
+        }
+      ],
+      "2": [
+        {
+          "jongens": 10,
+          "meisjes": 11
+        }
+      ],
+      "3": [
+        {
+          "jongens": 11,
+          "meisjes": 12
+        }
+      ],
+      "4": [
+        {
+          "jongens": 12,
+          "meisjes": 13
+        }
+      ],
+      "5": [
+        {
+          "jongens": 13,
+          "meisjes": 14
+        }
+      ],
+      "6": [
+        {
+          "jongens": 14,
+          "meisjes": 15
+        }
+      ],
+      "7": [
+        {
+          "jongens": 15
+        }
+      ]
     },
     "nieuwelingen": "U17 Nieuweling"
   }

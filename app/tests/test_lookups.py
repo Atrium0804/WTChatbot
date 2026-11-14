@@ -211,3 +211,13 @@ def test_render_vertaling_oude_categorie():
     assert "JO11/MO12" in answer
     assert "Bron:" in answer
     assert RULES["oude_categorie_indeling"]["bron"] in answer
+
+def test_render_eindigt_op_library_disclaimer():
+    # #91 besluit 4: het standaardantwoord eindigt met de disclaimer die aangeeft
+    # wanneer de document-library wél geraadpleegd wordt
+    answer = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B1")
+    assert "KNWU-documenten" in answer
+    assert "Bron:" not in answer  # B1-regel (#52) blijft gelden
+    answer_b2 = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B2")
+    assert "KNWU-documenten" in answer_b2
+    assert "Bron:" in answer_b2

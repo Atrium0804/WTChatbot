@@ -61,6 +61,14 @@ DISCIPLINE_PATTERNS = [
 ]
 DISCIPLINE_NAAM = {"weg": "wegwielrennen", "veld": "veldrijden", "baan": "baanwielrennen"}
 
+# Disclaimer aan het eind van elk deterministisch antwoord (#91 besluit 4):
+# dit is het kale feit; bij een vervolgvraag ("waarom", versie, "heb je dit
+# gecheckt") schakelt de app door naar de document-library.
+DISCLAIMER_LIBRARY = (
+    "Stel je een vervolgvraag (bijvoorbeeld 'waarom?' of 'welke versie?') — "
+    "dan doorzoek ik daarvoor de KNWU-documenten."
+)
+
 
 def _discipline_uit_bericht(message: str, extra: dict) -> str | None:
     discipline = extra.get("discipline")
@@ -105,10 +113,10 @@ def match_lookup(
         if year and year not in birth_years:
             birth_years.insert(0, year)
 
-    cat_vraag = bool(CATEGORIE_VRAAG.search(message))
-    lic_vraag = bool(LICENTIE_MENTION.search(message) and VRAAG_WOORD.search(message))
+    categorie_vraag = bool(CATEGORIE_VRAAG.search(message))
+    licentie_vraag = bool(LICENTIE_MENTION.search(message) and VRAAG_WOORD.search(message))
     verzet_vraag = bool(VERZET_VRAAG.search(message))
-    if sum((cat_vraag, lic_vraag, verzet_vraag)) > 1:
+    if sum((categorie_vraag, licentie_vraag, verzet_vraag)) > 1:
         # meerdere onderwerpen in één vraag (bv. categorie én licentie) ->
         # cross-check met bronconflict-mogelijkheid -> agent
         return None
@@ -122,9 +130,9 @@ def match_lookup(
             return {"kind": "verzet", "category": category, "discipline": discipline}
         return None  # categorie of discipline ontbreekt -> agent stelt bij
 
-    if cat_vraag or lic_vraag:
+    if categorie_vraag or licentie_vraag:
         if birth_years:
-            return {"kind": "categorie" if cat_vraag else "licentie", "birth_year": birth_years[0]}
+            return {"kind": "categorie" if categorie_vraag else "licentie", "birth_year": birth_years[0]}
         return None  # geen geboortejaar bekend -> agent vraagt ernaar
 
     bare_year = context.BIRTH_YEAR_PATTERN.search(message)
@@ -159,7 +167,8 @@ def render_lookup_answer(
 
     Bij taalniveau B2 staat de bron in een "Bron:"-regel (met artikel en
     versie); bij B1 (standaard) géén Bron-regel — zelfde regel als voor
-    agent-antwoorden (#52).
+    agent-antwoorden (#52). Elke variant eindigt op de disclaimer die
+    aangeeft wanneer de library wél geraadpleegd wordt (#91 besluit 4).
     """
     level = context.normalize_language_level(language_level)
     kind = match["kind"]
@@ -167,6 +176,7 @@ def render_lookup_answer(
     if kind == "vertaling":
         lines = context.old_designation_lines(message, rules)
         answer = "\n".join(lines) if lines else "Die aanduiding ken ik niet."
+        answer += f"\n\n{DISCLAIMER_LIBRARY}"
         if level == "B2":
             answer += f"\n\nBron: {rules['oude_categorie_indeling']['bron']}"
         return answer
@@ -180,6 +190,7 @@ def render_lookup_answer(
             f"Het maximaal toegestane verzet voor {label} bij "
             f"{DISCIPLINE_NAAM[discipline]} is {_fmt_verzet(gear)}."
         )
+        answer += f"\n\n{DISCLAIMER_LIBRARY}"
         if level == "B2":
             answer += (
                 f"\n\nBron: {rules['verzetten']['bron']}, versie "
@@ -197,6 +208,7 @@ def render_lookup_answer(
         return (
             f"Geboortejaar {birth_year} valt buiten de jeugdindeling: "
             "er is geen jeugdleeftijdscategorie en geen jeugdlicentie."
+            f"\n\n{DISCLAIMER_LIBRARY}"
         )
     road_txt = road or "valt buiten de jeugdindeling"
     cross_txt = cross or "valt buiten de jeugdindeling"
@@ -207,6 +219,7 @@ def render_lookup_answer(
         f"veldritseizoen {season_start}-{season_end} in {cross_txt}. "
         f"De licentie in {today.year} is {licence_txt}."
     )
+    answer += f"\n\n{DISCLAIMER_LIBRARY}"
     if level == "B2":
         answer += (
             f"\n\nBron: {rules['bron']}, versie {rules['versie']} "

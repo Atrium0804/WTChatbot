@@ -5,8 +5,12 @@ provider vervangbaar blijft (CODING_PRINCIPLES.md).
 """
 
 import json
+import logging
+from collections.abc import Callable
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 180  # ruimer (review 2026-11-12: websearch/handoff-runs liepen op 60s in een timeout); bij timeout direct een 502 met melding
 
@@ -103,7 +107,7 @@ def stream_answer(
     conversation_id: str | None = None,
     metadata: dict | None = None,
     prompt_cache_key: str | None = None,
-    on_event=None,
+    on_event: Callable[[str, dict], None] | None = None,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> tuple[str, str]:
     """POST /v1/conversations met stream: true; consumeer de SSE server-side (#90/#93).
@@ -160,7 +164,10 @@ def stream_answer(
                 try:
                     on_event(event, data)
                 except Exception:
-                    pass  # fase-mapping mag nooit de stream breken
+                    logger.warning(
+                        "on_event-handler gaf een fout; fase-mapping mag de stream niet breken",
+                        exc_info=True,
+                    )
             if event == "conversation.response.started":
                 conv_id = data.get("conversation_id") or conv_id
             elif event == "agent.handoff.done":
@@ -205,3 +212,42 @@ def check_reachable(*, api_key: str, base_url: str, timeout: int = 10) -> bool:
         return resp.status_code == 200
     except requests.RequestException:
         return False
+
+
+def chat_completion(
+    *,
+    api_key: str,
+    base_url: str,
+    model: str,
+    system_prompt: str,
+    message: str,
+    timeout: int = 30,
+) -> str:
+    """Eén call naar de Chat Completions API (light-model intake, #91).
+
+    Stuurt system_prompt + message met response_format json_object en geef de
+    content van de eerste choice terug. Bij elke fout (netwerk, HTTP,
+    ongeldige JSON of onverwachte structuur) raise RuntimeError met context —
+    de aanroeper (intake.classify_message) vangt af op de veilige fallback.
+    """
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    body = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": message},
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0,
+    }
+    try:
+        resp = requests.post(base_url, headers=headers, json=body, timeout=timeout)
+        resp.raise_for_status()
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
+    except requests.RequestException as exc:
+        raise RuntimeError(f"Mistral Chat Completions-aanroep mislukt: {exc}") from exc
+    except (KeyError, IndexError, TypeError) as exc:
+        raise RuntimeError(
+            f"Mistral Chat Completions gaf een onverwachte structuur terug: {exc}"
+        ) from exc

@@ -48,3 +48,8 @@ prompt caching aan (cached input = 10% van de prijs). De architectuur is switchb
   aangepast (geen return-handoff, direct expert→expert, lookups via de contextregel).
 - ADR-0006 (verzettencalculator, post-MVP) raakt de deterministische max-verzet-lookup
   (#94) maar niet deze architectuur.
+- Het deterministische bypass-antwoord (#91 besluit 4) vermeldt bron + versie + artikel
+  uit `knwu_categories.json` alleen bij B2 — bij B1 (standaard, #52) staat er geen
+  `Bron:`-regel, net als bij agent-antwoorden. Elk bypass-antwoord eindigt wel op een
+  vaste disclaimerzin die aangeeft dat de library geraadpleegd wordt bij een
+  vervolgvraag ("waarom", versie, "heb je dit gecheckt").

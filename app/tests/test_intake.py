@@ -151,3 +151,11 @@ def test_classify_message_fallback_bij_ongeldige_json():
     with patch("requests.post", return_value=_resp("geen json {")):
         result = intake.classify_message(api_key="k", base_url="u", model="m", message="vraag")
     assert result == dict(intake.FALLBACK)
+
+def test_system_prompt_komt_uit_apart_bestand():
+    # CODING_PRINCIPLES.md: prompts staan in aparte bestanden, niet als lange
+    # strings in de code — de intake-prompt staat in app/prompts/intake-system.md
+    prompt = intake._system_prompt()
+    assert "intentie" in prompt
+    assert "confidence" in prompt
+    assert intake.PROMPT_PATH.name == "intake-system.md"

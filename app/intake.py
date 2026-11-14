@@ -1,8 +1,9 @@
 """Light-model intake (#91): één kleine LLM-call per bericht.
 
 De intake classificeert het bericht als JSON via de Chat Completions API
-(mistral-small-latest): intentie, domein, discipline, geboortejaar en
-confidence. Samen met de deterministische regex-lookup
+(mistral-small-latest; de HTTP-call zit in de dunne API-laag
+mistral_client.chat_completion): intentie, domein, discipline, geboortejaar
+en confidence. Samen met de deterministische regex-lookup
 (lookups.match_lookup) bepaalt decide_route() de route van het bericht:
 
 - "bypass": pure lookup met complete data -> direct app-antwoord uit
@@ -12,29 +13,29 @@ confidence. Samen met de deterministische regex-lookup
 - "router": alles anders -> de router-agent als voordeur.
 
 Bij een intake-fout is de fallback altijd de router (veilig).
+
+De intake-prompt staat in een apart bestand (prompts/intake-system.md),
+volgens CODING_PRINCIPLES.md ("prompts staan in aparte bestanden").
 """
 
 import json
+import logging
 from datetime import date
-
-import requests
+from functools import lru_cache
+from pathlib import Path
 
 import lookups
+import mistral_client
 
-INTAKE_SYSTEM_PROMPT = """Je bent de intake van de WTC-kennischatbot Wielie. Classificeer het bericht van de gebruiker en antwoord ALLEEN met een JSON-object:
-{
-  "intentie": "lookup" | "regelgeving" | "verheldering" | "onbekend",
-  "domein": "knwu" | "regio" | "club" | "onbekend",
-  "discipline": "weg" | "veld" | "baan" | "onbekend",
-  "geboortejaar": <jaar als getal, of null>,
-  "leeftijd": <leeftijd in jaren als getal, of null>,
-  "confidence": <getal tussen 0.0 en 1.0>
-}
-- domein "knwu": nationale KNWU-zaken (Titel 20, Nationale Besluiten, licenties, verzekeringen, NK, verzet, leeftijdscategorie); "regio": MNC-wedstrijden in regio Midden; "club": WTC Woerden (ZMC, contributie, clubreglementen, jeugdsite).
-- "intentie": "lookup" ALLEEN als de vraag puur een feitelijk lookup is (leeftijdscategorie, licentie, maximaal verzet, oude categorie-aanduiding) én alle benodigde gegevens in het bericht staan; anders "regelgeving" (er wordt naar een regel/feit in documenten gevraagd) of "verheldering" (gegevens ontbreken).
-- discipline alleen als weg/veld/baan expliciet blijkt; geboortejaar/leeftijd alleen als ze expliciet in het bericht staan.
-- confidence: hoe zeker je bent van domein én intentie samen (1.0 = volstrekt zeker).
-"""
+logger = logging.getLogger(__name__)
+
+PROMPT_PATH = Path(__file__).parent / "prompts" / "intake-system.md"
+
+
+@lru_cache(maxsize=1)
+def _system_prompt() -> str:
+    """Lees de intake-prompt uit het aparte promptbestand (eenmalig)."""
+    return PROMPT_PATH.read_text(encoding="utf-8")
 
 FALLBACK: dict = {
     "intentie": "onbekend",
@@ -45,10 +46,10 @@ FALLBACK: dict = {
     "confidence": 0.0,
 }
 
-DOMEINEN = ("knwu", "regio", "club", "archief")
+DOMAINS = ("knwu", "regio", "club", "archief")
 
 
-def _normaliseer(data: dict) -> dict:
+def _normalize(data: dict) -> dict:
     """Zet de ruwe JSON van het model om in het vaste intake-schema."""
     result = dict(FALLBACK)
     if not isinstance(data, dict):
@@ -56,7 +57,7 @@ def _normaliseer(data: dict) -> dict:
     intentie = str(data.get("intentie") or "onbekend").lower()
     result["intentie"] = intentie if intentie in ("lookup", "regelgeving", "verheldering", "onbekend") else "onbekend"
     domein = str(data.get("domein") or "onbekend").lower()
-    result["domein"] = domein if domein in DOMEINEN else "onbekend"
+    result["domein"] = domein if domein in DOMAINS else "onbekend"
     discipline = str(data.get("discipline") or "onbekend").lower()
     result["discipline"] = discipline if discipline in ("weg", "veld", "baan") else "onbekend"
     for key in ("geboortejaar", "leeftijd"):
@@ -77,33 +78,24 @@ def classify_message(
     message: str,
     timeout: int = 30,
 ) -> dict:
-    """Eén call naar de Chat Completions API; geef het intake-schema.
+    """Eén call via de dunne API-laag (mistral_client.chat_completion); geef het intake-schema.
 
-    Bij elke fout (netwerk, HTTP, ongeldige JSON) de veilige fallback:
-    domein onbekend, confidence 0 — de route wordt dan altijd "router".
+    Bij elke fout (netwerk, HTTP, ongeldige JSON) loggen en de veilige
+    fallback teruggeven: domein onbekend, confidence 0 — de route wordt
+    dan altijd "router".
     """
     try:
-        resp = requests.post(
-            base_url,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": INTAKE_SYSTEM_PROMPT},
-                    {"role": "user", "content": message},
-                ],
-                "response_format": {"type": "json_object"},
-                "temperature": 0,
-            },
+        content = mistral_client.chat_completion(
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            system_prompt=_system_prompt(),
+            message=message,
             timeout=timeout,
         )
-        resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"]["content"]
-        return _normaliseer(json.loads(content))
-    except Exception:
+        return _normalize(json.loads(content))
+    except Exception as exc:
+        logger.warning("Intake-call mislukt (%s); val terug op de router", exc)
         return dict(FALLBACK)
 
 

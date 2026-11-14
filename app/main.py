@@ -138,8 +138,9 @@ def create_app(
                 response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
-    def _direct_response(conversation_id: str, message: str, answer: str) -> dict:
-        """Synchroon 200-antwoord: stub-mode óf deterministische bypass (#91)."""
+    def _record_turn(conversation_id: str, message: str, answer: str) -> str:
+        """[BRONCONFLICT]-markers als feedback opslaan en de turn in de
+        feedbackgeschiedenis bewaren; geef het antwoord zonder markers terug."""
         answer, bronconflicts = split_bronconflict_markers(answer)
         for marker in bronconflicts:
             store.save_feedback(
@@ -152,6 +153,11 @@ def create_app(
             conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
         )
         turns.append({"question": message, "answer": answer})
+        return answer
+
+    def _direct_response(conversation_id: str, message: str, answer: str) -> dict:
+        """Synchroon 200-antwoord: stub-mode óf deterministische bypass (#91)."""
+        answer = _record_turn(conversation_id, message, answer)
         return {"conversation_id": conversation_id, "answer": answer}
 
     async def _run_chat_job(
@@ -160,7 +166,7 @@ def create_app(
         message: str,
         context_message: str,
         mistral_conv_id: str | None,
-        vandaag: date,
+        today_date: date,
         language_level: str,
     ) -> None:
         """Background task (#85 + #91/#93): light intake + route + streaming
@@ -181,7 +187,7 @@ def create_app(
             )
             route = intake.decide_route(
                 message=message,
-                today=vandaag,
+                today=today_date,
                 rules=category_rules,
                 intake_result=intake_result,
                 expert_agent_ids=expert_agent_ids,
@@ -195,7 +201,7 @@ def create_app(
                 # de Mistral-conversation start niet (#88/#91)
                 job["phase"] = phases.PHASE_BEREKEN
                 answer = lookups.render_lookup_answer(
-                    route["lookup"], message, category_rules, vandaag, language_level
+                    route["lookup"], message, category_rules, today_date, language_level
                 )
                 new_conv_id = mistral_conv_id or ""
             else:
@@ -237,18 +243,7 @@ def create_app(
                     )
             if new_conv_id:
                 state["conversations"][conversation_id] = new_conv_id
-            answer, bronconflicts = split_bronconflict_markers(answer)
-            for marker in bronconflicts:
-                store.save_feedback(
-                    db,
-                    rating="bronconflict",
-                    conversation_id=conversation_id,
-                    text=marker[: config.FEEDBACK_MAX_TEXT_LENGTH],
-                )
-            turns = state["history"].setdefault(
-                conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
-            )
-            turns.append({"question": message, "answer": answer})
+            answer = _record_turn(conversation_id, message, answer)
             job["status"] = "done"
             job["phase"] = phases.PHASE_KLAAR
             job["answer"] = answer
@@ -279,14 +274,14 @@ def create_app(
                 status_code=429,
             )
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
-        vandaag = today()
+        today_date = today()
         # #91: pure lookup met complete data -> direct app-antwoord (0 LLM-calls,
         # géén job/fase — de snelheid is zo direct zichtbaar), ook midden in een
         # bestaand gesprek
-        lookup = lookups.match_lookup(message, vandaag, category_rules)
+        lookup = lookups.match_lookup(message, today_date, category_rules)
         if lookup:
             answer = lookups.render_lookup_answer(
-                lookup, message, category_rules, vandaag, payload.language_level
+                lookup, message, category_rules, today_date, payload.language_level
             )
             return _direct_response(conversation_id, message, answer)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
@@ -294,7 +289,7 @@ def create_app(
             mistral_conv_id = state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
                 message,
-                vandaag,
+                today_date,
                 category_rules,
                 new_conversation=not mistral_conv_id,
                 language_level=payload.language_level,
@@ -312,7 +307,7 @@ def create_app(
                     message,
                     context.add_context(message, context_lines),
                     mistral_conv_id,
-                    vandaag,
+                    today_date,
                     payload.language_level,
                 )
             )

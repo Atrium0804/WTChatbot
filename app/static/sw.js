@@ -4,7 +4,7 @@
 // Daar zit vraag/antwoord in; alleen de app-shell mag lokaal worden bewaard.
 "use strict";
 
-var CACHE = "wtchat-shell-v21"; // bij elke wijziging van de shell: versie ophogen
+var CACHE = "wtchat-shell-v22"; // bij elke wijziging van de shell: versie ophogen
 var SHELL = [
   "/",
   "/index.html",
@@ -15,7 +15,7 @@ var SHELL = [
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",
   "/icons/apple-touch-icon.png",
-  "/Achtergrond%2016-9.jpg"
+  "/Achtergrond%20A5.webp"
 ];
 
 var NEVER_CACHE = ["/chat", "/feedback", "/healthz", "/debug"];

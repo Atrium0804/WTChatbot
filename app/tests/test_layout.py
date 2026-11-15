@@ -1,5 +1,6 @@
 """Browserlayout van de echte app-shell, zonder API- of Mistral-aanroepen."""
 
+from base64 import b64encode
 from collections.abc import Iterator
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -7,7 +8,7 @@ from pathlib import Path
 from threading import Thread
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Browser, Page, expect
 
 
 @pytest.fixture(scope="session")
@@ -64,6 +65,95 @@ def assert_composer_visible(page: Page) -> None:
     """, timeout=3000)
 
 
+@pytest.mark.parametrize("width,height", [(360, 640), (390, 844), (430, 932), (844, 390), (1280, 720)])
+def test_background_area_stays_between_collapsed_settings_and_composer(
+    page: Page, shell_url: str, width: int, height: int
+) -> None:
+    page.set_viewport_size({"width": width, "height": height})
+    page.goto(shell_url)
+    page.locator("#taalniveau summary").click()
+    privacy = page.locator("#privacy")
+    messages = page.locator("#messages")
+    footer = page.locator("footer")
+    collapsed = messages.bounding_box()
+    privacy_bounds = privacy.bounding_box()
+    footer_bounds = footer.bounding_box()
+    assert collapsed is not None and privacy_bounds is not None and footer_bounds is not None
+    assert collapsed["y"] == pytest.approx(privacy_bounds["y"] + privacy_bounds["height"], abs=1)
+    assert collapsed["y"] + collapsed["height"] == pytest.approx(footer_bounds["y"], abs=1)
+
+    page.locator("#taalniveau summary").click()
+    assert messages.bounding_box() == collapsed
+    page.locator("#privacy summary").click()
+    assert messages.bounding_box() == collapsed
+    assert_composer_visible(page)
+
+
+def test_portrait_background_fills_conversation_height_without_distortion(page: Page, shell_url: str) -> None:
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.goto(shell_url)
+    background = page.locator("#messages").evaluate("""async node => {
+        const style = getComputedStyle(node);
+        const url = style.backgroundImage.match(/url\\(["']?(.*?)["']?\\)/);
+        if (!url) return null;
+        const image = new Image();
+        image.src = url[1];
+        await image.decode();
+        return {
+            url: image.src, width: image.naturalWidth, height: image.naturalHeight,
+            size: style.backgroundSize, position: style.backgroundPosition,
+            repeat: style.backgroundRepeat
+        };
+    }""")
+    assert background is not None
+    assert "Achtergrond%20A5" in background["url"]
+    assert background["width"] < background["height"]
+    assert background["size"] == "auto 100%"
+    assert background["position"] == "50% 50%"
+    assert background["repeat"] == "no-repeat"
+    response = page.request.get(background["url"])
+    assert response.ok
+    assert len(response.body()) <= 200_000
+
+
+@pytest.mark.parametrize("name", ["Achtergrond 16-9.jpg", "Achtergrond A5.png", "Achtergrond A5 liggend.png"])
+def test_background_assets_are_reduced_proportionally(page: Page, name: str) -> None:
+    asset = Path(__file__).resolve().parents[2] / "assets" / name
+    image = b64encode(asset.read_bytes()).decode("ascii")
+    dimensions = page.evaluate("""async encoded => {
+        const image = new Image();
+        image.src = "data:image/" + encoded.type + ";base64," + encoded.data;
+        await image.decode();
+        return [image.naturalWidth, image.naturalHeight];
+    }""", {"type": "jpeg" if name.endswith(".jpg") else "png", "data": image})
+    assert max(dimensions) <= 1280
+    expected_ratio = {"Achtergrond 16-9.jpg": 941 / 1672, "Achtergrond A5.png": 1053 / 1494,
+                      "Achtergrond A5 liggend.png": 1491 / 1055}[name]
+    assert dimensions[0] / dimensions[1] == pytest.approx(expected_ratio, abs=0.002)
+
+
+def test_background_is_available_when_the_webapp_starts_offline(browser: Browser, shell_url: str) -> None:
+    context = browser.new_context(service_workers="allow")
+    try:
+        page = context.new_page()
+        page.goto(shell_url)
+        page.evaluate("navigator.serviceWorker.ready")
+        page.reload()
+        page.wait_for_function("navigator.serviceWorker.controller !== null")
+        context.set_offline(True)
+        page.goto(shell_url)
+        assert page.locator("#messages").evaluate("""async node => {
+            const url = getComputedStyle(node).backgroundImage.match(/url\\(["']?(.*?)["']?\\)/);
+            if (!url) return false;
+            const image = new Image();
+            image.src = url[1];
+            await image.decode();
+            return image.naturalWidth > 0;
+        }""")
+    finally:
+        context.close()
+
+
 def test_composer_fits_visible_viewport_not_physical_screen(page: Page, shell_url: str) -> None:
     open_shell(page, shell_url)
     assert_composer_visible(page)
@@ -71,6 +161,8 @@ def test_composer_fits_visible_viewport_not_physical_screen(page: Page, shell_ur
 
 def test_composer_stays_visible_when_keyboard_opens_and_closes(page: Page, shell_url: str) -> None:
     open_shell(page, shell_url)
+    before = page.locator("#messages").bounding_box()
+    assert before is not None
     page.locator("#question").focus()
     page.evaluate("""
         () => {
@@ -79,6 +171,10 @@ def test_composer_stays_visible_when_keyboard_opens_and_closes(page: Page, shell
         }
     """)
     assert_composer_visible(page)
+    keyboard = page.locator("#messages").bounding_box()
+    assert keyboard is not None
+    assert keyboard["y"] == pytest.approx(before["y"], abs=1)
+    assert keyboard["height"] == pytest.approx(before["height"] - 349, abs=1)
     page.evaluate("""
         () => {
             visualViewport.height = 797;
@@ -86,6 +182,7 @@ def test_composer_stays_visible_when_keyboard_opens_and_closes(page: Page, shell
         }
     """)
     assert_composer_visible(page)
+    assert page.locator("#messages").bounding_box() == before
 
 
 def test_composer_follows_visible_viewport_offset_during_focus(page: Page, shell_url: str) -> None:
@@ -171,6 +268,13 @@ def test_long_conversation_scrolls_without_moving_header_or_composer(page: Page,
     page.locator("#question").press("Enter")
     expect(page.get_by_role("button", name="Goed antwoord")).to_be_visible()
     assert_composer_visible(page)
+    box = page.locator("#messages").bounding_box()
+    assert box is not None
+    pixel = {"x": box["x"] + 2, "y": box["y"] + box["height"] / 2, "width": 1, "height": 1}
+    page.locator("#messages").evaluate("node => { node.scrollTop = 0; }")
+    background_before = page.screenshot(clip=pixel)
+    page.locator("#messages").evaluate("node => { node.scrollTop = node.scrollHeight; }")
+    assert page.screenshot(clip=pixel) == background_before
     state = page.locator("#messages").evaluate("""
         node => {
             const scrollable = node.scrollHeight > node.clientHeight;
@@ -185,4 +289,16 @@ def test_long_conversation_scrolls_without_moving_header_or_composer(page: Page,
     assert state["last"] > 0
     assert state["pageScroll"] == 0
     assert page.locator("header").bounding_box() == before
+    assert_composer_visible(page)
+
+
+def test_both_settings_remain_accessible_when_contents_exceed_viewport(page: Page, shell_url: str) -> None:
+    page.set_viewport_size({"width": 360, "height": 640})
+    page.goto(shell_url)
+    page.locator(".taalniveau-uitleg").evaluate("node => { node.textContent = node.textContent.repeat(20); }")
+    page.locator("#privacy summary").click()
+    expect(page.locator("#privacy details")).to_have_attribute("open", "")
+    assert_composer_visible(page)
+    page.locator("#privacy summary").click()
+    page.locator("#taalniveau summary").click()
     assert_composer_visible(page)

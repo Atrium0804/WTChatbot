@@ -435,7 +435,7 @@ def test_shell_backgrounds_use_club_blue(tmp_path):
     client = make_client(tmp_path)
     html = client.get("/").text
     body_css = html[html.index("  body {"):html.index("  header {")]
-    assert "background: var(--accent) url(" in body_css
+    assert "background: var(--accent);" in body_css
     manifest = client.get("/manifest.webmanifest").json()
     assert manifest["background_color"] == "#033ec2"
 

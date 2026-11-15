@@ -22,6 +22,7 @@
     --muted: #55606e;
     --border: #d3dae8;
     --danger: #e00720;
+    --settings-bar-height: calc(1.2rem + 0.8rem + 1px);
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -29,7 +30,7 @@
   body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--accent) url("Achtergrond%2016-9.jpg") center / cover no-repeat fixed;
+    background: var(--accent);
     color: var(--text);
     display: flex;
     flex-direction: column;
@@ -50,17 +51,34 @@
   }
   header h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
   header .sub { font-size: 0.75rem; opacity: 0.85; }
+  .conversation {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .settings {
+    position: absolute;
+    inset: 0 0 auto;
+    max-height: 100%;
+    overflow-y: auto;
+    z-index: 1;
+  }
   #privacy {
     background: #e8edfb;
     border-bottom: 1px solid var(--border);
     font-size: 0.78rem;
+    line-height: 1.2rem;
     color: var(--muted);
     padding: 0.4rem 1rem;
   }
-  #privacy summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); }
+  #privacy summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); height: 1.2rem; }
   #privacy p { margin: 0.35rem 0 0.2rem; }
   main {
     flex: 1;
+    min-height: 0;
+    margin-top: calc(2 * var(--settings-bar-height));
+    background: var(--accent) url("Achtergrond%20A5.webp") center / auto 100% no-repeat;
     overflow-y: auto;
     padding: 0.75rem;
     display: flex;
@@ -183,7 +201,7 @@
   #send:disabled { opacity: 0.5; cursor: default; }
   .typing { font-style: italic; color: var(--muted); }
   @media (min-width: 720px) {
-    main { max-width: 44rem; margin: 0 auto; width: 100%; }
+    main { max-width: 44rem; margin-left: auto; margin-right: auto; width: 100%; }
     footer { display: flex; justify-content: center; }
     #composer { width: 44rem; }
     .msg { max-width: 75%; }
@@ -193,10 +211,11 @@
     background: #e8edfb;
     border-bottom: 1px solid var(--border);
     font-size: 0.78rem;
+    line-height: 1.2rem;
     color: var(--muted);
     padding: 0.4rem 1rem;
   }
-  .taalniveau summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); }
+  .taalniveau summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); height: 1.2rem; }
   .taalniveau-inhoud { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.35rem; }
   .taalniveau-uitleg { flex: 1; min-width: 12rem; margin: 0; }
   .taalniveau-hint { font-size: 0.72rem; font-style: italic; color: var(--accent-dark); }
@@ -220,6 +239,8 @@
   <h1>WTC - Wielie The Chatbot</h1>
   <div class="sub">Met mij fiets je van vraag naar antwoord</div>
 </header>
+<div class="conversation">
+<div class="settings">
 <details id="taalniveau" class="taalniveau" open>
   <summary>Antwoorden: <span id="taalniveau-stand">Kort</span></summary>
   <div class="taalniveau-inhoud">
@@ -241,9 +262,11 @@
     niets tussen sessies. Opgeslagen feedback gebruiken we om de chatbot te verbeteren.</p>
   </details>
 </div>
+</div>
 <main id="messages" aria-live="polite">
   <div class="msg bot">Hoi! Ik ben Wielie de chatbot. Stel me een vraag over wielrennen, veldrijden of over de club.</div>
 </main>
+</div>
 <footer>
   <form id="composer">
     <textarea id="question" rows="1" maxlength="1000"

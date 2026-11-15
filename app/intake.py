@@ -20,9 +20,12 @@ volgens CODING_PRINCIPLES.md ("prompts staan in aparte bestanden").
 
 import json
 import logging
+from collections.abc import Callable
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
+
+import requests
 
 import lookups
 import mistral_client
@@ -77,6 +80,7 @@ def classify_message(
     model: str,
     message: str,
     timeout: int = 30,
+    on_fallback: Callable[[str], None] | None = None,
 ) -> dict:
     """Eén call via de dunne API-laag (mistral_client.chat_completion); geef het intake-schema.
 
@@ -95,7 +99,22 @@ def classify_message(
         )
         return _normalize(json.loads(content))
     except Exception as exc:
-        logger.warning("Intake-call mislukt (%s); val terug op de router", exc)
+        reason = "intake_error"
+        cause: BaseException | None = exc
+        while cause is not None:
+            if isinstance(cause, requests.HTTPError) and cause.response is not None:
+                reason = f"http_{cause.response.status_code}"
+                break
+            if isinstance(cause, requests.Timeout):
+                reason = "timeout"
+                break
+            if isinstance(cause, json.JSONDecodeError):
+                reason = "invalid_json"
+                break
+            cause = cause.__cause__
+        logger.warning("Intake-call mislukt (%s); val terug op de router", reason)
+        if on_fallback is not None:
+            on_fallback(reason)
         return dict(FALLBACK)
 
 

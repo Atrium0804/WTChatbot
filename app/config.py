@@ -50,6 +50,7 @@ INTAKE_CONFIDENCE_THRESHOLD = float(os.environ.get("INTAKE_CONFIDENCE_THRESHOLD"
 PROMPT_CACHE_KEY = os.environ.get("PROMPT_CACHE_KEY", "wtchatbot-v1")
 
 DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "wtchat.db"))
+LOCAL_DEBUG_TRACES = os.environ.get("LOCAL_DEBUG_TRACES", "").lower() in ("1", "true")
 
 MAX_QUESTION_LENGTH = int(os.environ.get("MAX_QUESTION_LENGTH", "1000"))
 RATE_LIMIT_PER_HOUR = int(os.environ.get("RATE_LIMIT_PER_HOUR", "20"))

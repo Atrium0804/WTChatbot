@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wielie - lokale routing-traces</title>
+  <style>
+    body { font: 16px system-ui, sans-serif; max-width: 75rem; margin: auto; padding: 1rem; color: #17233a; }
+    details { border: 1px solid #bbc5d4; border-radius: .4rem; margin: 1rem 0; padding: .8rem; }
+    summary { cursor: pointer; overflow-wrap: anywhere; }
+    pre { overflow: auto; background: #f3f5f8; padding: 1rem; }
+    #status { font-weight: bold; }
+    #status.error { color: #a01818; }
+  </style>
+</head>
+<body>
+  <h1>Lokale routing-traces</h1>
+  <p>Stel vragen in <a href="/" target="_blank" rel="noopener">de chatbot</a>.
+    Dit paneel ververst elke seconde en toont de laatste 100 berichten van dit app-proces,
+    nieuwste eerst. Vraag- en antwoordteksten worden niet opgenomen.</p>
+  <p>Elk bericht heeft een eigen trace-ID (ook in de <code>X-Trace-ID</code>-responseheader).
+    De conversatiecode groepeert berichten uit hetzelfde gesprek.
+    <code>elapsed_ms</code> is de tijd sinds de start van het bericht;
+    <code>duration_ms</code> bij intake is de duur van die call.</p>
+  <p><code>regex_lookup</code>: bypass zonder LLM;
+    <code>intake_lookup</code>: bypass na een intake-call.
+    <code>agent_request</code> toont de aangevraagde startagent, niet noodzakelijk
+    de actieve agent bij voortzetting van een bestaande Mistral-conversatie.
+    Handoffs en tools worden alleen getoond als de stream ze doorgeeft.</p>
+  <p id="status" role="status">Traces ophalen...</p>
+  <div id="traces"></div>
+  <script>
+    "use strict";
+    var statusNode = document.getElementById("status");
+    var tracesNode = document.getElementById("traces");
+    var previous = "";
+
+    function render(traces) {
+      var serialized = JSON.stringify(traces);
+      if (serialized === previous) return;
+      previous = serialized;
+      var opened = new Set();
+      var known = new Set();
+      tracesNode.querySelectorAll("details").forEach(function (node) {
+        known.add(node.dataset.id);
+        if (node.open) opened.add(node.dataset.id);
+      });
+      tracesNode.textContent = "";
+      traces.forEach(function (trace, index) {
+        var details = document.createElement("details");
+        details.dataset.id = trace.trace_id;
+        details.open = opened.has(trace.trace_id) || (index === 0 && !known.has(trace.trace_id));
+        var summary = document.createElement("summary");
+        var last = trace.events[trace.events.length - 1];
+        summary.textContent = trace.started_at + " | " + (trace.route || "bezig") +
+          " | " + trace.status + (last ? " (" + last.elapsed_ms + " ms)" : "") +
+          " | trace " + trace.trace_id;
+        var body = document.createElement("pre");
+        body.textContent = "Conversatie: " + trace.conversation +
+          "\nOudere events buiten buffer: " + trace.dropped_events +
+          "\n\n" + trace.events.map(function (event) { return JSON.stringify(event); }).join("\n");
+        details.appendChild(summary);
+        details.appendChild(body);
+        tracesNode.appendChild(details);
+      });
+    }
+
+    function refresh() {
+      fetch("/debug/traces", { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        })
+        .then(function (body) {
+          render(body.traces);
+          statusNode.className = "";
+          statusNode.textContent = body.traces.length ?
+            "Bijgewerkt: " + new Date().toLocaleTimeString("nl-NL") :
+            "Nog geen traces. Stel een vraag in de chatbot.";
+        })
+        .catch(function (error) {
+          statusNode.className = "error";
+          statusNode.textContent = "Traces ophalen mislukt (" + error.message +
+            "). Controleer of de app draait, LOCAL_DEBUG_TRACES aanstaat en je direct via localhost werkt.";
+        })
+        .finally(function () { setTimeout(refresh, 1000); });
+    }
+    refresh();
+  </script>
+</body>
+</html>

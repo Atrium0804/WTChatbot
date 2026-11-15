@@ -21,8 +21,10 @@ Deze how-to beschrijft de hele loop van gebruikersfeedback naar een aantoonbare 
 
    ```bash
    .venv\Scripts\python scripts/trace_conversation.py <conversation-id>
+   
+   .venv\Scripts\python scripts/trace_conversation.py c607c5af9af948d381f25522bb626dbe
    ```
-
+   
    Alleen conversaties gestart na issue #44 hebben een koppeling; oudere vind je per dag (UTC) met `--date 2026-11-06`.
 3. **Reproduceer het patroon in de eval-set.** Voeg de falende vraag toe aan `eval/evalset.yaml` (schema: [eval-set](../reference/eval-set.md)) met `verwacht_antwoord`, `bron` en bij strikethrough `doorhaal_waarde`, en draai de gate — deze run moet rood zijn:
 

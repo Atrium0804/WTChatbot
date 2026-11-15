@@ -23,7 +23,7 @@ from datetime import date
 from typing import Optional
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
@@ -36,6 +36,7 @@ import lookups
 import mistral_client
 import phases
 import store
+import tracing
 
 STATIC_DIR = config.BASE_DIR / "static"
 
@@ -109,6 +110,7 @@ def create_app(
     # window van de laatste FEEDBACK_HISTORY_TURNS turns, voor feedback-koppeling),
     # rate-limit buckets.
     state: dict = {"conversations": {}, "history": {}, "buckets": {}, "jobs": {}}
+    traces = tracing.TraceStore(enabled=config.LOCAL_DEBUG_TRACES)
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
@@ -129,6 +131,12 @@ def create_app(
         # Cache-Control: API-antwoorden nooit cachen; html/manifest/sw.js altijd
         # revalideren (no-cache); statische assets (icons, afbeeldingen) kort cachen.
         path = request.url.path
+        if path == "/debug" or path.startswith("/debug/"):
+            response.headers["Cache-Control"] = "no-store"
+            response.headers["Content-Security-Policy"] = response.headers[
+                "Content-Security-Policy"
+            ].replace(f"frame-ancestors {config.FRAME_ANCESTORS}", "frame-ancestors 'none'")
+            response.headers["X-Frame-Options"] = "DENY"
         if request.method == "GET":
             if path in ("/", "/sw.js", "/manifest.webmanifest") or path.endswith(".html"):
                 response.headers["Cache-Control"] = "no-cache"
@@ -155,10 +163,16 @@ def create_app(
         turns.append({"question": message, "answer": answer})
         return answer
 
-    def _direct_response(conversation_id: str, message: str, answer: str) -> dict:
+    def _direct_response(
+        conversation_id: str, message: str, answer: str, trace: tracing.Trace
+    ) -> JSONResponse:
         """Synchroon 200-antwoord: stub-mode óf deterministische bypass (#91)."""
         answer = _record_turn(conversation_id, message, answer)
-        return {"conversation_id": conversation_id, "answer": answer}
+        trace.record("done")
+        return JSONResponse(
+            {"conversation_id": conversation_id, "answer": answer},
+            headers={"X-Trace-ID": trace.id},
+        )
 
     async def _run_chat_job(
         job_id: str,
@@ -168,6 +182,7 @@ def create_app(
         mistral_conv_id: str | None,
         today_date: date,
         language_level: str,
+        trace: tracing.Trace,
     ) -> None:
         """Background task (#85 + #91/#93): light intake + route + streaming
         Mistral-call off-loop; SSE-events worden omgezet in job["phase"].
@@ -176,6 +191,13 @@ def create_app(
         job["status"] = "working"
         job["phase"] = phases.PHASE_LEES
         try:
+            intake_started = time.monotonic()
+            fallback_reason = ""
+
+            def on_intake_fallback(reason: str) -> None:
+                nonlocal fallback_reason
+                fallback_reason = reason
+
             # #91: light intake (1 kleine call) + regex-lookup bepalen de route
             intake_result = await run_in_threadpool(
                 intake.classify_message,
@@ -184,6 +206,13 @@ def create_app(
                 model=config.MISTRAL_INTAKE_MODEL,
                 message=message,
                 timeout=config.INTAKE_TIMEOUT,
+                on_fallback=on_intake_fallback,
+            )
+            trace.record(
+                "intake",
+                confidence=intake_result["confidence"],
+                duration_ms=round((time.monotonic() - intake_started) * 1000, 1),
+                reason=fallback_reason or "classified",
             )
             route = intake.decide_route(
                 message=message,
@@ -196,6 +225,15 @@ def create_app(
             job["route"] = route["route"] + (
                 f"-{route['domein']}" if route["route"] == "direct" else ""
             )
+            route_reason = "intake_lookup" if route["route"] == "bypass" else "confident_domain"
+            if route["route"] == "router":
+                if fallback_reason:
+                    route_reason = fallback_reason
+                elif intake_result["domein"] not in expert_agent_ids:
+                    route_reason = "expert_not_configured"
+                else:
+                    route_reason = "low_confidence"
+            trace.record("route", route=job["route"], reason=route_reason)
             if route["route"] == "bypass":
                 # deterministische lookup met complete data: direct app-antwoord,
                 # de Mistral-conversation start niet (#88/#91)
@@ -208,9 +246,26 @@ def create_app(
                 agent_id = route.get("agent_id") or config.MISTRAL_AGENT_ID
                 current_agent = agent_names.get(agent_id, "")
                 job["phase"] = phases.fase_voor_startagent(current_agent)
+                trace.record(
+                    "agent_request",
+                    agent=current_agent or "unknown",
+                    reason="continue_conversation" if mistral_conv_id else "new_conversation",
+                )
+                observed_agent = "" if mistral_conv_id else current_agent
 
                 def on_event(event: str, data: dict) -> None:
-                    nonlocal current_agent
+                    nonlocal current_agent, observed_agent
+                    event_agent_id = data.get("agent_id")
+                    if isinstance(event_agent_id, str) and event_agent_id in agent_names:
+                        observed_agent = agent_names[event_agent_id]
+                    trace.stream_event(event, data, observed_agent)
+                    if event == "agent.handoff.done":
+                        next_agent = data.get("next_agent_name")
+                        observed_agent = (
+                            next_agent if isinstance(next_agent, str) and next_agent in tracing.AGENTS else ""
+                        )
+                    elif event == "message.output.done":
+                        trace.record("agent_output", agent=observed_agent or "unknown")
                     mapping = phases.phase_for_event(event, data, current_agent)
                     if mapping is not None:
                         new_phase, current_agent = mapping
@@ -231,6 +286,7 @@ def create_app(
                 except mistral_client.StreamStartError:
                     # stream startte niet: val terug op de non-streaming call (#93)
                     job["phase"] = phases.PHASE_OPSTELLEN
+                    trace.record("stream_fallback", reason="stream_start_error")
                     new_conv_id, answer = await run_in_threadpool(
                         mistral_client.answer_question,
                         api_key=config.MISTRAL_API_KEY,
@@ -248,10 +304,15 @@ def create_app(
             job["phase"] = phases.PHASE_KLAAR
             job["answer"] = answer
             job["conversation_id"] = conversation_id
+            trace.record("done")
+        except asyncio.CancelledError:
+            trace.record("cancelled", reason="job_cancelled")
+            raise
         except Exception as exc:
             job["status"] = "error"
             job["phase"] = phases.PHASE_FOUT
             job["error"] = f"Er ging iets mis bij het ophalen van het antwoord. Probeer het opnieuw. ({exc})"
+            trace.record("error", reason=type(exc).__name__)
 
     @app.post("/chat")
     async def chat(payload: ChatRequest):
@@ -274,16 +335,18 @@ def create_app(
                 status_code=429,
             )
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
+        trace = traces.start(conversation_id)
         today_date = today()
         # #91: pure lookup met complete data -> direct app-antwoord (0 LLM-calls,
         # géén job/fase — de snelheid is zo direct zichtbaar), ook midden in een
         # bestaand gesprek
         lookup = lookups.match_lookup(message, today_date, category_rules)
         if lookup:
+            trace.record("route", route="bypass", reason="regex_lookup")
             answer = lookups.render_lookup_answer(
                 lookup, message, category_rules, today_date, payload.language_level
             )
-            return _direct_response(conversation_id, message, answer)
+            return _direct_response(conversation_id, message, answer, trace)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             # #85: 202 + job-id; intake + Mistral-call draaien in een background task.
             mistral_conv_id = state["conversations"].get(conversation_id)
@@ -309,14 +372,29 @@ def create_app(
                     mistral_conv_id,
                     today_date,
                     payload.language_level,
+                    trace,
                 )
             )
             return JSONResponse(
                 {"job_id": job_id, "conversation_id": conversation_id},
                 status_code=202,
+                headers={"X-Trace-ID": trace.id},
             )
         # stub-mode: synchroon antwoord (handig voor offline development en tests)
-        return _direct_response(conversation_id, message, stub_answer(message))
+        trace.record("route", route="stub", reason="mistral_not_configured")
+        return _direct_response(conversation_id, message, stub_answer(message), trace)
+
+    @app.get("/debug")
+    async def debug_panel(request: Request):
+        if not tracing.local_debug_allowed(request, config.LOCAL_DEBUG_TRACES):
+            return JSONResponse({"error": "Niet gevonden."}, status_code=404)
+        return FileResponse(config.BASE_DIR / "debug.html")
+
+    @app.get("/debug/traces")
+    async def debug_traces(request: Request):
+        if not tracing.local_debug_allowed(request, config.LOCAL_DEBUG_TRACES):
+            return JSONResponse({"error": "Niet gevonden."}, status_code=404)
+        return {"traces": traces.snapshot()}
 
     @app.get("/chat/status/{job_id}")
     async def chat_status(job_id: str):

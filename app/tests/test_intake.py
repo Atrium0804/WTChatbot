@@ -138,6 +138,12 @@ def test_classify_message_normaliseert_ongeldige_waarden():
     assert result["geboortejaar"] is None  # string wordt niet als int geaccepteerd
 
 
+def test_classify_message_does_not_accept_track_as_supported_discipline():
+    with patch("requests.post", return_value=_resp('{"discipline": "baan"}')):
+        result = intake.classify_message(api_key="k", base_url="u", model="m", message="baanvraag")
+    assert result["discipline"] == "onbekend"
+
+
 def test_classify_message_fallback_bij_netwerkfout():
     import requests
 

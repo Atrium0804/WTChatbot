@@ -59,12 +59,17 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 
 Een korte aanvulling op een onvolledige lookup-vraag is geen verdiepingsvraag. `resolve_lookup_message()` combineert bijvoorbeeld "wlk verzet voor u8" met het volgende bericht "weg". Daarna antwoordt de app lokaal: maximaal 5,50 meter. Ook opeenvolgende aanvullingen zoals "Welk verzet?" → "2012" → "weg" behouden het vraagtype. De context komt alleen uit de in-memory feedbackgeschiedenis van dezelfde conversatie; een eerdere uitleg- of clubvraag wordt niet hergebruikt. De oorspronkelijke gebruikersberichten blijven ongewijzigd in die geschiedenis.
 
-Bij verzet op geboortejaar gebruikt de app voor weg en baan het huidige kalenderjaar, en voor veldrijden het eindjaar van het lopende of eerstvolgende veldritseizoen. Een expliciete leeftijdscategorie wordt niet opnieuw berekend. Bij oude of gecombineerde categorieën noemt het antwoord het verzet van elke bijbehorende leeftijdscategorie. De omgekeerde categorievertaling noemt jongens en meisjes afzonderlijk als geen geslacht is opgegeven; dezelfde U-aanduiding kan voor hen naar verschillende oude categorieën verwijzen.
+Bij verzet op geboortejaar gebruikt de app voor weg het huidige kalenderjaar, en voor veldrijden het eindjaar van het lopende of eerstvolgende veldritseizoen. Een expliciete leeftijdscategorie wordt niet opnieuw berekend. Bij oude of gecombineerde categorieën noemt het antwoord het verzet van elke bijbehorende leeftijdscategorie. De omgekeerde categorievertaling noemt jongens en meisjes afzonderlijk als geen geslacht is opgegeven; dezelfde U-aanduiding kan voor hen naar verschillende oude categorieën verwijzen.
+
+Voor de omgekeerde vertaling herkent de app "categorie" samen met een U-/JO-/MO-aanduiding, of de expliciete term "oude indeling". Een geboortejaarvraag houdt voorrang: "Welke categorie voor geboortejaar 2015?" blijft een berekening van de huidige leeftijdscategorie. Woorden als "was" en "waren" zijn op zichzelf geen vertaalaanvraag.
+
+Wielie ondersteunt alleen wegwielrennen en veldrijden. Baanvragen krijgen geen deterministisch antwoord, ook niet wanneer ze tevens "weg" noemen. De baanwaarden blijven alleen in de brontabel staan voor de controle tegen de KNWU-documenten, niet als ondersteunde discipline in de lookup of intake.
 
 Een bypass gebeurt alleen als de vraag alléén het kale feit vraagt. De guards in `lookups.py` sturen de rest door naar een agent:
 
 - `MEER_DAN_FEIT` (woorden als *waarom, versie, bron, heb je dit gecheckt, kosten, hoe meet, uitzonderingen*…) → geen bypass;
 - `REGELMENT_ONDERWERP` (wedstrijd, verzekering, contributie, training…) → geen bypass;
+- `BUITEN_SCOPE_DISCIPLINE` (baanwielrennen) → geen bypass;
 - meerdere onderwerpen in één vraag (bv. categorie én licentie) → geen bypass;
 - onvoldoende gegevens voor de lookup of een onbekende aanduiding → geen bypass, de agent handelt de vraag af.
 
@@ -89,6 +94,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | "2015" (kaal jaartal als vervolg op de vraag naar het geboortejaar) | `bypass` | kaal jaartal = geboortejaar (#91 besluit 5) |
 | "Wat is categorie 3 in de nieuwe indeling?" | `bypass` | vertaling van een oude aanduiding |
 | "Welke oude categorie is JO11/MO12?" | `bypass` | omgekeerde vertaling uit dezelfde categorietabel |
+| "Welke categorie is U12?" | `bypass` | omgekeerde vertaling; noemt de oude categorie voor jongens en meisjes |
 | "Welk verzet voor categorie 2 op de weg?" | `bypass` | verzet voor beide leeftijdscategorieën: U10 en U11 |
 | "weg" na "wlk verzet voor u8" | `bypass` | ontbrekende discipline aangevuld, geen verdiepingsvraag |
 | "Waarom is het verzet voor U15 maar 6,70 meter?" | géén bypass → agent | `MEER_DAN_FEIT` treft "waarom" |

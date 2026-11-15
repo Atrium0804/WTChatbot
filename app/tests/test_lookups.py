@@ -150,6 +150,33 @@ def test_extra_discipline_uit_intake_vult_aan():
     assert m == {"kind": "verzet", "category": "U13", "discipline": "veld"}
 
 
+@pytest.mark.parametrize(
+    ("message", "extra"),
+    [
+        ("Welk verzet voor U9 op de baan?", None),
+        ("Welk verzet voor U9 op de baan en op de weg?", {"discipline": "weg"}),
+        ("Welk verzet voor U9?", {"discipline": "baan"}),
+    ],
+)
+def test_track_cycling_never_bypasses(message, extra):
+    assert lookups.match_lookup(message, NOVEMBER_2026, RULES, extra=extra) is None
+
+
+def test_render_lookup_rejects_track_cycling():
+    with pytest.raises(ValueError, match="buiten scope"):
+        lookups.render_lookup_answer(
+            {"kind": "verzet", "category": "U9", "discipline": "baan"},
+            "Welk verzet voor U9 op de baan?",
+            RULES,
+            NOVEMBER_2026,
+            "B2",
+        )
+
+
+def test_former_words_without_category_request_do_not_trigger_translation():
+    assert lookups.match_lookup("Was U12 leuk?", NOVEMBER_2026, RULES) is None
+
+
 # --- render_lookup_answer: templates met bron+versie+artikel ---
 
 

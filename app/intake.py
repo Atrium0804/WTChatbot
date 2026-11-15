@@ -62,7 +62,7 @@ def _normalize(data: dict) -> dict:
     domein = str(data.get("domein") or "onbekend").lower()
     result["domein"] = domein if domein in DOMAINS else "onbekend"
     discipline = str(data.get("discipline") or "onbekend").lower()
-    result["discipline"] = discipline if discipline in ("weg", "veld", "baan") else "onbekend"
+    result["discipline"] = discipline if discipline in ("weg", "veld") else "onbekend"
     for key in ("geboortejaar", "leeftijd"):
         value = data.get(key)
         result[key] = int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None

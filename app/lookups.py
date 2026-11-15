@@ -55,18 +55,18 @@ VERTALING_VRAAG = re.compile(
     re.IGNORECASE,
 )
 NEW_CATEGORY_PATTERN = re.compile(r"\b(JO|MO|MU|VU|U)(\d{1,2})\b", re.IGNORECASE)
-OLD_DESIGNATION_REQUEST = re.compile(r"\b(oude|vroegere|voorheen|was|waren)\b", re.IGNORECASE)
+OLD_DESIGNATION_REQUEST = re.compile(r"\b(categorie(?:ën|en)?|oude\s+indeling)\b", re.IGNORECASE)
 BIRTH_YEAR_REPLY = re.compile(
     r"(?:(?:hij|zij|ik)\s+(?:is|ben)\s+)?(?:geboren(?:\s+in)?|geboortejaar)"
     r"\s+(?:19|20)\d{2}",
     re.IGNORECASE,
 )
 DISCIPLINE_PATTERNS = [
-    ("baan", re.compile(r"\b(baanwielrennen|op de baan|de baan|baan)\b", re.IGNORECASE)),
     ("veld", re.compile(r"\b(veldrijden|veldrit|in het veld|het veld|veld|cross)\b", re.IGNORECASE)),
     ("weg", re.compile(r"\b(wegwielrennen|op de weg|de weg|weg)\b", re.IGNORECASE)),
 ]
-DISCIPLINE_NAAM = {"weg": "wegwielrennen", "veld": "veldrijden", "baan": "baanwielrennen"}
+DISCIPLINE_NAAM = {"weg": "wegwielrennen", "veld": "veldrijden"}
+BUITEN_SCOPE_DISCIPLINE = re.compile(r"\b(baanwielrennen|baanrennen|baan)\b", re.IGNORECASE)
 
 # Disclaimer aan het eind van elk deterministisch antwoord (#91 besluit 4):
 # dit is het kale feit; bij een vervolgvraag ("waarom", versie, "heb je dit
@@ -125,7 +125,11 @@ def _categorieen_uit_bericht(message: str, rules: dict) -> list[str]:
 
 
 def _lookup_kind(message: str) -> str | None:
-    if MEER_DAN_FEIT.search(message) or REGELMENT_ONDERWERP.search(message):
+    if (
+        MEER_DAN_FEIT.search(message)
+        or REGELMENT_ONDERWERP.search(message)
+        or BUITEN_SCOPE_DISCIPLINE.search(message)
+    ):
         return None
     kinds = []
     if CATEGORIE_VRAAG.search(message):
@@ -204,12 +208,16 @@ def match_lookup(
     """Detecteer een pure lookup-vraag; geef de data terug, anders None.
 
     `extra` vult aan vanuit de light intake (#91): {"geboortejaar": int,
-    "discipline": "weg"|"veld"|"baan"}. Alleen expliciete geboortejaren
+    "discipline": "weg"|"veld"}. Alleen expliciete geboortejaren
     (of een kaal jaartal als antwoord op de geboortejaar-vraag) leiden
     tot een bypass — een leeftijd in jaren ("15-jarige") niet, omdat
     daarbij bronconflicten kunnen spelen die alleen een agent signaleert.
     """
-    if MEER_DAN_FEIT.search(message) or REGELMENT_ONDERWERP.search(message):
+    if (
+        MEER_DAN_FEIT.search(message)
+        or REGELMENT_ONDERWERP.search(message)
+        or BUITEN_SCOPE_DISCIPLINE.search(message)
+    ):
         return None
     extra = extra or {}
     birth_years = context.find_birth_years(message, today, rules)
@@ -313,6 +321,8 @@ def render_lookup_answer(
 
     if kind == "verzet":
         discipline = match["discipline"]
+        if discipline not in DISCIPLINE_NAAM:
+            raise ValueError(f"Discipline '{discipline}' valt buiten scope; gebruik weg of veld.")
         categories = match["categories"] if "categories" in match else [match["category"]]
         lines = context.old_designation_lines(message, rules) if context.old_category_numbers(message) else []
         for category in categories:

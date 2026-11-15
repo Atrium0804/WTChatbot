@@ -59,9 +59,13 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 
 Een korte aanvulling op een onvolledige lookup-vraag is geen verdiepingsvraag. `resolve_lookup_message()` combineert bijvoorbeeld "wlk verzet voor u8" met het volgende bericht "weg". Daarna antwoordt de app lokaal: maximaal 5,50 meter. Ook opeenvolgende aanvullingen zoals "Welk verzet?" → "2012" → "weg" behouden het vraagtype. De context komt alleen uit de in-memory feedbackgeschiedenis van dezelfde conversatie; een eerdere uitleg- of clubvraag wordt niet hergebruikt. De oorspronkelijke gebruikersberichten blijven ongewijzigd in die geschiedenis.
 
+Een gecombineerde categorie-aanduiding zoals "JO11/MO12" of "MU12, VU13" kan ook een korte aanvulling zijn: na "Welk verzet op de weg?" volgt dan het verzet per leeftijdscategorie, niet alleen een vertaling. De app onthoudt per beurt of de lookup is afgehandeld, ook wanneer de intake de ontbrekende gegevens heeft aangevuld. Latere losse fragmenten worden niet meer aan die afgehandelde vraag gekoppeld. Deze interne afhandelingsstatus wordt niet in de opgeslagen feedbackgeschiedenis opgenomen.
+
 Bij verzet op geboortejaar gebruikt de app voor weg het huidige kalenderjaar, en voor veldrijden het eindjaar van het lopende of eerstvolgende veldritseizoen. Een expliciete leeftijdscategorie wordt niet opnieuw berekend. Bij oude of gecombineerde categorieën noemt het antwoord het verzet van elke bijbehorende leeftijdscategorie. De omgekeerde categorievertaling noemt jongens en meisjes afzonderlijk als geen geslacht is opgegeven; dezelfde U-aanduiding kan voor hen naar verschillende oude categorieën verwijzen.
 
 Voor de omgekeerde vertaling herkent de app "categorie" samen met een U-/JO-/MO-aanduiding, of de expliciete term "oude indeling". Een geboortejaarvraag houdt voorrang: "Welke categorie voor geboortejaar 2015?" blijft een berekening van de huidige leeftijdscategorie. Woorden als "was" en "waren" zijn op zichzelf geen vertaalaanvraag.
+
+Die voorrang geldt ook voor "Wat is de categorie voor geboortejaar 2015, U12?": het geboortejaar blijft de basis van het antwoord.
 
 Wielie ondersteunt alleen wegwielrennen en veldrijden. Baanvragen krijgen geen deterministisch antwoord, ook niet wanneer ze tevens "weg" noemen. De baanwaarden blijven alleen in de brontabel staan voor de controle tegen de KNWU-documenten, niet als ondersteunde discipline in de lookup of intake.
 
@@ -71,7 +75,7 @@ Een bypass gebeurt alleen als de vraag alléén het kale feit vraagt. De guards 
 - `REGELMENT_ONDERWERP` (wedstrijd, verzekering, contributie, training…) → geen bypass;
 - `BUITEN_SCOPE_DISCIPLINE` (baanwielrennen) → geen bypass;
 - meerdere onderwerpen in één vraag (bv. categorie én licentie) → geen bypass;
-- onvoldoende gegevens voor de lookup of een onbekende aanduiding → geen bypass, de agent handelt de vraag af.
+- onvoldoende gegevens voor de lookup of een onbekende aanduiding → geen bypass, ook niet als daarnaast een bekende categorie staat of de intake aanvullende gegevens levert; de agent handelt de volledige vraag af.
 
 Het bypass-antwoord is een template met bron + versie + artikel — de `Bron:`-regel alleen bij taalniveau B2 (#52) — en eindigt altijd op een vaste disclaimer dat de library geraadpleegd wordt bij een vervolgvraag. De check draait niet alleen vóór een nieuwe job: `/chat` probeert `match_lookup` eerst zelf, ook midden in een bestaand gesprek, en antwoordt dan synchroon zonder job. In de background job kan `decide_route` met de intake-data (geboortejaar/discipline uit de LLM) alsnog een bypass opleveren; die job zet dan de fase "Ik bereken de leeftijdscategorie…".
 

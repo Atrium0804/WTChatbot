@@ -36,6 +36,7 @@ REGELMENT_ONDERWERP = re.compile(
 )
 CATEGORIE_VRAAG = re.compile(
     r"(in welke|welke|in welk|waarin)\s+(leeftijds)?categorie"
+    r"|wat\s+is\s+(?:(?:de|een)\s+)?(?:leeftijds)?categorie\b"
     r"|categorie\s+(rijdt|valt|hoort)"
     r"|rijdt\s+in\s+(een\s+|de\s+)?categorie"
     r"|hoort\s+bij\s+(een\s+|de\s+)?categorie",
@@ -72,8 +73,8 @@ BUITEN_SCOPE_DISCIPLINE = re.compile(r"\b(baanwielrennen|baanrennen|baan)\b", re
 # dit is het kale feit; bij een vervolgvraag ("waarom", versie, "heb je dit
 # gecheckt") schakelt de app door naar de document-library.
 DISCLAIMER_LIBRARY = (
-    "Stel je een vervolgvraag (bijvoorbeeld 'waarom?' of 'welke versie?') — "
-    "dan doorzoek ik daarvoor de KNWU-documenten."
+    "Stel je een vervolgvraag, dan fiets ik met je "
+    "door de KNWU-informatie"
 )
 
 
@@ -147,7 +148,13 @@ def _reply_kind(message: str) -> str | None:
         return "discipline"
     if context.BARE_YEAR_MESSAGE.fullmatch(message) or BIRTH_YEAR_REPLY.fullmatch(fragment):
         return "birth_year"
-    if NEW_CATEGORY_PATTERN.fullmatch(fragment) or context.OLD_CATEGORY_PATTERN.fullmatch(fragment):
+    if NEW_CATEGORY_PATTERN.search(fragment) and re.fullmatch(
+        r"(?:\s|,|/|\ben\b)*",
+        NEW_CATEGORY_PATTERN.sub("", fragment),
+        re.IGNORECASE,
+    ):
+        return "category"
+    if context.OLD_CATEGORY_PATTERN.fullmatch(fragment):
         return "category"
     if re.fullmatch(r"(?:U17[\s-]+)?nieuweling(?:en)?", fragment, re.IGNORECASE):
         return "category"
@@ -220,6 +227,13 @@ def match_lookup(
     ):
         return None
     extra = extra or {}
+    if any(
+        not knwu_categories.old_category_groups(number, rules)
+        for number in context.old_category_numbers(message)
+    ):
+        return None
+    if NEW_CATEGORY_PATTERN.search(message) and not _category_references(message, rules):
+        return None
     birth_years = context.find_birth_years(message, today, rules)
     extra_year = extra.get("geboortejaar")
     if extra_year:

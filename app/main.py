@@ -146,7 +146,9 @@ def create_app(
                 response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
-    def _record_turn(conversation_id: str, message: str, answer: str) -> str:
+    def _record_turn(
+        conversation_id: str, message: str, answer: str, *, lookup_completed: bool = False
+    ) -> str:
         """[BRONCONFLICT]-markers als feedback opslaan en de turn in de
         feedbackgeschiedenis bewaren; geef het antwoord zonder markers terug."""
         answer, bronconflicts = split_bronconflict_markers(answer)
@@ -160,14 +162,17 @@ def create_app(
         turns = state["history"].setdefault(
             conversation_id, deque(maxlen=config.FEEDBACK_HISTORY_TURNS)
         )
-        turns.append({"question": message, "answer": answer})
+        turns.append({"question": message, "answer": answer, "lookup_completed": lookup_completed})
         return answer
 
     def _direct_response(
-        conversation_id: str, message: str, answer: str, trace: tracing.Trace
+        conversation_id: str, message: str, answer: str, trace: tracing.Trace,
+        *, lookup_completed: bool = False,
     ) -> JSONResponse:
         """Synchroon 200-antwoord: stub-mode óf deterministische bypass (#91)."""
-        answer = _record_turn(conversation_id, message, answer)
+        answer = _record_turn(
+            conversation_id, message, answer, lookup_completed=lookup_completed
+        )
         trace.record("done")
         return JSONResponse(
             {"conversation_id": conversation_id, "answer": answer},
@@ -303,7 +308,9 @@ def create_app(
                 raise RuntimeError("het model gaf een leeg antwoord")
             if new_conv_id:
                 state["conversations"][conversation_id] = new_conv_id
-            answer = _record_turn(conversation_id, message, answer)
+            answer = _record_turn(
+                conversation_id, message, answer, lookup_completed=route["route"] == "bypass"
+            )
             job["status"] = "done"
             job["phase"] = phases.PHASE_KLAAR
             job["answer"] = answer
@@ -341,7 +348,12 @@ def create_app(
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         trace = traces.start(conversation_id)
         today_date = today()
-        previous_messages = [turn["question"] for turn in state["history"].get(conversation_id, [])]
+        previous_messages = []
+        for turn in state["history"].get(conversation_id, []):
+            if turn["lookup_completed"]:
+                previous_messages.clear()
+            else:
+                previous_messages.append(turn["question"])
         lookup_message = lookups.resolve_lookup_message(
             message, previous_messages, today_date, category_rules
         )
@@ -354,7 +366,7 @@ def create_app(
             answer = lookups.render_lookup_answer(
                 lookup, lookup_message, category_rules, today_date, payload.language_level
             )
-            return _direct_response(conversation_id, message, answer, trace)
+            return _direct_response(conversation_id, message, answer, trace, lookup_completed=True)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             # #85: 202 + job-id; intake + Mistral-call draaien in een background task.
             mistral_conv_id = state["conversations"].get(conversation_id)

@@ -89,6 +89,19 @@ def test_lookup_does_not_answer_explanations_or_unknown_designations(message):
     assert lookups.match_lookup(message, NOVEMBER_2026, RULES) is None
 
 
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Welk verzet voor U13 en categorie 8 op de weg?",
+        "Welke categorie is categorie 3 en categorie 8?",
+        "Wat is categorie 3 en U99 in de nieuwe indeling?",
+    ],
+)
+@pytest.mark.parametrize("extra", [None, {"geboortejaar": 2015, "discipline": "weg"}])
+def test_unknown_category_is_not_ignored_alongside_known_categories(message, extra):
+    assert lookups.match_lookup(message, NOVEMBER_2026, RULES, extra=extra) is None
+
+
 def test_licentiepakketten_vraag_is_geen_lookup():
     # pakketten/prijzen komen uit het Kenniscentrum, niet uit de tabel
     assert (
@@ -258,8 +271,8 @@ def test_render_eindigt_op_library_disclaimer():
     # #91 besluit 4: het standaardantwoord eindigt met de disclaimer die aangeeft
     # wanneer de document-library wél geraadpleegd wordt
     answer = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B1")
-    assert "KNWU-documenten" in answer
+    assert "KNWU-informatie" in answer
     assert "Bron:" not in answer  # B1-regel (#52) blijft gelden
     answer_b2 = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B2")
-    assert "KNWU-documenten" in answer_b2
+    assert "KNWU-informatie" in answer_b2
     assert "Bron:" in answer_b2

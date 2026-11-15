@@ -989,6 +989,8 @@ def test_lookup_bypass_verzet_after_discipline_clarification(
         ("Welke categorie is U12?", ("jongens U12", "categorie 4", "meisjes U12", "categorie 3")),
         ("JO11/MO12 in de oude indeling?", ("categorie 3", "jongens U11", "meisjes U12")),
         ("Welke categorie voor geboortejaar 2015?", ("leeftijdscategorie U12", "2015")),
+        ("Wat is de categorie voor geboortejaar 2015, U12?", ("leeftijdscategorie U12", "2015", "U13")),
+        ("Wat is de leeftijdscategorie voor geboortejaar 2015?", ("leeftijdscategorie U12", "2015")),
         ("Welk verzet voor categorie 3 op de weg?", ("U11", "U12", "5,90 meter")),
         ("Welk verzet voor categorie 2 op de weg?", ("U10", "5,50 meter", "U11", "5,90 meter")),
         ("Welk verzet voor geboortejaar 2015 op de weg?", ("U12", "5,90 meter")),
@@ -1084,6 +1086,31 @@ def test_gearing_lookup_after_category_or_birth_year_clarification(
     assert len(calls) == 1
 
 
+@pytest.mark.parametrize(
+    ("reply", "expected"),
+    [
+        ("JO11/MO12", ("U11", "U12", "5,90 meter")),
+        ("MU12, VU13", ("U12", "5,90 meter", "U13", "6,30 meter")),
+    ],
+)
+def test_gearing_lookup_after_combined_category_clarification(
+    tmp_path, monkeypatch, reply, expected
+):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = chat(client, "Welk verzet op de weg?")
+    resp = client.post(
+        "/chat",
+        json={"message": reply, "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert resp.status_code == 200
+    for fragment in expected:
+        assert fragment in resp.json()["answer"]
+    assert len(calls) == 1
+
+
 def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):
     from datetime import date
 
@@ -1144,6 +1171,42 @@ def test_intake_completed_lookup_bypasses_inside_job(tmp_path, monkeypatch):
     assert result["route"] == "bypass"
     assert "KNWU Licentie U17" in result["answer"]
     assert stream_calls == []  # de Mistral-conversation startte niet
+
+
+def test_intake_completed_lookup_is_not_reused_for_later_fragments(tmp_path, monkeypatch):
+    from datetime import date
+
+    import intake
+
+    calls = fake_mistral(monkeypatch)
+    monkeypatch.setattr(
+        intake,
+        "classify_message",
+        lambda **kwargs: {**intake.FALLBACK, "intentie": "lookup", "discipline": "weg"},
+    )
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = client.post(
+        "/chat",
+        json={"message": "Welk verzet voor U8 bij wegrennen?", "client_id": "test-client"},
+    )
+    assert first.status_code == 202
+    result = _wait_for_job(client, first.json()["job_id"])
+    assert result["route"] == "bypass"
+    assert "5,50 meter" in result["answer"]
+    assert calls == []
+
+    for reply in ("veld", "weg"):
+        resp = client.post(
+            "/chat",
+            json={
+                "message": reply,
+                "conversation_id": result["conversation_id"],
+                "client_id": "test-client",
+            },
+        )
+        assert resp.status_code == 202
+        assert _wait_for_job(client, resp.json()["job_id"])["status"] == "done"
+        assert "Welk verzet" not in calls[-1]["message"]
 
 
 def test_direct_to_expert_route_uses_expert_env_id(tmp_path, monkeypatch):

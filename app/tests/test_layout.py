@@ -116,6 +116,23 @@ def test_portrait_background_fills_conversation_height_without_distortion(page: 
     assert len(response.body()) <= 200_000
 
 
+def test_initial_greeting_is_visible_below_open_settings(page: Page, shell_url: str) -> None:
+    page.set_viewport_size({"width": 360, "height": 640})
+    page.goto(shell_url)
+    settings = page.locator("#privacy").bounding_box()
+    greeting = page.get_by_text("Hoi! Ik ben Wielie de chatbot.", exact=False).bounding_box()
+    assert settings is not None and greeting is not None
+    assert greeting["y"] >= settings["y"] + settings["height"]
+
+
+def test_background_can_use_full_width_on_large_screens(page: Page, shell_url: str) -> None:
+    page.set_viewport_size({"width": 1440, "height": 1400})
+    page.goto(shell_url)
+    messages = page.locator("#messages").bounding_box()
+    assert messages is not None
+    assert messages["width"] == 1440
+
+
 @pytest.mark.parametrize("name", ["Achtergrond 16-9.jpg", "Achtergrond A5.png", "Achtergrond A5 liggend.png"])
 def test_background_assets_are_reduced_proportionally(page: Page, name: str) -> None:
     asset = Path(__file__).resolve().parents[2] / "assets" / name

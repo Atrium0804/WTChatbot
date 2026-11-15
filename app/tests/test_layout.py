@@ -10,6 +10,8 @@ from threading import Thread
 import pytest
 from playwright.sync_api import Browser, Page, expect
 
+pytestmark = pytest.mark.browser
+
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args: dict[str, object]) -> dict[str, object]:

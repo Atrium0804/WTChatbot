@@ -40,7 +40,7 @@ Werk `app/knwu_categories.json` bij: `bron` (het Titel 20-hoofdstukbestand met a
 Zoek elke oude waarde uit stap 2 en de oude bestandsnaam van het document (bv. `TITEL_20-Jeugdwielrennen_20260921`) in `GLOSSARY.md`, `scripts/prompts/`, `docs/` en `eval/evalset.yaml`. Per vindplaats:
 
 - **Prompts** (`scripts/prompts/`, gespiegeld in `docs/system-prompt.md`): alleen artikelnummers, geen waarden. Staat er een waarde, vervang die door een artikelverwijzing.
-- **Eval-set**: `verwacht_antwoord`, `bron`, `versiedatum` en `doorhaal_waarde` krijgen de nieuwe waarden; de oude waarde is vaak de nieuwe `doorhaal_waarde`. Zie [eval-set.md](../../../docs/reference/eval-set.md).
+- **Eval-set**: `verwacht_antwoord`, `bron`, `versiedatum` en `doorhaal_waarde` krijgen de nieuwe waarden; de oude waarde is vaak de nieuwe `doorhaal_waarde`. Verschuift het seizoen, zet `peildatum` dan op een datum in het nieuwe seizoen en werk de seizoensafhankelijke verwachte categorieën bij. Zie [eval-set.md](../../../docs/reference/eval-set.md).
 - **GLOSSARY.md**: werk termen als licentie, leeftijdscategorie en veldritseizoen bij met de skill `domain-modeling`.
 
 **Klaar als:** de zoekactie op elke oude waarde en de oude bestandsnaam alleen nog treffers geeft in `knowledge-documents/archive/`, `knowledge-documents/review/` en git-historie.
@@ -54,7 +54,7 @@ Lees de licentiepagina's op kenniscentrum.knwu.nl (`/knwu-licenties/jeugd-u13`, 
 ## 6. Valideren en uitrollen
 
 1. `python -m pytest -q`
-2. Prompts gewijzigd? `python scripts/create_agents.py`, controleer, dan `--apply` ([create-agents.md](../../../docs/how-to/create-agents.md)).
+2. Prompts gewijzigd? `python scripts/create_agents.py`, controleer, dan `--apply` ([maak-of-update-productie-agents.md](../../../docs/how-to/maak-of-update-productie-agents.md)).
 3. Sync-libraries stappen 5–7: `app/knwu_categories.json` is al gedaan, dan de sync en de eval-set.
 
 **Klaar als:** de eval-gate gehaald is (`eval/last_run.json`, `gate_gehaald: true`) en de wijzigingen in één PR staan, met de lijst uit stap 2 en de bronconflicten uit stap 5 in de beschrijving.

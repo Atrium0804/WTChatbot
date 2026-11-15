@@ -500,29 +500,23 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertIn("knwu-licenties", prompt)
         self.assertIn("verzekeringen", prompt)
 
-    def test_knwu_agent_nk_dispensatie_citeert_titel_20(self) -> None:
-        # eval run 5: U10 met dispensatie mag WEL het NK rijden in de
-        # categorie waarvoor de dispensatie is (behalve BMX; U6 t/m U8
-        # uitgesloten) — Titel 20 art. 20.0.005 moet in de prompt staan.
-        prompts_dir = create_agents.SCRIPT_DIR / "prompts"
-        prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
-        self.assertIn("20.0.005", prompt)
-        self.assertIn("U6 t/m U8", prompt)
-        self.assertIn("BMX", prompt)
-
     def test_shared_schrijft_dagen_voluit(self) -> None:
         # eval run 5: "di-vr" in de prompt liet de agent de dagen afkorten
         # ("di-vr" i.p.v. "dinsdag"/"vrijdag" in het antwoord).
         prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertNotIn("di-vr 8.30", prompt)
-        self.assertIn("dinsdag tot en met vrijdag", prompt.lower())
+        # De prompt mag de zin over regels heen breken (markdown-reflow).
+        self.assertIn("dinsdag tot en met vrijdag", " ".join(prompt.lower().split()))
 
     def test_shared_noemt_artikelnummer_bij_regelvragen(self) -> None:
-        # eval run 5: categorie-antwoorden misten "artikel 20.0.004".
+        # eval run 5: categorie-antwoorden misten "artikel 20.0.004"; de
+        # NK-dispensatieregel (art. 20.0.005) staat sinds de promptcompactie
+        # alleen nog als artikelverwijzing in _shared.md.
         prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "_shared.md").read_text(encoding="utf-8")
         self.assertIn("20.0.004", prompt)
+        self.assertIn("20.0.005", prompt)
 
     def test_doorverwijzing_gaat_naar_trainer_niet_clubsecretariaat(self) -> None:
         # Doorverwijzen bij ontbrekend antwoord of out-of-scope gaat naar de

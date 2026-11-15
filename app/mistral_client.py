@@ -152,10 +152,11 @@ def stream_answer(
     kept: list[dict] = []  # fallback: outputs + handoffs in non-stream-vorm
     try:
         for raw in resp.iter_lines(decode_unicode=True):
-            if not raw or not raw.startswith("data:"):
+            line = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+            if not line or not line.startswith("data:"):
                 continue
             try:
-                payload = json.loads(raw[len("data:"):].strip())
+                payload = json.loads(line[len("data:"):].strip())
             except json.JSONDecodeError:
                 continue
             if "type" in payload:

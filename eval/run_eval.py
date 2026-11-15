@@ -27,7 +27,8 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
 
 Elk bericht krijgt dezelfde contextregels als in productie (taalniveau per
 bericht, datum bij de eerste beurt, categorie bij een geboortejaar;
-app/context.py). Het taalniveau komt uit het optionele veld `taalniveau`
+app/context.py). Als datum geldt de `peildatum` uit evalset.yaml, niet de
+rundatum. Het taalniveau komt uit het optionele veld `taalniveau`
 per evalset-entry (default B1, de productiestandaard sinds #52). Per beurt
 legt last_run.json vast welke agent antwoordde (`trace`).
 
@@ -92,6 +93,16 @@ def load_evalset(path: Path) -> list[dict]:
     with path.open(encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data["evalset"]
+
+
+def load_peildatum(path: Path) -> date:
+    """De `peildatum` van de evalset: de datum waarop de verwachte antwoorden
+    kloppen. Live runner en offline tests rekenen er allebei mee."""
+    with path.open(encoding="utf-8") as f:
+        value = yaml.safe_load(f).get("peildatum")
+    if not isinstance(value, date):
+        raise ValueError(f"{path.name}: 'peildatum' ontbreekt of is geen datum (JJJJ-MM-DD): {value!r}")
+    return value
 
 
 def agent_id_for(entry: dict) -> str:
@@ -497,7 +508,7 @@ def main() -> int:
     if not api_key:
         raise RuntimeError("MISTRAL_API_KEY ontbreekt")
     entries = load_evalset(EVAL_DIR / "evalset.yaml")
-    today = context.today_in_netherlands()
+    today = load_peildatum(EVAL_DIR / "evalset.yaml")
     rules = knwu_categories.load_rules()
     agent_names = agent_names_from_env()
     results = []

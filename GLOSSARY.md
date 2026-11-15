@@ -95,6 +95,9 @@ De zichtbare stap in de typing-indicator (#93): "Ik lees je vraag…", "Ik berek
 
 ## Renners en wedstrijden
 
+**Discipline**:
+Het wieleronderdeel waarop een vraag of wedstrijd betrekking heeft. Wielie behandelt uitsluitend wegwielrennen en veldrijden; baanwielrennen valt buiten het domein.
+
 **Leeftijdscategorie**:
 De categorie waarin een renner start (bijv. U13, U17 Nieuweling). De categorie-indeling is gebaseerd op het geboortejaar. Wedstrijden kunnen gereden worden per categorie, of met meerdere categorieën tegelijk, waarbij jongens en meisjes van een verschillend geboortejaar samen rijden (bijv. jongens U9 en meisjes U10). Zo'n gecombineerde categorie wordt aangeduid met 'JO9/MO10' (jongens onder 9, meisjes onder 10); de KNWU-wedstrijdkalender schrijft dezelfde groep als 'MU9, VU10'.
 _Avoid_: "categorie" zonder toevoeging, "klasse", "leeftijdsklasse"
@@ -156,6 +159,9 @@ _Avoid_: "chatlog", "conversatielog", "de hele conversatie opslaan"
 
 **Verzettenadvies**:
 De geplande uitbreiding (post-MVP) waarmee de chatbot adviseert welk verzet geschikt is voor een renner, gegeven geboortejaar en fiets. Hybride: RAG voor de KNWU-regel, een deterministische calculator-tool voor alle mogelijke combinaties kettingblad × cassette × bandenmaat, plus een beschikbaarheidscheck in de handel.
+
+**Maximaal toegestaan verzet**:
+De KNWU-grens aan de afstand die een fiets per volle pedaalomwenteling mag afleggen, uitgedrukt in meters. De toepasselijke regel wordt bepaald door discipline, geslacht, leeftijdscategorie en wedstrijdjaar of veldritseizoen; dezelfde leeftijdscategorie kan voor jongens en meisjes een verschillende grens hebben.
 
 **Verzet**:
 De afstand die een fiets aflegt bij één volle pedaalomwenteling, in meters — de gangbare term in de wielersport. De KNWU drukt het maximaal toegestane jeugdverzet uit in meters per omwenteling. De bandenmaat (via de wielomtrek) zet een tandwielverhouding om in verzet: `verzet (m) = wielomtrek (mm) × (tanden voor / tanden achter) / 1000`.

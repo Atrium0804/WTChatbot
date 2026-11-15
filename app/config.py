@@ -46,8 +46,9 @@ MISTRAL_INTAKE_MODEL = os.environ.get("MISTRAL_INTAKE_MODEL", "mistral-small-lat
 INTAKE_TIMEOUT = int(os.environ.get("INTAKE_TIMEOUT", "30"))
 INTAKE_CONFIDENCE_THRESHOLD = float(os.environ.get("INTAKE_CONFIDENCE_THRESHOLD", "0.8"))
 
-# Prompt caching aan (#88 besluit 6): gecachte input kost 10%.
-PROMPT_CACHE_KEY = os.environ.get("PROMPT_CACHE_KEY", "wtchatbot-v1")
+# Mistral weigert prompt_cache_key bij agent-conversaties (422 "model required"),
+# dus standaard uit. Alleen zetten als de API het voor agents accepteert (#88 besluit 6).
+PROMPT_CACHE_KEY = os.environ.get("PROMPT_CACHE_KEY", "")
 
 DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "data" / "wtchat.db"))
 LOCAL_DEBUG_TRACES = os.environ.get("LOCAL_DEBUG_TRACES", "").lower() in ("1", "true")

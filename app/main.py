@@ -178,6 +178,7 @@ def create_app(
         job_id: str,
         conversation_id: str,
         message: str,
+        lookup_message: str,
         context_message: str,
         mistral_conv_id: str | None,
         today_date: date,
@@ -204,7 +205,7 @@ def create_app(
                 api_key=config.MISTRAL_API_KEY,
                 base_url=config.MISTRAL_CHAT_COMPLETIONS_URL,
                 model=config.MISTRAL_INTAKE_MODEL,
-                message=message,
+                message=lookup_message,
                 timeout=config.INTAKE_TIMEOUT,
                 on_fallback=on_intake_fallback,
             )
@@ -215,7 +216,7 @@ def create_app(
                 reason=fallback_reason or "classified",
             )
             route = intake.decide_route(
-                message=message,
+                message=lookup_message,
                 today=today_date,
                 rules=category_rules,
                 intake_result=intake_result,
@@ -239,7 +240,7 @@ def create_app(
                 # de Mistral-conversation start niet (#88/#91)
                 job["phase"] = phases.PHASE_BEREKEN
                 answer = lookups.render_lookup_answer(
-                    route["lookup"], message, category_rules, today_date, language_level
+                    route["lookup"], lookup_message, category_rules, today_date, language_level
                 )
                 new_conv_id = mistral_conv_id or ""
             else:
@@ -340,21 +341,25 @@ def create_app(
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         trace = traces.start(conversation_id)
         today_date = today()
+        previous_messages = [turn["question"] for turn in state["history"].get(conversation_id, [])]
+        lookup_message = lookups.resolve_lookup_message(
+            message, previous_messages, today_date, category_rules
+        )
         # #91: pure lookup met complete data -> direct app-antwoord (0 LLM-calls,
         # géén job/fase — de snelheid is zo direct zichtbaar), ook midden in een
         # bestaand gesprek
-        lookup = lookups.match_lookup(message, today_date, category_rules)
+        lookup = lookups.match_lookup(lookup_message, today_date, category_rules)
         if lookup:
             trace.record("route", route="bypass", reason="regex_lookup")
             answer = lookups.render_lookup_answer(
-                lookup, message, category_rules, today_date, payload.language_level
+                lookup, lookup_message, category_rules, today_date, payload.language_level
             )
             return _direct_response(conversation_id, message, answer, trace)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             # #85: 202 + job-id; intake + Mistral-call draaien in een background task.
             mistral_conv_id = state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
-                message,
+                lookup_message,
                 today_date,
                 category_rules,
                 new_conversation=not mistral_conv_id,
@@ -371,7 +376,8 @@ def create_app(
                     job_id,
                     conversation_id,
                     message,
-                    context.add_context(message, context_lines),
+                    lookup_message,
+                    context.add_context(lookup_message, context_lines),
                     mistral_conv_id,
                     today_date,
                     payload.language_level,

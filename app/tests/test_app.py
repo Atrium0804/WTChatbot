@@ -13,6 +13,8 @@ import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import pytest
+
 # Zorg dat de module-level app bij import geen productie-DB raakt.
 os.environ["DATABASE_PATH"] = str(Path(tempfile.mkdtemp()) / "import-time.db")
 # Tests moeten offline/stub blijven, ook als .env een echte key bevat:
@@ -938,6 +940,145 @@ def test_lookup_bypass_follow_up_bare_year(tmp_path, monkeypatch):
     assert resp.status_code == 200
     assert "U12" in resp.json()["answer"]
     assert len(calls) == 1  # geen extra Mistral-call voor de lookup
+
+
+@pytest.mark.parametrize("previous_category_question", [True, False])
+def test_lookup_bypass_verzet_after_discipline_clarification(
+    tmp_path, monkeypatch, previous_category_question
+):
+    from datetime import date
+
+    import mistral_client
+
+    calls = fake_mistral(monkeypatch)
+
+    def clarify(**kwargs):
+        calls.append(kwargs)
+        return "mistral-conv-1", "Rijd je voor U8 op de weg of in het veld?"
+
+    monkeypatch.setattr(mistral_client, "stream_answer", clarify)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    if previous_category_question:
+        first = chat(client, "wat is categorie 1")
+        clarification = chat_in(client, first["conversation_id"], "wlk verzet voor u8", "test-client")
+    else:
+        clarification = chat(client, "wlk verzet voor u8")
+    assert clarification["answer"] == "Rijd je voor U8 op de weg of in het veld?"
+    calls_before = len(calls)
+    resp = client.post(
+        "/chat",
+        json={
+            "message": "weg",
+            "conversation_id": clarification["conversation_id"],
+            "client_id": "test-client",
+            "language_level": "B2",
+        },
+    )
+    assert resp.status_code == 200, "De discipline-aanvulling moet lokaal bypassen, niet naar een agent."
+    assert "5,50 meter" in resp.json()["answer"]
+    assert "artikel 20.1.007" in resp.json()["answer"]
+    assert len(calls) == calls_before
+
+
+@pytest.mark.parametrize(
+    ("message", "expected"),
+    [
+        ("Welke categorie is categorie 3 in de nieuwe indeling?", ("JO11/MO12",)),
+        ("Welke oude categorie is JO11/MO12?", ("categorie 3", "jongens U11", "meisjes U12")),
+        ("Welke oude categorie is U12?", ("jongens U12", "categorie 4", "meisjes U12", "categorie 3")),
+        ("Welk verzet voor categorie 3 op de weg?", ("U11", "U12", "5,90 meter")),
+        ("Welk verzet voor categorie 2 op de weg?", ("U10", "5,50 meter", "U11", "5,90 meter")),
+        ("Welk verzet voor geboortejaar 2015 op de weg?", ("U12", "5,90 meter")),
+        ("Welk verzet voor geboortejaar 2020 in het veld?", ("U8", "NVT")),
+    ],
+)
+def test_category_and_gearing_lookup_routes(tmp_path, monkeypatch, message, expected):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    resp = client.post("/chat", json={"message": message, "client_id": "test-client"})
+    assert resp.status_code == 200, "Een pure categorie- of verzetvraag moet lokaal worden beantwoord."
+    for fragment in expected:
+        assert fragment in resp.json()["answer"]
+    assert calls == []
+
+
+def test_gearing_lookup_retains_question_across_two_clarifications(tmp_path, monkeypatch):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = chat(client, "Welk verzet?")
+    year = client.post(
+        "/chat",
+        json={"message": "2012", "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert year.status_code == 202  # de discipline ontbreekt nog; geen categorie-antwoord
+    assert _wait_for_job(client, year.json()["job_id"])["status"] == "done"
+    road = client.post(
+        "/chat",
+        json={"message": "weg", "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert road.status_code == 200
+    assert "U15" in road.json()["answer"]
+    assert "6,70 meter" in road.json()["answer"]
+    assert len(calls) == 2
+    assert "2012" in calls[-1]["message"]
+    assert "Welk verzet?" in calls[-1]["message"]
+    next_year = client.post(
+        "/chat",
+        json={"message": "2014", "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert next_year.status_code == 200
+    assert "leeftijdscategorie U13" in next_year.json()["answer"]
+    assert "2014" in next_year.json()["answer"]
+
+
+@pytest.mark.parametrize(
+    "previous_question",
+    ["Waarom is het verzet voor U8 op de weg beperkt?", "Wanneer is de volgende clubtraining?"],
+)
+def test_short_reply_does_not_reuse_explanation_or_unrelated_context(
+    tmp_path, monkeypatch, previous_question
+):
+    calls = fake_mistral(monkeypatch)
+    client = make_client(tmp_path)
+    first = chat(client, previous_question)
+    resp = client.post(
+        "/chat",
+        json={"message": "weg", "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert resp.status_code == 202
+    assert _wait_for_job(client, resp.json()["job_id"])["status"] == "done"
+    assert len(calls) == 2
+    assert calls[-1]["message"].startswith("weg\n")
+    assert previous_question not in calls[-1]["message"]
+
+
+@pytest.mark.parametrize(
+    ("reply", "expected"),
+    [
+        ("U13", "6,30 meter"),
+        ("nieuwelingen", "7,68 meter"),
+        ("geboortejaar 2015", "5,90 meter"),
+    ],
+)
+def test_gearing_lookup_after_category_or_birth_year_clarification(
+    tmp_path, monkeypatch, reply, expected
+):
+    from datetime import date
+
+    calls = fake_mistral(monkeypatch)
+    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    first = chat(client, "Welk verzet op de weg?")
+    resp = client.post(
+        "/chat",
+        json={"message": reply, "conversation_id": first["conversation_id"], "client_id": "test-client"},
+    )
+    assert resp.status_code == 200
+    assert expected in resp.json()["answer"]
+    assert len(calls) == 1
 
 
 def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):

@@ -11,7 +11,7 @@ Termen als *route*, *intake*, *deterministische bypass* en *fase* staan in het [
 
 ```mermaid
 flowchart TD
-    A["POST /chat"] --> B{"lookups.match_lookup<br/>(regex alleen)"}
+    A["POST /chat"] --> B{"lookups.resolve_lookup_message<br/>+ match_lookup"}
     B -- "match" --> C["synchroon 200-antwoord<br/>route: bypass — 0 LLM-calls"]
     B -- "geen match" --> D["202 + background job"]
     D --> E["intake.classify_message<br/>1 call, mistral-small-latest"]
@@ -54,15 +54,19 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 
 - **leeftijdscategorie** op basis van een geboortejaar (ook een kaal jaartal als vervolg in een bestaand gesprek);
 - **licentie** op basis van een geboortejaar;
-- **maximaal verzet** per leeftijdscategorie én discipline;
-- **vertaling** van een oude aanduiding ("categorie 3", "nieuwelingen") of kalender-aanduiding ("MU12, VU13").
+- **maximaal verzet** per geboortejaar of leeftijdscategorie én discipline, ook bij een oude of gecombineerde categorie-aanduiding;
+- **vertaling** van een oude aanduiding ("categorie 3", "nieuwelingen") of kalender-aanduiding ("MU12, VU13"), en van een nieuwe leeftijdscategorie terug naar de oude indeling.
+
+Een korte aanvulling op een onvolledige lookup-vraag is geen verdiepingsvraag. `resolve_lookup_message()` combineert bijvoorbeeld "wlk verzet voor u8" met het volgende bericht "weg". Daarna antwoordt de app lokaal: maximaal 5,50 meter. Ook opeenvolgende aanvullingen zoals "Welk verzet?" → "2012" → "weg" behouden het vraagtype. De context komt alleen uit de in-memory feedbackgeschiedenis van dezelfde conversatie; een eerdere uitleg- of clubvraag wordt niet hergebruikt. De oorspronkelijke gebruikersberichten blijven ongewijzigd in die geschiedenis.
+
+Bij verzet op geboortejaar gebruikt de app voor weg en baan het huidige kalenderjaar, en voor veldrijden het eindjaar van het lopende of eerstvolgende veldritseizoen. Een expliciete leeftijdscategorie wordt niet opnieuw berekend. Bij oude of gecombineerde categorieën noemt het antwoord het verzet van elke bijbehorende leeftijdscategorie. De omgekeerde categorievertaling noemt jongens en meisjes afzonderlijk als geen geslacht is opgegeven; dezelfde U-aanduiding kan voor hen naar verschillende oude categorieën verwijzen.
 
 Een bypass gebeurt alleen als de vraag alléén het kale feit vraagt. De guards in `lookups.py` sturen de rest door naar een agent:
 
-- `MEER_DAN_FEIT` (woorden als *waarom, versie, bron, heb je dit gecheckt, kosten*…) → geen bypass;
+- `MEER_DAN_FEIT` (woorden als *waarom, versie, bron, heb je dit gecheckt, kosten, hoe meet, uitzonderingen*…) → geen bypass;
 - `REGELMENT_ONDERWERP` (wedstrijd, verzekering, contributie, training…) → geen bypass;
 - meerdere onderwerpen in één vraag (bv. categorie én licentie) → geen bypass;
-- geen geboortejaar bekend → geen bypass, de agent vraagt ernaar.
+- onvoldoende gegevens voor de lookup of een onbekende aanduiding → geen bypass, de agent handelt de vraag af.
 
 Het bypass-antwoord is een template met bron + versie + artikel — de `Bron:`-regel alleen bij taalniveau B2 (#52) — en eindigt altijd op een vaste disclaimer dat de library geraadpleegd wordt bij een vervolgvraag. De check draait niet alleen vóór een nieuwe job: `/chat` probeert `match_lookup` eerst zelf, ook midden in een bestaand gesprek, en antwoordt dan synchroon zonder job. In de background job kan `decide_route` met de intake-data (geboortejaar/discipline uit de LLM) alsnog een bypass opleveren; die job zet dan de fase "Ik bereken de leeftijdscategorie…".
 
@@ -84,7 +88,11 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?" | `bypass` | verzet-vraag met categorie U15 én discipline weg |
 | "2015" (kaal jaartal als vervolg op de vraag naar het geboortejaar) | `bypass` | kaal jaartal = geboortejaar (#91 besluit 5) |
 | "Wat is categorie 3 in de nieuwe indeling?" | `bypass` | vertaling van een oude aanduiding |
+| "Welke oude categorie is JO11/MO12?" | `bypass` | omgekeerde vertaling uit dezelfde categorietabel |
+| "Welk verzet voor categorie 2 op de weg?" | `bypass` | verzet voor beide leeftijdscategorieën: U10 en U11 |
+| "weg" na "wlk verzet voor u8" | `bypass` | ontbrekende discipline aangevuld, geen verdiepingsvraag |
 | "Waarom is het verzet voor U15 maar 6,70 meter?" | géén bypass → agent | `MEER_DAN_FEIT` treft "waarom" |
+| "Hoe meet ik het verzet voor U13 op de weg?" | géén bypass → agent | meetinstructies zijn meer dan het maximale verzet |
 | "Wat kost de contributie bij WTC Woerden?" | `direct-club` (bij confidence ≥ 0,8) | intake ziet domein `club`; "kosten" is pas bij de lookup-guard een probleem, niet bij de intake-route |
 | "Hoe zit het met die wedstrijd?" | `router` | vage vraag, lage confidence |
 | "Wat is er veranderd in Titel 20?" | `router` als er geen archief-expert-id is geconfigureerd | zonder `MISTRAL_AGENT_ID_ARCHIEF` is geen direct-to-expert mogelijk |
@@ -117,7 +125,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 
 - `app/main.py` — `POST /chat` (eerste lookup-check, 202 + job), `_run_chat_job` (intake → route → stream), `GET /chat/status`
 - `app/intake.py` — `classify_message` (light LLM-call) en `decide_route` (bypass | direct | router)
-- `app/lookups.py` — `match_lookup` (guards + patronen) en `render_lookup_answer` (template-antwoord)
+- `app/lookups.py` — `resolve_lookup_message` (korte aanvullingen), `match_lookup` (guards + patronen) en `render_lookup_answer` (template-antwoord)
 - `app/context.py` — deterministische contextregels onder elk bericht
 - `app/phases.py` — SSE-event → fase-tekst
 - `app/mistral_client.py` — dunne API-laag: álle LLM-calls (stream, non-streaming fallback, intake-call)

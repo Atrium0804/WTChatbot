@@ -130,10 +130,13 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     router-route om end-to-end handoff te testen), anders de light intake
     (1 kleine call) met decide_route -> direct-<domein> of router.
     """
-    vraag = entry["vraag"]
+    vraag = lookups.resolve_lookup_message(entry["vraag"], entry.get("beurten", []), today, rules)
     lookup = lookups.match_lookup(vraag, today, rules)
     if lookup:
-        return {"route": "bypass", "agent_id": None, "lookup": lookup, "intake_ms": 0.0}
+        return {
+            "route": "bypass", "agent_id": None, "lookup": lookup,
+            "lookup_message": vraag, "intake_ms": 0.0,
+        }
     if entry.get("via") == "router":
         return {
             "route": "router",
@@ -159,7 +162,10 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
         threshold=INTAKE_CONFIDENCE_THRESHOLD,
     )
     if route["route"] == "bypass":
-        return {"route": "bypass", "agent_id": None, "lookup": route["lookup"], "intake_ms": intake_ms}
+        return {
+            "route": "bypass", "agent_id": None, "lookup": route["lookup"],
+            "lookup_message": vraag, "intake_ms": intake_ms,
+        }
     if route["route"] == "direct":
         return {
             "route": f"direct-{route['domein']}",
@@ -282,17 +288,19 @@ def play_conversation(
     conversation_id = None
     trace: list[dict] = []
     outputs: list[dict] = []
+    previous_messages: list[str] = []
     for message in entry.get("beurten", []) + [entry["vraag"]]:
         beurt_t0 = time.monotonic()
+        lookup_message = lookups.resolve_lookup_message(message, previous_messages, today, rules)
         lines = context.build_context_lines(
-            message,
+            lookup_message,
             today,
             rules,
             new_conversation=conversation_id is None,
             language_level=entry.get("taalniveau", "B1"),
         )
         response, error = ask_with_retry(
-            context.add_context(message, lines),
+            context.add_context(lookup_message, lines),
             api_key,
             vraagtype=entry["type"],
             attempts=1,
@@ -302,6 +310,7 @@ def play_conversation(
         if error:
             return {"antwoord": "", "trace": trace, "error": error, "duur_ms": 0.0}
         conversation_id = response.get("conversation_id") or conversation_id
+        previous_messages.append(message)
         outputs = response.get("outputs", [])
         trace.append({
             "vraag": message,
@@ -501,7 +510,7 @@ def main() -> int:
             # dezelfde app-functie als productie (0 LLM-calls voor de vraag)
             run = {
                 "antwoord": lookups.render_lookup_answer(
-                    plan["lookup"], entry["vraag"], rules, today, entry.get("taalniveau", "B1")
+                    plan["lookup"], plan["lookup_message"], rules, today, entry.get("taalniveau", "B1")
                 ),
                 "trace": [],
                 "error": "",

@@ -4,6 +4,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import knwu_categories  # noqa: E402
@@ -72,6 +74,19 @@ def test_oude_aanduiding_met_vertaalvraag_is_lookup():
 
 def test_waarom_vraag_is_geen_lookup():
     assert lookups.match_lookup("Waarom rijdt mijn zoon in U12?", NOVEMBER_2026, RULES) is None
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Hoe meet ik het verzet voor U13 op de weg?",
+        "Welke uitzonderingen gelden voor het verzet van U13 op de weg?",
+        "Welke categorie is categorie 3 en wat zijn de regels?",
+        "Wat is categorie 8 in de nieuwe indeling?",
+    ],
+)
+def test_lookup_does_not_answer_explanations_or_unknown_designations(message):
+    assert lookups.match_lookup(message, NOVEMBER_2026, RULES) is None
 
 
 def test_licentiepakketten_vraag_is_geen_lookup():

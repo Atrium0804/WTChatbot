@@ -726,6 +726,20 @@ class PlanEntryTests(unittest.TestCase):
         self.assertEqual(plan["route"], "router")
         self.assertEqual(plan["agent_id"], "ag_router")
 
+    def test_discipline_clarification_bypasses_using_previous_question(self) -> None:
+        entry = {"vraag": "weg", "beurten": ["wlk verzet voor u8"]}
+        with patch.object(
+            run_eval.intake, "classify_message", return_value=dict(run_eval.intake.FALLBACK)
+        ) as classify:
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "bypass")
+        self.assertEqual(plan["lookup"]["category"], "U8")
+        classify.assert_not_called()
+        answer = run_eval.lookups.render_lookup_answer(
+            plan["lookup"], plan["lookup_message"], self.rules, self.today, "B2"
+        )
+        self.assertIn("5,50 meter", answer)
+
     def test_intake_direct_to_expert_bij_hoge_confidence(self) -> None:
         entry = {"id": "x", "vraag": "Wat kost de contributie bij WTC Woerden?"}
         intake_result = {

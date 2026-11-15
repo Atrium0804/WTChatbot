@@ -3,10 +3,13 @@
 - alle pagina's in docs/how-to/ hebben een kebab-case bestandsnaam (de
   actieve werkwoordsvorm is een review-conventie, zie DOCUMENTATION_GUIDE.md);
 - elke how-to-pagina staat in de README.md-index van de map;
-- alle relative markdown-links naar .md-bestanden in docs/ en de
-  root-*.md-bestanden resolven naar bestaande bestanden (vangt rename-missers op).
+- alle relative markdown-links naar .md-bestanden in docs/, de
+  root-*.md-bestanden en de eigen skills in .agents/skills/ resolven naar
+  bestaande bestanden (vangt rename-missers op). Skills uit skills-lock.json
+  zijn extern beheerd en vallen erbuiten.
 """
 
+import json
 import re
 import unittest
 from pathlib import Path
@@ -14,9 +17,20 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOCS = REPO_ROOT / "docs"
 HOW_TO = DOCS / "how-to"
+SKILLS = REPO_ROOT / ".agents" / "skills"
 
 KEBAB_CASE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
 MD_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+
+
+def own_skill_md_files() -> list[Path]:
+    external = json.loads((REPO_ROOT / "skills-lock.json").read_text(encoding="utf-8"))["skills"]
+    return sorted(
+        md
+        for skill in SKILLS.iterdir()
+        if skill.is_dir() and skill.name not in external
+        for md in skill.rglob("*.md")
+    )
 
 
 class HowToNamingTests(unittest.TestCase):
@@ -34,7 +48,7 @@ class HowToNamingTests(unittest.TestCase):
             self.assertIn(f"({page.name})", index)
 
     def test_relative_md_links_resolven(self) -> None:
-        md_files = sorted(DOCS.rglob("*.md")) + sorted(REPO_ROOT.glob("*.md"))
+        md_files = sorted(DOCS.rglob("*.md")) + sorted(REPO_ROOT.glob("*.md")) + own_skill_md_files()
         broken = []
         for md in md_files:
             for target in MD_LINK.findall(md.read_text(encoding="utf-8")):

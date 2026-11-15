@@ -1,0 +1,7 @@
+{
+  "include": ["app", "eval"],
+  "exclude": ["app/tests", "**/__pycache__"],
+  "extraPaths": ["app"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "basic"
+}

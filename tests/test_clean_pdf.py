@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 import pymupdf
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -258,6 +259,7 @@ class TabelTests(unittest.TestCase):
         self.assertLess(tekst.index("| Categorie"), tekst.index("Na de tabel."))
 
 
+@pytest.mark.pdf
 class NationaleBesluitenTabelTests(unittest.TestCase):
     def test_titelrij_over_de_volle_breedte_staat_er_een_keer(self) -> None:
         kandidaten = sorted((ROOT / "knowledge-documents").glob("*/Nationale_Besluiten_20260918*.pdf"))
@@ -271,6 +273,7 @@ class NationaleBesluitenTabelTests(unittest.TestCase):
 GEW, GEW_SLUIT = clean_pdf.GEWIJZIGD_OPEN, clean_pdf.GEWIJZIGD_SLUIT
 
 
+@pytest.mark.pdf
 class TitelTwintigTests(unittest.TestCase):
     """Feiten uit de handmatige review van eval run 3 (#28), geverifieerd in de PDF."""
 
@@ -427,6 +430,7 @@ def kop_boven(tekst: str, fragment: str) -> str:
     return [r for r in voor.splitlines() if r.startswith("#")][-1]
 
 
+@pytest.mark.pdf
 class EchteKoppenTests(unittest.TestCase):
     """Koppen in de echte KNWU-PDF's met scripts/kopprofielen.json (feedback NK weg jeugd)."""
 
@@ -462,6 +466,7 @@ class EchteKoppenTests(unittest.TestCase):
         self.assertNotIn("INHOUDSOPGAVE", tekst)
 
 
+@pytest.mark.pdf
 class HandboekRapportTests(unittest.TestCase):
     def test_doorgehaald_opsommingsteken_is_zichtbaar_maar_geen_twijfelgeval(self) -> None:
         kandidaten = sorted((ROOT / "knowledge-documents").glob("*/Handboek Veldrijden Jeugd 2026-2027*.pdf"))

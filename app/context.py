@@ -186,7 +186,7 @@ def old_category_numbers(message: str) -> list[int]:
 
 def old_category_line(number: int, rules: dict) -> str | None:
     if number == 0:
-        first = knwu_categories.old_category_groups(1, rules)
+        first = knwu_categories.old_category_groups(1, rules) or []
         notation = " en ".join(
             knwu_categories.combined_notation(g.get("jongens"), g.get("meisjes")) for g in first
         )
@@ -210,7 +210,11 @@ def _boys_and_girls(groups: list[dict], rules: dict) -> str:
     """Bijvoorbeeld "jongens U8 en U9, meisjes U9 en U10"."""
     parts = []
     for sex in ("jongens", "meisjes"):
-        names = [knwu_categories.category_name(g[sex], rules) for g in groups if g.get(sex)]
+        names = [
+            name
+            for g in groups
+            if g.get(sex) and (name := knwu_categories.category_name(g[sex], rules))
+        ]
         if names:
             parts.append(f"{sex} {' en '.join(names)}")
     return ", ".join(parts)

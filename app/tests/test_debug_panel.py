@@ -4,11 +4,14 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
 from playwright.sync_api import Page, Route, expect
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import tracing  # noqa: E402
+
+pytestmark = pytest.mark.browser
 
 
 def test_panel_updates_preserves_collapsed_traces_and_recovers_from_errors(page: Page):

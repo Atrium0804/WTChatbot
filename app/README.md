@@ -57,10 +57,9 @@ duidelijk gemarkeerd STUB-antwoord — geen API-key nodig om te ontwikkelen.
 pytest app/tests   # vanuit repo-root; 100% offline
 ```
 
-Installeer vooraf de testbrowsers met `.venv\Scripts\python -m playwright install chromium webkit`.
-De layouttests gebruiken een lokale server en een gestubde chat-API.
-Zie [Chatlayout testen](../docs/how-to/test-chatlayout.md) voor de browsercommando's
-en de aanvullende controles op echte telefoons.
+De browsertests (marker `browser`) gebruiken een lokale server en een gestubde
+chat-API. Snelle en volledige testcommando's en de browserinstallatie staan in
+[CONTRIBUTING.md](../CONTRIBUTING.md#tests-draaien).
 
 ## Met echte Mistral-agent
 

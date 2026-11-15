@@ -56,6 +56,12 @@
 # starttijden en club-zmc-kosten (B2-twins van de B1-varianten; B1 is sinds
 # issue #52 de productiestandaard). Strikethrough staat nu op het minimum van 3.
 
+# Peildatum: de datum waarop de verwachte antwoorden kloppen. De live runner én
+# de offline tests rekenen hiermee in plaats van met de rundatum, zodat
+# seizoensafhankelijke categorieën niet vals falen. Werk hem alleen bij samen
+# met de verwachte antwoorden (bv. bij een seizoenwissel).
+peildatum: 2026-11-09
+
 evalset:
   # --- KNWU ---
   - id: knwu-licentie-pakketten

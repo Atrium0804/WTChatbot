@@ -9,6 +9,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "eval"))
 
 import run_eval
 
+EVALSET = Path(run_eval.EVAL_DIR) / "evalset.yaml"
+PEILDATUM = run_eval.load_peildatum(EVALSET)
 
 # Realistische shape van POST /v1/conversations (captured 2026-11-04):
 # content zit top-level in het output-entry, niet onder "message".
@@ -834,11 +836,9 @@ class BypassTemplateEvalsetTests(unittest.TestCase):
     productie-template-antwoord (lookups.render_lookup_answer) de checks halen."""
 
     def test_bypass_entries_halen_checks_met_template(self) -> None:
-        from datetime import date
-
-        entries = run_eval.load_evalset(Path(run_eval.EVAL_DIR) / "evalset.yaml")
+        entries = run_eval.load_evalset(EVALSET)
         rules = run_eval.knwu_categories.load_rules()
-        today = date(2026, 11, 9)
+        today = PEILDATUM
         bypass_entries = [e for e in entries if e.get("verwacht_route") == "bypass"]
         self.assertGreaterEqual(len(bypass_entries), 4)  # oa. de 2 baseline-lookup-vragen
         for e in bypass_entries:
@@ -850,3 +850,36 @@ class BypassTemplateEvalsetTests(unittest.TestCase):
                 )
                 result = run_eval.check_entry(e, antwoord, [], route="bypass")
                 self.assertTrue(result["ok"], f"{e['id']}: {result}")
+
+
+class PeildatumTests(unittest.TestCase):
+    """Live runner en offline tests rekenen met dezelfde peildatum uit de
+    evalset, zodat seizoensafhankelijke verwachtingen niet vals falen."""
+
+    def test_live_runner_rekent_met_de_peildatum_van_de_evalset(self) -> None:
+        class Stop(Exception):
+            pass
+
+        seen = []
+
+        def capture(entry, api_key, today, rules):
+            seen.append(today)
+            raise Stop
+
+        with (
+            patch.object(run_eval, "load_dotenv"),
+            patch.dict(os.environ, {"MISTRAL_API_KEY": "key"}),
+            patch.object(run_eval, "plan_entry", side_effect=capture),
+            self.assertRaises(Stop),
+        ):
+            run_eval.main()
+        self.assertEqual(seen, [PEILDATUM])
+
+    def test_ontbrekende_peildatum_faalt_luid(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evalset.yaml"
+            path.write_text("evalset: []\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "peildatum"):
+                run_eval.load_peildatum(path)

@@ -7,6 +7,14 @@ De eval-set is de launch-gate van de MVP: een vaste set clubvragen met verwacht 
 
 ## Schema
 
+Bovenaan `evalset.yaml`, naast de lijst `evalset`:
+
+| Veld | Type | Verplicht | Betekenis |
+| --- | --- | --- | --- |
+| `peildatum` | datum (`JJJJ-MM-DD`) | ja | De datum waarop de verwachte antwoorden kloppen. De runner (`load_peildatum` in `run_eval.py`) en de offline tests (`tests/test_run_eval.py`) rekenen hiermee in plaats van met de rundatum; `PeildatumTests` faalt als de runner een andere datum gebruikt. Ontbreekt het veld, dan stopt de runner met een `ValueError` |
+
+Per entry in `evalset`:
+
 | Veld | Type | Verplicht | Betekenis |
 | --- | --- | --- | --- |
 | `id` | string | ja | Unieke code, bijv. `knwu-verzet-u15` |
@@ -49,7 +57,7 @@ Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 
 
 ## Contextregels
 
-Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum van vandaag, bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, en bij een oude aanduiding of kalenderaanduiding ("categorie 3", "MU12, VU13") de nieuwe leeftijdscategorie. De runner gebruikt de datum van de dag waarop hij draait.
+Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): per bericht het taalniveau van de entry (`taalniveau`, default B1 — sinds issue #52 de productiestandaard), bij de eerste beurt de datum, bij een geboortejaar uit de jeugdindeling de leeftijdscategorie (weg en veld) en de licentie, en bij een oude aanduiding of kalenderaanduiding ("categorie 3", "MU12, VU13") de nieuwe leeftijdscategorie. Als datum geldt de `peildatum` uit `evalset.yaml`, niet de rundatum; daarmee rekent de runner ook het bypass-antwoord en de seizoenen uit.
 
 ## Route spiegelen (#91/#92)
 
@@ -86,4 +94,5 @@ Output: per-vraag resultaat op stdout, volledig resultaat in `eval/last_run.json
 - De beheerder (zie [operations.md](../operations.md)) runt de eval-set handmatig na elke library-update (seizoenwissel) en bij elke prompt-wijziging.
 - Missers (falende vragen) noteert de beheerder als entry in [LEARNINGS.md](../../LEARNINGS.md) met oorzaak en fix.
 - Nieuwe vragen worden toegevoegd aan `eval/evalset.yaml`; de set is een door de agent gegenereerd voorstel dat de beheerder reviewt en corrigeert.
+- De `peildatum` verandert alleen samen met de seizoensafhankelijke verwachte antwoorden (leeftijdscategorie, seizoen), bijvoorbeeld bij een seizoenwissel.
 - Van feedback naar een prompt-wijziging met de eval-gate als controle: zie [how-to: gebruik feedback om prompts te finetunen](../how-to/gebruik-feedback-om-prompts-te-finetunen.md) (issue #55).

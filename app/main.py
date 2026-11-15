@@ -297,6 +297,9 @@ def create_app(
                         metadata={"app_conversation_id": conversation_id},
                         prompt_cache_key=config.PROMPT_CACHE_KEY,
                     )
+            if not answer.strip():
+                # bv. een agent die alleen "thinking" teruggeeft: liever een foutmelding dan een leeg antwoord
+                raise RuntimeError("het model gaf een leeg antwoord")
             if new_conv_id:
                 state["conversations"][conversation_id] = new_conv_id
             answer = _record_turn(conversation_id, message, answer)

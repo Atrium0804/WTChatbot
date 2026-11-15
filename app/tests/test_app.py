@@ -836,6 +836,51 @@ def test_status_endpoint_returns_error_on_mistral_failure(tmp_path, monkeypatch)
     assert "timeout" in result["error"].lower()
 
 
+def test_category_followup_returns_answer_from_flat_mistral_stream(tmp_path, monkeypatch):
+    from unittest.mock import Mock
+
+    import intake
+    import mistral_client
+
+    lines = [
+        "data: " + json.dumps(payload) for payload in [
+            {"type": "conversation.response.started", "conversation_id": "conv-knwu"},
+            {"type": "message.output.delta", "content": {
+                "type": "thinking", "thinking": [{"type": "text", "text": "Niet tonen"}],
+            }},
+            {"type": "message.output.delta", "content": "Antwoord over het verzet."},
+            {"type": "conversation.response.done", "usage": {}},
+        ]
+    ]
+    response = Mock()
+    response.iter_lines.return_value = iter(lines)
+    post = Mock(return_value=response)
+    monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id"})
+    monkeypatch.setattr(
+        intake, "classify_message",
+        lambda **kwargs: {**dict(intake.FALLBACK), "domein": "knwu", "confidence": 0.95},
+    )
+    monkeypatch.setattr(mistral_client.requests, "post", post)
+    with make_client(tmp_path) as client:
+        first = client.post("/chat", json={"message": "wat is categorie 1", "client_id": "c"})
+        assert first.status_code == 200
+        post.assert_not_called()
+        followup = client.post("/chat", json={
+            "message": "welk verzet voor categorie u8",
+            "conversation_id": first.json()["conversation_id"],
+            "client_id": "c",
+        })
+        assert followup.status_code == 202
+        result = _wait_for_job(client, followup.json()["job_id"])
+    assert result["status"] == "done", result
+    assert result["answer"] == "Antwoord over het verzet."
+    assert result["route"] == "direct-knwu"
+    assert result["conversation_id"] == first.json()["conversation_id"]
+    assert post.call_args.kwargs["json"]["agent_id"] == "knwu-id"
+
+
 def test_stub_mode_still_returns_200_synchronously(tmp_path):
     """#85: zonder Mistral-config blijft /chat synchroon 200 (stub-mode)."""
     client = make_client(tmp_path)

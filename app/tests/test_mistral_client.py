@@ -13,8 +13,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import mistral_client  # noqa: E402
 
 
-def sse(event: str, data: dict) -> str:
-    return "data: " + json.dumps({"event": event, "data": data})
+def sse(event: str, data: dict, *, flat: bool = False) -> str:
+    payload = {"type": event, **data} if flat else {"event": event, "data": data}
+    return "data: " + json.dumps(payload)
 
 
 class FakeResp:
@@ -92,11 +93,49 @@ def test_stream_answer_bij_bestaande_conversation_geen_agent_id():
     assert "agent_id" not in post.call_args.kwargs["json"]
 
 
-def test_stream_answer_error_event_raises_runtime_error():
-    lines = [sse("conversation.response.error", {"message": "kapot"})]
+@pytest.mark.parametrize("flat", [False, True])
+def test_stream_answer_error_event_raises_runtime_error(flat):
+    lines = [sse("conversation.response.error", {"message": "kapot"}, flat=flat)]
     with patch("requests.post", return_value=FakeResp(lines)):
         with pytest.raises(RuntimeError, match="kapot"):
             mistral_client.stream_answer(api_key="k", agent_id="a", base_url="u", message="m")
+
+
+def test_stream_answer_reads_flat_events_and_ignores_thinking():
+    lines = [
+        sse("conversation.response.started", {"conversation_id": "conv-live"}, flat=True),
+        sse("message.output.delta", {
+            "content": {"type": "thinking", "thinking": [{"type": "text", "text": "Niet tonen"}]},
+        }, flat=True),
+        sse("message.output.delta", {"content": "Het maximale "}, flat=True),
+        sse("message.output.delta", {"content": "verzet."}, flat=True),
+        sse("conversation.response.done", {"usage": {}}, flat=True),
+    ]
+    events = []
+    with patch("requests.post", return_value=FakeResp(lines)):
+        conv, text = mistral_client.stream_answer(
+            api_key="k", agent_id="a", base_url="u", message="m",
+            on_event=lambda event, data: events.append((event, data)),
+        )
+    assert conv == "conv-live"
+    assert text == "Het maximale verzet."
+    assert events[0] == ("conversation.response.started", {"conversation_id": "conv-live"})
+    assert events[-1] == ("conversation.response.done", {"usage": {}})
+
+
+@pytest.mark.parametrize("flat", [False, True])
+def test_stream_answer_done_output_after_handoff(flat):
+    lines = [
+        sse("message.output.delta", {"content": "Ik verwijs je door."}, flat=flat),
+        sse("agent.handoff.done", {"next_agent_name": "knwu-agent"}, flat=flat),
+        sse("message.output.done", {"content": [
+            {"type": "thinking", "thinking": [{"type": "text", "text": "Niet tonen"}]},
+            {"type": "text", "text": "Het antwoord."},
+        ]}, flat=flat),
+    ]
+    with patch("requests.post", return_value=FakeResp(lines)):
+        _, text = mistral_client.stream_answer(api_key="k", agent_id="a", base_url="u", message="m")
+    assert text == "Het antwoord."
 
 
 def test_stream_start_fout_is_stream_start_error():

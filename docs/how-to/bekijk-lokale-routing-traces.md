@@ -37,6 +37,14 @@ Volg per bericht de gekozen route, intake, handoffs en tool-aanroepen zonder vra
 
 4. Koppel een browserrequest aan de terminal via de responseheader `X-Trace-ID` van `POST /chat`. In het paneel groepeert een gehashte conversatiecode de berichten van hetzelfde gesprek.
 
+5. Haal bij `error` de volledige foutmelding op voordat je de server herstart. Gebruik het job-id uit de `/chat/status/<job-id>`-regels in de terminal:
+
+   ```powershell
+   Invoke-RestMethod "http://127.0.0.1:8000/chat/status/<job-id>" | ConvertTo-Json -Depth 5
+   ```
+
+   Lees het veld `error`; `reason` in de trace bevat alleen de exceptionklasse. HTTP 200 bij het pollen betekent niet dat de job geslaagd is. Na een herstart zijn de jobs gewist en geeft dit endpoint `Onbekende job.`. Verwijder secrets en persoonsgegevens uit de foutmelding voordat je die deelt.
+
 ## Controle
 
 Stel bijvoorbeeld: "In welke leeftijdscategorie rijdt een jongen geboren in 2015?"

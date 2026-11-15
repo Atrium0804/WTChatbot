@@ -117,7 +117,9 @@ def stream_answer(
     de tekst telt alleen message.output.delta-chunks ná de laatste
     agent.handoff.done (zelfde regel als extract_text). Bij een connect/HTTP-
     fout vóór het eerste event raise StreamStartError (veilig om non-
-    streaming te retryen); mid-stream fouten raise RuntimeError.
+    streaming te retryen); mid-stream fouten raise RuntimeError. SSE-data
+    bevat `type` plus eventvelden op top-level; de oudere `event`/`data`-
+    envelop wordt ook geaccepteerd.
     """
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     url = f"{base_url}/{conversation_id}" if conversation_id else base_url
@@ -156,8 +158,12 @@ def stream_answer(
                 payload = json.loads(raw[len("data:"):].strip())
             except json.JSONDecodeError:
                 continue
-            event = str(payload.get("event") or "")
-            data = payload.get("data") or {}
+            if "type" in payload:
+                event = str(payload["type"])
+                data = {key: value for key, value in payload.items() if key != "type"}
+            else:
+                event = str(payload.get("event") or "")
+                data = payload.get("data") or {}
             if not isinstance(data, dict):
                 continue
             if on_event is not None:

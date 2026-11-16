@@ -1,4 +1,7 @@
 mistralai==3.6.0
+# httpx2/httpcore2 2.16.1 breken `import mistralai` op Python 3.11 (SyntaxError in een multiline type-alias).
+httpx2<2.16.1
+httpcore2<2.16.1
 python-dotenv==1.2.4
 pymupdf==2.1
 Pillow>=11  # scripts/make_icons.py (PWA-iconen genereren uit wielie.jpg)

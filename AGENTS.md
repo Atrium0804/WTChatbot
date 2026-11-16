@@ -2,6 +2,8 @@
 
 Follow [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md) for all code and [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow. Write documentation per [docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md) (Diátaxis), using the `write-documentation` skill.
 
+Werk per sessie in een eigen worktree en branch, nooit op `main`: zie [Werkwijze per agentsessie](CONTRIBUTING.md#werkwijze-per-agentsessie).
+
 ## Agent skills
 
 ### Issue tracker

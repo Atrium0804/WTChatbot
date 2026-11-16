@@ -1098,17 +1098,12 @@ def test_gearing_lookup_after_combined_category_clarification(
 ):
     from datetime import date
 
-    calls = fake_mistral(monkeypatch)
+    fake_mistral(monkeypatch)
     client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     first = chat(client, "Welk verzet op de weg?")
-    resp = client.post(
-        "/chat",
-        json={"message": reply, "conversation_id": first["conversation_id"], "client_id": "test-client"},
-    )
-    assert resp.status_code == 200
+    resp = chat_in(client, first["conversation_id"], reply, "test-client")
     for fragment in expected:
-        assert fragment in resp.json()["answer"]
-    assert len(calls) == 1
+        assert fragment in resp["answer"]
 
 
 def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):

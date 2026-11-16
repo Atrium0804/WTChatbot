@@ -4,6 +4,8 @@ Follow [CODING_PRINCIPLES.md](CODING_PRINCIPLES.md) for all code and [CONTRIBUTI
 
 Werk per sessie in een eigen worktree en branch, nooit op `main`: zie [Werkwijze per agentsessie](CONTRIBUTING.md#werkwijze-per-agentsessie).
 
+Adviseer voor je aan een issue begint de flow (grill → implement of to-spec → to-tickets) en het modelformaat: zie [Flowkeuze per issue](CONTRIBUTING.md#flowkeuze-per-issue).
+
 ## Agent skills
 
 ### Issue tracker

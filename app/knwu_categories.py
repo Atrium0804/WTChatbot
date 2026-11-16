@@ -11,8 +11,12 @@ Hetzelfde bestand bevat de vertaling van de oude categorie-indeling
 import json
 from datetime import date
 from pathlib import Path
+from typing import Literal
 
 RULES_PATH = Path(__file__).parent / "knwu_categories.json"
+
+Gender = Literal["jongens", "meisjes"]
+Discipline = Literal["weg", "baan", "veld"]
 
 
 def load_rules(path: Path = RULES_PATH) -> dict:
@@ -48,20 +52,33 @@ def category_name(under: int, rules: dict) -> str | None:
     return None
 
 
-def max_gear(category: str, discipline: str, rules: dict) -> float | str | None:
-    """Maximaal toegestaan verzet (art. 20.1.007) voor een leeftijdscategorie.
+def max_gear(
+    category: str, discipline: Discipline, gender: Gender, rules: dict
+) -> float | str | None:
+    """Maximaal toegestaan verzet (art. 20.1.007) voor geslacht en leeftijdscategorie.
 
     `category` is bv. "U13" of "U17 Nieuweling" (uit age_category); `discipline`
     is "weg", "baan" of "veld". Geeft meters (float), "vrij" of None (NVT) terug.
+    Raises ValueError for unsupported input; None means a validated NVT source value.
     """
-    per_category = rules["verzetten"]["per_categorie"]
+    if gender not in ("jongens", "meisjes"):
+        raise ValueError(f"Onbekend geslacht: {gender}")
+    if discipline not in ("weg", "baan", "veld"):
+        raise ValueError(f"Onbekende discipline: {discipline}")
+
+    per_category = rules["verzetten"]["per_geslacht"].get(gender)
+    if per_category is None:
+        raise ValueError(f"Geen verzetdata voor geslacht: {gender}")
     if category not in per_category:
         token = category.split()[0]
-        category = next((name for name in per_category if name.split()[0] == token), category)
-    entry = per_category.get(category)
-    if not entry:
-        return None
-    return entry.get(discipline)
+        matches = [name for name in per_category if name.split()[0] == token]
+        if len(matches) != 1:
+            raise ValueError(f"Onbekende leeftijdscategorie voor {gender}: {category}")
+        category = matches[0]
+    entry = per_category[category]
+    if discipline not in entry:
+        raise ValueError(f"Geen verzetdata voor {category}, {gender}, {discipline}")
+    return entry[discipline]
 
 
 def old_category_groups(number: int, rules: dict) -> list[dict] | None:

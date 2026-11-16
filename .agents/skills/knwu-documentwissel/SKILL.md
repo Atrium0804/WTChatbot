@@ -31,9 +31,9 @@ Zijn artikelnummers verschoven, zoek dan op de kop ("Categorie-indeling", "Categ
 
 ## 3. Categorie-lookup bijwerken
 
-Werk `app/knwu_categories.json` bij: `bron` (het Titel 20-hoofdstukbestand met art. 20.0.002 en 20.0.004, nu `... - ALGEMENE BEPALINGEN.md`), `versie`, `leeftijdscategorieen` en `licenties`.
+Werk `app/knwu_categories.json` bij: `bron` (het Titel 20-hoofdstukbestand met art. 20.0.002 en 20.0.004, nu `... - ALGEMENE BEPALINGEN.md`), `versie`, `leeftijdscategorieen`, `licenties` en `verzetten.per_geslacht` (`jongens` en `meisjes`). Houd de verzetdata uitsluitend per geslacht bij; behoud bron, versie, artikel en eventuele specifiek goedgekeurde correctiemetadata. Werk callers van `max_gear` bij met een expliciet geslacht. Een lookup zonder geslachtsfilter toont de waarden van beide geslachten met labels.
 
-**Klaar als:** `python -m pytest tests/test_knwu_categories.py -q` groen is.
+**Klaar als:** `python -m pytest tests/test_knwu_categories.py -q` de bronkolommen voor beide geslachten vergelijkt en alleen de expliciet vastgelegde broncorrecties toestaat.
 
 ## 4. Kopieën van oude waarden opruimen
 

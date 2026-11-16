@@ -224,6 +224,14 @@ def test_render_verzet_weg_b2():
     assert RULES["verzetten"]["bron"] in answer
 
 
+def test_render_verzet_zonder_geslachtsfilter_noemt_beide_waarden():
+    answer = _render("Wat is het verzet voor U11 op de weg?", "B1")
+    assert "jongens U11" in answer
+    assert "5,90 meter" in answer
+    assert "meisjes U11" in answer
+    assert "5,50 meter" in answer
+
+
 def test_render_verzet_nieuwelingen_noemt_nieuwelingen():
     answer = _render(
         "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?", "B2"

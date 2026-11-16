@@ -338,14 +338,24 @@ def render_lookup_answer(
         if discipline not in DISCIPLINE_NAAM:
             raise ValueError(f"Discipline '{discipline}' valt buiten scope; gebruik weg of veld.")
         categories = match["categories"] if "categories" in match else [match["category"]]
+        gender = match.get("gender")
+        if gender == "jongens":
+            genders: list[knwu_categories.Gender] = ["jongens"]
+        elif gender == "meisjes":
+            genders = ["meisjes"]
+        elif gender is None:
+            genders = ["jongens", "meisjes"]
+        else:
+            raise ValueError(f"Onbekend geslacht: {gender}")
         lines = context.old_designation_lines(message, rules) if context.old_category_numbers(message) else []
         for category in categories:
-            gear = knwu_categories.max_gear(category, discipline, rules)
             label = f"{category} (nieuwelingen)" if "Nieuweling" in category else category
-            lines.append(
-                f"Het maximaal toegestane verzet voor {label} bij "
-                f"{DISCIPLINE_NAAM[discipline]} is {_fmt_verzet(gear)}."
-            )
+            for selected_gender in genders:
+                gear = knwu_categories.max_gear(category, discipline, selected_gender, rules)
+                lines.append(
+                    f"Het maximaal toegestane verzet voor {selected_gender} {label} bij "
+                    f"{DISCIPLINE_NAAM[discipline]} is {_fmt_verzet(gear)}."
+                )
         answer = "\n".join(lines)
         answer += f"\n\n{DISCLAIMER_LIBRARY}"
         if level == "B2":

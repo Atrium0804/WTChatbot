@@ -73,4 +73,5 @@ CI (`.github/workflows/tests.yml`) draait bij elke push en pull request de jobs 
 - [ ] De volledige testrun en `pyright` slagen lokaal, of de CI-jobs zijn groen
 - [ ] Geen secrets of persoonsgegevens in de diff
 - [ ] Nieuwe tools hebben type hints en tests
+- [ ] Verandert de route van een bericht? Dan staat er een regel in het routecontract (`app/tests/fixtures/routecontract.yaml`)
 - [ ] ADR/GLOSSARY bijgewerkt bij een besluit of nieuwe term

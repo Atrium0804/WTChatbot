@@ -81,26 +81,12 @@ def test_waarom_vraag_is_geen_lookup():
     "message",
     [
         "Hoe meet ik het verzet voor U13 op de weg?",
-        "Welke uitzonderingen gelden voor het verzet van U13 op de weg?",
         "Welke categorie is categorie 3 en wat zijn de regels?",
         "Wat is categorie 8 in de nieuwe indeling?",
     ],
 )
 def test_lookup_does_not_answer_explanations_or_unknown_designations(message):
     assert lookups.match_lookup(message, NOVEMBER_2026, RULES) is None
-
-
-@pytest.mark.parametrize(
-    "message",
-    [
-        "Welk verzet voor U13 en categorie 8 op de weg?",
-        "Welke categorie is categorie 3 en categorie 8?",
-        "Wat is categorie 3 en U99 in de nieuwe indeling?",
-    ],
-)
-@pytest.mark.parametrize("extra", [None, {"geboortejaar": 2015, "discipline": "weg"}])
-def test_unknown_category_is_not_ignored_alongside_known_categories(message, extra):
-    assert lookups.match_lookup(message, NOVEMBER_2026, RULES, extra=extra) is None
 
 
 def test_licentiepakketten_vraag_is_geen_lookup():

@@ -113,7 +113,8 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 
 - De route staat per job in `GET /chat/status/{job_id}` (`route`), de fase in dezelfde response (`app/phases.py`).
 - De eval spiegelt de productie-flow: `eval/run_eval.py` gebruikt dezelfde `match_lookup` + `intake.decide_route`. In `eval/evalset.yaml` assert `verwacht_route` per vraag de route; `eval/last_run.json` rapporteert `per_route`. Zie [reference: eval-set](../reference/eval-set.md).
-- Tests: `app/tests/test_intake.py` (route-beslissing incl. fallback), `app/tests/test_lookups.py` (welke vragen bypassen).
+- Tests: `app/tests/test_intake.py` (route-beslissing incl. fallback), `app/tests/test_lookups.py` (inhoud van de lookups).
+- Routecontract: `app/tests/fixtures/routecontract.yaml` legt per gesprek vast of de app een deterministische bypass of de inhoudelijke route (`direct-<domein>` of `router`) kiest; `app/tests/test_routecontract.py` speelt elke regel af via `POST /chat`. Een nieuw routeringsgeval krijgt een regel in dat bestand, met `herkomst`; de test toetst alleen de route, niet de antwoordtekst.
 
 ## Configuratieknobs voor de routing
 

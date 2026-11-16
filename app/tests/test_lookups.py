@@ -1,5 +1,6 @@
 """Tests voor de deterministische lookup-laag (#91/#94) — offline, puur functies."""
 
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -276,3 +277,30 @@ def test_render_eindigt_op_library_disclaimer():
     answer_b2 = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B2")
     assert "KNWU-informatie" in answer_b2
     assert "Bron:" in answer_b2
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+        "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
+        "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
+        "Welk verzet voor categorie 2 op de weg?",
+        "Wat is categorie 3 in de nieuwe indeling?",
+        "Welke oude categorie is JO11/MO12?",
+        "2008",
+    ],
+)
+@pytest.mark.parametrize("language_level", ["B1", "B2"])
+def test_render_lookup_answer_uses_supported_markdown_format(message, language_level):
+    match = lookups.match_lookup(message, NOVEMBER_2026, RULES)
+    assert match is not None, message
+
+    answer = lookups.render_lookup_answer(match, message, RULES, NOVEMBER_2026, language_level)
+    assert re.search(r"^[ \t]+[-*]\s", answer, re.MULTILINE) is None
+
+    lines = answer.splitlines()
+    source_line_indexes = [index for index, line in enumerate(lines) if line.startswith("Bron:")]
+    assert len(source_line_indexes) <= 1
+    if source_line_indexes:
+        assert all(line.startswith("Bron") for line in lines[source_line_indexes[0] + 1 :])

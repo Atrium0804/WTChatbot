@@ -1,0 +1,194 @@
+# Routecontract (#107, #117): per gesprek de route die de app kiest.
+# `bypass` = deterministische bypass; `inhoudelijk` = direct-<domein> of router.
+# Alleen de route wordt getoetst, niet de antwoordtekst.
+# Nieuw routeringsgeval? Voeg hier een regel toe, met `herkomst`.
+#
+# intake: velden die de nep-intake teruggeeft; zonder `intake` geeft die een
+# neutraal resultaat (domein onbekend, confidence 0).
+vandaag: 2026-11-09
+
+regels:
+  # --- #99 bevinding 1: verzet-aanvulling met gecombineerde categorie ---
+  - id: verzet-aanvulling-jo11-mo12
+    herkomst: "#99 review, bevinding 1"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "JO11/MO12", route: bypass}
+
+  - id: verzet-aanvulling-mu12-vu13
+    herkomst: "#99 review, bevinding 1"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "MU12, VU13", route: bypass}
+
+  # --- #99 bevinding 2: onbekende categorie naast bekende mag niet bypassen ---
+  - id: onbekende-categorie-verzet-u13-cat8
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - {vraag: "Welk verzet voor U13 en categorie 8 op de weg?", route: inhoudelijk}
+
+  - id: onbekende-categorie-verzet-u13-cat8-intake
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - vraag: "Welk verzet voor U13 en categorie 8 op de weg?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: onbekende-categorie-cat3-cat8
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - {vraag: "Welke categorie is categorie 3 en categorie 8?", route: inhoudelijk}
+
+  - id: onbekende-categorie-cat3-cat8-intake
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - vraag: "Welke categorie is categorie 3 en categorie 8?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: onbekende-categorie-cat3-u99
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - {vraag: "Wat is categorie 3 en U99 in de nieuwe indeling?", route: inhoudelijk}
+
+  - id: onbekende-categorie-cat3-u99-intake
+    herkomst: "#99 review, bevinding 2"
+    beurten:
+      - vraag: "Wat is categorie 3 en U99 in de nieuwe indeling?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  # --- #99 bevinding 3: geboortejaar met categorie of leeftijdscategorie ---
+  - id: geboortejaar-met-categorie-u12
+    herkomst: "#99 review, bevinding 3"
+    beurten:
+      - {vraag: "Wat is de categorie voor geboortejaar 2015, U12?", route: bypass}
+
+  - id: geboortejaar-leeftijdscategorie
+    herkomst: "#99 review, bevinding 3"
+    beurten:
+      - {vraag: "Wat is de leeftijdscategorie voor geboortejaar 2015?", route: bypass}
+
+  # --- #99 bevinding 4: discipline-aanvulling wordt niet hergebruikt ---
+  - id: intake-lookup-niet-hergebruikt-voor-latere-fragmenten
+    herkomst: "#99 review, bevinding 4"
+    beurten:
+      - vraag: "Welk verzet voor U8 bij wegrennen?"
+        route: bypass
+        intake: {intentie: lookup, discipline: weg}
+      - {vraag: "veld", route: inhoudelijk}
+      - {vraag: "weg", route: inhoudelijk}
+
+  # --- #102 Standards 1: categorie gecombineerd met een licentievraag ---
+  - id: categorie-en-licentie-aanvragen
+    herkomst: "#102 Standards, bevinding 1"
+    beurten:
+      - vraag: "Welke categorie voor mijn zoon geboren in 2015, en hoe vraag ik zijn licentie aan?"
+        route: inhoudelijk
+
+  - id: categorie-en-licentie-aanvragen-intake
+    herkomst: "#102 Standards, bevinding 1"
+    beurten:
+      - vraag: "Welke categorie voor mijn zoon geboren in 2015, en hoe vraag ik zijn licentie aan?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  # --- #102 Spec 1: vervolgvraag met een onbekende categorie ---
+  - id: categorie-vervolg-onbekende-u99
+    herkomst: "#102 Spec, bevinding 1"
+    beurten:
+      - {vraag: "Welke categorie voor jongen geboren in 2015 op de weg?", route: bypass}
+      - {vraag: "en voor U99?", route: inhoudelijk}
+
+  - id: categorie-vervolg-onbekende-categorie-8
+    herkomst: "#102 Spec, bevinding 1"
+    beurten:
+      - {vraag: "Welke categorie voor jongen geboren in 2015 op de weg?", route: bypass}
+      - {vraag: "en voor categorie 8?", route: inhoudelijk}
+
+  # --- #102 Spec 2: verzet buiten de weg of met uitzonderingen ---
+  - id: verzet-u11-mountainbiken
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - {vraag: "Welk verzet voor U11 bij mountainbiken?", route: inhoudelijk}
+
+  - id: verzet-u11-bmx
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - {vraag: "Welk verzet voor U11 bij BMX?", route: inhoudelijk}
+
+  - id: verzet-u11-combinatiewedstrijden
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - vraag: "Welk verzet voor U11 als ik hoger start bij combinatiewedstrijden?"
+        route: inhoudelijk
+
+  - id: verzet-uitzonderingen-u13-weg
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - {vraag: "Welke uitzonderingen gelden voor het verzet van U13 op de weg?", route: inhoudelijk}
+
+  - id: verzet-uitzonderingen-u13-weg-intake
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - vraag: "Welke uitzonderingen gelden voor het verzet van U13 op de weg?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: verzet-u11-baan
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - {vraag: "Welk verzet voor U11 op de baan?", route: inhoudelijk}
+
+  - id: verzet-u11-baan-intake
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - vraag: "Welk verzet voor U11 op de baan?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: verzet-u11-baan-en-weg
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - {vraag: "Welk verzet voor U11 op de baan en de weg?", route: inhoudelijk}
+
+  - id: verzet-u11-baan-en-weg-intake
+    herkomst: "#102 Spec, bevinding 2"
+    beurten:
+      - vraag: "Welk verzet voor U11 op de baan en de weg?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  # --- #102 Spec 4: vertaling oude en nieuwe categorienamen ---
+  - id: vertaling-oude-cat-3
+    herkomst: "#102 Spec, bevinding 4"
+    beurten:
+      - {vraag: "oude cat. 3", route: bypass}
+
+  - id: vertaling-oude-cat-3-na-seizoenwissel
+    herkomst: "#102 Spec, bevinding 4"
+    vandaag: 2026-07-01
+    beurten:
+      - {vraag: "oude cat. 3", route: bypass}
+
+  - id: vertaling-mu12-vu13
+    herkomst: "#102 Spec, bevinding 4"
+    beurten:
+      - {vraag: "Wat betekent MU12, VU13?", route: bypass}
+
+  - id: vertaling-mu12-vu13-na-seizoenwissel
+    herkomst: "#102 Spec, bevinding 4"
+    vandaag: 2026-07-01
+    beurten:
+      - {vraag: "Wat betekent MU12, VU13?", route: bypass}
+
+  - id: vertaling-nieuwelingen
+    herkomst: "#102 Spec, bevinding 4"
+    beurten:
+      - {vraag: "Hoe heet nieuwelingen nu?", route: bypass}
+
+  - id: vertaling-nieuwelingen-na-seizoenwissel
+    herkomst: "#102 Spec, bevinding 4"
+    vandaag: 2026-07-01
+    beurten:
+      - {vraag: "Hoe heet nieuwelingen nu?", route: bypass}

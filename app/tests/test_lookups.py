@@ -367,6 +367,30 @@ def test_missing_lookup_primary_input_can_be_completed_by_a_birth_year():
     assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
 
 
+def test_intake_completes_only_the_explicit_unqualified_year_from_the_request():
+    pending = lookups.recognize_turn("Welk verzet? 2012", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    completed = lookups.complete_with_intake(
+        pending, {"geboortejaar": 2012}, NOVEMBER_2026, RULES
+    )
+
+    assert completed.kind == "ready"
+    assert {row.season.discipline for row in completed.ready.rows} == {"weg", "veld"}
+    assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
+
+
+def test_intake_cannot_replace_the_unqualified_year_with_another_year():
+    pending = lookups.recognize_turn("Welk verzet? 2012", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    completed = lookups.complete_with_intake(
+        pending, {"geboortejaar": 2013}, NOVEMBER_2026, RULES
+    )
+
+    assert completed.kind == "needs_information"
+
+
 def test_intake_cannot_infer_a_birth_year_from_age_or_unstated_input():
     pending = lookups.recognize_turn("Welk verzet?", None, NOVEMBER_2026, RULES)
 
@@ -480,6 +504,7 @@ def test_birth_year_and_paired_category_filter_the_same_gender_category_pair():
         "Welke categorie voor mijn twee zoons geboren in 2015?",
         "Waarom rijdt mijn zoon in U12?",
         "Wat is categorie 8 in de nieuwe indeling?",
+        "Mijn verzet is kapot.",
     ],
 )
 def test_unsupported_or_conflicting_input_is_not_bypass_eligible(message):
@@ -599,6 +624,8 @@ def test_old_category_and_explicit_new_category_must_match():
         ("Wat is categorie 3 in de nieuwe indeling?", "Oude cat. 3 (JO11/MO12)"),
         ("Wat is cat. 3?", "Oude cat. 3 (JO11/MO12)"),
         ("Welke oude categorie is MU11, VU12?", "JO11/MO12"),
+        ("Wat betekent MU12, VU13?", "JO12/MO13"),
+        ("Hoe heet nieuwelingen nu?", "U17 Nieuweling"),
     ],
 )
 def test_original_category_translation_forms_remain_recognizable(message, expected_heading):

@@ -13,6 +13,27 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 7. **Documentatie bijwerken** waar relevant (zie hieronder).
 8. **Pull request** met een verwijzing naar het issue (`Closes #<nr>`).
 
+## Werkwijze per agentsessie
+
+Elke agentsessie werkt in een **eigen `git worktree` op een eigen branch**, zodat sessies elkaars werk in de gedeelde worktree niet verstoren. Nooit werken of committen op `main`.
+
+```powershell
+git worktree add ..\WTChatbot-<issue> -b issue-<nr>-<korte-naam> main
+```
+
+- Ruim na de merge op met `git worktree remove ..\WTChatbot-<issue>`.
+- Een nieuwe worktree deelt de `.git`-config, maar niet `.venv` of `.env`; maak of kopieer die in de worktree.
+- Eenmalig per clone: `git config core.hooksPath .githooks`. De hook `.githooks/pre-commit` weigert dan commits op `main`. Dit dekt alleen lokaal werk; `main` is op GitHub al beschermd.
+
+## Flowkeuze per issue
+
+Er is geen vaste drempel; de keuze volgt per issue uit een afweging:
+
+- **grill → implement**: het werk past in één sessie en één context, en is te overzien (bijv. #99).
+- **to-spec → to-tickets → implement per ticket**: het werk raakt meerdere lagen (data, renderer, eval, docs), wijzigt een datamodel, introduceert een nieuwe seam, of dreigt de context te vullen (bijv. #102: 23 bestanden, late reviewgaten).
+
+Bij twijfel kies je de zwaardere flow. Een agent die aan een issue begint, **adviseert de gebruiker voordat hij bouwt**: welke flow (grill → implement of to-spec → to-tickets) en welk modelformaat (klein voor afgebakend, mechanisch werk; groot voor ontwerp, datamodel of werk over meerdere lagen), met een korte reden. De gebruiker beslist.
+
 ## Documentatie
 
 - **Ontwikkelaarsdocumentatie** → Diátaxis-map in `docs/` volgens [docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md).

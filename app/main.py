@@ -110,6 +110,9 @@ def create_app(
     # window van de laatste FEEDBACK_HISTORY_TURNS turns, voor feedback-koppeling),
     # rate-limit buckets.
     state: dict = {"conversations": {}, "history": {}, "buckets": {}, "jobs": {}}
+    # De event loop houdt alleen een zwakke referentie naar tasks; zonder sterke
+    # referentie kan een lopende chat-job door de garbage collector verdwijnen.
+    background_tasks: set[asyncio.Task] = set()
     traces = tracing.TraceStore(enabled=config.LOCAL_DEBUG_TRACES)
 
     @app.middleware("http")
@@ -383,7 +386,7 @@ def create_app(
                 "phase": phases.PHASE_LEES,
                 "created_at": time.time(),
             }
-            asyncio.create_task(
+            job_task = asyncio.create_task(
                 _run_chat_job(
                     job_id,
                     conversation_id,
@@ -396,6 +399,8 @@ def create_app(
                     trace,
                 )
             )
+            background_tasks.add(job_task)
+            job_task.add_done_callback(background_tasks.discard)
             return JSONResponse(
                 {"job_id": job_id, "conversation_id": conversation_id},
                 status_code=202,

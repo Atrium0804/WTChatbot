@@ -79,6 +79,8 @@ Een bypass gebeurt alleen als de vraag alléén het kale feit vraagt. De guards 
 
 Het bypass-antwoord is een template met bron + versie + artikel — de `Bron:`-regel alleen bij taalniveau B2 (#52) — en eindigt altijd op een vaste disclaimer dat de library geraadpleegd wordt bij een vervolgvraag. De check draait niet alleen vóór een nieuwe job: `/chat` probeert `match_lookup` eerst zelf, ook midden in een bestaand gesprek, en antwoordt dan synchroon zonder job. In de background job kan `decide_route` met de intake-data (geboortejaar/discipline uit de LLM) alsnog een bypass opleveren; die job zet dan de fase "Ik bereken de leeftijdscategorie…".
 
+De chatrenderer ondersteunt alleen koppen, **vet**, platte lijsten, links en één `Bron:`-blok; de formatcheck staat in [`app/tests/test_lookups.py`](../../app/tests/test_lookups.py) en de renderercontracttest in [`app/tests/test_markdown_rendering.cjs`](../../app/tests/test_markdown_rendering.cjs).
+
 ## Contextregels bij de LLM-routes
 
 Ook als een vraag naar een agent gaat, rekent de app zelf: `app/context.py` voegt deterministische contextregels toe onder het gebruikersbericht — het taalniveau (B1/B2), bij een nieuwe conversatie de datum, per geboortejaar de leeftijdscategorie (weg én veldritseizoen) en licentie, en vertalingen van oude/kalender-aanduidingen (#44, #61). De agents hoeven dus geen categorie uit te rekenen.

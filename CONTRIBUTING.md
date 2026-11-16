@@ -13,6 +13,18 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 7. **Documentatie bijwerken** waar relevant (zie hieronder).
 8. **Pull request** met een verwijzing naar het issue (`Closes #<nr>`).
 
+## Werkwijze per agentsessie
+
+Elke agentsessie werkt in een **eigen `git worktree` op een eigen branch**, zodat sessies elkaars werk in de gedeelde worktree niet verstoren. Nooit werken of committen op `main`.
+
+```powershell
+git worktree add ..\WTChatbot-<issue> -b issue-<nr>-<korte-naam> main
+```
+
+- Ruim na de merge op met `git worktree remove ..\WTChatbot-<issue>`.
+- Een nieuwe worktree deelt de `.git`-config, maar niet `.venv` of `.env`; maak of kopieer die in de worktree.
+- Eenmalig per clone: `git config core.hooksPath .githooks`. De hook `.githooks/pre-commit` weigert dan commits op `main`. Dit dekt alleen lokaal werk; `main` is op GitHub al beschermd.
+
 ## Documentatie
 
 - **Ontwikkelaarsdocumentatie** → Diátaxis-map in `docs/` volgens [docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md).

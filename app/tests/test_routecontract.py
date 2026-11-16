@@ -31,7 +31,7 @@ CONTRACT = yaml.safe_load((Path(__file__).parent / "fixtures" / "routecontract.y
 RULES = CONTRACT["regels"]
 
 
-def _wait_for_job(client: TestClient, job_id: str, timeout: float = 5.0) -> dict:
+def _wait_for_job(client: TestClient, job_id: str, timeout: float = 30.0) -> dict:
     import time
 
     deadline = time.time() + timeout

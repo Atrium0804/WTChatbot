@@ -78,8 +78,15 @@ Kern van ADR-0009: een kleine router-agent (`mistral-small-latest`) als voordeur
 **Route**:
 De weg die een bericht door de app nimmt (#91): `bypass` (deterministische lookup, direct app-antwoord), `direct-<domein>` (direct-to-expert na intake met hoge confidence) of `router` (via de router-agent). Gelogd in `/chat/status` (`route`) en in de eval (`verwacht_route`, `per_route` in `last_run.json`).
 
+**Inhoudelijke route**:
+Elke route behalve de deterministische bypass: `direct-<domein>` of `router`. Een agent stelt het antwoord op. Tegenhanger van de bypass; welke van de twee het wordt, hangt af van de intake.
+_Avoid_: agent-route, "naar een agent"
+
+**Routecontract**:
+Eén tabel die per vraag of gesprek vastlegt welke route de app moet kiezen: deterministische bypass of inhoudelijke route. Elk reviewgeval over routering krijgt hier een regel, met de herkomst erbij.
+_Avoid_: routetabel, bypass-lijst
 **Deterministische bypass**:
-Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een template (bron+versie+artikel bij B2) — zonder LLM-call; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek.
+Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een template (bron+versie+artikel bij B2) — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek. Twee ingangen: de regex herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call, die geboortejaar of discipline aanvult).
 
 **Intake (light-model intake)**:
 Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de regex-lookup de route.

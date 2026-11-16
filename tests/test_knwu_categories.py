@@ -43,10 +43,12 @@ def parse_licences(document: str) -> list[dict]:
 
 def parse_meter(text: str) -> float | None:
     """'5,50 meter' -> 5.5; 'NVT' -> None."""
-    match = re.match(r"(\d+),(\d+)\s*meter", text.strip())
+    match = re.fullmatch(r"(\d+),(\d+)\s*meter", text.strip())
     if match:
         return float(f"{match.group(1)}.{match.group(2)}")
-    return None
+    if text.strip() == "NVT":
+        return None
+    raise ValueError(f"Onbekende verzetwaarde in Titel 20: {text!r}")
 
 
 def parse_gear_table(document: str) -> dict[str, dict[str, list[dict]]]:
@@ -59,13 +61,19 @@ def parse_gear_table(document: str) -> dict[str, dict[str, list[dict]]]:
     )
     categories = r"U(\d+)(?:\s*\(([^)]*)\))?"
     for boys, girls, weg, baan, veld in re.findall(row, section, flags=re.MULTILINE):
+        source_categories = {
+            "jongens": re.findall(categories, boys),
+            "meisjes": re.findall(categories, girls),
+        }
+        if not any(source_categories.values()):
+            continue
         source_values = {
             "weg": parse_meter(weg),
             "baan": parse_meter(baan),
-            "veld": "vrij" if veld.strip() == "vrij" else None,
+            "veld": "vrij" if veld.strip() == "vrij" else parse_meter(veld),
         }
-        for gender, cell in (("jongens", boys), ("meisjes", girls)):
-            for under, label in re.findall(categories, cell):
+        for gender, gender_categories in source_categories.items():
+            for under, label in gender_categories:
                 name = f"U{under}" + (" Nieuweling" if label and "Nieuweling" in label else "")
                 table[gender].setdefault(name, []).append(source_values)
     return table
@@ -98,17 +106,13 @@ class TestKnwuCategoriesMatchTitel20(unittest.TestCase):
         row = "| U17 Nieuweling | Het jaar waarin je 15 of 16 wordt |"
         self.assertEqual(parse_age_categories(row), {"15": "U17 Nieuweling", "16": "U17 Nieuweling"})
 
-    def test_parser_reads_both_gear_columns_and_preserves_duplicate_source_row(self):
+    def test_max_gear_matches(self):
         gear_path = KNWU_DIR / self.rules["verzetten"]["bron"]
-        source = parse_gear_table(strip_markers(gear_path.read_text(encoding="utf-8")))
-        self.assertEqual(
-            source["jongens"]["U11"],
-            [{"weg": 5.9, "baan": 5.78, "veld": "vrij"}],
-        )
-        self.assertEqual(
-            source["meisjes"]["U11"],
-            [{"weg": 5.5, "baan": 5.46, "veld": "vrij"}],
-        )
+        self.assertTrue(gear_path.exists(), f"bron {self.rules['verzetten']['bron']} niet gevonden in {KNWU_DIR}")
+        gear_document = strip_markers(gear_path.read_text(encoding="utf-8"))
+        source = parse_gear_table(gear_document)
+        self.assertEqual(source["jongens"]["U11"], [{"weg": 5.9, "baan": 5.78, "veld": "vrij"}])
+        self.assertEqual(source["meisjes"]["U11"], [{"weg": 5.5, "baan": 5.46, "veld": "vrij"}])
         self.assertEqual(
             source["meisjes"]["U9"],
             [
@@ -116,12 +120,6 @@ class TestKnwuCategoriesMatchTitel20(unittest.TestCase):
                 {"weg": 5.5, "baan": 5.46, "veld": "vrij"},
             ],
         )
-
-    def test_max_gear_matches(self):
-        gear_path = KNWU_DIR / self.rules["verzetten"]["bron"]
-        self.assertTrue(gear_path.exists(), f"bron {self.rules['verzetten']['bron']} niet gevonden in {KNWU_DIR}")
-        gear_document = strip_markers(gear_path.read_text(encoding="utf-8"))
-        source = parse_gear_table(gear_document)
         corrections = self.rules["verzetten"]["correcties"]
         self.assertEqual(len(corrections), 1)
         correction = corrections[0]
@@ -201,6 +199,13 @@ class TestMaxGearLookup(unittest.TestCase):
         self.assertIsNone(knwu_categories.max_gear("U8", "veld", "meisjes", self.rules))
         with self.assertRaises(ValueError):
             knwu_categories.max_gear("U8", "baanwielrennen", "meisjes", self.rules)
+
+
+class TestGearSourceParser(unittest.TestCase):
+    def test_nvt_is_valid_but_unknown_values_fail(self):
+        self.assertIsNone(parse_meter("NVT"))
+        with self.assertRaises(ValueError):
+            parse_meter("onbekend")
 
 
 if __name__ == "__main__":

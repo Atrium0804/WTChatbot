@@ -45,5 +45,6 @@ def calculate_gear_development(chainring: int, sprocket: int, wheel_circumferenc
 - Minimum per wijziging:
   - nieuwe functie of tool → happy path + één foutgeval;
   - bugfix → test die de bug reproduceert;
-  - gewijzigd gedrag → aangepaste tests.
+  - gewijzigd gedrag → aangepaste tests;
+  - wijziging die verandert welke route een bericht krijgt (bypass of inhoudelijk) → een regel in het routecontract (`app/tests/fixtures/routecontract.yaml`), in dezelfde PR. Bij een bugfix of nieuw gedrag schrijf je de regel eerst (rood → groen). Let op wijzigingen in `lookups.match_lookup`, `lookups.resolve_lookup_message`, `intake.decide_route` en de routekeuze in `app/main.py`; een refactor zonder routewijziging vraagt geen regel.
 - Antwoordkwaliteit (bronvolgorde, "verzin niets") bewaak je met de eval-set, niet met unit tests.

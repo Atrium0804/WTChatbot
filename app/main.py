@@ -65,6 +65,16 @@ class ConversationLookup:
     state: lookups.LookupState
 
 
+@dataclass(frozen=True)
+class LookupTurn:
+    """Een geaccepteerde beurt die naar de job gaat, met de revisie waaronder
+    zijn lookup-toestand is vastgelegd."""
+
+    conversation_id: str
+    revision: int
+    decision: lookups.NeedsInformation | lookups.NotEligible
+
+
 def rate_limit_ok(buckets: dict[str, list[float]], key: str, limit: int, window: int) -> bool:
     """In-memory rate limiter: maximaal `limit` requests per `window` seconden per key."""
     now = time.time()
@@ -194,15 +204,13 @@ def create_app(
         lookup_states[conversation_id] = ConversationLookup(revision, decision.next_state)
         return decision, revision
 
-    def _publish_lookup_state(
-        conversation_id: str, revision: int, next_state: lookups.LookupState
-    ) -> bool:
+    def _publish_lookup_state(turn: LookupTurn, next_state: lookups.LookupState) -> bool:
         """Compare-and-set: alleen de job van de laatst geaccepteerde beurt mag
         de lookup-toestand bijwerken. Synchroon, zonder await tussen check en set."""
-        current = lookup_states.get(conversation_id)
-        if current is None or current.revision != revision:
+        current = lookup_states.get(turn.conversation_id)
+        if current is None or current.revision != turn.revision:
             return False
-        lookup_states[conversation_id] = ConversationLookup(revision, next_state)
+        lookup_states[turn.conversation_id] = ConversationLookup(turn.revision, next_state)
         return True
 
     def _direct_response(
@@ -218,10 +226,8 @@ def create_app(
 
     async def _run_chat_job(
         job_id: str,
-        conversation_id: str,
+        turn: LookupTurn,
         message: str,
-        decision: lookups.NeedsInformation | lookups.NotEligible,
-        revision: int,
         context_message: str,
         mistral_conv_id: str | None,
         today_date: date,
@@ -231,7 +237,8 @@ def create_app(
         """Background task (#85 + #91/#93): light intake + route + streaming
         Mistral-call off-loop; SSE-events worden omgezet in job["phase"].
         De /chat/status endpoint leest die state. Een aangevulde lookup werkt
-        de lookup-toestand alleen bij als `revision` nog de nieuwste is (#136)."""
+        de lookup-toestand alleen bij als de revisie van `turn` nog de nieuwste is (#136)."""
+        conversation_id = turn.conversation_id
         job = state["jobs"][job_id]
         job["status"] = "working"
         job["phase"] = phases.PHASE_LEES
@@ -260,28 +267,26 @@ def create_app(
                 reason=fallback_reason or "classified",
             )
             route = intake.decide_route(
-                decision=decision,
+                decision=turn.decision,
                 today=today_date,
                 rules=category_rules,
                 intake_result=intake_result,
                 expert_agent_ids=expert_agent_ids,
                 threshold=config.INTAKE_CONFIDENCE_THRESHOLD,
             )
-            if isinstance(decision, lookups.NeedsInformation) and not _publish_lookup_state(
-                conversation_id, revision, route.lookup.next_state
+            if isinstance(turn.decision, lookups.NeedsInformation) and not _publish_lookup_state(
+                turn, route.lookup.next_state
             ):
                 trace.record("lookup_state", reason="stale_revision")
-            job["route"] = route.kind + (f"-{route.domein}" if route.kind == "direct" else "")
-            route_reason = "intake_lookup" if route.kind == "bypass" else "confident_domain"
-            if route.kind == "router":
-                if fallback_reason:
-                    route_reason = fallback_reason
-                elif intake_result["domein"] not in expert_agent_ids:
-                    route_reason = "expert_not_configured"
-                else:
-                    route_reason = "low_confidence"
-            trace.record("route", route=job["route"], reason=route_reason)
-            if isinstance(route.lookup, lookups.Ready):
+            job["route"] = route.kind
+            if isinstance(route, intake.AgentRoute) and route.kind == "direct":
+                job["route"] = f"direct-{route.domein}"
+            trace.record(
+                "route",
+                route=job["route"],
+                reason=intake.route_reason(route, intake_result, expert_agent_ids, fallback_reason),
+            )
+            if isinstance(route, intake.BypassRoute):
                 # aangevulde lookup met complete data: direct app-antwoord,
                 # de Mistral-conversation start niet (#88/#91)
                 job["phase"] = phases.PHASE_BEREKEN
@@ -411,10 +416,8 @@ def create_app(
             job_task = asyncio.create_task(
                 _run_chat_job(
                     job_id,
-                    conversation_id,
+                    LookupTurn(conversation_id, revision, decision),
                     message,
-                    decision,
-                    revision,
                     context.add_context(message, context_lines),
                     mistral_conv_id,
                     today_date,

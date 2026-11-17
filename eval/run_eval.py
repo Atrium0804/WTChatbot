@@ -133,6 +133,38 @@ def expert_agent_ids_from_env() -> dict[str, str]:
     }
 
 
+def classify_with_reason(message: str, api_key: str) -> tuple[dict, str, float]:
+    """Light intake zoals de app; geef (intake-resultaat, fallback-reden, duur in ms)."""
+    fallback_reason = ""
+
+    def on_fallback(reason: str) -> None:
+        nonlocal fallback_reason
+        fallback_reason = reason
+
+    t0 = time.monotonic()
+    intake_result = intake.classify_message(
+        api_key=api_key,
+        base_url=CHAT_COMPLETIONS_URL,
+        model=INTAKE_MODEL,
+        message=message,
+        timeout=30,
+        on_fallback=on_fallback,
+    )
+    return intake_result, fallback_reason, round((time.monotonic() - t0) * 1000, 1)
+
+
+def replay_beurt(
+    message: str, state: lookups.LookupState, api_key: str, today: date, rules: dict
+) -> lookups.LookupState:
+    """Volgende lookup-toestand na een eerdere beurt, zoals de app die vastlegt:
+    een herkende onvolledige vraag krijgt de intake-aanvulling uit de job."""
+    decision = lookups.recognize_turn(message, state, today, rules)
+    if not isinstance(decision, lookups.NeedsInformation):
+        return decision.next_state
+    intake_result, _, _ = classify_with_reason(message, api_key)
+    return lookups.complete_with_intake(decision, intake_result, today, rules).next_state
+
+
 def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     """Spiegel de productie-route van de app per evalvraag (#91/#92/#136).
 
@@ -142,11 +174,11 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     LLM-calls, geen conversation); anders `via: router` (vaste router-route om
     end-to-end handoff te testen), anders de light intake (1 kleine call) met
     decide_route -> intake-ondersteunde bypass, direct-<domein> of router.
-    `route_reden` volgt de trace-redenen van de app.
+    `route_reden` gebruikt de trace-redenen van de app.
     """
     state: lookups.LookupState = lookups.NoLookupState()
     for message in entry.get("beurten", []):
-        state = lookups.recognize_turn(message, state, today, rules).next_state
+        state = replay_beurt(message, state, api_key, today, rules)
     decision = lookups.recognize_turn(entry["vraag"], state, today, rules)
     if isinstance(decision, lookups.Ready):
         return {
@@ -161,39 +193,33 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
             "lookup": None,
             "intake_ms": 0.0,
         }
-    t0 = time.monotonic()
-    intake_result = intake.classify_message(
-        api_key=api_key,
-        base_url=CHAT_COMPLETIONS_URL,
-        model=INTAKE_MODEL,
-        message=entry["vraag"],
-        timeout=30,
-    )
-    intake_ms = round((time.monotonic() - t0) * 1000, 1)
+    intake_result, fallback_reason, intake_ms = classify_with_reason(entry["vraag"], api_key)
+    expert_agent_ids = {k: v for k, v in expert_agent_ids_from_env().items() if v}
     route = intake.decide_route(
         decision=decision,
         today=today,
         rules=rules,
         intake_result=intake_result,
-        expert_agent_ids=expert_agent_ids_from_env(),
+        expert_agent_ids=expert_agent_ids,
         threshold=INTAKE_CONFIDENCE_THRESHOLD,
     )
-    if isinstance(route.lookup, lookups.Ready):
+    reden = intake.route_reason(route, intake_result, expert_agent_ids, fallback_reason)
+    if isinstance(route, intake.BypassRoute):
         return {
-            "route": "bypass", "route_reden": "intake_lookup", "agent_id": None,
+            "route": "bypass", "route_reden": reden, "agent_id": None,
             "lookup": route.lookup, "intake_ms": intake_ms,
         }
     if route.kind == "direct":
         return {
             "route": f"direct-{route.domein}",
-            "route_reden": "confident_domain",
+            "route_reden": reden,
             "agent_id": route.agent_id,
             "lookup": None,
             "intake_ms": intake_ms,
         }
     return {
         "route": "router",
-        "route_reden": "intake_router",
+        "route_reden": reden,
         "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
         "lookup": None,
         "intake_ms": intake_ms,

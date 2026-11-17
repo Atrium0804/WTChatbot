@@ -749,6 +749,20 @@ class PlanEntryTests(unittest.TestCase):
         classify.assert_called_once()
         self.assertEqual(plan["route"], "router")
 
+    def test_earlier_incomplete_beurt_gets_the_intake_completion_like_the_app(self) -> None:
+        entry = {"vraag": "alleen meisjes", "beurten": ["Welk verzet? 2012"]}
+        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+        with patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ) as classify:
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        classify.assert_called_once()  # alleen voor de eerdere beurt
+        self.assertEqual(plan["route"], "bypass")
+        self.assertEqual(plan["route_reden"], "regex_lookup")
+        answer = run_eval.lookups.render_answer(plan["lookup"], "B1")
+        self.assertIn("**Geboortejaar 2012**", answer)
+        self.assertNotIn("Jongens", answer)
+
     def test_intake_direct_to_expert_bij_hoge_confidence(self) -> None:
         entry = {"id": "x", "vraag": "Wat kost de contributie bij WTC Woerden?"}
         intake_result = {
@@ -862,10 +876,12 @@ class BypassTemplateEvalsetTests(unittest.TestCase):
         self.assertGreaterEqual(len(bypass_entries), 4)  # oa. de 2 baseline-lookup-vragen
         for e in bypass_entries:
             with self.subTest(e["id"]):
-                with patch.object(run_eval.intake, "classify_message") as classify:
+                with patch.object(
+                    run_eval.intake, "classify_message", return_value=dict(run_eval.intake.FALLBACK)
+                ):
                     plan = run_eval.plan_entry(e, "key", PEILDATUM, rules)
-                classify.assert_not_called()
                 self.assertEqual(plan["route"], "bypass", "geen lookup herkend")
+                self.assertEqual(plan["route_reden"], "regex_lookup")
                 antwoord = run_eval.lookups.render_answer(plan["lookup"], e.get("taalniveau", "B1"))
                 result = run_eval.check_entry(e, antwoord, [], route="bypass")
                 self.assertTrue(result["ok"], f"{e['id']}: {result}")

@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Literal, TypeAlias
 
 import requests
 
@@ -124,13 +124,24 @@ def classify_message(
 
 
 @dataclass(frozen=True)
-class Route:
-    """Routekeuze na de intake; `lookup` is de lookup-beslissing ná aanvulling."""
+class BypassRoute:
+    """Een onvolledige lookup die de intake compleet maakte: app-antwoord, geen agent."""
 
-    kind: Literal["bypass", "direct", "router"]
-    lookup: lookups.LookupDecision
+    lookup: lookups.Ready
+    kind: Literal["bypass"] = "bypass"
+
+
+@dataclass(frozen=True)
+class AgentRoute:
+    """Inhoudelijke route; `lookup` is de lookup-beslissing ná de intake."""
+
+    kind: Literal["direct", "router"]
+    lookup: lookups.NeedsInformation | lookups.NotEligible
     agent_id: str = ""
     domein: str = ""
+
+
+Route: TypeAlias = BypassRoute | AgentRoute
 
 
 def decide_route(
@@ -149,16 +160,35 @@ def decide_route(
     `expert_agent_ids` mapt domein -> MISTRAL_AGENT_ID_<DOMEIN> (leeg =
     niet geconfigureerd -> dan kan er geen direct-to-expert plaatsvinden).
     """
-    lookup: lookups.LookupDecision = decision
+    lookup: lookups.NeedsInformation | lookups.NotEligible = decision
     if isinstance(decision, lookups.NeedsInformation):
-        lookup = lookups.complete_with_intake(decision, intake_result, today, rules)
-        if isinstance(lookup, lookups.Ready):
-            return Route("bypass", lookup)
+        completed = lookups.complete_with_intake(decision, intake_result, today, rules)
+        if isinstance(completed, lookups.Ready):
+            return BypassRoute(completed)
+        lookup = completed
     elif not isinstance(decision, lookups.NotEligible):
         raise TypeError("decide_route requires a NeedsInformation or NotEligible decision")
     domein = str(intake_result.get("domein") or "onbekend")
     confidence = float(intake_result.get("confidence") or 0.0)
     agent_id = expert_agent_ids.get(domein, "")
     if agent_id and confidence >= threshold:
-        return Route("direct", lookup, agent_id=agent_id, domein=domein)
-    return Route("router", lookup)
+        return AgentRoute("direct", lookup, agent_id=agent_id, domein=domein)
+    return AgentRoute("router", lookup)
+
+
+def route_reason(
+    route: Route,
+    intake_result: dict,
+    expert_agent_ids: dict[str, str],
+    fallback_reason: str = "",
+) -> str:
+    """Trace-reden van een route na de intake; app en eval gebruiken dezelfde redenen."""
+    if isinstance(route, BypassRoute):
+        return "intake_lookup"
+    if route.kind == "direct":
+        return "confident_domain"
+    if fallback_reason:
+        return fallback_reason
+    if not expert_agent_ids.get(str(intake_result.get("domein"))):
+        return "expert_not_configured"
+    return "low_confidence"

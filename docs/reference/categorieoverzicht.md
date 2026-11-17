@@ -37,6 +37,7 @@ Precies één hoofdingang per bericht.
 | Oude categorie | `categorie N`, `cat. N`, `cat N` (N = 1 t/m 7) | "Wat is cat. 3?" |
 | Nieuwe leeftijdscategorie | `U<n>`, `JO<n>`, `MO<n>`, `MU<n>`, `VU<n>`; "nieuweling(en)" | "U11", "JO11/MO12", "MU12, VU13" |
 | Losse licentie | "licentie 17+" met een vraagwoord | "Welke KNWU Licentie 17+ is nodig?" |
+| Alleen gegevens | een bericht met alleen herkende gegevens, gescheiden door komma's, "en" of spaties: geslachtswoord, geboortejaarvorm (ook een kaal jaartal), categorie, oude categorie, discipline. Minstens één hoofdingang; elk ander woord geeft `NotEligible` | "jongen uit 2015, U12, weg", "2015, meisjes" |
 
 Een geboortejaar samen met een categorie: het geboortejaar is de hoofdingang, de categorie een extra filter. Een oude en een nieuwe categorie samen: de oude categorie is de hoofdingang, de nieuwe een filter.
 
@@ -112,7 +113,7 @@ Per conversatie in het geheugen van de app (`lookup_states` in `app/main.py`), l
 
 | Bericht na een profiel | Resultaat |
 | --- | --- |
-| Nieuwe hoofdingang als kort vervolg ("2017", "en voor 2017?", "U13", "cat. 4") | vervangt geboortejaar- en categoriefilters; geslacht en discipline blijven |
+| Nieuwe hoofdingang als kort vervolg ("2017", "en voor 2017?", "U13", "cat. 4", "jongen uit 2017") | vervangt geboortejaar- en categoriefilters; geslacht en discipline blijven tenzij het bericht ze noemt |
 | "alleen meisjes" na `JO11` | meisjes U11 |
 | "alleen meisjes" na `JO11/MO12` | alleen meisjes U12 |
 | "alleen meisjes" na een oude categorie | de meisjescategorieën van die oude categorie |
@@ -160,7 +161,7 @@ Disciplines in de data: `weg`, `veld` en `baan`. `baan` staat er alleen voor de 
 | Blokkop | `### <Discipline> <seizoen> · <Jongens\|Meisjes>`; bij categorie-invoer `· geboortejaar NNNN` erachter |
 | Volgorde | seizoenen chronologisch, jongens vóór meisjes, oplopend geboortejaar |
 | Regels per blok | `- **Categorie:** U14 (oude cat. 5)` of `(oude cat. n.v.t.)`; `- **Verzet:** 6,30 meter`, `vrij` of `NVT (niet van toepassing)`; `- **Licentie:** U13 (t/m dec 2026), U17 (vanaf jan 2027)` |
-| Slot | vooruitblikvoorbehoud, de vaste disclaimer, één `Bron:`-regel als laatste regel |
+| Slot | vooruitblikvoorbehoud, de slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" (`DISCLAIMER_LIBRARY`), één `Bron:`-regel als laatste regel |
 | Opmaak | geen ingesprongen lijstregels; de renderer blijft ongewijzigd |
 
 ### Bronregel

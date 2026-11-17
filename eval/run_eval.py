@@ -477,12 +477,11 @@ def check_entry(
     # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
     # wedervraag); de bron-check vervalt. Bij taalniveau B2 (default B1,
     # issue #52) moet de bron in een "Bron:"-regel staan; bij B1 mag het
-    # antwoord géén Bron-regel bevatten, behalve het bypass-overzicht (#102:
-    # gerichte uitzondering op ADR-0009, ook B1 krijgt een bronregel).
+    # antwoord géén Bron-regel bevatten; alleen B2-antwoorden tonen een bron.
     level = entry.get("taalniveau", "B1")
     if entry.get("type") == "verheldering":
         bron_ok = True
-    elif level == "B2" or route == "bypass":
+    elif level == "B2":
         bron_ok = bron_match(entry.get("bron", ""), bron_line)
     else:
         bron_ok = bron_line == ""

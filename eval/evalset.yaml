@@ -10,7 +10,7 @@
 #                      runner in de contextregel injecteert (issue #52). Bij B2
 #                      moet het antwoord een "Bron:"-regel bevatten die matcht
 #                      met `bron`; bij B1 mag het antwoord géén Bron-regel bevatten,
-#                      behalve een bypass-antwoord (#102: ook B1 met Bron-regel).
+#                      ook niet bij bypass.
 #   vraag:             typische clubvraag
 #   verwacht_antwoord: korte kernfeiten, gescheiden door ";" — elk token moet
 #                      in het antwoord staan (getallen/korte woorden heel,
@@ -340,7 +340,6 @@ evalset:
     versiedatum: "2026"
 
   # --- B1-vragen (taalniveau B1 = standaard, issue #52): kort antwoord, géén Bron-regel ---
-  # Uitzondering (#102): het bypass-overzicht draagt ook bij B1 één Bron-regel.
   - id: knwu-b1-categorie-jongen-2015
     # #136: een expliciet wedstrijdjaar ("in 2026") is geen bypass-invoer
     # (#102); de vraag gaat naar de inhoudelijke route
@@ -352,7 +351,7 @@ evalset:
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-b1-overzicht-geboortejaar-2014
-    verwacht_route: bypass  # #102/#136: gecombineerd overzicht, B1 met één Bron-regel
+    verwacht_route: bypass  # #102/#136: gecombineerd overzicht
     taalniveau: B1
     categorie: knwu
     type: standaard

@@ -27,7 +27,7 @@ def test_recognize_birth_year_renders_combined_gender_specific_overview():
     assert "### Veldrijden 2026-2027 · Jongens" in answer
     assert "### Wegwielrennen 2027 · Meisjes" in answer
     assert "5,90 meter" in answer
-    assert answer.splitlines()[-1].startswith("Bron:")
+    assert not any(line.startswith("Bron:") for line in answer.splitlines())
 
 
 def test_paired_category_keeps_its_gender_specific_members_per_season():
@@ -485,10 +485,12 @@ def test_standalone_knwu_17_plus_licence_remains_reachable():
     assert "**KNWU Licentie 17+**" in answer
     assert "artikel 20.0.002" in answer
     assert answer.splitlines()[-1].startswith("Bron:")
+    b1_answer = lookups.render_answer(decision, "B1")
+    assert not any(line.startswith("Bron:") for line in b1_answer.splitlines())
 
 
 @pytest.mark.parametrize("language_level", ["B1", "B2"])
-def test_combined_overview_uses_flat_markdown_and_one_final_source_line(language_level):
+def test_combined_overview_uses_flat_markdown_and_level_appropriate_source_line(language_level):
     decision = lookups.recognize_turn(
         "Welk verzet voor U11?",
         None,
@@ -504,37 +506,30 @@ def test_combined_overview_uses_flat_markdown_and_one_final_source_line(language
     assert "5,90 meter" in answer
     assert "5,50 meter" in answer
     assert re.search(r"^[ \t]+[-*]\s", answer, re.MULTILINE) is None
-    assert len(source_lines) == 1
-    assert source_lines[0] == len(lines) - 1
     if language_level == "B2":
+        assert len(source_lines) == 1
+        assert source_lines[0] == len(lines) - 1
         assert "artikel 20.1.007" in answer
         assert "artikel 20.0.002" in answer
+    else:
+        assert source_lines == []
 
 
-@pytest.mark.parametrize(
-    ("language_level", "expected"),
-    [
-        (
-            "B1",
-            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21; "
-            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21; "
-            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
-        ),
-        (
-            "B2",
-            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21 "
-            "(artikel 20.0.004 en artikel 20.0.002); "
-            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21 "
-            "(artikel 20.1.007); "
-            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
-        ),
-    ],
-)
-def test_source_line_names_each_document_once_and_labels_the_club_source(language_level, expected):
+def test_b2_source_line_names_each_document_once():
     decision = lookups.recognize_turn("2014", None, NOVEMBER_2026, RULES)
     assert decision.kind == "ready"
 
-    assert lookups.render_answer(decision, language_level).splitlines()[-1] == expected
+    b1_answer = lookups.render_answer(decision, "B1")
+    assert not any(line.startswith("Bron:") for line in b1_answer.splitlines())
+
+    b2_answer = lookups.render_answer(decision, "B2")
+    assert b2_answer.splitlines()[-1] == (
+        f"Bron: {RULES['bron']}, versie {RULES['versie']} "
+        f"(artikel {RULES['leeftijdscategorieen']['artikel']} en artikel {RULES['licenties']['artikel']}); "
+        f"{RULES['verzetten']['bron']}, versie {RULES['verzetten']['versie']} "
+        f"(artikel {RULES['verzetten']['artikel']}); "
+        f"{RULES['oude_categorie_indeling']['bron']}"
+    )
 
 
 def test_conflicting_category_and_birth_year_does_not_fall_back_to_partial_answer():
@@ -634,5 +629,8 @@ def test_every_bypass_answer_uses_supported_markdown_format(message, language_le
     assert re.search(r"^[ \t]+[-*]\s", answer, re.MULTILINE) is None
     lines = answer.splitlines()
     source_line_indexes = [index for index, line in enumerate(lines) if line.startswith("Bron:")]
-    assert source_line_indexes == [len(lines) - 1]
+    if language_level == "B2":
+        assert source_line_indexes == [len(lines) - 1]
+    else:
+        assert source_line_indexes == []
     assert "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" in answer

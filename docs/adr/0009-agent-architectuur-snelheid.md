@@ -25,7 +25,7 @@ uitlegvragen. De app streamt de run (SSE) zodat de gebruiker de fase ziet
 prompt caching aan (cached input = 10% van de prijs). De architectuur is switchbaar via
 `scripts/architectures/active` (zie #95).
 
-_Amendment 2026-11-17 (#102, tweede implementatie #135): gerichte uitzondering op de B1-bronweglating hieronder. Elk deterministisch bypass-antwoord, dus het gecombineerde [categorieoverzicht](../reference/categorieoverzicht.md) en de losse lookups, eindigt ook bij B1 op één `Bron:`-regel met documentnaam en versiedatum; bij B2 komen de artikelen erbij. Aanleiding: het overzicht combineert feiten uit drie bronnen (twee Titel 20-hoofdstukken en de clubbron voor de oude indeling), en zonder bronregel is niet zichtbaar dat het antwoord uit vaste data komt in plaats van uit een agent. De regel noemt elk document één keer en labelt de clubbron, zodat hij kort blijft. Overwogen: alleen het gecombineerde overzicht een B1-bronregel geven (verworpen: twee regels voor bypass-antwoorden, en de eval-check kan dan niet op de route alleen beslissen). Agent-antwoorden houden de B1-bronweglating; de overige besluiten van deze ADR blijven ongewijzigd._
+_Amendment 2026-11-17 (#102, tweede implementatie #135): er kwam een uitzondering op de B1-bronweglating: elk deterministisch bypass-antwoord eindigde ook bij B1 op één `Bron:`-regel. Herziening 2026-11-17: die uitzondering is vervallen. B1-bypassantwoorden tonen geen bronregel; B2-bypassantwoorden tonen die wel, met artikelen. De oorspronkelijke motivering was dat het gecombineerde [categorieoverzicht](../reference/categorieoverzicht.md) feiten uit drie bronnen combineert; de keuze is herzien om de vaste B1-weergave zonder bronregel te behouden._
 
 ## Considered options
 

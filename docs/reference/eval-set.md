@@ -20,10 +20,10 @@ Per entry in `evalset`:
 | `id` | string | ja | Unieke code, bijv. `knwu-verzet-u15` |
 | `categorie` | enum | ja | `knwu` \| `regio` \| `club` — bepaalt welke agent de vraag krijgt (tenzij `via: router`) en in welke categoriescore de vraag meetelt |
 | `type` | enum | ja | `standaard` \| `websearch` \| `strikethrough` \| `verheldering` |
-| `taalniveau` | enum | nee | `B1` (default) \| `B2` — het taalniveau dat de runner per bericht in de contextregel injecteert (issue #52); de bron-check geldt bij `B2` en bij een `bypass`-antwoord |
+| `taalniveau` | enum | nee | `B1` (default) \| `B2` — het taalniveau dat de runner per bericht in de contextregel injecteert (issue #52); de bron-check geldt bij `B2` |
 | `vraag` | string | ja | Typische clubvraag |
 | `verwacht_antwoord` | string | ja | Kernfeiten, gescheiden door `;` — moeten allemaal in het antwoord voorkomen. Houd kernfeiten kort (één tot drie woorden of getallen) |
-| `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); bij `taalniveau: B2` moet die in een `Bron:`-regel van het antwoord staan, bij `B1` mag het antwoord géén `Bron:`-regel bevatten, behalve een `bypass`-antwoord (#102). Alternatieven scheiden met ` \| ` (één match volstaat) |
+| `bron` | string | ja, behalve bij `verheldering` | Verwachte bron (documentnaam of URL); bij `taalniveau: B2` moet die in een `Bron:`-regel van het antwoord staan, bij `B1` mag het antwoord géén `Bron:`-regel bevatten, ook niet bij `bypass`. Alternatieven scheiden met ` \| ` (één match volstaat) |
 | `versiedatum` | string | ja | Verwachte versie/datum van de bron |
 | `doorhaal_waarde` | string | nee (alleen `strikethrough`) | Superseded waarde uit de rode revisie; mag NIET in het antwoord voorkomen |
 | `verwacht_marker` | string | nee | Marker die in de **ruwe agent-output** moet voorkomen, bijv. `[BRONCONFLICT]` (#47). De proxy stript de marker vóór de gebruiker hem ziet, dus in productie-antwoorden is hij weg; de eval-runner draait offline en ziet de ruwe output |
@@ -43,7 +43,7 @@ Een test (`tests/test_run_eval.py`, `Run3ReviewTests`) legt per vraag het oordee
 
 Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 
-1. **Bron**: bij `taalniveau: B2` moet een van de `Bron: ...`-regels van het antwoord na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset bevatten, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee. Bij `taalniveau: B1` (default) moet het antwoord juist géén `Bron:`-regel bevatten, behalve bij route `bypass`: dat overzicht draagt ook bij B1 een bronregel die moet matchen (#102).
+1. **Bron**: bij `taalniveau: B2` moet een van de `Bron: ...`-regels van het antwoord na normalisatie (lowercase, alleen letters en cijfers) de `bron` in de evalset bevatten, of één van de alternatieven. Locale-segmenten (`/nl_NL/`), `/index.php` en de sessie-parameter `sid` tellen niet mee. Bij `taalniveau: B1` (default) moet het antwoord juist géén `Bron:`-regel bevatten.
 2. **Kernfeiten**: elk token van elk item van `verwacht_antwoord` staat los in het antwoord. Getallen en woorden van maximaal 3 tekens moeten als heel token voorkomen (`5` matcht niet in `15`, `ja` niet in `jaar`); langere woorden als woordbegin (`verzeker` matcht `verzekering`). Getallen worden genormaliseerd: `11.05` = `11:05`, `08:30` = `8.30`, `€ 10,-` = `10,00` = `10`.
 3. **Strikethrough**: `doorhaal_waarde` mag niet in het antwoord voorkomen.
 4. **Verboden woorden**: geen van de woorden uit `niet_in_antwoord` mag in het antwoord voorkomen; `last_run.json` toont ze onder `verboden_gevonden`.
@@ -61,7 +61,7 @@ Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): p
 
 ## Route spiegelen (#91/#92)
 
-De runner spiegelt de route-beslissing van de app per vraag (`plan_entry` in `run_eval.py`, zelfde operaties als productie — `app/lookups.py` + `app/intake.py`): `beurten` en `vraag` gaan in volgorde door `lookups.recognize_turn`, met de lookup-toestand van de vorige beurt. Is een eerdere beurt een herkende onvolledige vraag, dan vult de runner die net als de app aan met de light intake en `lookups.complete_with_intake`. Is de beslissing voor `vraag` Ready, dan is de route `bypass` (`route_reden: regex_lookup`) en komt het antwoord uit `lookups.render_answer`, zonder conversation te starten; ook bij B1 met één `Bron:`-regel (#102). Anders geldt `via: router` als vaste router-route, en start de runner de light intake (1 call naar `mistral-small-latest`, `MISTRAL_CHAT_COMPLETIONS_URL`/`MISTRAL_INTAKE_MODEL`). `intake.decide_route` kiest dan een intake-ondersteunde bypass (`route_reden: intake_lookup`, alleen voor een herkende onvolledige vraag), direct-to-expert (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`) of router.
+De runner spiegelt de route-beslissing van de app per vraag (`plan_entry` in `run_eval.py`, zelfde operaties als productie — `app/lookups.py` + `app/intake.py`): `beurten` en `vraag` gaan in volgorde door `lookups.recognize_turn`, met de lookup-toestand van de vorige beurt. Is een eerdere beurt een herkende onvolledige vraag, dan vult de runner die net als de app aan met de light intake en `lookups.complete_with_intake`. Is de beslissing voor `vraag` Ready, dan is de route `bypass` (`route_reden: regex_lookup`) en komt het antwoord uit `lookups.render_answer`, zonder conversation te starten; het taalniveau bepaalt of er een bronregel staat. Anders geldt `via: router` als vaste router-route, en start de runner de light intake (1 call naar `mistral-small-latest`, `MISTRAL_CHAT_COMPLETIONS_URL`/`MISTRAL_INTAKE_MODEL`). `intake.decide_route` kiest dan een intake-ondersteunde bypass (`route_reden: intake_lookup`, alleen voor een herkende onvolledige vraag), direct-to-expert (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`) of router.
 
 ## Gate
 

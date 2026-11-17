@@ -849,12 +849,14 @@ def _render_standalone_licence(
     selector: StandaloneLicenceSelector, source: SourceFact, level: str
 ) -> str:
     article = f" (artikel {source.article})" if level == "B2" else ""
-    return (
+    answer = (
         f"**{selector.name}**\n\n"
         f"- **Licentie:** {selector.name}\n\n"
-        f"{DISCLAIMER_LIBRARY}\n\n"
-        f"Bron: {source.name}, versie {source.version}{article}"
+        f"{DISCLAIMER_LIBRARY}"
     )
+    if level == "B2":
+        answer += f"\n\nBron: {source.name}, versie {source.version}{article}"
+    return answer
 
 
 def _render_row(ready: ReadyLookup, row: AnswerRow) -> list[str]:
@@ -891,7 +893,7 @@ def _render_source_line(sources: AnswerSources, level: str) -> str:
         if level == "B2" and articles:
             part += " (" + " en ".join(f"artikel {article}" for article in articles) + ")"
         parts.append(part)
-    parts.append(f"{sources.old_categories.name} (clubbron, oude indeling)")
+    parts.append(f"{sources.old_categories.name}")
     return "Bron: " + "; ".join(parts)
 
 
@@ -913,10 +915,10 @@ def _render_ready(ready: ReadyLookup, language_level: str) -> str:
         [
             "Vooruitblik op basis van de bekende regels; die kunnen wijzigen.",
             DISCLAIMER_LIBRARY,
-            "",
-            _render_source_line(ready.sources, level),
         ]
     )
+    if level == "B2":
+        lines.extend(["", _render_source_line(ready.sources, level)])
     return "\n".join(lines)
 
 

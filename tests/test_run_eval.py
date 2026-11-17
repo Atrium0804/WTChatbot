@@ -856,12 +856,15 @@ class RouteAssertionTests(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.assertTrue(result["route_ok"])
 
-    def test_b1_bypass_draagt_wel_een_bronregel(self) -> None:
-        # #102: gerichte uitzondering op ADR-0009 voor het bypass-overzicht
+    def test_b1_bypass_heeft_geen_bronregel(self) -> None:
         entry = self.entry(taalniveau="B1")
-        bypass = run_eval.check_entry(entry, "U12\n\nBron: doc.pdf", [], route="bypass")
+        bypass_without_source = run_eval.check_entry(entry, "U12", [], route="bypass")
+        bypass_with_source = run_eval.check_entry(
+            entry, "U12\n\nBron: doc.pdf", [], route="bypass"
+        )
         agent = run_eval.check_entry(entry, "U12\n\nBron: doc.pdf", [], route="router")
-        self.assertTrue(bypass["bron_ok"])
+        self.assertTrue(bypass_without_source["bron_ok"])
+        self.assertFalse(bypass_with_source["bron_ok"])
         self.assertFalse(agent["bron_ok"])
 
 

@@ -117,6 +117,10 @@ _Avoid_: "cat. 3" zonder de nieuwe aanduiding erbij
 Het wedstrijdseizoen veldrijden, dat over twee kalenderjaren loopt (Titel 20: september t/m maart). Een renner rijdt het hele veldritseizoen in de leeftijdscategorie waarin hij per 1 januari van dat seizoen valt, in het najaar dus een categorie hoger dan op de weg (bv. een jongen geboren in 2015: U12 op de weg in 2026, U13 in het veldritseizoen 2026-2027).
 _Avoid_: "winterseizoen", "crossseizoen" zonder jaartallen
 
+**Peiljaar**:
+Het kalenderjaar dat bepaalt in welke leeftijdscategorie een renner start: bij wegwielrennen het jaar van de wedstrijd, bij veldrijden het jaar waarin het veldritseizoen eindigt. De leeftijd voor de indeling is het peiljaar min het geboortejaar.
+_Avoid_: "seizoensjaar"; "wedstrijdjaar" bij veldrijden
+
 
 **Licentie**:
 De wedstrijdlicentie die de KNWU aan een renner verleent; die geeft het startrecht. Welke licentie een renner nodig heeft, volgt alleen uit het geboortejaar, niet uit discipline of geslacht. Indeling seizoen 2026 (Titel 20, art. 20.0.002): **KNWU Licentie U13** (het jaar waarin je 5 t/m 12 wordt) en **KNWU Licentie U17** (13 t/m 16); vanaf 17 jaar de **KNWU Licentie 17+**. Namen en leeftijdsgrenzen kunnen per seizoen wijzigen (tot 2025: U15 en 15+); Titel 20 is leidend. Eén licentie omvat meerdere leeftijdscategorieën (bv. seizoen 2026: een jongen geboren in 2020 heeft een KNWU Licentie U13 en rijdt in leeftijdscategorie U7). Altijd een KNWU-licentie: ook als een regio- of clubdocument naar een licentie verwijst; regio's en clubs geven zelf geen licenties uit.

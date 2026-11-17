@@ -33,6 +33,8 @@ Zijn artikelnummers verschoven, zoek dan op de kop ("Categorie-indeling", "Categ
 
 Werk `app/knwu_categories.json` bij: `bron` (het Titel 20-hoofdstukbestand met art. 20.0.002 en 20.0.004, nu `... - ALGEMENE BEPALINGEN.md`), `versie`, `leeftijdscategorieen`, `licenties` en `verzetten.per_geslacht` (`jongens` en `meisjes`). Houd de verzetdata uitsluitend per geslacht bij; behoud bron, versie, artikel en eventuele specifiek goedgekeurde correctiemetadata. Werk callers van `max_gear` bij met een expliciet geslacht. Een lookup zonder geslachtsfilter toont de waarden van beide geslachten met labels.
 
+`verzetten.correcties` bevat alleen correcties die een mens expliciet heeft goedgekeurd (nu: meisjes U9 veld = vrij, #102). De driftcontrole faalt bewust als de nieuwe versie die dubbele bronrij niet meer heeft, of een andere dubbele rij toevoegt. Leg zo'n verschil voor aan de gebruiker; pas `correcties` en de verwachtingen in `test_max_gear_matches` pas aan na diens besluit. Zie [reference: categorieoverzicht](../../../docs/reference/categorieoverzicht.md#broncorrectie).
+
 **Klaar als:** `python -m pytest tests/test_knwu_categories.py -q` de bronkolommen voor beide geslachten vergelijkt en alleen de expliciet vastgelegde broncorrecties toestaat.
 
 ## 4. Kopieën van oude waarden opruimen

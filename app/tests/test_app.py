@@ -4,7 +4,6 @@ Draai: .venv\Scripts\python -m pytest app/tests   (vanuit repo-root; de project-
 """
 
 import asyncio
-import contextlib
 import json
 import os
 import sqlite3
@@ -33,8 +32,28 @@ import store  # noqa: E402
 from main import create_app  # noqa: E402
 
 
+_open_clients: list[TestClient] = []
+
+
+def open_client(app) -> TestClient:
+    """TestClient met één blijvende event loop. Zonder context krijgt elk request
+    een eigen loop, waardoor een background chat-job kan stranden; de fixture
+    hieronder sluit de clients na elke test."""
+    client = TestClient(app)
+    client.__enter__()
+    _open_clients.append(client)
+    return client
+
+
+@pytest.fixture(autouse=True)
+def _close_open_clients():
+    yield
+    while _open_clients:
+        _open_clients.pop().__exit__(None, None, None)
+
+
 def make_client(tmp_path: Path) -> TestClient:
-    return TestClient(create_app(db_path=str(tmp_path / "test.db")))
+    return open_client(create_app(db_path=str(tmp_path / "test.db")))
 
 
 def _wait_for_job(client: TestClient, job_id: str, timeout: float = 5.0) -> dict:
@@ -530,7 +549,7 @@ def test_chat_adds_date_and_metadata_on_new_conversation(tmp_path, monkeypatch):
     from datetime import date
 
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     body = chat(client, "Wanneer is de volgende wedstrijd?")
     sent = calls[0]
     assert sent["message"].startswith("Wanneer is de volgende wedstrijd?")
@@ -543,7 +562,7 @@ def test_chat_follow_up_adds_category_but_no_date(tmp_path, monkeypatch):
     from datetime import date
 
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     first = chat(client, "In welke leeftijdscategorie rijdt mijn zoon?")
     # #91: een kaal jaartal als vervolg is zélf een deterministische bypass
     # (direct app-antwoord, geen Mistral-call) — zie test_lookup_bypass_follow_up
@@ -561,7 +580,7 @@ def test_chat_sends_language_level_context(tmp_path, monkeypatch):
     from datetime import date
 
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     body = chat_raw(client, {"message": "Hoeveel kost een licentie?", "client_id": "c", "language_level": "B2"})
     assert "vastgesteld taalniveau: B2" in calls[0]["message"]
     # ook op een vervolgbericht (zonder datumregel) staat de taalniveau-regel
@@ -866,17 +885,17 @@ def test_category_followup_returns_answer_from_flat_mistral_stream(tmp_path, mon
         lambda **kwargs: {**dict(intake.FALLBACK), "domein": "knwu", "confidence": 0.95},
     )
     monkeypatch.setattr(mistral_client.requests, "post", post)
-    with make_client(tmp_path) as client:
-        first = client.post("/chat", json={"message": "wat is categorie 1", "client_id": "c"})
-        assert first.status_code == 200
-        post.assert_not_called()
-        followup = client.post("/chat", json={
-            "message": "Waarom is het verzet voor U8 beperkt?",
-            "conversation_id": first.json()["conversation_id"],
-            "client_id": "c",
-        })
-        assert followup.status_code == 202
-        result = _wait_for_job(client, followup.json()["job_id"])
+    client = make_client(tmp_path)
+    first = client.post("/chat", json={"message": "wat is categorie 1", "client_id": "c"})
+    assert first.status_code == 200
+    post.assert_not_called()
+    followup = client.post("/chat", json={
+        "message": "Waarom is het verzet voor U8 beperkt?",
+        "conversation_id": first.json()["conversation_id"],
+        "client_id": "c",
+    })
+    assert followup.status_code == 202
+    result = _wait_for_job(client, followup.json()["job_id"])
     assert result["status"] == "done", result
     assert result["answer"] == "Antwoord over het verzet."
     assert result["route"] == "direct-knwu"
@@ -912,7 +931,7 @@ def test_lookup_bypass_in_mistral_mode_returns_200_direct(tmp_path, monkeypatch)
     monkeypatch.setattr(
         mistral_client, "stream_answer", lambda **kw: calls.append(("stream", kw)) or ("conv", "x")
     )
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     resp = client.post(
         "/chat",
         json={
@@ -931,15 +950,10 @@ def test_lookup_bypass_in_mistral_mode_returns_200_direct(tmp_path, monkeypatch)
 
 @pytest.fixture
 def lookup_client(tmp_path):
-    """Maak een TestClient met één blijvende event loop, zodat background jobs
-    niet stranden wanneer de loop van een los request sluit."""
-    with contextlib.ExitStack() as stack:
+    def make(today: date = date(2026, 11, 9)) -> TestClient:
+        return open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: today))
 
-        def make(today: date = date(2026, 11, 9)) -> TestClient:
-            app = create_app(db_path=str(tmp_path / "t.db"), today=lambda: today)
-            return stack.enter_context(TestClient(app))
-
-        yield make
+    return make
 
 
 def post_in(client: TestClient, conversation_id: str, message: str, **extra):
@@ -1079,7 +1093,7 @@ def test_gearing_lookup_after_category_or_birth_year_clarification(
     from datetime import date
 
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     first = chat(client, "Welk verzet op de weg?")
     resp = client.post(
         "/chat",
@@ -1103,7 +1117,7 @@ def test_gearing_lookup_after_combined_category_clarification(
     from datetime import date
 
     fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = open_client(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
     first = chat(client, "Welk verzet op de weg?")
     resp = chat_in(client, first["conversation_id"], reply, "test-client")
     for fragment in expected:

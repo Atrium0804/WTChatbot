@@ -133,58 +133,97 @@ def expert_agent_ids_from_env() -> dict[str, str]:
     }
 
 
-def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
-    """Spiegel de productie-route van de app per evalvraag (#91/#92).
+def classify_with_reason(message: str, api_key: str) -> tuple[dict, str, float]:
+    """Light intake zoals de app; geef (intake-resultaat, fallback-reden, duur in ms)."""
+    fallback_reason = ""
 
-    Zelfde volgorde als app/main.py: eerst de deterministische lookup
-    (bypass, 0 LLM-calls, geen conversation), anders `via: router` (vaste
-    router-route om end-to-end handoff te testen), anders de light intake
-    (1 kleine call) met decide_route -> direct-<domein> of router.
-    """
-    vraag = lookups.resolve_lookup_message(entry["vraag"], entry.get("beurten", []), today, rules)
-    lookup = lookups.match_lookup(vraag, today, rules)
-    if lookup:
-        return {
-            "route": "bypass", "agent_id": None, "lookup": lookup,
-            "lookup_message": vraag, "intake_ms": 0.0,
-        }
-    if entry.get("via") == "router":
-        return {
-            "route": "router",
-            "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
-            "lookup": None,
-            "intake_ms": 0.0,
-        }
+    def on_fallback(reason: str) -> None:
+        nonlocal fallback_reason
+        fallback_reason = reason
+
     t0 = time.monotonic()
     intake_result = intake.classify_message(
         api_key=api_key,
         base_url=CHAT_COMPLETIONS_URL,
         model=INTAKE_MODEL,
-        message=vraag,
+        message=message,
         timeout=30,
+        on_fallback=on_fallback,
     )
-    intake_ms = round((time.monotonic() - t0) * 1000, 1)
+    return intake_result, fallback_reason, round((time.monotonic() - t0) * 1000, 1)
+
+
+def replay_beurt(
+    message: str, state: lookups.LookupState, api_key: str, today: date, rules: dict
+) -> lookups.LookupState:
+    """Volgende lookup-toestand na een eerdere beurt, zoals de app die vastlegt:
+    een herkende onvolledige vraag krijgt de intake-aanvulling uit de job."""
+    decision = lookups.recognize_turn(message, state, today, rules)
+    if not isinstance(decision, lookups.NeedsInformation):
+        return decision.next_state
+    intake_result, _, _ = classify_with_reason(message, api_key)
+    return lookups.complete_with_intake(decision, intake_result, today, rules).next_state
+
+
+def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
+    """Spiegel de productie-route van de app per evalvraag (#91/#92/#136).
+
+    Zelfde volgorde als app/main.py: `beurten` en `vraag` gaan in volgorde
+    door lookups.recognize_turn (de lookup-toestand loopt mee, geen tekst
+    plakken). Een Ready-beslissing is een deterministische bypass (0
+    LLM-calls, geen conversation); anders `via: router` (vaste router-route om
+    end-to-end handoff te testen), anders de light intake (1 kleine call) met
+    decide_route -> intake-ondersteunde bypass, direct-<domein> of router.
+    `route_reden` gebruikt de trace-redenen van de app.
+    """
+    state: lookups.LookupState = lookups.NoLookupState()
+    for message in entry.get("beurten", []):
+        state = replay_beurt(message, state, api_key, today, rules)
+    decision = lookups.recognize_turn(entry["vraag"], state, today, rules)
+    if isinstance(decision, lookups.Ready):
+        return {
+            "route": "bypass", "route_reden": "regex_lookup", "agent_id": None,
+            "lookup": decision, "intake_ms": 0.0,
+        }
+    if entry.get("via") == "router":
+        return {
+            "route": "router",
+            "route_reden": "via_router",
+            "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
+            "lookup": None,
+            "intake_ms": 0.0,
+        }
+    intake_result, fallback_reason, intake_ms = classify_with_reason(entry["vraag"], api_key)
+    expert_agent_ids = {k: v for k, v in expert_agent_ids_from_env().items() if v}
     route = intake.decide_route(
-        message=vraag,
+        decision=decision,
         today=today,
         rules=rules,
         intake_result=intake_result,
-        expert_agent_ids=expert_agent_ids_from_env(),
+        expert_agent_ids=expert_agent_ids,
         threshold=INTAKE_CONFIDENCE_THRESHOLD,
     )
-    if route["route"] == "bypass":
+    reden = intake.route_reason(route, intake_result, expert_agent_ids, fallback_reason)
+    if isinstance(route, intake.BypassRoute):
         return {
-            "route": "bypass", "agent_id": None, "lookup": route["lookup"],
-            "lookup_message": vraag, "intake_ms": intake_ms,
+            "route": "bypass", "route_reden": reden, "agent_id": None,
+            "lookup": route.lookup, "intake_ms": intake_ms,
         }
-    if route["route"] == "direct":
+    if route.kind == "direct":
         return {
-            "route": f"direct-{route['domein']}",
-            "agent_id": route["agent_id"],
+            "route": f"direct-{route.domein}",
+            "route_reden": reden,
+            "agent_id": route.agent_id,
             "lookup": None,
             "intake_ms": intake_ms,
         }
-    return {"route": "router", "agent_id": os.environ.get("MISTRAL_AGENT_ID"), "lookup": None, "intake_ms": intake_ms}
+    return {
+        "route": "router",
+        "route_reden": reden,
+        "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
+        "lookup": None,
+        "intake_ms": intake_ms,
+    }
 
 
 def extract_text(outputs: list[dict]) -> str:
@@ -299,19 +338,17 @@ def play_conversation(
     conversation_id = None
     trace: list[dict] = []
     outputs: list[dict] = []
-    previous_messages: list[str] = []
     for message in entry.get("beurten", []) + [entry["vraag"]]:
         beurt_t0 = time.monotonic()
-        lookup_message = lookups.resolve_lookup_message(message, previous_messages, today, rules)
         lines = context.build_context_lines(
-            lookup_message,
+            message,
             today,
             rules,
             new_conversation=conversation_id is None,
             language_level=entry.get("taalniveau", "B1"),
         )
         response, error = ask_with_retry(
-            context.add_context(lookup_message, lines),
+            context.add_context(message, lines),
             api_key,
             vraagtype=entry["type"],
             attempts=1,
@@ -321,7 +358,6 @@ def play_conversation(
         if error:
             return {"antwoord": "", "trace": trace, "error": error, "duur_ms": 0.0}
         conversation_id = response.get("conversation_id") or conversation_id
-        previous_messages.append(message)
         outputs = response.get("outputs", [])
         trace.append({
             "vraag": message,
@@ -441,11 +477,12 @@ def check_entry(
     # type `verheldering` checkt alleen de kernfeiten (de bot stelt een
     # wedervraag); de bron-check vervalt. Bij taalniveau B2 (default B1,
     # issue #52) moet de bron in een "Bron:"-regel staan; bij B1 mag het
-    # antwoord géén Bron-regel bevatten.
+    # antwoord géén Bron-regel bevatten, behalve het bypass-overzicht (#102:
+    # gerichte uitzondering op ADR-0009, ook B1 krijgt een bronregel).
     level = entry.get("taalniveau", "B1")
     if entry.get("type") == "verheldering":
         bron_ok = True
-    elif level == "B2":
+    elif level == "B2" or route == "bypass":
         bron_ok = bron_match(entry.get("bron", ""), bron_line)
     else:
         bron_ok = bron_line == ""
@@ -517,12 +554,10 @@ def main() -> int:
         t0 = time.monotonic()
         plan = plan_entry(entry, api_key, today, rules)
         if plan["route"] == "bypass":
-            # deterministische bypass: geen conversation, template-antwoord uit
-            # dezelfde app-functie als productie (0 LLM-calls voor de vraag)
+            # bypass: geen conversation, antwoord uit dezelfde app-functie als
+            # productie (0 LLM-calls voor de vraag; bij intake_lookup 1 intake-call)
             run = {
-                "antwoord": lookups.render_lookup_answer(
-                    plan["lookup"], plan["lookup_message"], rules, today, entry.get("taalniveau", "B1")
-                ),
+                "antwoord": lookups.render_answer(plan["lookup"], entry.get("taalniveau", "B1")),
                 "trace": [],
                 "error": "",
                 "llm_calls": 0,
@@ -532,6 +567,7 @@ def main() -> int:
             run["llm_calls"] = len(run["trace"][-1]["agents"]) if run["trace"] else 0
         result = check_entry(entry, run["antwoord"], run["trace"], route=plan["route"])
         result["route"] = plan["route"]
+        result["route_reden"] = plan["route_reden"]
         result["duur_ms"] = round((time.monotonic() - t0) * 1000, 1)
         result["llm_calls"] = run.get("llm_calls", 0)
         result["intake_ms"] = plan["intake_ms"]

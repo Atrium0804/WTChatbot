@@ -86,10 +86,10 @@ _Avoid_: agent-route, "naar een agent"
 Eén tabel die per vraag of gesprek vastlegt welke route de app moet kiezen: deterministische bypass of inhoudelijke route. Elk reviewgeval over routering krijgt hier een regel, met de herkomst erbij.
 _Avoid_: routetabel, bypass-lijst
 **Deterministische bypass**:
-Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een template (bron+versie+artikel bij B2) — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek. Twee ingangen: de regex herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call, die geboortejaar of discipline aanvult).
+Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een overzicht met bron en versie — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek, ook als kort vervolg op een eerdere lookup. Twee ingangen: de app herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call) bij een herkende vraag waarvan het geboortejaar alleen nog bevestigd moest worden. De intake vult nooit een gegeven aan dat de gebruiker niet zelf noemde, en maakt van een afgewezen vraag geen bypass.
 
 **Intake (light-model intake)**:
-Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de regex-lookup de route.
+Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de herkenning van de app (lookup, onvolledige lookup of geen lookup) de route.
 
 **Direct-to-expert**:
 De app start een conversatie direct bij de domeinexpert (via `MISTRAL_AGENT_ID_KNWU`/`_REGIO`/`_CLUB`/`_ARCHIEF`) als de intake het domein met confidence ≥ drempel (`INTAKE_CONFIDENCE_THRESHOLD`, default 0,8) bepaalt — de router-call wordt zo bespaard.

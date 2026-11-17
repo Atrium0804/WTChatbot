@@ -712,14 +712,15 @@ class PlanEntryTests(unittest.TestCase):
     def test_bypass_bij_pure_lookup_zonder_intake_call(self) -> None:
         entry = {
             "id": "x",
-            "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+            "vraag": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen?",
         }
         with patch.object(run_eval.intake, "classify_message") as classify:
             plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
         classify.assert_not_called()  # bypass gebeurt vóór de intake, 0 LLM-calls
         self.assertEqual(plan["route"], "bypass")
+        self.assertEqual(plan["route_reden"], "regex_lookup")
         self.assertIsNone(plan["agent_id"])
-        self.assertEqual(plan["lookup"]["kind"], "categorie")
+        self.assertIn("**Geboortejaar 2015**", run_eval.lookups.render_answer(plan["lookup"], "B1"))
 
     def test_via_router_forceert_router(self) -> None:
         entry = {"id": "x", "vraag": "Hoe zit het met die wedstrijd?", "via": "router"}
@@ -728,19 +729,39 @@ class PlanEntryTests(unittest.TestCase):
         self.assertEqual(plan["route"], "router")
         self.assertEqual(plan["agent_id"], "ag_router")
 
-    def test_discipline_clarification_bypasses_using_previous_question(self) -> None:
-        entry = {"vraag": "weg", "beurten": ["wlk verzet voor u8"]}
-        with patch.object(
+    def test_beurten_replay_in_order_through_the_lookup_state(self) -> None:
+        entry = {"vraag": "weg", "beurten": ["wat is categorie 1", "wlk verzet voor u8"]}
+        with patch.object(run_eval.intake, "classify_message") as classify:
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        classify.assert_not_called()
+        self.assertEqual(plan["route"], "bypass")
+        answer = run_eval.lookups.render_answer(plan["lookup"], "B2")
+        self.assertIn("5,50 meter", answer)
+        self.assertNotIn("Veldrijden", answer)
+        self.assertNotIn("Oude cat.", answer)
+
+    def test_rejected_beurt_ends_reuse_of_the_earlier_profile(self) -> None:
+        entry = {"vraag": "alleen meisjes", "beurten": ["Welke categorie voor JO11?", "Waarom?"]}
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}), patch.object(
             run_eval.intake, "classify_message", return_value=dict(run_eval.intake.FALLBACK)
         ) as classify:
             plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        classify.assert_called_once()
+        self.assertEqual(plan["route"], "router")
+
+    def test_earlier_incomplete_beurt_gets_the_intake_completion_like_the_app(self) -> None:
+        entry = {"vraag": "alleen meisjes", "beurten": ["Welk verzet? 2012"]}
+        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+        with patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ) as classify:
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        classify.assert_called_once()  # alleen voor de eerdere beurt
         self.assertEqual(plan["route"], "bypass")
-        self.assertEqual(plan["lookup"]["category"], "U8")
-        classify.assert_not_called()
-        answer = run_eval.lookups.render_lookup_answer(
-            plan["lookup"], plan["lookup_message"], self.rules, self.today, "B2"
-        )
-        self.assertIn("5,50 meter", answer)
+        self.assertEqual(plan["route_reden"], "regex_lookup")
+        answer = run_eval.lookups.render_answer(plan["lookup"], "B1")
+        self.assertIn("**Geboortejaar 2012**", answer)
+        self.assertNotIn("Jongens", answer)
 
     def test_intake_direct_to_expert_bij_hoge_confidence(self) -> None:
         entry = {"id": "x", "vraag": "Wat kost de contributie bij WTC Woerden?"}
@@ -779,23 +800,28 @@ class PlanEntryTests(unittest.TestCase):
         self.assertEqual(plan["route"], "router")
         self.assertEqual(plan["agent_id"], "ag_router")
 
-    def test_intake_can_lookup_compleet_maken(self) -> None:
-        # regex vindt geen geboortejaar, de intake wel -> toch bypass
-        entry = {"id": "x", "vraag": "Welke licentie heb ik nodig?"}
-        intake_result = {
-            "intentie": "lookup",
-            "domein": "knwu",
-            "discipline": "onbekend",
-            "geboortejaar": 2012,
-            "leeftijd": None,
-            "confidence": 0.9,
-        }
+    def test_intake_kan_onvolledige_lookup_compleet_maken(self) -> None:
+        # het kale jaartal is pas met de intake een geboortejaar -> intake-bypass
+        entry = {"id": "x", "vraag": "Welk verzet? 2012"}
+        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
         with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}), patch.object(
             run_eval.intake, "classify_message", return_value=intake_result
         ):
             plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
         self.assertEqual(plan["route"], "bypass")
-        self.assertEqual(plan["lookup"]["birth_year"], 2012)
+        self.assertEqual(plan["route_reden"], "intake_lookup")
+        self.assertIn("**Geboortejaar 2012**", run_eval.lookups.render_answer(plan["lookup"], "B1"))
+
+    def test_intake_redt_afgewezen_invoer_niet(self) -> None:
+        entry = {"id": "x", "vraag": "Welke categorie voor geboortejaar 2015 in 2025?"}
+        intake_result = {
+            **run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2015, "discipline": "weg",
+        }
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}), patch.object(
+            run_eval.intake, "classify_message", return_value=intake_result
+        ):
+            plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
+        self.assertEqual(plan["route"], "router")
 
 
 class RouteAssertionTests(unittest.TestCase):
@@ -830,24 +856,33 @@ class RouteAssertionTests(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.assertTrue(result["route_ok"])
 
+    def test_b1_bypass_draagt_wel_een_bronregel(self) -> None:
+        # #102: gerichte uitzondering op ADR-0009 voor het bypass-overzicht
+        entry = self.entry(taalniveau="B1")
+        bypass = run_eval.check_entry(entry, "U12\n\nBron: doc.pdf", [], route="bypass")
+        agent = run_eval.check_entry(entry, "U12\n\nBron: doc.pdf", [], route="router")
+        self.assertTrue(bypass["bron_ok"])
+        self.assertFalse(agent["bron_ok"])
+
 
 class BypassTemplateEvalsetTests(unittest.TestCase):
-    """#92: alle evalset-entries met verwacht_route: bypass moeten met het
-    productie-template-antwoord (lookups.render_lookup_answer) de checks halen."""
+    """#92/#136: alle evalset-entries met verwacht_route: bypass moeten via
+    dezelfde recognize/render-operaties als de app de checks halen, zonder intake."""
 
     def test_bypass_entries_halen_checks_met_template(self) -> None:
         entries = run_eval.load_evalset(EVALSET)
         rules = run_eval.knwu_categories.load_rules()
-        today = PEILDATUM
         bypass_entries = [e for e in entries if e.get("verwacht_route") == "bypass"]
         self.assertGreaterEqual(len(bypass_entries), 4)  # oa. de 2 baseline-lookup-vragen
         for e in bypass_entries:
             with self.subTest(e["id"]):
-                lookup = run_eval.lookups.match_lookup(e["vraag"], today, rules)
-                self.assertIsNotNone(lookup, "geen lookup gedetecteerd")
-                antwoord = run_eval.lookups.render_lookup_answer(
-                    lookup, e["vraag"], rules, today, e.get("taalniveau", "B1")
-                )
+                with patch.object(
+                    run_eval.intake, "classify_message", return_value=dict(run_eval.intake.FALLBACK)
+                ):
+                    plan = run_eval.plan_entry(e, "key", PEILDATUM, rules)
+                self.assertEqual(plan["route"], "bypass", "geen lookup herkend")
+                self.assertEqual(plan["route_reden"], "regex_lookup")
+                antwoord = run_eval.lookups.render_answer(plan["lookup"], e.get("taalniveau", "B1"))
                 result = run_eval.check_entry(e, antwoord, [], route="bypass")
                 self.assertTrue(result["ok"], f"{e['id']}: {result}")
 

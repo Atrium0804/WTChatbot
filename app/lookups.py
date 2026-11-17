@@ -22,9 +22,10 @@ from typing import Literal, TypeAlias
 
 import context
 import knwu_categories
+import message_recognition
 
 # Woorden die aangeven dat de vraag méér is dan het kale feit -> geen bypass.
-MEER_DAN_FEIT = re.compile(
+_MEER_DAN_FEIT = re.compile(
     r"\b(waarom|hoe zit het|hoe zit|uitleg|leg uit|leg toe|versie|gecheckt|"
     r"heb je dit|bron|waar staat|geldt dit|ook voor|wat als|verschil|"
     r"toelichting|pakket|kosten|prijs|tarief|bedrag|regels|"
@@ -33,13 +34,13 @@ MEER_DAN_FEIT = re.compile(
     re.IGNORECASE,
 )
 # Onderwerpen die een echte (reglement)vraag zijn, geen kale lookup.
-REGELMENT_ONDERWERP = re.compile(
+_REGELMENT_ONDERWERP = re.compile(
     r"\b(wedstrijd|nk|meedoen|deelnemen|inschrijf|verzekerd|verzekering|"
     r"contributie|zmc|mnc|training|kalender|starttijd|dispensatie|"
     r"ranglijst|kwalificatie)\b",
     re.IGNORECASE,
 )
-CATEGORIE_VRAAG = re.compile(
+_CATEGORIE_VRAAG = re.compile(
     r"(in welke|welke|in welk|waarin)\s+(leeftijds)?categorie"
     r"|wat\s+is\s+(?:(?:de|een)\s+)?(?:leeftijds)?categorie\b"
     r"|categorie\s+(rijdt|valt|hoort)"
@@ -47,34 +48,34 @@ CATEGORIE_VRAAG = re.compile(
     r"|hoort\s+bij\s+(een\s+|de\s+)?categorie",
     re.IGNORECASE,
 )
-LICENTIE_MENTION = re.compile(r"\blicentie", re.IGNORECASE)
-VRAAG_WOORD = re.compile(
+_LICENTIE_MENTION = re.compile(r"\blicentie", re.IGNORECASE)
+_VRAAG_WOORD = re.compile(
     r"\b(welke|welk|wlke|wlk|wat|hoe|hoeveel|heeft|heb|nodig|aanvragen|krijg|krijgt)\b",
     re.IGNORECASE,
 )
-VERZET_VRAAG = re.compile(
+_VERZET_VRAAG = re.compile(
     r"verzet|tandwiel|versnelling|rollout|afgerolde\s+afstand", re.IGNORECASE
 )
-VERTALING_VRAAG = re.compile(
+_VERTALING_VRAAG = re.compile(
     r"wat\s+(is|betekent)|hoe\s+heet|betekenis|vertaling|nieuwe\s+aanduiding"
     r"|hoe\s+heet\s+.*\s+nu|omgerekend|in\s+de\s+nieuwe",
     re.IGNORECASE,
 )
-NEW_CATEGORY_PATTERN = re.compile(r"\b(JO|MO|MU|VU|U)(\d{1,2})\b", re.IGNORECASE)
-CATEGORY_FRAGMENT_PATTERN = re.compile(
+_NEW_CATEGORY_PATTERN = re.compile(r"\b(JO|MO|MU|VU|U)(\d{1,2})\b", re.IGNORECASE)
+_CATEGORY_FRAGMENT_PATTERN = re.compile(
     r"(?:JO|MO|MU|VU|U)\d{1,2}"
     r"(?:\s*(?:/|,|&|\ben\b)\s*(?:JO|MO|MU|VU|U)\d{1,2})*",
     re.IGNORECASE,
 )
-OLD_DESIGNATION_REQUEST = re.compile(r"\b(categorie(?:ën|en)?|oude\s+indeling)\b", re.IGNORECASE)
-DISCIPLINE_PATTERNS = [
+_OLD_DESIGNATION_REQUEST = re.compile(r"\b(categorie(?:ën|en)?|oude\s+indeling)\b", re.IGNORECASE)
+_DISCIPLINE_PATTERNS = [
     ("veld", re.compile(r"\b(veldrijden|veldrit|in het veld|het veld|veld|cross)\b", re.IGNORECASE)),
     ("weg", re.compile(r"\b(wegwielrennen|op de weg|de weg|weg)\b", re.IGNORECASE)),
 ]
-BUITEN_SCOPE_DISCIPLINE = re.compile(
+_BUITEN_SCOPE_DISCIPLINE = re.compile(
     r"\b(baanwielrennen|baanrennen|baan|mountainbik\w*|mtb|bmx)\b", re.IGNORECASE
 )
-MULTIPLE_RIDERS = re.compile(
+_MULTIPLE_RIDERS = re.compile(
     r"\b(?:twee|beide|allebei|meerdere|kinderen|renners)\b"
     r"|\b(?:zoon|dochter|kind)\s+en\s+(?:zoon|dochter|kind)\b",
     re.IGNORECASE,
@@ -84,89 +85,74 @@ _DATA_TOKEN = (
     r"(?:(?:een|mijn)\s+)?(?:jongens?|meisjes?|zoon|dochter)"
     r"|(?:(?:uit|geboren(?:\s+in)?|geboortejaar)\s+)?(?:19|20)\d{2}"
     r"|(?:categorie|cat\.?)\s*\d+"
-    rf"|{CATEGORY_FRAGMENT_PATTERN.pattern}"
+    rf"|{_CATEGORY_FRAGMENT_PATTERN.pattern}"
     r"|op\s+de\s+weg|in\s+het\s+veld|wegwielrennen|veldrijden|veldrit|weg|veld|cross"
 )
-DATA_ONLY_MESSAGE = re.compile(
+_DATA_ONLY_MESSAGE = re.compile(
     rf"\s*(?:{_DATA_TOKEN})(?:(?:\s*,\s*|\s+en\s+|\s+)(?:{_DATA_TOKEN}))*\s*[.?!]*\s*",
     re.IGNORECASE,
 )
-DATA_PRIMARY_INPUT = re.compile(
-    rf"\b(?:19|20)\d{{2}}\b|\b(?:categorie|cat\.?)\s*\d+|{CATEGORY_FRAGMENT_PATTERN.pattern}",
+_DATA_PRIMARY_INPUT = re.compile(
+    rf"\b(?:19|20)\d{{2}}\b|\b(?:categorie|cat\.?)\s*\d+|{_CATEGORY_FRAGMENT_PATTERN.pattern}",
     re.IGNORECASE,
 )
 
 # Slotvraag aan het eind van elk deterministisch antwoord (#91 besluit 4, #135):
 # dit is het kale feit; wie meer wil weten, krijgt het aanbod om de
 # KNWU-documenten te doorzoeken. Een vervolgvraag gaat naar de inhoudelijke route.
-DISCLAIMER_LIBRARY = (
+_DISCLAIMER_LIBRARY = (
     "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
 )
 
-Gender = knwu_categories.Gender
-SupportedDiscipline = Literal["weg", "veld"]
+_Gender = knwu_categories.Gender
+_SupportedDiscipline = Literal["weg", "veld"]
 
 
 @dataclass(frozen=True)
-class SourceFact:
-    name: str
-    version: str | None
-    article: str | None
-
-
-@dataclass(frozen=True)
-class AnswerSources:
-    age_categories: SourceFact
-    gearing: SourceFact
-    licences: SourceFact
-    old_categories: SourceFact
-
-
-@dataclass(frozen=True)
-class BirthYearSelector:
+class _BirthYearSelector:
     kind: Literal["birth_year"]
     birth_year: int
 
 
 @dataclass(frozen=True)
-class CategoryMember:
-    gender: Gender | None
+class _CategoryMember:
+    gender: _Gender | None
     category: str
 
 
 @dataclass(frozen=True)
-class CategorySelector:
+class _CategorySelector:
     kind: Literal["category"]
-    members: tuple[CategoryMember, ...]
+    members: tuple[_CategoryMember, ...]
 
 
 @dataclass(frozen=True)
-class OldCategorySelector:
+class _OldCategorySelector:
     kind: Literal["old_category"]
     number: int
-    members: tuple[CategoryMember, ...]
+    members: tuple[_CategoryMember, ...]
 
 
 @dataclass(frozen=True)
-class StandaloneLicenceSelector:
+class _StandaloneLicenceSelector:
     kind: Literal["standalone_licence"]
     name: Literal["KNWU Licentie 17+"]
 
 
-PrimarySelector: TypeAlias = (
-    BirthYearSelector
-    | CategorySelector
-    | OldCategorySelector
-    | StandaloneLicenceSelector
+_PrimarySelector: TypeAlias = (
+    _BirthYearSelector
+    | _CategorySelector
+    | _OldCategorySelector
+    | _StandaloneLicenceSelector
 )
 
 
 @dataclass(frozen=True)
-class LookupProfile:
-    selector: PrimarySelector | None
-    gender: Gender | None
-    discipline: SupportedDiscipline | None
-    category_filter: tuple[tuple[CategoryMember, ...], ...] = ()
+class _LookupProfile:
+    selector: _PrimarySelector | None
+    gender: _Gender | None
+    discipline: _SupportedDiscipline | None
+    category_filter: tuple[tuple[_CategoryMember, ...], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -175,74 +161,74 @@ class NoLookupState:
 
 
 @dataclass(frozen=True)
-class PendingLookupState:
+class _PendingLookupState:
     kind: Literal["pending"] = "pending"
-    profile: LookupProfile = LookupProfile(None, None, None)
+    profile: _LookupProfile = _LookupProfile(None, None, None)
 
 
 @dataclass(frozen=True)
-class CompletedLookupState:
+class _CompletedLookupState:
     kind: Literal["completed"] = "completed"
-    profile: LookupProfile = LookupProfile(None, None, None)
+    profile: _LookupProfile = _LookupProfile(None, None, None)
 
 
-LookupState: TypeAlias = NoLookupState | PendingLookupState | CompletedLookupState
+LookupState: TypeAlias = NoLookupState | _PendingLookupState | _CompletedLookupState
 
 
 @dataclass(frozen=True)
-class InputEvidence:
+class _InputEvidence:
     explicit_birth_years: tuple[int, ...] = ()
     contains_age: bool = False
     requires_intake: bool = False
 
 
 @dataclass(frozen=True)
-class Season:
-    discipline: SupportedDiscipline
+class _Season:
+    discipline: _SupportedDiscipline
     start_year: int
     end_year: int
     reference_year: int
 
 
 @dataclass(frozen=True)
-class LicenceFact:
+class _LicenceFact:
     name: str
     period: str | None = None
 
 
 @dataclass(frozen=True)
-class AnswerRow:
-    season: Season
-    gender: Gender
+class _AnswerRow:
+    season: _Season
+    gender: _Gender
     category: str
     birth_year: int
     old_category: int | None
     gear: float | str | None
-    licences: tuple[LicenceFact, ...]
+    licences: tuple[_LicenceFact, ...]
 
 
 @dataclass(frozen=True)
-class ReadyLookup:
-    selector: PrimarySelector
-    profile: LookupProfile
+class _ReadyLookup:
+    selector: _PrimarySelector
+    profile: _LookupProfile
     heading: str
-    rows: tuple[AnswerRow, ...]
-    sources: AnswerSources
+    rows: tuple[_AnswerRow, ...]
+    sources: knwu_categories.RuleSources
     outside_youth_birth_year: int | None = None
 
 
 @dataclass(frozen=True)
 class Ready:
     kind: Literal["ready"]
-    ready: ReadyLookup
-    next_state: CompletedLookupState
+    ready: _ReadyLookup
+    next_state: _CompletedLookupState
 
 
 @dataclass(frozen=True)
 class NeedsInformation:
     kind: Literal["needs_information"]
-    next_state: PendingLookupState
-    evidence: InputEvidence = InputEvidence()
+    next_state: _PendingLookupState
+    evidence: _InputEvidence = _InputEvidence()
 
 
 @dataclass(frozen=True)
@@ -257,8 +243,8 @@ LookupDecision: TypeAlias = Ready | NeedsInformation | NotEligible
 @dataclass(frozen=True)
 class _ParsedTurn:
     eligible: bool
-    profile: LookupProfile
-    evidence: InputEvidence = InputEvidence()
+    profile: _LookupProfile
+    evidence: _InputEvidence = _InputEvidence()
 
 
 @dataclass(frozen=True)
@@ -271,36 +257,36 @@ class _TurnShape:
 
 @dataclass(frozen=True)
 class _CategoryInputs:
-    members: tuple[CategoryMember, ...]
+    members: tuple[_CategoryMember, ...]
     old_number: int | None
-    old_members: tuple[CategoryMember, ...]
+    old_members: tuple[_CategoryMember, ...]
 
 
 @dataclass(frozen=True)
 class _ParsedInputs:
-    profile: LookupProfile
-    evidence: InputEvidence
+    profile: _LookupProfile
+    evidence: _InputEvidence
 
 
-def _supported_seasons(today: date) -> tuple[Season, Season]:
+def _supported_seasons(today: date) -> tuple[_Season, _Season]:
     year = today.year
     if today.month <= 2:
         return (
-            Season("veld", year - 1, year, year),
-            Season("weg", year, year, year),
+            _Season("veld", year - 1, year, year),
+            _Season("weg", year, year, year),
         )
     if today.month <= 9:
         return (
-            Season("weg", year, year, year),
-            Season("veld", year, year + 1, year + 1),
+            _Season("weg", year, year, year),
+            _Season("veld", year, year + 1, year + 1),
         )
     return (
-        Season("veld", year, year + 1, year + 1),
-        Season("weg", year + 1, year + 1, year + 1),
+        _Season("veld", year, year + 1, year + 1),
+        _Season("weg", year + 1, year + 1, year + 1),
     )
 
 
-def _gender_in_message(message: str) -> Gender | None:
+def _gender_in_message(message: str) -> _Gender | None:
     boys = re.search(r"\b(jongen(?:s)?|zoon)\b", message, re.IGNORECASE) is not None
     girls = re.search(r"\b(meisje(?:s)?|dochter)\b", message, re.IGNORECASE) is not None
     if boys == girls:
@@ -308,9 +294,9 @@ def _gender_in_message(message: str) -> Gender | None:
     return "jongens" if boys else "meisjes"
 
 
-def _discipline_in_message(message: str) -> tuple[SupportedDiscipline | None, bool]:
-    selected: list[SupportedDiscipline] = []
-    for discipline, pattern in DISCIPLINE_PATTERNS:
+def _discipline_in_message(message: str) -> tuple[_SupportedDiscipline | None, bool]:
+    selected: list[_SupportedDiscipline] = []
+    for discipline, pattern in _DISCIPLINE_PATTERNS:
         if not pattern.search(message):
             continue
         if discipline == "weg":
@@ -321,14 +307,14 @@ def _discipline_in_message(message: str) -> tuple[SupportedDiscipline | None, bo
         return None, True
     if selected:
         return selected[0], False
-    if BUITEN_SCOPE_DISCIPLINE.search(message):
+    if _BUITEN_SCOPE_DISCIPLINE.search(message):
         return None, True
     return None, False
 
 
-def _category_members(message: str, rules: dict) -> tuple[CategoryMember, ...] | None:
-    members: list[CategoryMember] = []
-    for match in NEW_CATEGORY_PATTERN.finditer(message):
+def _category_members(message: str, rules: dict) -> tuple[_CategoryMember, ...] | None:
+    members: list[_CategoryMember] = []
+    for match in _NEW_CATEGORY_PATTERN.finditer(message):
         if re.search(
             r"\blicentie\s*$",
             message[max(0, match.start() - 15) : match.start()],
@@ -342,22 +328,22 @@ def _category_members(message: str, rules: dict) -> tuple[CategoryMember, ...] |
         category = knwu_categories.category_name(under, rules)
         if category is None:
             return None
-        gender: Gender | None = None
+        gender: _Gender | None = None
         if prefix.upper() in ("JO", "MU"):
             gender = "jongens"
         elif prefix.upper() in ("MO", "VU"):
             gender = "meisjes"
-        member = CategoryMember(gender, category)
+        member = _CategoryMember(gender, category)
         if member not in members:
             members.append(member)
     return tuple(members)
 
 
-def _old_category_members(number: int, rules: dict) -> tuple[CategoryMember, ...] | None:
+def _old_category_members(number: int, rules: dict) -> tuple[_CategoryMember, ...] | None:
     groups = knwu_categories.old_category_groups(number, rules)
     if not groups:
         return None
-    members: list[CategoryMember] = []
+    members: list[_CategoryMember] = []
     for group in groups:
         for gender in ("jongens", "meisjes"):
             under = group.get(gender)
@@ -366,42 +352,48 @@ def _old_category_members(number: int, rules: dict) -> tuple[CategoryMember, ...
             category = knwu_categories.category_name(under, rules)
             if category is None:
                 return None
-            members.append(CategoryMember(gender, category))
+            members.append(_CategoryMember(gender, category))
     return tuple(members)
 
 
 def _turn_shape(text: str) -> _TurnShape:
-    licence_question = bool(LICENTIE_MENTION.search(text) and VRAAG_WOORD.search(text))
+    licence_question = bool(_LICENTIE_MENTION.search(text) and _VRAAG_WOORD.search(text))
     verzet_question = bool(
-        VERZET_VRAAG.search(text)
-        and (VRAAG_WOORD.search(text) or "?" in text)
+        _VERZET_VRAAG.search(text)
+        and (_VRAAG_WOORD.search(text) or "?" in text)
     )
     old_category_fragment = bool(
-        context.OLD_CATEGORY_PATTERN.fullmatch(text.rstrip(".?!"))
+        message_recognition.has_old_category_fragment(text.rstrip(".?!"))
     )
-    category_fragment = bool(CATEGORY_FRAGMENT_PATTERN.fullmatch(text.rstrip(".?!")))
-    data_only = bool(DATA_ONLY_MESSAGE.fullmatch(text) and DATA_PRIMARY_INPUT.search(text))
+    category_fragment = bool(_CATEGORY_FRAGMENT_PATTERN.fullmatch(text.rstrip(".?!")))
+    data_only = bool(_DATA_ONLY_MESSAGE.fullmatch(text) and _DATA_PRIMARY_INPUT.search(text))
     translation_question = bool(
-        VERTALING_VRAAG.search(text)
+        _VERTALING_VRAAG.search(text)
         and (
-            NEW_CATEGORY_PATTERN.search(text)
-            or context.CALENDAR_PATTERN.search(text)
-            or context.NIEUWELING_PATTERN.search(text)
-            or context.old_category_numbers(text)
+            _NEW_CATEGORY_PATTERN.search(text)
+            or message_recognition.has_calendar_categories(text)
+            or message_recognition.has_nieuweling_mention(text)
+            or message_recognition.old_category_numbers(text)
         )
     )
     is_complete_question = bool(
-        CATEGORIE_VRAAG.search(text)
+        _CATEGORIE_VRAAG.search(text)
         or licence_question
         or verzet_question
         or translation_question
-        or (OLD_DESIGNATION_REQUEST.search(text) and not old_category_fragment)
-        or (context.old_category_numbers(text) and not old_category_fragment)
-        or (context.CALENDAR_PATTERN.search(text) and not category_fragment)
+        or (_OLD_DESIGNATION_REQUEST.search(text) and not old_category_fragment)
+        or (
+            message_recognition.old_category_numbers(text)
+            and not old_category_fragment
+        )
+        or (
+            message_recognition.has_calendar_categories(text)
+            and not category_fragment
+        )
         or data_only
     )
     is_fragment = bool(
-        context.BARE_YEAR_MESSAGE.fullmatch(text)
+        message_recognition.is_bare_year_message(text)
         or re.fullmatch(r"\s*(?:en\s+)?voor\s+(?:19|20)\d{2}\s*[.?!]*", text, re.IGNORECASE)
         or re.fullmatch(
             r"\s*(?:geboortejaar|geboren(?:\s+in)?)\s*[:=]?\s*(?:19|20)\d{2}\s*[.?!]*",
@@ -431,7 +423,7 @@ def _parse_category_inputs(text: str, rules: dict) -> _CategoryInputs | None:
     members = _category_members(text, rules)
     if members is None:
         return None
-    old_numbers = context.old_category_numbers(text)
+    old_numbers = message_recognition.old_category_numbers(text)
     if len(old_numbers) > 1:
         return None
     old_members = _old_category_members(old_numbers[0], rules) if old_numbers else ()
@@ -447,9 +439,9 @@ def _parse_category_inputs(text: str, rules: dict) -> _CategoryInputs | None:
 
 def _parse_year_evidence(
     text: str, shape: _TurnShape, has_category_selector: bool
-) -> InputEvidence | None:
+) -> _InputEvidence | None:
     explicit_years = re.findall(r"\b(?:19|20)\d{2}\b", text)
-    if context.BARE_YEAR_MESSAGE.fullmatch(text) or shape.data_only:
+    if message_recognition.is_bare_year_message(text) or shape.data_only:
         birth_years = list(dict.fromkeys(int(year) for year in explicit_years))
     else:
         birth_years = []
@@ -463,13 +455,13 @@ def _parse_year_evidence(
                 int(match) for match in re.findall(pattern, text, re.IGNORECASE)
             )
         birth_years = list(dict.fromkeys(birth_years))
-    if len(birth_years) > 1 or context.find_ages_in_years(text):
+    if len(birth_years) > 1 or message_recognition.find_ages_in_years(text):
         return None
     unmatched_years = [
         int(year) for year in explicit_years if int(year) not in birth_years
     ]
     if not unmatched_years:
-        return InputEvidence(tuple(birth_years))
+        return _InputEvidence(tuple(birth_years))
     is_groundable_year = (
         len(explicit_years) == 1
         and len(unmatched_years) == 1
@@ -483,49 +475,49 @@ def _parse_year_evidence(
         )
     )
     if is_groundable_year:
-        return InputEvidence(tuple(unmatched_years), requires_intake=True)
+        return _InputEvidence(tuple(unmatched_years), requires_intake=True)
     return None
 
 
 def _selector_from_inputs(
-    text: str, evidence: InputEvidence, category_inputs: _CategoryInputs, rules: dict
-) -> tuple[PrimarySelector | None, tuple[tuple[CategoryMember, ...], ...]] | None:
-    selector: PrimarySelector | None = None
-    category_filter: tuple[tuple[CategoryMember, ...], ...] = ()
+    text: str, evidence: _InputEvidence, category_inputs: _CategoryInputs, rules: dict
+) -> tuple[_PrimarySelector | None, tuple[tuple[_CategoryMember, ...], ...]] | None:
+    selector: _PrimarySelector | None = None
+    category_filter: tuple[tuple[_CategoryMember, ...], ...] = ()
     if evidence.explicit_birth_years and not evidence.requires_intake:
-        selector = BirthYearSelector("birth_year", evidence.explicit_birth_years[0])
+        selector = _BirthYearSelector("birth_year", evidence.explicit_birth_years[0])
         if category_inputs.members:
             category_filter += (category_inputs.members,)
         if category_inputs.old_members:
             category_filter += (category_inputs.old_members,)
     elif category_inputs.old_number is not None:
-        selector = OldCategorySelector(
+        selector = _OldCategorySelector(
             "old_category", category_inputs.old_number, category_inputs.old_members
         )
         if category_inputs.members:
             category_filter = (category_inputs.members,)
     elif category_inputs.members:
-        selector = CategorySelector("category", category_inputs.members)
+        selector = _CategorySelector("category", category_inputs.members)
     elif (
         re.search(r"\blicentie\s+17\s*\+", text, re.IGNORECASE)
-        and VRAAG_WOORD.search(text)
+        and _VRAAG_WOORD.search(text)
     ):
-        selector = StandaloneLicenceSelector("standalone_licence", "KNWU Licentie 17+")
+        selector = _StandaloneLicenceSelector("standalone_licence", "KNWU Licentie 17+")
     elif re.search(r"\bnieuweling(?:en)?\b", text, re.IGNORECASE):
         category = knwu_categories.category_name(17, rules)
         if category is not None:
-            selector = CategorySelector("category", (CategoryMember(None, category),))
+            selector = _CategorySelector("category", (_CategoryMember(None, category),))
     if evidence.requires_intake and selector is not None:
         return None
     return selector, category_filter
 
 
-def _explicit_attributes(text: str) -> tuple[Gender | None, SupportedDiscipline | None] | None:
+def _explicit_attributes(text: str) -> tuple[_Gender | None, _SupportedDiscipline | None] | None:
     if (
-        MEER_DAN_FEIT.search(text)
-        or REGELMENT_ONDERWERP.search(text)
-        or BUITEN_SCOPE_DISCIPLINE.search(text)
-        or MULTIPLE_RIDERS.search(text)
+        _MEER_DAN_FEIT.search(text)
+        or _REGELMENT_ONDERWERP.search(text)
+        or _BUITEN_SCOPE_DISCIPLINE.search(text)
+        or _MULTIPLE_RIDERS.search(text)
     ):
         return None
     discipline, conflict = _discipline_in_message(text)
@@ -567,11 +559,11 @@ def _parse_explicit_inputs(
         return None
     selector, category_filter = selection
 
-    profile = LookupProfile(
+    profile = _LookupProfile(
         selector=selector,
         gender=gender or (
             selector.members[0].gender
-            if isinstance(selector, CategorySelector) and len(selector.members) == 1
+            if isinstance(selector, _CategorySelector) and len(selector.members) == 1
             else None
         ),
         discipline=discipline,
@@ -585,9 +577,9 @@ def _apply_followup(
     text: str,
     shape: _TurnShape,
     previous_state: LookupState,
-) -> LookupProfile:
+) -> _LookupProfile:
     if not shape.is_fragment or not isinstance(
-        previous_state, (PendingLookupState, CompletedLookupState)
+        previous_state, (_PendingLookupState, _CompletedLookupState)
     ):
         return parsed.profile
     base = previous_state.profile
@@ -606,35 +598,35 @@ def _apply_followup(
         elif (
             gender is not None
             and gender != base.gender
-            and isinstance(selector, CategorySelector)
+            and isinstance(selector, _CategorySelector)
             and len(selector.members) == 1
             and selector.members[0].gender is not None
         ):
-            selector = CategorySelector(
-                "category", (CategoryMember(None, selector.members[0].category),)
+            selector = _CategorySelector(
+                "category", (_CategoryMember(None, selector.members[0].category),)
             )
     elif gender is None:
         gender = base.gender
-    return LookupProfile(selector, gender, discipline, category_filter)
+    return _LookupProfile(selector, gender, discipline, category_filter)
 
 
 def _parse_lookup_turn(
     message: str, rules: dict, previous_state: LookupState
 ) -> _ParsedTurn:
     text = message.strip()
-    empty_profile = LookupProfile(None, None, None)
+    empty_profile = _LookupProfile(None, None, None)
     shape = _turn_shape(text)
     explicit_inputs = _parse_explicit_inputs(text, rules, shape)
     if explicit_inputs is None:
         return _ParsedTurn(False, empty_profile)
 
     eligible = bool(
-        context.BARE_YEAR_MESSAGE.fullmatch(text)
+        message_recognition.is_bare_year_message(text)
         or shape.old_category_fragment
         or shape.is_complete_question
         or (
             shape.is_fragment
-            and isinstance(previous_state, (PendingLookupState, CompletedLookupState))
+            and isinstance(previous_state, (_PendingLookupState, _CompletedLookupState))
         )
     )
     if not eligible:
@@ -643,70 +635,54 @@ def _parse_lookup_turn(
     return _ParsedTurn(True, profile, explicit_inputs.evidence)
 
 
-def _season_label(season: Season) -> str:
+def _season_label(season: _Season) -> str:
     if season.discipline == "veld":
         return f"Veldrijden {season.start_year}-{season.end_year}"
     return f"Wegwielrennen {season.reference_year}"
 
 
-def _old_category_for(gender: Gender, category: str, rules: dict) -> int | None:
-    under = int(category.split()[0][1:])
-    for number_text, groups in rules["oude_categorie_indeling"]["categorieen"].items():
-        if any(group.get(gender) == under for group in groups):
-            return int(number_text)
-    return None
-
-
-def _licences_for_season(birth_year: int, season: Season, rules: dict) -> tuple[LicenceFact, ...]:
+def _licences_for_season(birth_year: int, season: _Season, rules: dict) -> tuple[_LicenceFact, ...]:
     start_name = knwu_categories.licence(birth_year, season.start_year, rules)
     end_name = knwu_categories.licence(birth_year, season.end_year, rules)
     if start_name == end_name:
-        return (LicenceFact(start_name),) if start_name else ()
-    facts: list[LicenceFact] = []
+        return (_LicenceFact(start_name),) if start_name else ()
+    facts: list[_LicenceFact] = []
     if start_name:
-        facts.append(LicenceFact(start_name, f"t/m dec {season.start_year}"))
+        facts.append(_LicenceFact(start_name, f"t/m dec {season.start_year}"))
     if end_name:
-        facts.append(LicenceFact(end_name, f"vanaf jan {season.end_year}"))
+        facts.append(_LicenceFact(end_name, f"vanaf jan {season.end_year}"))
     return tuple(facts)
 
 
-def _members_for_profile(profile: LookupProfile) -> tuple[CategoryMember, ...]:
+def _members_for_profile(profile: _LookupProfile) -> tuple[_CategoryMember, ...]:
     selector = profile.selector
-    if isinstance(selector, CategorySelector):
+    if isinstance(selector, _CategorySelector):
         return selector.members
-    if isinstance(selector, OldCategorySelector):
+    if isinstance(selector, _OldCategorySelector):
         return selector.members
     return ()
 
 
-def _ages_for_category(category: str, rules: dict) -> tuple[int, ...]:
-    return tuple(
-        int(age)
-        for age, name in rules["leeftijdscategorieen"]["per_leeftijd"].items()
-        if name == category
-    )
-
-
 def _candidate_birth_years(
-    selector: PrimarySelector,
-    season: Season,
-    members: tuple[CategoryMember, ...],
+    selector: _PrimarySelector,
+    season: _Season,
+    members: tuple[_CategoryMember, ...],
     rules: dict,
 ) -> tuple[int, ...]:
-    if isinstance(selector, BirthYearSelector):
+    if isinstance(selector, _BirthYearSelector):
         return (selector.birth_year,)
     return tuple(
         season.reference_year - age
         for member in members
-        for age in _ages_for_category(member.category, rules)
+        for age in knwu_categories.ages_for_category(member.category, rules)
     )
 
 
 def _matches_category_constraints(
-    profile: LookupProfile,
-    category_members: tuple[CategoryMember, ...],
+    profile: _LookupProfile,
+    category_members: tuple[_CategoryMember, ...],
     category: str,
-    gender: Gender,
+    gender: _Gender,
 ) -> bool:
     if profile.category_filter and any(
         not any(
@@ -732,14 +708,14 @@ def _matches_category_constraints(
 
 
 def _rows_for_season(
-    profile: LookupProfile, season: Season, genders: tuple[Gender, ...], rules: dict
-) -> list[AnswerRow]:
+    profile: _LookupProfile, season: _Season, genders: tuple[_Gender, ...], rules: dict
+) -> list[_AnswerRow]:
     selector = profile.selector
     if selector is None:
         return []
     category_members = _members_for_profile(profile)
-    rows: list[AnswerRow] = []
-    seen: set[tuple[Gender, str, int]] = set()
+    rows: list[_AnswerRow] = []
+    seen: set[tuple[_Gender, str, int]] = set()
     for birth_year in _candidate_birth_years(selector, season, category_members, rules):
         age = season.reference_year - birth_year
         category = knwu_categories.age_category(birth_year, season.reference_year, rules)
@@ -753,12 +729,14 @@ def _rows_for_season(
                 continue
             seen.add(row_key)
             rows.append(
-                AnswerRow(
+                _AnswerRow(
                     season=season,
                     gender=gender,
                     category=category,
                     birth_year=birth_year,
-                    old_category=_old_category_for(gender, category, rules),
+                    old_category=knwu_categories.old_category_number(
+                        gender, category, rules
+                    ),
                     gear=knwu_categories.max_gear(category, season.discipline, gender, rules),
                     licences=_licences_for_season(birth_year, season, rules),
                 )
@@ -766,12 +744,12 @@ def _rows_for_season(
     return rows
 
 
-def _calculate_rows(profile: LookupProfile, today: date, rules: dict) -> tuple[AnswerRow, ...]:
-    if profile.selector is None or isinstance(profile.selector, StandaloneLicenceSelector):
+def _calculate_rows(profile: _LookupProfile, today: date, rules: dict) -> tuple[_AnswerRow, ...]:
+    if profile.selector is None or isinstance(profile.selector, _StandaloneLicenceSelector):
         return ()
     seasons = _supported_seasons(today)
     disciplines = (profile.discipline,) if profile.discipline else ("weg", "veld")
-    genders: tuple[Gender, ...] = (
+    genders: tuple[_Gender, ...] = (
         (profile.gender,) if profile.gender else ("jongens", "meisjes")
     )
     rows = [
@@ -792,49 +770,32 @@ def _calculate_rows(profile: LookupProfile, today: date, rules: dict) -> tuple[A
     )
 
 
-def _heading_for(profile: LookupProfile, rules: dict) -> str:
+def _heading_for(profile: _LookupProfile, rules: dict) -> str:
     selector = profile.selector
-    if isinstance(selector, BirthYearSelector):
+    if isinstance(selector, _BirthYearSelector):
         return f"Geboortejaar {selector.birth_year}"
-    if isinstance(selector, OldCategorySelector):
+    if isinstance(selector, _OldCategorySelector):
         last_group = (knwu_categories.old_category_groups(selector.number, rules) or [])[-1]
         notation = knwu_categories.combined_notation(last_group.get("jongens"), last_group.get("meisjes"))
         return f"Oude cat. {selector.number} ({notation})"
-    if isinstance(selector, StandaloneLicenceSelector):
+    if isinstance(selector, _StandaloneLicenceSelector):
         return selector.name
-    if isinstance(selector, CategorySelector):
+    if isinstance(selector, _CategorySelector):
         if len(selector.members) == 2 and all(member.gender for member in selector.members):
             boys = next(member for member in selector.members if member.gender == "jongens")
             girls = next(member for member in selector.members if member.gender == "meisjes")
             notation = knwu_categories.combined_notation(
-                int(boys.category.split()[0][1:]),
-                int(girls.category.split()[0][1:]),
+                knwu_categories.category_under(boys.category),
+                knwu_categories.category_under(girls.category),
             )
             return notation
         member = selector.members[0]
         if member.gender:
             prefix = "JO" if member.gender == "jongens" else "MO"
-            under = member.category.split()[0].removeprefix("U")
+            under = knwu_categories.category_under(member.category)
             return f"{prefix}{under}"
         return member.category
     return "Overzicht"
-
-
-def _answer_sources(rules: dict) -> AnswerSources:
-    return AnswerSources(
-        age_categories=SourceFact(
-            rules["bron"], rules["versie"], rules["leeftijdscategorieen"]["artikel"]
-        ),
-        gearing=SourceFact(
-            rules["verzetten"]["bron"],
-            rules["verzetten"]["versie"],
-            rules["verzetten"]["artikel"],
-        ),
-        licences=SourceFact(rules["bron"], rules["versie"], rules["licenties"]["artikel"]),
-        old_categories=SourceFact(
-            rules["oude_categorie_indeling"]["bron"], None, None
-        ),
-    )
 
 
 def _gear_text(value: float | str | None) -> str:
@@ -846,22 +807,24 @@ def _gear_text(value: float | str | None) -> str:
 
 
 def _render_standalone_licence(
-    selector: StandaloneLicenceSelector, source: SourceFact, level: str
+    selector: _StandaloneLicenceSelector,
+    source: knwu_categories.SourceFact,
+    level: str,
 ) -> str:
     article = f" (artikel {source.article})" if level == "B2" else ""
     answer = (
         f"**{selector.name}**\n\n"
         f"- **Licentie:** {selector.name}\n\n"
-        f"{DISCLAIMER_LIBRARY}"
+        f"{_DISCLAIMER_LIBRARY}"
     )
     if level == "B2":
         answer += f"\n\nBron: {source.name}, versie {source.version}{article}"
     return answer
 
 
-def _render_row(ready: ReadyLookup, row: AnswerRow) -> list[str]:
+def _render_row(ready: _ReadyLookup, row: _AnswerRow) -> list[str]:
     title = f"### {_season_label(row.season)} · {row.gender.capitalize()}"
-    if isinstance(ready.selector, CategorySelector | OldCategorySelector):
+    if isinstance(ready.selector, _CategorySelector | _OldCategorySelector):
         title += f" · geboortejaar {row.birth_year}"
     category = (
         f"- **Categorie:** {row.category} "
@@ -881,7 +844,7 @@ def _render_row(ready: ReadyLookup, row: AnswerRow) -> list[str]:
     ]
 
 
-def _render_source_line(sources: AnswerSources, level: str) -> str:
+def _render_source_line(sources: knwu_categories.RuleSources, level: str) -> str:
     articles_per_document: dict[tuple[str, str | None], list[str]] = {}
     for fact in (sources.age_categories, sources.gearing, sources.licences):
         articles = articles_per_document.setdefault((fact.name, fact.version), [])
@@ -897,9 +860,9 @@ def _render_source_line(sources: AnswerSources, level: str) -> str:
     return "Bron: " + "; ".join(parts)
 
 
-def _render_ready(ready: ReadyLookup, language_level: str) -> str:
+def _render_ready(ready: _ReadyLookup, language_level: str) -> str:
     level = context.normalize_language_level(language_level)
-    if isinstance(ready.selector, StandaloneLicenceSelector):
+    if isinstance(ready.selector, _StandaloneLicenceSelector):
         return _render_standalone_licence(ready.selector, ready.sources.licences, level)
     lines = [f"**{ready.heading}**", ""]
     for row in ready.rows:
@@ -914,12 +877,44 @@ def _render_ready(ready: ReadyLookup, language_level: str) -> str:
     lines.extend(
         [
             "Vooruitblik op basis van de bekende regels; die kunnen wijzigen.",
-            DISCLAIMER_LIBRARY,
+            _DISCLAIMER_LIBRARY,
         ]
     )
     if level == "B2":
         lines.extend(["", _render_source_line(ready.sources, level)])
     return "\n".join(lines)
+
+
+def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> LookupDecision:
+    selector = profile.selector
+    if selector is None:
+        return NotEligible("not_eligible", NoLookupState())
+    if isinstance(selector, _BirthYearSelector) and selector.birth_year > today.year:
+        return NotEligible("not_eligible", NoLookupState())
+
+    rows = _calculate_rows(profile, today, rules)
+    outside_youth = None
+    if (
+        not rows
+        and isinstance(selector, _BirthYearSelector)
+        and not profile.category_filter
+        and knwu_categories.age_category(selector.birth_year, today.year, rules) is None
+        and knwu_categories.licence(selector.birth_year, today.year, rules) is None
+    ):
+        outside_youth = selector.birth_year
+    is_standalone_license = isinstance(selector, _StandaloneLicenceSelector)
+    if not rows and outside_youth is None and not is_standalone_license:
+        return NotEligible("not_eligible", NoLookupState())
+
+    ready = _ReadyLookup(
+        selector=selector,
+        profile=profile,
+        heading=_heading_for(profile, rules),
+        rows=rows,
+        sources=knwu_categories.sources(rules),
+        outside_youth_birth_year=outside_youth,
+    )
+    return Ready("ready", ready, _CompletedLookupState(profile=profile))
 
 
 def recognize_turn(
@@ -934,41 +929,9 @@ def recognize_turn(
     if not parsed.eligible:
         return NotEligible("not_eligible", NoLookupState())
     if parsed.profile.selector is None:
-        pending = PendingLookupState(profile=parsed.profile)
+        pending = _PendingLookupState(profile=parsed.profile)
         return NeedsInformation("needs_information", pending, parsed.evidence)
-    if (
-        isinstance(parsed.profile.selector, BirthYearSelector)
-        and parsed.profile.selector.birth_year > today.year
-    ):
-        return NotEligible("not_eligible", NoLookupState())
-
-    rows = _calculate_rows(parsed.profile, today, rules)
-    outside_youth = None
-    if (
-        not rows
-        and isinstance(parsed.profile.selector, BirthYearSelector)
-        and not parsed.profile.category_filter
-        and knwu_categories.age_category(
-            parsed.profile.selector.birth_year, today.year, rules
-        ) is None
-        and knwu_categories.licence(
-            parsed.profile.selector.birth_year, today.year, rules
-        ) is None
-    ):
-        outside_youth = parsed.profile.selector.birth_year
-    is_standalone_license = isinstance(parsed.profile.selector, StandaloneLicenceSelector)
-    if not rows and outside_youth is None and not is_standalone_license:
-        return NotEligible("not_eligible", NoLookupState())
-    ready = ReadyLookup(
-        selector=parsed.profile.selector,
-        profile=parsed.profile,
-        heading=_heading_for(parsed.profile, rules),
-        rows=rows,
-        sources=_answer_sources(rules),
-        outside_youth_birth_year=outside_youth,
-    )
-    completed = CompletedLookupState(profile=parsed.profile)
-    return Ready("ready", ready, completed)
+    return _decide_profile(parsed.profile, today, rules)
 
 
 def complete_with_intake(
@@ -996,29 +959,17 @@ def complete_with_intake(
         and isinstance(year, int)
         and not isinstance(year, bool)
     ):
-        if year > today.year:
-            return NotEligible("not_eligible", NoLookupState())
-        profile = LookupProfile(
-            BirthYearSelector("birth_year", year),
+        profile = _LookupProfile(
+            _BirthYearSelector("birth_year", year),
             profile.gender,
             profile.discipline,
             profile.category_filter,
         )
     if profile.selector is None:
         return NeedsInformation(
-            "needs_information", PendingLookupState(profile=profile), needs_information.evidence
+            "needs_information", _PendingLookupState(profile=profile), needs_information.evidence
         )
-    rows = _calculate_rows(profile, today, rules)
-    if not rows:
-        return NotEligible("not_eligible", NoLookupState())
-    ready = ReadyLookup(
-        profile.selector,
-        profile,
-        _heading_for(profile, rules),
-        rows,
-        _answer_sources(rules),
-    )
-    return Ready("ready", ready, CompletedLookupState(profile=profile))
+    return _decide_profile(profile, today, rules)
 
 
 def render_answer(ready: Ready, language_level: str) -> str:

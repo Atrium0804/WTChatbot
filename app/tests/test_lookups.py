@@ -215,7 +215,7 @@ def test_short_old_category_fragment_replaces_primary_and_keeps_other_filters():
     )
 
     assert followup.kind == "ready"
-    assert isinstance(followup.ready.selector, lookups.OldCategorySelector)
+    assert "**Oude cat. 3 (JO11/MO12)**" in lookups.render_answer(followup, "B1")
     assert {row.gender for row in followup.ready.rows} == {"jongens"}
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
 
@@ -288,6 +288,23 @@ def test_intake_completes_only_the_explicit_unqualified_year_from_the_request():
     assert completed.kind == "ready"
     assert {row.season.discipline for row in completed.ready.rows} == {"weg", "veld"}
     assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
+
+
+def test_intake_completion_matches_direct_lookup_outside_the_youth_classification():
+    pending = lookups.recognize_turn("Welk verzet? 2005", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    completed = lookups.complete_with_intake(
+        pending, {"geboortejaar": 2005}, NOVEMBER_2026, RULES
+    )
+    direct = lookups.recognize_turn("2005", None, NOVEMBER_2026, RULES)
+
+    assert completed.kind == "ready"
+    assert direct.kind == "ready"
+    assert lookups.render_answer(completed, "B1") == lookups.render_answer(direct, "B1")
+    assert "Geboortejaar 2005 valt buiten de jeugdindeling." in lookups.render_answer(
+        completed, "B1"
+    )
 
 
 def test_intake_cannot_replace_the_unqualified_year_with_another_year():

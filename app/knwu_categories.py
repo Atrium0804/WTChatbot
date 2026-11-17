@@ -9,6 +9,7 @@ Hetzelfde bestand bevat de vertaling van de oude categorie-indeling
 """
 
 import json
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Literal
@@ -17,6 +18,21 @@ RULES_PATH = Path(__file__).parent / "knwu_categories.json"
 
 Gender = Literal["jongens", "meisjes"]
 Discipline = Literal["weg", "baan", "veld"]
+
+
+@dataclass(frozen=True)
+class SourceFact:
+    name: str
+    version: str | None
+    article: str | None
+
+
+@dataclass(frozen=True)
+class RuleSources:
+    age_categories: SourceFact
+    gearing: SourceFact
+    licences: SourceFact
+    old_categories: SourceFact
 
 
 def load_rules(path: Path = RULES_PATH) -> dict:
@@ -93,6 +109,45 @@ def max_gear(
 def old_category_groups(number: int, rules: dict) -> list[dict] | None:
     """Gecombineerde categorieën van oude categorie <number>; None als die niet bestaat."""
     return rules["oude_categorie_indeling"]["categorieen"].get(str(number))
+
+
+def category_under(category: str) -> int:
+    """Het U-nummer van een categorie, ook als de naam een nadere aanduiding bevat."""
+    return int(category.split()[0][1:])
+
+
+def old_category_number(gender: Gender, category: str, rules: dict) -> int | None:
+    """Oud categorienummer voor een geslacht en nieuwe categorie, indien van toepassing."""
+    under = category_under(category)
+    for number_text, groups in rules["oude_categorie_indeling"]["categorieen"].items():
+        if any(group.get(gender) == under for group in groups):
+            return int(number_text)
+    return None
+
+
+def ages_for_category(category: str, rules: dict) -> tuple[int, ...]:
+    """Leeftijden die in de regels naar deze categorie verwijzen."""
+    return tuple(
+        int(age)
+        for age, name in rules["leeftijdscategorieen"]["per_leeftijd"].items()
+        if name == category
+    )
+
+
+def sources(rules: dict) -> RuleSources:
+    """Bronverwijzingen voor alle lookup-feiten."""
+    return RuleSources(
+        age_categories=SourceFact(
+            rules["bron"], rules["versie"], rules["leeftijdscategorieen"]["artikel"]
+        ),
+        gearing=SourceFact(
+            rules["verzetten"]["bron"],
+            rules["verzetten"]["versie"],
+            rules["verzetten"]["artikel"],
+        ),
+        licences=SourceFact(rules["bron"], rules["versie"], rules["licenties"]["artikel"]),
+        old_categories=SourceFact(rules["oude_categorie_indeling"]["bron"], None, None),
+    )
 
 
 def combined_notation(boys: int | None, girls: int | None) -> str:

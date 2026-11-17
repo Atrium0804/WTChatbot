@@ -861,17 +861,19 @@ def _render_row(ready: ReadyLookup, row: AnswerRow) -> list[str]:
 
 
 def _render_source_line(sources: AnswerSources, level: str) -> str:
-    age_source = f"{sources.age_categories.name}, versie {sources.age_categories.version}"
-    gear_source = f"{sources.gearing.name}, versie {sources.gearing.version}"
-    licence_source = f"{sources.licences.name}, versie {sources.licences.version}"
-    if level == "B2":
-        age_source += f" (artikel {sources.age_categories.article})"
-        gear_source += f" (artikel {sources.gearing.article})"
-        licence_source += f" (artikel {sources.licences.article})"
-    return (
-        f"Bron: {age_source}; {gear_source}; {licence_source}; "
-        f"{sources.old_categories.name}"
-    )
+    articles_per_document: dict[tuple[str, str | None], list[str]] = {}
+    for fact in (sources.age_categories, sources.gearing, sources.licences):
+        articles = articles_per_document.setdefault((fact.name, fact.version), [])
+        if fact.article and fact.article not in articles:
+            articles.append(fact.article)
+    parts = []
+    for (name, version), articles in articles_per_document.items():
+        part = f"{name}, versie {version}"
+        if level == "B2" and articles:
+            part += " (" + " en ".join(f"artikel {article}" for article in articles) + ")"
+        parts.append(part)
+    parts.append(f"{sources.old_categories.name} (clubbron, oude indeling)")
+    return "Bron: " + "; ".join(parts)
 
 
 def _render_ready(ready: ReadyLookup, language_level: str) -> str:

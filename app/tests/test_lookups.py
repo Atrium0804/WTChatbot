@@ -466,6 +466,32 @@ def test_combined_overview_uses_flat_markdown_and_one_final_source_line(language
         assert "artikel 20.0.002" in answer
 
 
+@pytest.mark.parametrize(
+    ("language_level", "expected"),
+    [
+        (
+            "B1",
+            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21; "
+            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21; "
+            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
+        ),
+        (
+            "B2",
+            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21 "
+            "(artikel 20.0.004 en artikel 20.0.002); "
+            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21 "
+            "(artikel 20.1.007); "
+            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
+        ),
+    ],
+)
+def test_source_line_names_each_document_once_and_labels_the_club_source(language_level, expected):
+    decision = lookups.recognize_turn("2014", None, NOVEMBER_2026, RULES)
+    assert decision.kind == "ready"
+
+    assert lookups.render_answer(decision, language_level).splitlines()[-1] == expected
+
+
 def test_conflicting_category_and_birth_year_does_not_fall_back_to_partial_answer():
     decision = lookups.recognize_turn(
         "Welke categorie voor geboortejaar 2015 en jongens U11?",

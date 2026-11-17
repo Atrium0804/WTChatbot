@@ -5,93 +5,102 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import intake  # noqa: E402
 import knwu_categories  # noqa: E402
+import lookups  # noqa: E402
 
 RULES = knwu_categories.load_rules()
 NOVEMBER_2026 = date(2026, 11, 9)
 EXPERTS = {"knwu": "ag_knwu", "regio": "ag_regio", "club": "ag_club", "archief": ""}
 
 
+def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> intake.Route:
+    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
+    assert not isinstance(decision, lookups.Ready), message
+    return intake.decide_route(
+        decision=decision,
+        today=NOVEMBER_2026,
+        rules=RULES,
+        intake_result=intake_result,
+        expert_agent_ids=EXPERTS,
+        threshold=threshold,
+    )
+
+
 # --- decide_route ---
 
 
-def test_route_bypass_bij_pure_lookup():
-    route = intake.decide_route(
-        message="In welke leeftijdscategorie rijdt een jongen geboren in 2015?",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result=dict(intake.FALLBACK),
-        expert_agent_ids=EXPERTS,
-        threshold=0.8,
+def test_route_bypass_only_completes_a_grounded_pending_lookup():
+    route = route_for("Welk verzet? 2012", {**intake.FALLBACK, "geboortejaar": 2012})
+    assert route.kind == "bypass"
+    assert isinstance(route.lookup, lookups.Ready)
+
+
+def test_rejected_input_is_never_rescued_into_a_bypass():
+    route = route_for(
+        "Welke categorie voor geboortejaar 2015 in 2025?",
+        {**intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2015, "discipline": "weg"},
     )
-    assert route["route"] == "bypass"
-    assert route["lookup"]["kind"] == "categorie"
+    assert route.kind == "router"
+    assert route.lookup.next_state.kind == "none"
+
+
+def test_decide_route_refuses_a_ready_decision():
+    ready = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
+    with pytest.raises(TypeError, match="NeedsInformation or NotEligible"):
+        intake.decide_route(
+            decision=ready,  # type: ignore[arg-type]
+            today=NOVEMBER_2026,
+            rules=RULES,
+            intake_result=dict(intake.FALLBACK),
+            expert_agent_ids=EXPERTS,
+            threshold=0.8,
+        )
 
 
 def test_route_direct_bij_hoge_confidence_en_expert_bekend():
-    route = intake.decide_route(
-        message="Wat kost de contributie bij WTC Woerden?",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result={"domein": "club", "confidence": 0.95, "intentie": "regelgeving"},
-        expert_agent_ids=EXPERTS,
-        threshold=0.8,
+    route = route_for(
+        "Wat kost de contributie bij WTC Woerden?",
+        {"domein": "club", "confidence": 0.95, "intentie": "regelgeving"},
     )
-    assert route["route"] == "direct"
-    assert route["agent_id"] == "ag_club"
-    assert route["domein"] == "club"
+    assert route.kind == "direct"
+    assert route.agent_id == "ag_club"
+    assert route.domein == "club"
 
 
 def test_route_router_bij_lage_confidence():
-    route = intake.decide_route(
-        message="Hoe zit het met die wedstrijd?",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result={"domein": "regio", "confidence": 0.5, "intentie": "onbekend"},
-        expert_agent_ids=EXPERTS,
-        threshold=0.8,
+    route = route_for(
+        "Hoe zit het met die wedstrijd?",
+        {"domein": "regio", "confidence": 0.5, "intentie": "onbekend"},
     )
-    assert route["route"] == "router"
+    assert route.kind == "router"
 
 
 def test_route_router_bij_ontbrekende_expert_id():
     # archief heeft geen id geconfigureerd -> geen direct-to-expert mogelijk
-    route = intake.decide_route(
-        message="Wat is er veranderd in Titel 20?",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result={"domein": "archief", "confidence": 0.99, "intentie": "regelgeving"},
-        expert_agent_ids=EXPERTS,
-        threshold=0.8,
+    route = route_for(
+        "Wat is er veranderd in Titel 20?",
+        {"domein": "archief", "confidence": 0.99, "intentie": "regelgeving"},
     )
-    assert route["route"] == "router"
+    assert route.kind == "router"
 
 
 def test_route_router_bij_intake_fout():
-    route = intake.decide_route(
-        message="Iets vaags",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result=dict(intake.FALLBACK),
-        expert_agent_ids=EXPERTS,
-        threshold=0.8,
-    )
-    assert route["route"] == "router"
+    route = route_for("Iets vaags", dict(intake.FALLBACK))
+    assert route.kind == "router"
 
 
 def test_drempel_is_configureerbaar():
-    route = intake.decide_route(
-        message="Wat kost de contributie?",
-        today=NOVEMBER_2026,
-        rules=RULES,
-        intake_result={"domein": "club", "confidence": 0.7, "intentie": "regelgeving"},
-        expert_agent_ids=EXPERTS,
+    route = route_for(
+        "Wat kost de contributie?",
+        {"domein": "club", "confidence": 0.7, "intentie": "regelgeving"},
         threshold=0.6,
     )
-    assert route["route"] == "direct"
+    assert route.kind == "direct"
 
 
 # --- classify_message: parsing + fallback (netwerk gemockt) ---

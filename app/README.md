@@ -37,14 +37,17 @@ duidelijk gemarkeerd STUB-antwoord — geen API-key nodig om te ontwikkelen.
 
 ## Flow per bericht (ADR-0009, #86/#88/#91/#93)
 
-1. **Deterministische lookup** (`lookups.py`): een pure feitelijke vraag
-   (leeftijdscategorie, licentie, maximaal verzet, oude categorie-indeling)
-   met complete data krijgt direct een template-antwoord uit
-   `knwu_categories.json` — 0 LLM-calls, synchroon 200, géén fase.
+1. **Deterministische lookup** (`lookups.recognize_turn`, #136): een herkende
+   feitelijke vraag (leeftijdscategorie, licentie, maximaal verzet, oude
+   categorie-indeling) met complete invoer krijgt direct een overzicht uit
+   `knwu_categories.json` — 0 LLM-calls, synchroon 200, géén fase. Korte
+   vervolgberichten werken op de lookup-toestand van de conversatie.
 2. Anders: 202 + background job. De **light intake** (`intake.py`, 1 call
    naar `mistral-small-latest`) classificeert de vraag; `decide_route` kiest
-   **direct-to-expert** (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id
-   uit `MISTRAL_AGENT_ID_<DOMEIN>`) of de **router**.
+   een **bypass** (alleen een herkende onvolledige vraag die de intake met
+   een gegrond geboortejaar aanvult), **direct-to-expert** (confidence ≥
+   `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`)
+   of de **router**.
 3. De Mistral-call streamt (SSE, `mistral_client.stream_answer`); events
    worden in de job omgezet in **fasen** (`phases.py`, teksten als
    "Ik doorzoek de KNWU-regelgeving…"); de UI pollt `/chat/status/{job_id}`

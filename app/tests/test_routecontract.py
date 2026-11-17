@@ -72,7 +72,19 @@ def _install_fake_mistral(monkeypatch) -> tuple[list[dict], list[dict], dict]:
 def test_routecontract(rule, tmp_path, monkeypatch):
     intake_calls, agent_calls, turn_intake = _install_fake_mistral(monkeypatch)
     today = rule.get("vandaag", CONTRACT["vandaag"])
+    # Eén blijvende event loop: background jobs stranden niet als een request-loop sluit.
     client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: today))
+    with client:
+        _play_rule(client, rule, intake_calls, agent_calls, turn_intake)
+
+
+def _play_rule(
+    client: TestClient,
+    rule: dict,
+    intake_calls: list[dict],
+    agent_calls: list[dict],
+    turn_intake: dict,
+) -> None:
     conversation_id = None
     for number, turn in enumerate(rule["beurten"], start=1):
         label = f"{rule['id']} beurt {number}: {turn['vraag']!r}"

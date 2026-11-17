@@ -4,13 +4,14 @@ Draai: .venv\Scripts\python -m pytest app/tests   (vanuit repo-root; de project-
 """
 
 import asyncio
+import contextlib
 import json
 import os
 import sqlite3
 import sys
 import tempfile
 import threading
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -130,7 +131,7 @@ def test_rate_limit_per_client_id(tmp_path, monkeypatch):
 def test_feedback_negative_stores_content(tmp_path):
     db = str(tmp_path / "test.db")
     client = make_client(tmp_path)
-    conv = chat(client, "Wat is het maximale verzet voor U15?")  # expres foute vraag
+    conv = chat(client, "Hoeveel kost de contributie voor jeugdleden?")
     resp = client.post(
         "/feedback",
         json={"conversation_id": conv["conversation_id"], "rating": "negative", "text": "klopt niet"},
@@ -140,12 +141,12 @@ def test_feedback_negative_stores_content(tmp_path):
     assert len(rows) == 1
     row = rows[0]
     assert row["rating"] == "negative"
-    assert row["question"] == "Wat is het maximale verzet voor U15?"
+    assert row["question"] == "Hoeveel kost de contributie voor jeugdleden?"
     assert "STUB" in row["answer"]
     assert row["text"] == "klopt niet"
     history = json.loads(row["history"])
     assert len(history) == 1
-    assert history[0]["question"] == "Wat is het maximale verzet voor U15?"
+    assert history[0]["question"] == "Hoeveel kost de contributie voor jeugdleden?"
     assert "STUB" in history[0]["answer"]
 
 
@@ -870,7 +871,7 @@ def test_category_followup_returns_answer_from_flat_mistral_stream(tmp_path, mon
         assert first.status_code == 200
         post.assert_not_called()
         followup = client.post("/chat", json={
-            "message": "welk verzet voor categorie u8",
+            "message": "Waarom is het verzet voor U8 beperkt?",
             "conversation_id": first.json()["conversation_id"],
             "client_id": "c",
         })
@@ -915,129 +916,132 @@ def test_lookup_bypass_in_mistral_mode_returns_200_direct(tmp_path, monkeypatch)
     resp = client.post(
         "/chat",
         json={
-            "message": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+            "message": "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen?",
             "client_id": "c",
         },
     )
     assert resp.status_code == 200  # geen 202/job: het antwoord verschijnt direct
-    assert "U12" in resp.json()["answer"]
-    assert "2015" in resp.json()["answer"]
+    answer = resp.json()["answer"]
+    assert "**Geboortejaar 2015**" in answer
+    assert "### Wegwielrennen 2027 · Jongens" in answer
+    assert "**Categorie:** U13" in answer
+    assert "Meisjes" not in answer
     assert calls == []  # 0 LLM-calls
 
 
-def test_lookup_bypass_follow_up_bare_year(tmp_path, monkeypatch):
-    """#91 besluit 5: een kaal jaartal midden in een gesprek bypasst toch direct."""
-    from datetime import date
+@pytest.fixture
+def lookup_client(tmp_path):
+    """Maak een TestClient met één blijvende event loop, zodat background jobs
+    niet stranden wanneer de loop van een los request sluit."""
+    with contextlib.ExitStack() as stack:
 
+        def make(today: date = date(2026, 11, 9)) -> TestClient:
+            app = create_app(db_path=str(tmp_path / "t.db"), today=lambda: today)
+            return stack.enter_context(TestClient(app))
+
+        yield make
+
+
+def post_in(client: TestClient, conversation_id: str, message: str, **extra):
+    payload = {"message": message, "conversation_id": conversation_id, "client_id": "test-client"}
+    return client.post("/chat", json={**payload, **extra})
+
+
+def season_headings(answer: str) -> list[str]:
+    return [line for line in answer.splitlines() if line.startswith("### ")]
+
+
+def test_lookup_bypass_follow_up_bare_year(lookup_client, monkeypatch):
+    """#91 besluit 5 + #125: een kaal jaartal vult de openstaande vraag aan, met
+    het geslacht uit die vraag."""
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = lookup_client()
     first = chat(client, "In welke leeftijdscategorie rijdt mijn zoon?")
     assert len(calls) == 1  # eerste vraag ging naar de agent
-    resp = client.post(
-        "/chat",
-        json={"message": "2015", "conversation_id": first["conversation_id"], "client_id": "test-client"},
-    )
+    resp = post_in(client, first["conversation_id"], "2015")
     assert resp.status_code == 200
-    assert "U12" in resp.json()["answer"]
+    answer = resp.json()["answer"]
+    assert "**Categorie:** U13" in answer
+    assert season_headings(answer) == [
+        "### Veldrijden 2026-2027 · Jongens",
+        "### Wegwielrennen 2027 · Jongens",
+    ]
     assert len(calls) == 1  # geen extra Mistral-call voor de lookup
 
 
-@pytest.mark.parametrize("previous_category_question", [True, False])
-def test_lookup_bypass_verzet_after_discipline_clarification(
-    tmp_path, monkeypatch, previous_category_question
-):
-    from datetime import date
-
-    import mistral_client
-
+def test_discipline_reply_filters_a_completed_overview_without_model_calls(lookup_client, monkeypatch):
     calls = fake_mistral(monkeypatch)
+    client = lookup_client()
+    first = chat(client, "wat is categorie 1")
+    question = post_in(client, first["conversation_id"], "wlk verzet voor u8")
+    assert question.status_code == 200
+    assert "Veldrijden" in question.json()["answer"]
+    assert "Oude cat." not in question.json()["answer"]  # nieuwe vraag erft niets
 
-    def clarify(**kwargs):
-        calls.append(kwargs)
-        return "mistral-conv-1", "Rijd je voor U8 op de weg of in het veld?"
+    resp = post_in(client, first["conversation_id"], "weg", language_level="B2")
 
-    monkeypatch.setattr(mistral_client, "stream_answer", clarify)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
-    if previous_category_question:
-        first = chat(client, "wat is categorie 1")
-        clarification = chat_in(client, first["conversation_id"], "wlk verzet voor u8", "test-client")
-    else:
-        clarification = chat(client, "wlk verzet voor u8")
-    assert clarification["answer"] == "Rijd je voor U8 op de weg of in het veld?"
-    calls_before = len(calls)
-    resp = client.post(
-        "/chat",
-        json={
-            "message": "weg",
-            "conversation_id": clarification["conversation_id"],
-            "client_id": "test-client",
-            "language_level": "B2",
-        },
-    )
     assert resp.status_code == 200, "De discipline-aanvulling moet lokaal bypassen, niet naar een agent."
-    assert "5,50 meter" in resp.json()["answer"]
-    assert "artikel 20.1.007" in resp.json()["answer"]
-    assert len(calls) == calls_before
+    answer = resp.json()["answer"]
+    assert season_headings(answer) == [
+        "### Wegwielrennen 2027 · Jongens · geboortejaar 2020",
+        "### Wegwielrennen 2027 · Meisjes · geboortejaar 2020",
+    ]
+    assert "5,50 meter" in answer
+    assert "artikel 20.1.007" in answer
+    assert calls == []
 
 
 @pytest.mark.parametrize(
     ("message", "expected"),
     [
-        ("Welke categorie is categorie 3 in de nieuwe indeling?", ("JO11/MO12",)),
-        ("Welke oude categorie is JO11/MO12?", ("categorie 3", "jongens U11", "meisjes U12")),
-        ("Welke oude categorie is U12?", ("jongens U12", "categorie 4", "meisjes U12", "categorie 3")),
-        ("Welke categorie is U12?", ("jongens U12", "categorie 4", "meisjes U12", "categorie 3")),
-        ("JO11/MO12 in de oude indeling?", ("categorie 3", "jongens U11", "meisjes U12")),
-        ("Welke categorie voor geboortejaar 2015?", ("leeftijdscategorie U12", "2015")),
-        ("Wat is de categorie voor geboortejaar 2015, U12?", ("leeftijdscategorie U12", "2015", "U13")),
-        ("Wat is de leeftijdscategorie voor geboortejaar 2015?", ("leeftijdscategorie U12", "2015")),
+        ("Welke categorie is categorie 3 in de nieuwe indeling?", ("**Oude cat. 3 (JO11/MO12)**",)),
+        ("Welke oude categorie is JO11/MO12?", ("**JO11/MO12**", "U11 (oude cat. 3)", "U12 (oude cat. 3)")),
+        ("Welke oude categorie is U12?", ("**U12**", "U12 (oude cat. 4)", "U12 (oude cat. 3)")),
+        ("JO11/MO12 in de oude indeling?", ("**JO11/MO12**", "U11 (oude cat. 3)")),
+        ("Welke categorie voor geboortejaar 2015?", ("**Geboortejaar 2015**", "U13 (oude cat. 5)")),
+        ("Wat is de leeftijdscategorie voor geboortejaar 2015?", ("**Geboortejaar 2015**", "U13")),
+        ("Welke categorie, verzet en licentie voor geboortejaar 2014?", ("U14", "**Licentie:** U17")),
         ("Welk verzet voor categorie 3 op de weg?", ("U11", "U12", "5,90 meter")),
-        ("Welk verzet voor categorie 2 op de weg?", ("U10", "5,50 meter", "U11", "5,90 meter")),
-        ("Welk verzet voor geboortejaar 2015 op de weg?", ("U12", "5,90 meter")),
+        ("Welk verzet voor categorie 2 op de weg?", ("U10", "5,50 meter", "U11")),
+        ("Welk verzet voor geboortejaar 2015 op de weg?", ("U13", "6,30 meter")),
         ("Welk verzet voor geboortejaar 2020 in het veld?", ("U8", "NVT")),
     ],
 )
-def test_category_and_gearing_lookup_routes(tmp_path, monkeypatch, message, expected):
-    from datetime import date
-
+def test_category_and_gearing_lookup_routes(lookup_client, monkeypatch, message, expected):
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = lookup_client()
     resp = client.post("/chat", json={"message": message, "client_id": "test-client"})
     assert resp.status_code == 200, "Een pure categorie- of verzetvraag moet lokaal worden beantwoord."
     for fragment in expected:
         assert fragment in resp.json()["answer"]
+    assert resp.json()["answer"].splitlines()[-1].startswith("Bron:")
     assert calls == []
 
 
-def test_gearing_lookup_retains_question_across_two_clarifications(tmp_path, monkeypatch):
-    from datetime import date
-
+def test_gearing_question_is_completed_by_a_bare_year_without_discipline(lookup_client, monkeypatch):
+    """#125: `Welk verzet?` -> `2012` geeft het volledige overzicht; discipline is
+    optioneel. Een latere discipline of nieuw jaar werkt op dat profiel."""
     calls = fake_mistral(monkeypatch)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = lookup_client()
     first = chat(client, "Welk verzet?")
-    year = client.post(
-        "/chat",
-        json={"message": "2012", "conversation_id": first["conversation_id"], "client_id": "test-client"},
-    )
-    assert year.status_code == 202  # de discipline ontbreekt nog; geen categorie-antwoord
-    assert _wait_for_job(client, year.json()["job_id"])["status"] == "done"
-    road = client.post(
-        "/chat",
-        json={"message": "weg", "conversation_id": first["conversation_id"], "client_id": "test-client"},
-    )
+    assert len(calls) == 1
+
+    year = post_in(client, first["conversation_id"], "2012")
+    assert year.status_code == 200
+    assert {line.split(" · ")[0] for line in season_headings(year.json()["answer"])} == {
+        "### Veldrijden 2026-2027",
+        "### Wegwielrennen 2027",
+    }
+    road = post_in(client, first["conversation_id"], "weg")
     assert road.status_code == 200
-    assert "U15" in road.json()["answer"]
-    assert "6,70 meter" in road.json()["answer"]
-    assert len(calls) == 2
-    assert "2012" in calls[-1]["message"]
-    assert "Welk verzet?" in calls[-1]["message"]
-    next_year = client.post(
-        "/chat",
-        json={"message": "2014", "conversation_id": first["conversation_id"], "client_id": "test-client"},
-    )
+    assert "7,68 meter" in road.json()["answer"]
+    assert "Veldrijden" not in road.json()["answer"]
+    next_year = post_in(client, first["conversation_id"], "2014")
     assert next_year.status_code == 200
-    assert "leeftijdscategorie U13" in next_year.json()["answer"]
-    assert "2014" in next_year.json()["answer"]
+    assert "**Geboortejaar 2014**" in next_year.json()["answer"]
+    assert "**Categorie:** U14" in next_year.json()["answer"]
+    assert "Veldrijden" not in next_year.json()["answer"]
+    assert len(calls) == 1
 
 
 @pytest.mark.parametrize(
@@ -1089,8 +1093,8 @@ def test_gearing_lookup_after_category_or_birth_year_clarification(
 @pytest.mark.parametrize(
     ("reply", "expected"),
     [
-        ("JO11/MO12", ("U11", "U12", "5,90 meter")),
-        ("MU12, VU13", ("U12", "5,90 meter", "U13", "6,30 meter")),
+        ("JO11/MO12", ("Jongens · geboortejaar 2017", "Meisjes · geboortejaar 2016", "5,90 meter")),
+        ("MU12, VU13", ("**Categorie:** U12", "**Categorie:** U13", "5,90 meter")),
     ],
 )
 def test_gearing_lookup_after_combined_category_clarification(
@@ -1106,14 +1110,10 @@ def test_gearing_lookup_after_combined_category_clarification(
         assert fragment in resp["answer"]
 
 
-def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):
-    from datetime import date
-
-    import config
-
+def test_lookup_bypass_b2_heeft_bron_regel(lookup_client, monkeypatch):
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
+    client = lookup_client()
     resp = client.post(
         "/chat",
         json={
@@ -1124,84 +1124,278 @@ def test_lookup_bypass_b2_heeft_bron_regel(tmp_path, monkeypatch):
     )
     assert resp.status_code == 200
     answer = resp.json()["answer"]
-    assert "KNWU Licentie U17" in answer
-    assert "Bron:" in answer
+    assert "**Licentie:** U17" in answer
     assert "artikel 20.0.002" in answer
+    assert answer.splitlines()[-1].startswith("Bron:")
 
 
-def test_intake_completed_lookup_bypasses_inside_job(tmp_path, monkeypatch):
-    """#91: als de regex-lookup data mist maar de intake ze aanvult, bypasst de
-    job alsnog (template-antwoord, geen conversation-call)."""
-    from datetime import date
-
-    import config
+def install_lookup_mistral(monkeypatch, classify) -> list[tuple[str, dict]]:
+    """Mistral-mode met de gegeven nep-intake; geef alle modelcalls (intake en agent)."""
     import intake
     import mistral_client
 
-    stream_calls: list[dict] = []
+    model_calls: list[tuple[str, dict]] = []
 
-    def classify(**kwargs):
-        return {
-            "intentie": "lookup",
-            "domein": "knwu",
-            "discipline": "onbekend",
-            "geboortejaar": 2012,
-            "leeftijd": None,
-            "confidence": 0.9,
-        }
+    def recorded_classify(**kwargs):
+        model_calls.append(("intake", kwargs))
+        return classify(**kwargs)
 
     def stream(**kwargs):
-        stream_calls.append(kwargs)
-        return "conv-x", "mag niet gebeuren"
+        model_calls.append(("agent", kwargs))
+        return "mistral-conv-1", "antwoord"
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
-    monkeypatch.setattr(intake, "classify_message", classify)
+    monkeypatch.setattr(intake, "classify_message", recorded_classify)
     monkeypatch.setattr(mistral_client, "stream_answer", stream)
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
-    resp = client.post("/chat", json={"message": "Welke licentie heb ik nodig?", "client_id": "c"})
+    monkeypatch.setattr(mistral_client, "answer_question", stream)
+    return model_calls
+
+
+def overview_rows(answer: str) -> list[tuple[str, str, str]]:
+    """(discipline, geslacht, categorie) per seizoensblok van een overzicht."""
+    rows: list[tuple[str, str, str]] = []
+    heading: list[str] = []
+    for line in answer.splitlines():
+        if line.startswith("### "):
+            heading = line.removeprefix("### ").split(" · ")
+        elif line.startswith("- **Categorie:** ") and heading:
+            category = line.removeprefix("- **Categorie:** ").split(" (")[0]
+            rows.append((heading[0].split()[0], heading[1], category))
+    return rows
+
+
+def test_current_intake_completion_bypasses_and_commits_the_profile(lookup_client, monkeypatch):
+    import intake
+
+    model_calls = install_lookup_mistral(
+        monkeypatch, lambda **kw: {**intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+    )
+    client = lookup_client()
+    resp = client.post("/chat", json={"message": "Welk verzet? 2012", "client_id": "c"})
     assert resp.status_code == 202
     result = _wait_for_job(client, resp.json()["job_id"])
-    assert result["status"] == "done"
     assert result["route"] == "bypass"
-    assert "KNWU Licentie U17" in result["answer"]
-    assert stream_calls == []  # de Mistral-conversation startte niet
+    assert "**Geboortejaar 2012**" in result["answer"]
+    assert [kind for kind, _ in model_calls] == ["intake"]
+
+    followup = post_in(client, result["conversation_id"], "alleen meisjes")
+
+    assert followup.status_code == 200
+    assert "**Geboortejaar 2012**" in followup.json()["answer"]
+    assert {gender for _, gender, _ in overview_rows(followup.json()["answer"])} == {"Meisjes"}
+    assert [kind for kind, _ in model_calls] == ["intake"]
 
 
-def test_intake_completed_lookup_is_not_reused_for_later_fragments(tmp_path, monkeypatch):
-    from datetime import date
+def test_intake_cannot_invent_a_birth_year_but_the_pending_question_remains(lookup_client, monkeypatch):
+    import intake
+
+    model_calls = install_lookup_mistral(
+        monkeypatch,
+        lambda **kw: {**intake.FALLBACK, "intentie": "lookup", "domein": "knwu", "geboortejaar": 2012},
+    )
+    client = lookup_client()
+    first = client.post("/chat", json={"message": "Welke licentie heb ik nodig?", "client_id": "c"})
+    result = _wait_for_job(client, first.json()["job_id"])
+    assert result["route"] == "router"
+    assert [kind for kind, _ in model_calls] == ["intake", "agent"]
+
+    reply = post_in(client, result["conversation_id"], "2012")
+
+    assert reply.status_code == 200
+    assert "**Geboortejaar 2012**" in reply.json()["answer"]
+    assert len(model_calls) == 2
+
+
+@pytest.mark.parametrize(
+    ("today", "messages", "heading", "expected_rows"),
+    [
+        pytest.param(
+            date(2026, 6, 1),
+            ["Welke categorie voor jongen uit 2015, U12, weg?", "en voor 2017?"],
+            "**Geboortejaar 2017**",
+            {("Wegwielrennen", "Jongens", "U10")},
+            id="new-primary-replaces-category-keeps-filters",
+        ),
+        pytest.param(
+            date(2026, 6, 1),
+            ["Welke categorie voor jongen uit 2015, U12, weg?", "Welke categorie voor geboortejaar 2017?"],
+            "**Geboortejaar 2017**",
+            {
+                ("Wegwielrennen", "Jongens", "U10"),
+                ("Wegwielrennen", "Meisjes", "U10"),
+                ("Veldrijden", "Jongens", "U11"),
+                ("Veldrijden", "Meisjes", "U11"),
+            },
+            id="standalone-question-inherits-nothing",
+        ),
+        pytest.param(
+            date(2026, 11, 9),
+            ["Welke categorie voor JO11?", "alleen meisjes"],
+            "**U11**",
+            {("Veldrijden", "Meisjes", "U11"), ("Wegwielrennen", "Meisjes", "U11")},
+            id="gender-replaces-single-prefix",
+        ),
+        pytest.param(
+            date(2026, 11, 9),
+            ["Welke categorie voor JO11/MO12?", "alleen meisjes"],
+            "**JO11/MO12**",
+            {("Veldrijden", "Meisjes", "U12"), ("Wegwielrennen", "Meisjes", "U12")},
+            id="gender-filters-paired-category",
+        ),
+        pytest.param(
+            date(2026, 11, 9),
+            ["oude cat. 1", "alleen meisjes"],
+            "**Oude cat. 1 (JO9/MO10)**",
+            {
+                ("Veldrijden", "Meisjes", "U9"),
+                ("Veldrijden", "Meisjes", "U10"),
+                ("Wegwielrennen", "Meisjes", "U9"),
+                ("Wegwielrennen", "Meisjes", "U10"),
+            },
+            id="gender-filters-old-category-mapping",
+        ),
+    ],
+)
+def test_lookup_followups_use_the_conversation_profile_without_model_calls(
+    lookup_client, monkeypatch, today, messages, heading, expected_rows
+):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    client = lookup_client(today)
+    conversation_id = "profiel"
+    for message in messages:
+        resp = post_in(client, conversation_id, message)
+        assert resp.status_code == 200, message
+    answer = resp.json()["answer"]
+    assert answer.startswith(heading)
+    assert set(overview_rows(answer)) == expected_rows
+    assert model_calls == []
+
+
+@pytest.mark.parametrize(
+    "messages",
+    [
+        ["Welke categorie voor geboortejaar 2015 bij wegwielrennen?", "Waarom?", "alleen meisjes"],
+        ["Welke categorie voor JO11?", "Welke categorie voor JO11 meisjes?", "alleen veldrijden"],
+        ["Welke categorie voor JO11?", "Wanneer is de volgende clubtraining?", "en voor 2017?"],
+    ],
+    ids=["same-topic-why", "contradiction-in-one-message", "topic-change"],
+)
+def test_substantive_or_rejected_turn_ends_profile_reuse(lookup_client, monkeypatch, messages):
+    import intake
+
+    model_calls = install_lookup_mistral(
+        monkeypatch, lambda **kw: {**intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2015}
+    )
+    client = lookup_client()
+    first, middle, fragment = messages
+    assert post_in(client, "reset", first).status_code == 200
+    middle_result = _wait_for_job(client, post_in(client, "reset", middle).json()["job_id"])
+    assert middle_result["route"] == "router"
+
+    resp = post_in(client, "reset", fragment)
+
+    assert resp.status_code == 202
+    assert _wait_for_job(client, resp.json()["job_id"])["route"] == "router"
+    assert model_calls[-1][0] == "agent"
+    assert model_calls[-1][1]["message"].startswith(fragment)
+
+
+def test_lookup_state_is_isolated_per_conversation(lookup_client, monkeypatch):
+    import intake
+
+    install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    client = lookup_client()
+    assert post_in(client, "a", "Welke categorie voor JO11?").status_code == 200
+
+    other = post_in(client, "b", "alleen meisjes")
+    same = post_in(client, "a", "alleen meisjes")
+
+    assert other.status_code == 202
+    assert same.status_code == 200
+
+
+@pytest.mark.parametrize("older_outcome", ["success", "failure"])
+@pytest.mark.parametrize(
+    ("newer_message", "newer_keeps_profile"),
+    [("Welke categorie voor JO11?", True), ("Waarom?", False)],
+    ids=["newer-completed", "newer-cleared"],
+)
+def test_older_intake_job_cannot_overwrite_newer_lookup_state(
+    tmp_path, monkeypatch, older_outcome, newer_message, newer_keeps_profile
+):
+    """#136: een oudere intake-job die pas na een nieuwere beurt klaar is,
+    publiceert geen lookup-toestand meer; zijn eigen antwoord/status blijft."""
+    import httpx
 
     import intake
 
-    calls = fake_mistral(monkeypatch)
-    monkeypatch.setattr(
-        intake,
-        "classify_message",
-        lambda **kwargs: {**intake.FALLBACK, "intentie": "lookup", "discipline": "weg"},
-    )
-    client = TestClient(create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9)))
-    first = client.post(
-        "/chat",
-        json={"message": "Welk verzet voor U8 bij wegrennen?", "client_id": "test-client"},
-    )
-    assert first.status_code == 202
-    result = _wait_for_job(client, first.json()["job_id"])
-    assert result["route"] == "bypass"
-    assert "5,50 meter" in result["answer"]
-    assert calls == []
+    older_message = "Welk verzet? 2012"
+    older_started = threading.Event()
+    release_older = threading.Event()
 
-    for reply in ("veld", "weg"):
-        resp = client.post(
-            "/chat",
-            json={
-                "message": reply,
-                "conversation_id": result["conversation_id"],
-                "client_id": "test-client",
-            },
-        )
-        assert resp.status_code == 202
-        assert _wait_for_job(client, resp.json()["job_id"])["status"] == "done"
-        assert "Welk verzet" not in calls[-1]["message"]
+    def classify(**kwargs):
+        if kwargs["message"] != older_message:
+            return dict(intake.FALLBACK)
+        older_started.set()
+        if not release_older.wait(timeout=5):
+            raise AssertionError("oudere intake werd niet vrijgegeven")
+        if older_outcome == "failure":
+            raise RuntimeError("intake viel om")
+        return {**intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+
+    install_lookup_mistral(monkeypatch, classify)
+    app = create_app(db_path=str(tmp_path / "t.db"), today=lambda: date(2026, 11, 9))
+
+    async def run():
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+
+            async def post(message: str):
+                return await ac.post(
+                    "/chat", json={"message": message, "conversation_id": "conv", "client_id": "c"}
+                )
+
+            async def finished(job_id: str) -> dict:
+                for _ in range(500):
+                    body = (await ac.get(f"/chat/status/{job_id}")).json()
+                    if body["status"] in ("done", "error"):
+                        return body
+                    await asyncio.sleep(0.01)
+                raise AssertionError(f"job {job_id} werd niet klaar")
+
+            older = await post(older_message)
+            assert older.status_code == 202
+            assert await asyncio.to_thread(older_started.wait, 5)
+            newer = await post(newer_message)
+            if newer.status_code == 202:
+                assert (await finished(newer.json()["job_id"]))["status"] == "done"
+            release_older.set()
+            older_result = await finished(older.json()["job_id"])
+            followup = await post("alleen meisjes")
+            if followup.status_code == 202:
+                return older_result, 202, await finished(followup.json()["job_id"])
+            return older_result, followup.status_code, followup.json()
+
+    older_result, followup_status, followup = asyncio.run(run())
+
+    if older_outcome == "success":
+        assert older_result["status"] == "done"
+        assert older_result["route"] == "bypass"
+        assert "**Geboortejaar 2012**" in older_result["answer"]
+    else:
+        assert older_result["status"] == "error"
+    if newer_keeps_profile:
+        assert followup_status == 200
+        assert set(overview_rows(followup["answer"])) == {
+            ("Veldrijden", "Meisjes", "U11"),
+            ("Wegwielrennen", "Meisjes", "U11"),
+        }
+    else:
+        assert followup_status == 202
+        assert followup["route"] == "router"
 
 
 def test_direct_to_expert_route_uses_expert_env_id(tmp_path, monkeypatch):

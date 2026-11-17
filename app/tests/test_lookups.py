@@ -16,167 +16,6 @@ RULES = knwu_categories.load_rules()
 NOVEMBER_2026 = date(2026, 11, 9)
 
 
-# --- match_lookup: welke vragen zijn een pure lookup? ---
-
-
-def test_categorie_vraag_met_geboortejaar_is_lookup():
-    m = lookups.match_lookup(
-        "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?",
-        NOVEMBER_2026,
-        RULES,
-    )
-    assert m == {"kind": "categorie", "birth_year": 2013}
-
-
-def test_licentie_vraag_met_geboortejaar_is_lookup():
-    m = lookups.match_lookup(
-        "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
-        NOVEMBER_2026,
-        RULES,
-    )
-    assert m == {"kind": "licentie", "birth_year": 2012}
-
-
-def test_verzet_vraag_met_categorie_en_discipline_is_lookup():
-    m = lookups.match_lookup(
-        "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
-        NOVEMBER_2026,
-        RULES,
-    )
-    assert m == {"kind": "verzet", "category": "U15", "discipline": "weg"}
-
-
-def test_verzet_vraag_zonder_discipline_is_geen_lookup():
-    # de agent moet eerst vragen: weg of veld?
-    assert lookups.match_lookup("Welk verzet mag U15 maximaal rijden?", NOVEMBER_2026, RULES) is None
-
-
-def test_verzet_met_nieuwelingen_wordt_u17():
-    m = lookups.match_lookup(
-        "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?",
-        NOVEMBER_2026,
-        RULES,
-    )
-    assert m["category"] == "U17 Nieuweling"
-
-
-def test_kaal_jaartal_is_lookup():
-    # vervolg op de vraag naar het geboortejaar (#91 besluit 5)
-    assert lookups.match_lookup("2015", NOVEMBER_2026, RULES) == {
-        "kind": "categorie",
-        "birth_year": 2015,
-    }
-
-
-def test_oude_aanduiding_met_vertaalvraag_is_lookup():
-    m = lookups.match_lookup("Wat is categorie 3 in de nieuwe indeling?", NOVEMBER_2026, RULES)
-    assert m == {"kind": "vertaling"}
-
-
-def test_waarom_vraag_is_geen_lookup():
-    assert lookups.match_lookup("Waarom rijdt mijn zoon in U12?", NOVEMBER_2026, RULES) is None
-
-
-@pytest.mark.parametrize(
-    "message",
-    [
-        "Hoe meet ik het verzet voor U13 op de weg?",
-        "Welke categorie is categorie 3 en wat zijn de regels?",
-        "Wat is categorie 8 in de nieuwe indeling?",
-    ],
-)
-def test_lookup_does_not_answer_explanations_or_unknown_designations(message):
-    assert lookups.match_lookup(message, NOVEMBER_2026, RULES) is None
-
-
-def test_licentiepakketten_vraag_is_geen_lookup():
-    # pakketten/prijzen komen uit het Kenniscentrum, niet uit de tabel
-    assert (
-        lookups.match_lookup(
-            "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?",
-            NOVEMBER_2026,
-            RULES,
-        )
-        is None
-    )
-
-
-def test_categorie_en_licentie_samen_is_geen_lookup():
-    # cross-check met bronconflict-mogelijkheid (#47) -> agent
-    assert (
-        lookups.match_lookup(
-            "In welke leeftijdscategorie rijdt een renner die in 2026 15 jaar wordt met een KNWU Licentie U17?",
-            NOVEMBER_2026,
-            RULES,
-        )
-        is None
-    )
-
-
-def test_leeftijd_in_jaren_is_geen_lookup():
-    # "15-jarige" kan een bronconflict opleveren; alleen expliciete geboortejaren bypassen
-    assert (
-        lookups.match_lookup("Welke leeftijdscategorie is een 15-jarige in 2026?", NOVEMBER_2026, RULES)
-        is None
-    )
-
-
-def test_reglement_vraag_is_geen_lookup():
-    assert (
-        lookups.match_lookup("Mag een kind van 6 meedoen met nationale wedstrijden?", NOVEMBER_2026, RULES)
-        is None
-    )
-
-
-def test_verhelderingsvraag_zonder_geboortejaar_is_geen_lookup():
-    assert lookups.match_lookup("Welke licentie moet ik aanvragen voor mijn zoon?", NOVEMBER_2026, RULES) is None
-    assert lookups.match_lookup("In welke categorie rijdt mijn zoon?", NOVEMBER_2026, RULES) is None
-
-
-def test_algemene_vraag_is_geen_lookup():
-    assert lookups.match_lookup("Wanneer is de volgende wedstrijd?", NOVEMBER_2026, RULES) is None
-    assert lookups.match_lookup("Hoeveel kost de contributie?", NOVEMBER_2026, RULES) is None
-
-
-def test_extra_geboortejaar_uit_intake_vult_aan():
-    m = lookups.match_lookup("Welke licentie heb ik nodig?", NOVEMBER_2026, RULES, extra={"geboortejaar": 2012})
-    assert m == {"kind": "licentie", "birth_year": 2012}
-
-
-def test_extra_discipline_uit_intake_vult_aan():
-    m = lookups.match_lookup(
-        "Wat is het maximale verzet voor U13?", NOVEMBER_2026, RULES, extra={"discipline": "veld"}
-    )
-    assert m == {"kind": "verzet", "category": "U13", "discipline": "veld"}
-
-
-@pytest.mark.parametrize(
-    ("message", "extra"),
-    [
-        ("Welk verzet voor U9 op de baan?", None),
-        ("Welk verzet voor U9 op de baan en op de weg?", {"discipline": "weg"}),
-        ("Welk verzet voor U9?", {"discipline": "baan"}),
-    ],
-)
-def test_track_cycling_never_bypasses(message, extra):
-    assert lookups.match_lookup(message, NOVEMBER_2026, RULES, extra=extra) is None
-
-
-def test_render_lookup_rejects_track_cycling():
-    with pytest.raises(ValueError, match="buiten scope"):
-        lookups.render_lookup_answer(
-            {"kind": "verzet", "category": "U9", "discipline": "baan"},
-            "Welk verzet voor U9 op de baan?",
-            RULES,
-            NOVEMBER_2026,
-            "B2",
-        )
-
-
-def test_former_words_without_category_request_do_not_trigger_translation():
-    assert lookups.match_lookup("Was U12 leuk?", NOVEMBER_2026, RULES) is None
-
-
 def test_recognize_birth_year_renders_combined_gender_specific_overview():
     decision = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
 
@@ -367,6 +206,32 @@ def test_missing_lookup_primary_input_can_be_completed_by_a_birth_year():
     assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
 
 
+@pytest.mark.parametrize(
+    ("reply", "expected_category"),
+    [
+        ("geboortejaar 2015", "U13"),
+        ("geboren in 2015", "U13"),
+        ("nieuwelingen", "U17 Nieuweling"),
+    ],
+)
+def test_pending_lookup_accepts_short_keyword_replies(reply, expected_category):
+    pending = lookups.recognize_turn("Welk verzet op de weg?", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    completed = lookups.recognize_turn(reply, pending.next_state, NOVEMBER_2026, RULES)
+
+    assert completed.kind == "ready"
+    assert {row.category for row in completed.ready.rows} == {expected_category}
+    assert {row.season.discipline for row in completed.ready.rows} == {"weg"}
+
+
+def test_abbreviated_question_word_is_a_complete_gearing_question():
+    decision = lookups.recognize_turn("wlk verzet voor u8", None, NOVEMBER_2026, RULES)
+
+    assert decision.kind == "ready"
+    assert {row.category for row in decision.ready.rows} == {"U8"}
+
+
 def test_intake_completes_only_the_explicit_unqualified_year_from_the_request():
     pending = lookups.recognize_turn("Welk verzet? 2012", None, NOVEMBER_2026, RULES)
     assert pending.kind == "needs_information"
@@ -505,6 +370,11 @@ def test_birth_year_and_paired_category_filter_the_same_gender_category_pair():
         "Waarom rijdt mijn zoon in U12?",
         "Wat is categorie 8 in de nieuwe indeling?",
         "Mijn verzet is kapot.",
+        "Welk verzet voor U11 bij mountainbiken?",
+        "Welk verzet voor U11 bij BMX?",
+        "Welk verzet voor U11 als ik hoger start bij combinatiewedstrijden?",
+        "Welke categorie voor mijn zoon geboren in 2015, en hoe vraag ik zijn licentie aan?",
+        "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
     ],
 )
 def test_unsupported_or_conflicting_input_is_not_bypass_eligible(message):
@@ -635,124 +505,63 @@ def test_original_category_translation_forms_remain_recognizable(message, expect
     assert decision.ready.heading == expected_heading
 
 
-# --- render_lookup_answer: templates met bron+versie+artikel ---
-
-
-def _render(message, level, today=NOVEMBER_2026):
-    m = lookups.match_lookup(message, today, RULES)
-    assert m is not None, message
-    return lookups.render_lookup_answer(m, message, RULES, today, level)
-
-
-def test_render_categorie_b1_heeft_geen_bron_regel():
-    answer = _render(
-        "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?", "B1"
-    )
-    assert "U12" in answer
-    assert "2015" in answer
-    assert "KNWU Licentie U13" in answer
-    assert "Bron:" not in answer  # B1-regel (#52): géén bronvermelding
-
-
-def test_render_categorie_b2_citeert_bron_versie_en_artikel():
-    answer = _render(
-        "In welke leeftijdscategorie rijdt een jongen geboren in 2013 bij wegwielrennen in 2026?", "B2"
-    )
-    assert "U14" in answer
-    assert "Bron:" in answer
-    assert RULES["bron"] in answer
-    assert f"versie {RULES['versie']}" in answer
-    assert "artikel 20.0.004" in answer
-    assert "artikel 20.0.002" in answer
-
-
-def test_render_licentie_bevat_licentie_en_categorie():
-    answer = _render("Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.", "B2")
-    assert "KNWU Licentie U17" in answer
-    assert "U15" in answer  # weg 2026
-
-
-def test_render_verzet_weg_b2():
-    answer = _render(
-        "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?", "B2"
-    )
-    assert "6,70 meter" in answer
-    assert "U15" in answer
-    assert "artikel 20.1.007" in answer
-    assert RULES["verzetten"]["bron"] in answer
-
-
-def test_render_verzet_zonder_geslachtsfilter_noemt_beide_waarden():
-    answer = _render("Wat is het verzet voor U11 op de weg?", "B1")
-    assert "jongens U11" in answer
-    assert "5,90 meter" in answer
-    assert "meisjes U11" in answer
-    assert "5,50 meter" in answer
-
-
-def test_render_verzet_nieuwelingen_noemt_nieuwelingen():
-    answer = _render(
-        "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?", "B2"
-    )
-    assert "7,68 meter" in answer
-    assert "nieuwelingen" in answer
-
-
-def test_render_verzet_veld_is_vrij():
-    answer = _render("Wat is het verzet voor U9 in het veld?", "B1")
-    assert "vrij" in answer
-    assert "Bron:" not in answer
-
-
-def test_render_verzet_nvt():
-    answer = _render("Wat is het verzet voor U6 in het veld?", "B1")
-    assert "NVT" in answer
-
-
-def test_render_buiten_jeugdindeling():
-    answer = _render("2008", "B1")
-    assert "buiten de jeugdindeling" in answer
-
-
-def test_render_vertaling_oude_categorie():
-    answer = _render("Wat is categorie 3 in de nieuwe indeling?", "B2")
-    assert "JO11/MO12" in answer
-    assert "Bron:" in answer
-    assert RULES["oude_categorie_indeling"]["bron"] in answer
-
-def test_render_eindigt_op_library_disclaimer():
-    # #91 besluit 4: het standaardantwoord eindigt met de disclaimer die aangeeft
-    # wanneer de document-library wél geraadpleegd wordt
-    answer = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B1")
-    assert "KNWU-informatie" in answer
-    assert "Bron:" not in answer  # B1-regel (#52) blijft gelden
-    answer_b2 = _render("In welke leeftijdscategorie rijdt een jongen geboren in 2015?", "B2")
-    assert "KNWU-informatie" in answer_b2
-    assert "Bron:" in answer_b2
+# --- legacy lookup-vormen via recognize_turn (#91/#99) ---
 
 
 @pytest.mark.parametrize(
     "message",
     [
-        "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?",
+        "Mag een kind van 6 meedoen met nationale wedstrijden?",
+        "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?",
+        "In welke leeftijdscategorie rijdt een renner die in 2026 15 jaar wordt met een KNWU Licentie U17?",
+        "Hoe meet ik het verzet voor U13 op de weg?",
+        "Welke categorie is categorie 3 en wat zijn de regels?",
+        "Welk verzet voor U9 op de baan?",
+        "Welk verzet voor U9 op de baan en op de weg?",
+        "Wanneer is de volgende wedstrijd?",
+        "Hoeveel kost de contributie?",
+        "Was U12 leuk?",
+    ],
+)
+def test_explanations_rules_and_unrelated_questions_stay_out_of_the_bypass(message):
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible"
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Welke licentie moet ik aanvragen voor mijn zoon?",
+        "In welke categorie rijdt mijn zoon?",
+        "Welk verzet op de weg?",
+    ],
+)
+def test_question_without_primary_input_waits_for_it(message):
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "needs_information"
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen?",
         "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012.",
         "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?",
+        "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?",
         "Welk verzet voor categorie 2 op de weg?",
         "Wat is categorie 3 in de nieuwe indeling?",
         "Welke oude categorie is JO11/MO12?",
+        "Welke categorie, verzet en licentie voor geboortejaar 2014?",
+        "Welke KNWU Licentie 17+ is nodig?",
         "2008",
     ],
 )
 @pytest.mark.parametrize("language_level", ["B1", "B2"])
-def test_render_lookup_answer_uses_supported_markdown_format(message, language_level):
-    match = lookups.match_lookup(message, NOVEMBER_2026, RULES)
-    assert match is not None, message
+def test_every_bypass_answer_uses_supported_markdown_format(message, language_level):
+    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
+    assert decision.kind == "ready", message
 
-    answer = lookups.render_lookup_answer(match, message, RULES, NOVEMBER_2026, language_level)
+    answer = lookups.render_answer(decision, language_level)
     assert re.search(r"^[ \t]+[-*]\s", answer, re.MULTILINE) is None
-
     lines = answer.splitlines()
     source_line_indexes = [index for index, line in enumerate(lines) if line.startswith("Bron:")]
-    assert len(source_line_indexes) <= 1
-    if source_line_indexes:
-        assert all(line.startswith("Bron") for line in lines[source_line_indexes[0] + 1 :])
+    assert source_line_indexes == [len(lines) - 1]
+    assert lookups.DISCLAIMER_LIBRARY in answer

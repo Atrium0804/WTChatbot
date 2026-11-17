@@ -87,6 +87,51 @@ def test_new_primary_year_fragment_replaces_category_but_keeps_filters():
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
 
 
+def test_data_only_message_starts_a_profile_that_a_new_year_replaces():
+    first = lookups.recognize_turn("jongen uit 2015, U12, weg", None, date(2026, 6, 1), RULES)
+
+    assert first.kind == "ready"
+    assert [
+        (row.season.discipline, row.gender, row.category, row.birth_year)
+        for row in first.ready.rows
+    ] == [("weg", "jongens", "U12", 2015)]
+
+    followup = lookups.recognize_turn("en voor 2017?", first.next_state, date(2026, 6, 1), RULES)
+
+    assert followup.kind == "ready"
+    assert {(row.gender, row.season.discipline, row.birth_year) for row in followup.ready.rows} == {
+        ("jongens", "weg", 2017)
+    }
+
+
+def test_data_only_reply_completes_a_pending_lookup_and_keeps_its_filters():
+    pending = lookups.recognize_turn("Welk verzet op de weg?", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    reply = lookups.recognize_turn("jongen uit 2015", pending.next_state, NOVEMBER_2026, RULES)
+
+    assert reply.kind == "ready"
+    assert {(row.gender, row.season.discipline, row.birth_year) for row in reply.ready.rows} == {
+        ("jongens", "weg", 2015)
+    }
+
+
+def test_bare_year_in_a_data_only_message_is_a_birth_year():
+    decision = lookups.recognize_turn("2015, meisjes", None, NOVEMBER_2026, RULES)
+
+    assert decision.kind == "ready"
+    assert decision.ready.heading == "Geboortejaar 2015"
+    assert {row.gender for row in decision.ready.rows} == {"meisjes"}
+
+
+@pytest.mark.parametrize(
+    "message",
+    ["jongen, weg", "jongen uit 2015 heeft een nieuwe fiets", "2015, 2017"],
+)
+def test_data_only_message_needs_a_primary_input_and_only_known_data(message):
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible"
+
+
 def test_complete_question_starts_without_inherited_filters():
     first = lookups.recognize_turn(
         "Welke categorie voor een jongen geboren in 2015 bij wegwielrennen?",
@@ -590,4 +635,4 @@ def test_every_bypass_answer_uses_supported_markdown_format(message, language_le
     lines = answer.splitlines()
     source_line_indexes = [index for index, line in enumerate(lines) if line.startswith("Bron:")]
     assert source_line_indexes == [len(lines) - 1]
-    assert lookups.DISCLAIMER_LIBRARY in answer
+    assert "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" in answer

@@ -79,13 +79,28 @@ MULTIPLE_RIDERS = re.compile(
     r"|\b(?:zoon|dochter|kind)\s+en\s+(?:zoon|dochter|kind)\b",
     re.IGNORECASE,
 )
+# Een bericht dat alleen uit lookup-gegevens bestaat, bv. "jongen uit 2015, U12, weg" (#102/#125).
+_DATA_TOKEN = (
+    r"(?:(?:een|mijn)\s+)?(?:jongens?|meisjes?|zoon|dochter)"
+    r"|(?:(?:uit|geboren(?:\s+in)?|geboortejaar)\s+)?(?:19|20)\d{2}"
+    r"|(?:categorie|cat\.?)\s*\d+"
+    rf"|{CATEGORY_FRAGMENT_PATTERN.pattern}"
+    r"|op\s+de\s+weg|in\s+het\s+veld|wegwielrennen|veldrijden|veldrit|weg|veld|cross"
+)
+DATA_ONLY_MESSAGE = re.compile(
+    rf"\s*(?:{_DATA_TOKEN})(?:(?:\s*,\s*|\s+en\s+|\s+)(?:{_DATA_TOKEN}))*\s*[.?!]*\s*",
+    re.IGNORECASE,
+)
+DATA_PRIMARY_INPUT = re.compile(
+    rf"\b(?:19|20)\d{{2}}\b|\b(?:categorie|cat\.?)\s*\d+|{CATEGORY_FRAGMENT_PATTERN.pattern}",
+    re.IGNORECASE,
+)
 
-# Disclaimer aan het eind van elk deterministisch antwoord (#91 besluit 4):
-# dit is het kale feit; bij een vervolgvraag ("waarom", versie, "heb je dit
-# gecheckt") schakelt de app door naar de document-library.
+# Slotvraag aan het eind van elk deterministisch antwoord (#91 besluit 4, #135):
+# dit is het kale feit; wie meer wil weten, krijgt het aanbod om de
+# KNWU-documenten te doorzoeken. Een vervolgvraag gaat naar de inhoudelijke route.
 DISCLAIMER_LIBRARY = (
-    "Stel je een vervolgvraag, dan fiets ik met je "
-    "door de KNWU-informatie"
+    "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
 )
 
 Gender = knwu_categories.Gender
@@ -251,6 +266,7 @@ class _TurnShape:
     is_complete_question: bool
     is_fragment: bool
     old_category_fragment: bool
+    data_only: bool = False
 
 
 @dataclass(frozen=True)
@@ -364,6 +380,7 @@ def _turn_shape(text: str) -> _TurnShape:
         context.OLD_CATEGORY_PATTERN.fullmatch(text.rstrip(".?!"))
     )
     category_fragment = bool(CATEGORY_FRAGMENT_PATTERN.fullmatch(text.rstrip(".?!")))
+    data_only = bool(DATA_ONLY_MESSAGE.fullmatch(text) and DATA_PRIMARY_INPUT.search(text))
     translation_question = bool(
         VERTALING_VRAAG.search(text)
         and (
@@ -381,6 +398,7 @@ def _turn_shape(text: str) -> _TurnShape:
         or (OLD_DESIGNATION_REQUEST.search(text) and not old_category_fragment)
         or (context.old_category_numbers(text) and not old_category_fragment)
         or (context.CALENDAR_PATTERN.search(text) and not category_fragment)
+        or data_only
     )
     is_fragment = bool(
         context.BARE_YEAR_MESSAGE.fullmatch(text)
@@ -399,11 +417,13 @@ def _turn_shape(text: str) -> _TurnShape:
             re.IGNORECASE,
         )
         or category_fragment
+        or data_only
     )
     return _TurnShape(
         is_complete_question,
         is_fragment,
         old_category_fragment,
+        data_only,
     )
 
 
@@ -429,9 +449,8 @@ def _parse_year_evidence(
     text: str, shape: _TurnShape, has_category_selector: bool
 ) -> InputEvidence | None:
     explicit_years = re.findall(r"\b(?:19|20)\d{2}\b", text)
-    if context.BARE_YEAR_MESSAGE.fullmatch(text):
-        year_match = re.search(r"\d{4}", text)
-        birth_years = [int(year_match.group())] if year_match else []
+    if context.BARE_YEAR_MESSAGE.fullmatch(text) or shape.data_only:
+        birth_years = list(dict.fromkeys(int(year) for year in explicit_years))
     else:
         birth_years = []
         birth_year_patterns = (
@@ -958,7 +977,10 @@ def complete_with_intake(
 ) -> LookupDecision:
     """Complete only a recognized pending lookup with explicit intake facts."""
     if not isinstance(needs_information, NeedsInformation):
-        raise TypeError("complete_with_intake requires a NeedsInformation decision")
+        raise TypeError(
+            "complete_with_intake requires a NeedsInformation decision; "
+            "answer Ready directly and route NotEligible without intake completion"
+        )
     profile = needs_information.next_state.profile
     year = intake_result.get("geboortejaar")
     age = intake_result.get("leeftijd")
@@ -1000,5 +1022,8 @@ def complete_with_intake(
 def render_answer(ready: Ready, language_level: str) -> str:
     """Render validated answer facts without reading or interpreting user text."""
     if not isinstance(ready, Ready):
-        raise TypeError("render_answer requires a Ready decision")
+        raise TypeError(
+            "render_answer requires a Ready decision; "
+            "route NeedsInformation and NotEligible through intake.decide_route"
+        )
     return _render_ready(ready.ready, language_level)

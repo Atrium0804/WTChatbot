@@ -245,6 +245,29 @@ regels:
       - {vraag: "en voor 2017?", route: bypass}
       - {vraag: "2016", route: bypass}
 
+  - id: alleen-gegevens-als-eerste-bericht
+    herkomst: "#135 spec-review bevinding 1; voorbeeld #102/#125 (jongen uit 2015, U12, weg)"
+    vandaag: 2026-06-01
+    beurten:
+      - {vraag: "jongen uit 2015, U12, weg", route: bypass}
+      - {vraag: "en voor 2017?", route: bypass}
+
+  - id: alleen-gegevens-als-antwoord-op-open-vraag
+    herkomst: "#135 spec-review bevinding 1 (antwoord op een onvolledige lookup)"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "jongen uit 2015", route: bypass}
+
+  - id: alleen-filters-zonder-hoofdingang
+    herkomst: "#135 spec-review bevinding 1 (gegevensbericht zonder hoofdingang)"
+    beurten:
+      - {vraag: "jongen, weg", route: inhoudelijk}
+
+  - id: gegevens-met-andere-woorden
+    herkomst: "#135 spec-review bevinding 1 (alleen herkende gegevens)"
+    beurten:
+      - {vraag: "jongen uit 2015 heeft een nieuwe fiets", route: inhoudelijk}
+
   - id: geslacht-vervangt-enkel-prefix
     herkomst: "toestandsmodel #125 besluit 4 (JO11 -> alleen meisjes)"
     beurten:

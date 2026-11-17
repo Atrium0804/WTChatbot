@@ -62,22 +62,31 @@ def max_gear(
     Raises ValueError for unsupported input; None means a validated NVT source value.
     """
     if gender not in ("jongens", "meisjes"):
-        raise ValueError(f"Onbekend geslacht: {gender}")
+        raise ValueError(f"Onbekend geslacht: {gender}; geef 'jongens' of 'meisjes' mee")
     if discipline not in ("weg", "baan", "veld"):
-        raise ValueError(f"Onbekende discipline: {discipline}")
+        raise ValueError(f"Onbekende discipline: {discipline}; geef 'weg', 'baan' of 'veld' mee")
 
     per_category = rules["verzetten"]["per_geslacht"].get(gender)
     if per_category is None:
-        raise ValueError(f"Geen verzetdata voor geslacht: {gender}")
+        raise ValueError(
+            f"Geen verzetdata voor geslacht: {gender}; vul verzetten.per_geslacht.{gender} "
+            "aan in knwu_categories.json"
+        )
     if category not in per_category:
         token = category.split()[0]
         matches = [name for name in per_category if name.split()[0] == token]
         if len(matches) != 1:
-            raise ValueError(f"Onbekende leeftijdscategorie voor {gender}: {category}")
+            raise ValueError(
+                f"Onbekende leeftijdscategorie voor {gender}: {category}; "
+                f"kies een van {', '.join(per_category)}"
+            )
         category = matches[0]
     entry = per_category[category]
     if discipline not in entry:
-        raise ValueError(f"Geen verzetdata voor {category}, {gender}, {discipline}")
+        raise ValueError(
+            f"Geen verzetdata voor {category}, {gender}, {discipline}; "
+            "vul de waarde aan in knwu_categories.json (null voor NVT)"
+        )
     return entry[discipline]
 
 

@@ -87,6 +87,51 @@ def test_new_primary_year_fragment_replaces_category_but_keeps_filters():
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
 
 
+def test_data_only_message_starts_a_profile_that_a_new_year_replaces():
+    first = lookups.recognize_turn("jongen uit 2015, U12, weg", None, date(2026, 6, 1), RULES)
+
+    assert first.kind == "ready"
+    assert [
+        (row.season.discipline, row.gender, row.category, row.birth_year)
+        for row in first.ready.rows
+    ] == [("weg", "jongens", "U12", 2015)]
+
+    followup = lookups.recognize_turn("en voor 2017?", first.next_state, date(2026, 6, 1), RULES)
+
+    assert followup.kind == "ready"
+    assert {(row.gender, row.season.discipline, row.birth_year) for row in followup.ready.rows} == {
+        ("jongens", "weg", 2017)
+    }
+
+
+def test_data_only_reply_completes_a_pending_lookup_and_keeps_its_filters():
+    pending = lookups.recognize_turn("Welk verzet op de weg?", None, NOVEMBER_2026, RULES)
+    assert pending.kind == "needs_information"
+
+    reply = lookups.recognize_turn("jongen uit 2015", pending.next_state, NOVEMBER_2026, RULES)
+
+    assert reply.kind == "ready"
+    assert {(row.gender, row.season.discipline, row.birth_year) for row in reply.ready.rows} == {
+        ("jongens", "weg", 2015)
+    }
+
+
+def test_bare_year_in_a_data_only_message_is_a_birth_year():
+    decision = lookups.recognize_turn("2015, meisjes", None, NOVEMBER_2026, RULES)
+
+    assert decision.kind == "ready"
+    assert decision.ready.heading == "Geboortejaar 2015"
+    assert {row.gender for row in decision.ready.rows} == {"meisjes"}
+
+
+@pytest.mark.parametrize(
+    "message",
+    ["jongen, weg", "jongen uit 2015 heeft een nieuwe fiets", "2015, 2017"],
+)
+def test_data_only_message_needs_a_primary_input_and_only_known_data(message):
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible"
+
+
 def test_complete_question_starts_without_inherited_filters():
     first = lookups.recognize_turn(
         "Welke categorie voor een jongen geboren in 2015 bij wegwielrennen?",
@@ -466,6 +511,32 @@ def test_combined_overview_uses_flat_markdown_and_one_final_source_line(language
         assert "artikel 20.0.002" in answer
 
 
+@pytest.mark.parametrize(
+    ("language_level", "expected"),
+    [
+        (
+            "B1",
+            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21; "
+            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21; "
+            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
+        ),
+        (
+            "B2",
+            "Bron: TITEL_20-Jeugdwielrennen_20260921 - ALGEMENE BEPALINGEN.md, versie 2026-09-21 "
+            "(artikel 20.0.004 en artikel 20.0.002); "
+            "TITEL_20-Jeugdwielrennen_20260921 - Hoofdstuk 1 - WEDSTRIJDEN, ALGEMEEN.md, versie 2026-09-21 "
+            "(artikel 20.1.007); "
+            "WebsiteWTCjeugd: website-tekst KNWU - leeftijdscategorieën (clubbron, oude indeling)",
+        ),
+    ],
+)
+def test_source_line_names_each_document_once_and_labels_the_club_source(language_level, expected):
+    decision = lookups.recognize_turn("2014", None, NOVEMBER_2026, RULES)
+    assert decision.kind == "ready"
+
+    assert lookups.render_answer(decision, language_level).splitlines()[-1] == expected
+
+
 def test_conflicting_category_and_birth_year_does_not_fall_back_to_partial_answer():
     decision = lookups.recognize_turn(
         "Welke categorie voor geboortejaar 2015 en jongens U11?",
@@ -564,4 +635,4 @@ def test_every_bypass_answer_uses_supported_markdown_format(message, language_le
     lines = answer.splitlines()
     source_line_indexes = [index for index, line in enumerate(lines) if line.startswith("Bron:")]
     assert source_line_indexes == [len(lines) - 1]
-    assert lookups.DISCLAIMER_LIBRARY in answer
+    assert "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" in answer

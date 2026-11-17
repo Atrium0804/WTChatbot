@@ -167,7 +167,10 @@ def decide_route(
             return BypassRoute(completed)
         lookup = completed
     elif not isinstance(decision, lookups.NotEligible):
-        raise TypeError("decide_route requires a NeedsInformation or NotEligible decision")
+        raise TypeError(
+            "decide_route requires a NeedsInformation or NotEligible decision; "
+            "answer a Ready decision directly with lookups.render_answer"
+        )
     domein = str(intake_result.get("domein") or "onbekend")
     confidence = float(intake_result.get("confidence") or 0.0)
     agent_id = expert_agent_ids.get(domein, "")

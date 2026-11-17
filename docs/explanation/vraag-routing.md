@@ -56,7 +56,7 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 - **NeedsInformation**: een herkende lookup-vraag mist de hoofdingang, bijvoorbeeld "Welk verzet?". Alleen deze beslissing mag de intake aanvullen, via `complete_with_intake()`. Die neemt alleen een geboortejaar over dat al letterlijk in het bericht staat, nooit een jaar dat uit een leeftijd is afgeleid of dat de intake verzint.
 - **NotEligible**: uitleg- of uitzonderingsvragen, tegenstrijdige of onbekende invoer, meerdere renners, een expliciet wedstrijdjaar, andere disciplines dan weg en veld, en berichten die niets met de lookup te maken hebben. De intake kiest dan alleen tussen expert en router en maakt er nooit een bypass van.
 
-Geslacht en discipline zijn optioneel: ontbreken ze, dan toont het overzicht beide. Het overzicht toont twee kandidaatseizoenen, afhankelijk van de appdatum.
+Geslacht en discipline zijn optioneel: ontbreken ze, dan toont het overzicht beide. Het overzicht toont twee kandidaatseizoenen, afhankelijk van de appdatum. De exacte invoervormen, seizoensregels, overgangen en antwoordvorm staan in de [reference: categorieoverzicht](../reference/categorieoverzicht.md).
 
 ### Lookup-toestand per conversatie
 
@@ -69,7 +69,7 @@ De app bewaart per conversatie een lookup-toestand, los van de feedbackgeschiede
 
 De app stelt bij elk geaccepteerd bericht synchroon de volgende toestand vast en verhoogt een revisienummer, vóór er iets wordt afgewacht. Een background job die een onvolledige vraag met de intake aanvult, publiceert zijn toestand alleen als zijn revisie nog de nieuwste is. Een oudere job kan zo een nieuwere toestand niet overschrijven of wissen; zijn eigen antwoord en status blijven ongewijzigd. Een rate-limited of ongeldig verzoek telt niet als beurt.
 
-Het bypass-antwoord eindigt op een vooruitblikvoorbehoud, een vaste disclaimer en één `Bron:`-regel met versiedatum. Dat geldt ook bij B1: dit is een gerichte uitzondering op de B1-bronweglating uit [ADR-0009](../adr/0009-agent-architectuur-snelheid.md) (#102). Bij B2 noemt de bronregel ook de artikelen. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
+Het bypass-antwoord eindigt op een vooruitblikvoorbehoud, de vaste slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" en één `Bron:`-regel met versiedatum. Een bypass start geen agentgesprek, dus een kort antwoord als "ja" komt bij de agent aan zonder de eerdere vraag; wie meer wil weten, stelt de vraag het best opnieuw. De `Bron:`-regel geldt voor elk bypass-antwoord, ook bij B1: dit is een gerichte uitzondering op de B1-bronweglating uit [ADR-0009](../adr/0009-agent-architectuur-snelheid.md) (#102). Zo blijft zichtbaar dat het antwoord uit vaste KNWU-data komt en niet van een agent. De bronregel noemt elk document één keer en onderscheidt de clubbron voor de oude indeling van de KNWU-regels. Bij B2 noemt de bronregel ook de artikelen. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
 
 De chatrenderer ondersteunt alleen koppen, **vet**, platte lijsten, links en één `Bron:`-blok; de formatcheck staat in [`app/tests/test_lookups.py`](../../app/tests/test_lookups.py) en de renderercontracttest in [`app/tests/test_markdown_rendering.cjs`](../../app/tests/test_markdown_rendering.cjs).
 
@@ -94,6 +94,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | "Welke oude categorie is JO11/MO12?" | `bypass` | gecombineerde categorie; het overzicht noemt de oude categorie per regel |
 | "Welk verzet voor categorie 2 op de weg?" | `bypass` | overzicht voor jongens U10 en meisjes U11 |
 | "weg" na "wlk verzet voor u8" | `bypass` | discipline-filter op het voltooide profiel |
+| "jongen uit 2015, U12, weg" | `bypass` | bericht met alleen herkende gegevens, met een geboortejaar als hoofdingang |
 | "In welke categorie rijdt hij in 2026?" | géén bypass → agent | een expliciet wedstrijdjaar is geen invoerveld |
 | "Waarom is het verzet voor U15 maar 6,70 meter?" | géén bypass → agent | `MEER_DAN_FEIT` treft "waarom" |
 | "Hoe meet ik het verzet voor U13 op de weg?" | géén bypass → agent | meetinstructies zijn meer dan het maximale verzet |

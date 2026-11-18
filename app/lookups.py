@@ -611,7 +611,7 @@ def _apply_followup(
 
 
 def _parse_lookup_turn(
-    message: str, rules: dict, previous_state: LookupState
+    message: str, rules: dict, previous_state: LookupState, is_first_turn: bool
 ) -> _ParsedTurn:
     text = message.strip()
     empty_profile = _LookupProfile(None, None, None)
@@ -620,14 +620,19 @@ def _parse_lookup_turn(
     if explicit_inputs is None:
         return _ParsedTurn(False, empty_profile)
 
-    eligible_for_bypass = bool(
+    # #143: een los gegeven ("2014", "2014, meisje", "categorie 3") is een
+    # vervolgbericht; zonder open of voltooide lookup hoort het bij de vorige
+    # (inhoudelijke) beurt en is het alleen als eerste beurt een eigen lookup.
+    standalone_data = bool(
         message_recognition.is_bare_year_message(text)
         or shape.old_category_fragment
-        or shape.is_complete_question
-        or (
-            shape.is_fragment
-            and isinstance(previous_state, (_PendingLookupState, _CompletedLookupState))
-        )
+        or shape.data_only
+    )
+    lookup_in_progress = isinstance(previous_state, (_PendingLookupState, _CompletedLookupState))
+    eligible_for_bypass = bool(
+        (standalone_data and is_first_turn)
+        or (shape.is_complete_question and not shape.data_only)
+        or (shape.is_fragment and lookup_in_progress)
     )
     if not eligible_for_bypass:
         return _ParsedTurn(False, empty_profile)
@@ -922,10 +927,15 @@ def recognize_turn(
     previous_state: LookupState | None,
     today: date,
     rules: dict,
+    *,
+    is_first_turn: bool,
 ) -> BypassDecision:
-    """Recognize, validate and calculate a deterministic lookup without side effects."""
+    """Recognize, validate and calculate a deterministic lookup without side effects.
+
+    `is_first_turn`: this is the first accepted turn of the conversation.
+    """
     state = previous_state or NoLookupState()
-    parsed = _parse_lookup_turn(message, rules, state)
+    parsed = _parse_lookup_turn(message, rules, state, is_first_turn)
     if not parsed.eligible_for_bypass:
         return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
     if parsed.profile.selector is None:

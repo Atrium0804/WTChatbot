@@ -1331,6 +1331,54 @@ def test_lookup_state_is_isolated_per_conversation(lookup_client, monkeypatch):
     assert same.status_code == 200
 
 
+QUESTION_ABOUT_CLUB_RACE = (
+    "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?"
+)
+
+
+def test_bare_year_after_restart_is_a_first_turn_again(lookup_client, monkeypatch):
+    """#143 S11: een herstart wist lookup-toestand en agentgesprek; een kaal
+    jaartal is dan weer een eigen lookup."""
+    import intake
+
+    install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    before_restart = lookup_client()
+    question = post_in(before_restart, "conv", QUESTION_ABOUT_CLUB_RACE)
+    assert _wait_for_job(before_restart, question.json()["job_id"])["status"] == "done"
+
+    after_restart = lookup_client()
+
+    assert post_in(after_restart, "conv", "2014").status_code == 200
+
+
+def test_bare_year_sent_while_the_agent_answers_goes_to_the_agent(lookup_client, monkeypatch):
+    """#143 S12: de beurt telt al bij acceptatie, niet pas als het agentantwoord er is."""
+    import intake
+    import mistral_client
+
+    install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    agent_started = threading.Event()
+    release_agent = threading.Event()
+
+    def slow_stream(**kwargs):
+        agent_started.set()
+        if not release_agent.wait(timeout=5):
+            raise AssertionError("agentantwoord werd niet vrijgegeven")
+        return "mistral-conv-1", "antwoord"
+
+    monkeypatch.setattr(mistral_client, "stream_answer", slow_stream)
+    client = lookup_client()
+    question = post_in(client, "conv", QUESTION_ABOUT_CLUB_RACE)
+    assert agent_started.wait(timeout=5)
+
+    year = post_in(client, "conv", "2014")
+    release_agent.set()
+
+    assert year.status_code == 202
+    assert _wait_for_job(client, question.json()["job_id"])["status"] == "done"
+    assert _wait_for_job(client, year.json()["job_id"])["route"] == "router"
+
+
 @pytest.mark.parametrize("older_outcome", ["success", "failure"])
 @pytest.mark.parametrize(
     ("newer_message", "newer_keeps_profile"),

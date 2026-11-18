@@ -199,7 +199,13 @@ def create_app(
         previous = lookup_states.get(conversation_id) or ConversationLookup(
             0, lookups.NoLookupState()
         )
-        decision = lookups.recognize_turn(message, previous.state, today_date, category_rules)
+        decision = lookups.recognize_turn(
+            message,
+            previous.state,
+            today_date,
+            category_rules,
+            is_first_turn=previous.accepted_turn_count == 0,
+        )
         accepted_turn_count = previous.accepted_turn_count + 1
         lookup_states[conversation_id] = ConversationLookup(accepted_turn_count, decision.next_state)
         return decision, accepted_turn_count

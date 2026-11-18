@@ -154,11 +154,17 @@ def classify_with_reason(message: str, api_key: str) -> tuple[dict, str, float]:
 
 
 def replay_beurt(
-    message: str, state: lookups.LookupState, api_key: str, today: date, rules: dict
+    message: str,
+    state: lookups.LookupState,
+    api_key: str,
+    today: date,
+    rules: dict,
+    *,
+    is_first_turn: bool,
 ) -> lookups.LookupState:
     """Volgende lookup-toestand na een eerdere beurt, zoals de app die vastlegt:
     een herkende onvolledige vraag krijgt de intake-aanvulling uit de job."""
-    decision = lookups.recognize_turn(message, state, today, rules)
+    decision = lookups.recognize_turn(message, state, today, rules, is_first_turn=is_first_turn)
     if not isinstance(decision, lookups.NeedsInputForBypass):
         return decision.next_state
     intake_result, _, _ = classify_with_reason(message, api_key)
@@ -177,9 +183,12 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     `route_reden` gebruikt de trace-redenen van de app.
     """
     state: lookups.LookupState = lookups.NoLookupState()
-    for message in entry.get("beurten", []):
-        state = replay_beurt(message, state, api_key, today, rules)
-    decision = lookups.recognize_turn(entry["vraag"], state, today, rules)
+    previous_turns = entry.get("beurten", [])
+    for number, message in enumerate(previous_turns):
+        state = replay_beurt(message, state, api_key, today, rules, is_first_turn=number == 0)
+    decision = lookups.recognize_turn(
+        entry["vraag"], state, today, rules, is_first_turn=not previous_turns
+    )
     if isinstance(decision, lookups.ReadyForBypass):
         return {
             "route": "bypass", "route_reden": "regex_lookup", "agent_id": None,

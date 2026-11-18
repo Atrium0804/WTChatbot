@@ -67,7 +67,9 @@ De app bewaart per conversatie een lookup-toestand, los van de feedbackgeschiede
 - een zelfstandige vraag erft niets;
 - een afgewezen of inhoudelijke beurt, ook "Waarom?", beëindigt het hergebruik. Alleen een openstaande onvolledige vraag blijft staan, zodat "Welk verzet?" → "2012" het volledige overzicht geeft.
 
-De app stelt bij elk geaccepteerd bericht synchroon de volgende toestand vast en verhoogt een revisienummer, vóór er iets wordt afgewacht. Een background job die een onvolledige vraag met de intake aanvult, publiceert zijn toestand alleen als zijn revisie nog de nieuwste is. Een oudere job kan zo een nieuwere toestand niet overschrijven of wissen; zijn eigen antwoord en status blijven ongewijzigd. Een rate-limited of ongeldig verzoek telt niet als beurt.
+Een vervolgbericht hoort bij de vorige beurt (#143). Een los gegeven zonder openstaande of voltooide lookup, zoals "2014", "2014, meisje" of "categorie 3", is daarom alleen in de eerste beurt van een gesprek een eigen lookup (#102). Na een inhoudelijke beurt is zo'n bericht meestal het antwoord op een vraag van de agent: "Aan welke voorwaarden moet mijn dochter voldoen voor een clubwedstrijd?" → "2014" gaat naar de agent, die de categorie al via de contextregels krijgt. Een zelfstandige vraag ("Welke categorie voor geboortejaar 2014?") krijgt midden in een gesprek nog steeds de bypass. De app herkent geen onderwerpwissel; hij kijkt alleen naar de vorm van het bericht en de lookup-toestand.
+
+De app stelt bij elk geaccepteerd bericht synchroon de volgende toestand vast en verhoogt een beurtenteller, vóór er iets wordt afgewacht. Die teller bepaalt ook of een beurt de eerste is; een bericht dat binnenkomt terwijl de agent nog antwoordt, is dus al een vervolgbericht. Een background job die een onvolledige vraag met de intake aanvult, publiceert zijn toestand alleen als zijn teller nog de nieuwste is. Een oudere job kan zo een nieuwere toestand niet overschrijven of wissen; zijn eigen antwoord en status blijven ongewijzigd. Een rate-limited of ongeldig verzoek telt niet als beurt. Na een herstart van de app zijn toestand en teller weg, net als het agentgesprek; de volgende beurt is dan weer de eerste.
 
 Het bypass-antwoord eindigt op een vooruitblikvoorbehoud en de vaste slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?". Een bypass start geen agentgesprek, dus een kort antwoord als "ja" komt bij de agent aan zonder de eerdere vraag; wie meer wil weten, stelt de vraag het best opnieuw. Bij B2 volgt een `Bron:`-regel met versiedatum en artikelnummers; bij B1 staat die regel niet, net als bij andere B1-antwoorden. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
 
@@ -90,6 +92,8 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | "In welke leeftijdscategorie rijdt een jongen geboren in 2015?" | `bypass` | geboortejaar als hoofdingang, geen "meer dan feit"-woorden |
 | "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?" | `bypass` | categorie U15 met geslacht en discipline als filter |
 | "2015" (kaal jaartal als vervolg op de vraag naar het geboortejaar) | `bypass` | vult de openstaande vraag aan (#91 besluit 5) |
+| "2015" als eerste bericht | `bypass` | los gegeven in de eerste beurt (#102) |
+| "2015" na een inhoudelijke beurt | `direct-<domein>` of `router` | vervolgbericht op de agent (#143) |
 | "Wat is categorie 3 in de nieuwe indeling?" | `bypass` | oude categorie als hoofdingang |
 | "Welke oude categorie is JO11/MO12?" | `bypass` | gecombineerde categorie; het overzicht noemt de oude categorie per regel |
 | "Welk verzet voor categorie 2 op de weg?" | `bypass` | overzicht voor jongens U10 en meisjes U11 |

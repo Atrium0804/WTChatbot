@@ -19,7 +19,7 @@ EXPERTS = {"knwu": "ag_knwu", "regio": "ag_regio", "club": "ag_club", "archief":
 
 
 def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> intake.Route:
-    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
+    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES, is_first_turn=True)
     assert not isinstance(decision, lookups.ReadyForBypass), message
     return intake.decide_route(
         decision=decision,
@@ -50,7 +50,7 @@ def test_rejected_input_is_never_rescued_into_a_bypass():
 
 
 def test_decide_route_refuses_a_ready_decision():
-    ready = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
+    ready = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES, is_first_turn=True)
     with pytest.raises(TypeError, match="NeedsInputForBypass or NotEligibleForBypass"):
         intake.decide_route(
             decision=ready,  # type: ignore[arg-type]

@@ -11,7 +11,7 @@ Alle drie in `app/lookups.py`, puur (geen netwerk, geen LLM). Datum en regels wo
 
 | Operatie | Invoer | Uitvoer |
 | --- | --- | --- |
-| `recognize_turn(message, previous_state, today, rules)` | bericht, lookup-toestand van de conversatie (of `None`), appdatum, `knwu_categories.load_rules()` | `ReadyForBypass` \| `NeedsInputForBypass` \| `NotEligibleForBypass`, elk met `next_state` |
+| `recognize_turn(message, previous_state, today, rules, *, is_first_turn)` | bericht, lookup-toestand van de conversatie (of `None`), appdatum, `knwu_categories.load_rules()`, of dit de eerste geaccepteerde beurt van het gesprek is | `ReadyForBypass` \| `NeedsInputForBypass` \| `NotEligibleForBypass`, elk met `next_state` |
 | `complete_with_intake(needs_input, intake_result, today, rules)` | alleen een `NeedsInputForBypass`; anders `TypeError` | `ReadyForBypass` \| `NeedsInputForBypass` \| `NotEligibleForBypass` |
 | `render_answer(ready, language_level)` | alleen een `ReadyForBypass`; anders `TypeError`. `language_level` `B1` of `B2` | markdown-antwoord |
 
@@ -40,6 +40,8 @@ Precies één hoofdingang per bericht.
 | Alleen gegevens | een bericht met alleen herkende gegevens, gescheiden door komma's, "en" of spaties: geslachtswoord, geboortejaarvorm (ook een kaal jaartal), categorie, oude categorie, discipline. Minstens één hoofdingang; elk ander woord geeft `NotEligibleForBypass` | "jongen uit 2015, U12, weg", "2015, meisjes" |
 
 Een geboortejaar samen met een categorie: het geboortejaar is de hoofdingang, de categorie een extra filter. Een oude en een nieuwe categorie samen: de oude categorie is de hoofdingang, de nieuwe een filter.
+
+Een los gegeven ("2014", "2014, meisje", "categorie 3") zonder `pending`- of `completed`-toestand is alleen in de eerste beurt een lookup, zie [Overgangen](#overgangen) (#143). "oude cat. 3" en "Wat is cat. 3?" zijn zelfstandige vragen.
 
 ### Filters en normalisatie
 
@@ -121,14 +123,16 @@ Per conversatie in het geheugen van de app (`lookup_states` in `app/main.py`), l
 | Kaal jaartal na `pending` ("Welk verzet?" → "2012") | volledig overzicht, beide disciplines |
 | Complete zelfstandige vraag | erft niets |
 | Afgewezen of inhoudelijke beurt ("Waarom?") | toestand `none`; een later fragment grijpt niet terug |
+| Los gegeven bij toestand `none` ("2014", "2014, meisje", "categorie 3") | alleen in de eerste beurt een lookup; na een eerdere beurt `NotEligibleForBypass` |
 
-### Revisie
+### Beurtenteller
 
 | Moment | Gedrag |
 | --- | --- |
-| Geaccepteerd `POST /chat` | revisie +1 en de nieuwe toestand vastgelegd vóór enige `await` |
-| Rate-limited of ongeldig verzoek | geen beurt, geen revisie |
-| Background job met intake-aanvulling | publiceert alleen als zijn revisie nog de nieuwste is; anders trace-event `lookup_state` met `reason: stale_revision` |
+| Geaccepteerd `POST /chat` | `accepted_turn_count` +1 en de nieuwe toestand vastgelegd vóór enige `await`; bij 0 is de beurt de eerste (`is_first_turn`) |
+| Rate-limited of ongeldig verzoek | geen beurt, teller ongewijzigd |
+| Background job met intake-aanvulling | publiceert alleen als zijn teller nog de nieuwste is; anders trace-event `lookup_state` met `reason: stale_revision` |
+| Herstart van de app | teller en toestand weg; de volgende beurt is weer de eerste |
 
 ## Verzetdata
 
@@ -180,7 +184,7 @@ De losse lookup KNWU Licentie 17+ noemt alleen ALGEMENE BEPALINGEN, bij B2 met a
 | Bestand | Dekt |
 | --- | --- |
 | `app/tests/test_lookups.py` | herkenning, profielovergangen, seizoenen, antwoordvorm en bronregel |
-| `app/tests/test_app.py` | vervolgvragen, revisievolgorde en 0 modelcalls via `POST /chat` |
+| `app/tests/test_app.py` | vervolgvragen, volgorde van de beurtenteller, herstart, bericht tijdens een agentantwoord en 0 modelcalls via `POST /chat` |
 | `app/tests/fixtures/routecontract.yaml` | route per gesprek |
 | `app/tests/test_intake.py` | `decide_route` met de drie beslissingen |
 | `tests/test_knwu_categories.py` | driftcontrole van de data tegen Titel 20 |

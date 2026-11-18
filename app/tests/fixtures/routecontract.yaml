@@ -382,3 +382,79 @@ regels:
         route: inhoudelijk
         intake: {intentie: lookup, geboortejaar: 2012, discipline: weg}
       - {vraag: "weg", route: inhoudelijk}
+
+  # --- #143: een kaal geboortejaar is alleen een lookup als eerste beurt of
+  # als vervolg op een lookup; na een inhoudelijke beurt gaat het naar de agent.
+  # S2-S4 (vervolg op een open of voltooide lookup) staan al hierboven (#125). ---
+  - id: zelfstandig-geboortejaar-eerste-beurt
+    herkomst: "#143 S1, behoud #102"
+    beurten:
+      - {vraag: "2014", route: bypass}
+
+  - id: geboortejaar-antwoord-op-inhoudelijke-vraag
+    herkomst: "#143 S5"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-na-verduidelijking
+    herkomst: "#143 S6"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "Het gaat om een wedstrijd in de regio.", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-punt
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014.", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-vraagteken
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014?", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-geboren-in
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "geboren in 2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-geslacht
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014, meisje", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-geslacht-ervoor
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "meisje 2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-discipline
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014 weg", route: inhoudelijk}
+
+  - id: geboortejaar-na-inhoudelijke-beurt-zonder-vraag
+    herkomst: "#143 S8"
+    beurten:
+      - {vraag: "Hoe schrijf ik mijn dochter in voor de clubcompetitie?", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: zelfstandige-lookupvraag-na-inhoudelijke-beurt
+    herkomst: "#143 S9, behoud #91"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "Welke categorie voor geboortejaar 2014?", route: bypass}
+
+  - id: geboortejaar-na-waarom
+    herkomst: "#143 S10"
+    beurten:
+      - {vraag: "2014", route: bypass}
+      - {vraag: "Waarom?", route: inhoudelijk}
+      - {vraag: "2016", route: inhoudelijk}

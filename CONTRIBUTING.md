@@ -15,14 +15,13 @@ Dit bestand beschrijft **wat** je doet bij een bijdrage. **Hoe** je code schrijf
 
 ## Werkwijze per agentsessie
 
-Elke agentsessie werkt in een **eigen `git worktree` op een eigen branch**, zodat sessies elkaars werk in de gedeelde worktree niet verstoren. Nooit werken of committen op `main`.
+Elke agentsessie werkt op een **featurebranch**. Nooit werken of committen op `main`. Staat de checkout op `main`, maak dan eerst een branch aan:
 
 ```powershell
-git worktree add ..\WTChatbot-<issue> -b issue-<nr>-<korte-naam> main
+git switch -c issue-<nr>-<korte-naam> main
 ```
 
-- Ruim na de merge op met `git worktree remove ..\WTChatbot-<issue>`.
-- Een nieuwe worktree deelt de `.git`-config, maar niet `.venv` of `.env`; maak of kopieer die in de worktree.
+- De agent maakt zelf geen worktrees aan. Wil je sessies parallel laten draaien, start de agent dan zelf vanuit een eigen worktree (`git worktree add ..\WTChatbot-<issue> -b issue-<nr>-<korte-naam> main`); die deelt de `.git`-config, maar niet `.venv` of `.env`.
 - Eenmalig per clone: `git config core.hooksPath .githooks`. De hook `.githooks/pre-commit` weigert dan commits op `main`. Dit dekt alleen lokaal werk; `main` is op GitHub al beschermd.
 
 ## Flowkeuze per issue

@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import context  # noqa: E402
 import knwu_categories  # noqa: E402
+import message_recognition  # noqa: E402
 
 RULES = knwu_categories.load_rules()
 NOVEMBER_2026 = date(2026, 11, 9)
@@ -172,11 +173,11 @@ def test_old_category_all_numbers_translate():
 
 
 def test_old_category_lists_and_ranges():
-    assert context.old_category_numbers("categorieën 3 en 4") == [3, 4]
-    assert context.old_category_numbers("cat. 3/4") == [3, 4]
-    assert context.old_category_numbers("categorie 2, 3 en 5") == [2, 3, 5]
-    assert context.old_category_numbers("categorie 1 t/m 3") == [1, 2, 3]
-    assert context.old_category_numbers("cat 5-7") == [5, 6, 7]
+    assert message_recognition.old_category_numbers("categorieën 3 en 4") == [3, 4]
+    assert message_recognition.old_category_numbers("cat. 3/4") == [3, 4]
+    assert message_recognition.old_category_numbers("categorie 2, 3 en 5") == [2, 3, 5]
+    assert message_recognition.old_category_numbers("categorie 1 t/m 3") == [1, 2, 3]
+    assert message_recognition.old_category_numbers("cat 5-7") == [5, 6, 7]
 
 
 def test_old_category_0_does_not_exist():
@@ -263,20 +264,20 @@ def test_old_designation_lines_deduplicate():
 
 
 def test_find_ages_in_years_digit():
-    assert context.find_ages_in_years("mag een kind van 6 meedoen?") == [6]
-    assert context.find_ages_in_years("mijn dochter is 8 jaar oud") == [8]
-    assert context.find_ages_in_years("een 12-jarige mag") == [12]
+    assert message_recognition.find_ages_in_years("mag een kind van 6 meedoen?") == [6]
+    assert message_recognition.find_ages_in_years("mijn dochter is 8 jaar oud") == [8]
+    assert message_recognition.find_ages_in_years("een 12-jarige mag") == [12]
 
 
 def test_find_ages_in_years_dutch_number_word():
-    assert context.find_ages_in_years("mijn kind is zes jaar") == [6]
-    assert context.find_ages_in_years("een zevenjarige") == [7]
+    assert message_recognition.find_ages_in_years("mijn kind is zes jaar") == [6]
+    assert message_recognition.find_ages_in_years("een zevenjarige") == [7]
 
 
 def test_find_ages_in_years_no_false_positives():
-    assert context.find_ages_in_years("Wanneer is het NK 2026?") == []
-    assert context.find_ages_in_years("Hoeveel kost een licentie in 2026?") == []
-    assert context.find_ages_in_years("Categorie 3 rijdt om 10:00") == []
+    assert message_recognition.find_ages_in_years("Wanneer is het NK 2026?") == []
+    assert message_recognition.find_ages_in_years("Hoeveel kost een licentie in 2026?") == []
+    assert message_recognition.find_ages_in_years("Categorie 3 rijdt om 10:00") == []
 
 
 def test_birth_years_for_age():

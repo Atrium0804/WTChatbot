@@ -85,11 +85,28 @@ _Avoid_: agent-route, "naar een agent"
 **Routecontract**:
 Eén tabel die per vraag of gesprek vastlegt welke route de app moet kiezen: deterministische bypass of inhoudelijke route. Elk reviewgeval over routering krijgt hier een regel, met de herkomst erbij.
 _Avoid_: routetabel, bypass-lijst
+
+**Gesprek**:
+Eén chat in Wielie: alle beurten vanaf het eerste bericht, tot de gebruiker de pagina herlaadt of de app herstart. Bevat zowel bypass-antwoorden als antwoorden van een agent.
+_Avoid_: conversatie (verwarrend met het agentgesprek), sessie
+
+**Beurt**:
+Eén bericht van de gebruiker plus het antwoord van de app. Een geweigerd bericht (te lang, te veel vragen per uur) is geen beurt.
+_Avoid_: turn (in Nederlandse tekst), vraag (een beurt kan ook een kort antwoord zijn)
+
+**Agentgesprek**:
+Het deel van een gesprek dat een agent kent: alleen de beurten op de inhoudelijke route. Begint bij de eerste inhoudelijke beurt; bypass-antwoorden ziet de agent niet.
+_Avoid_: Mistral-conversatie (als domeinterm), "het gesprek" als je alleen het agentdeel bedoelt
+
+**Vervolgbericht**:
+Een kort bericht dat alleen samen met de vorige beurt iets betekent, zoals "2014", "weg" of "alleen meisjes". Het hoort bij de vorige beurt: na een lookup vult of wijzigt het die lookup, na een antwoord van een agent gaat het naar de agent. Alleen als eerste beurt van een gesprek is een los gegeven een eigen lookup. Een vervolgbericht op een onvolledige lookup-vraag heet een **aanvulling**. Tegenhanger: de zelfstandige vraag, die op zichzelf te begrijpen is en niets van eerdere beurten erft.
+_Avoid_: vervolgvraag (zegt niet of het bericht zelfstandig is), verdiepingsvraag
+
 **Deterministische bypass**:
-Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een template (bron+versie+artikel bij B2) — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een bestaand gesprek. Twee ingangen: de regex herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call, die geboortejaar of discipline aanvult).
+Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een overzicht met bron en versie — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een gesprek: bij een zelfstandige lookup-vraag, of bij een vervolgbericht op een eerdere lookup. Twee ingangen: de app herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call) bij een herkende vraag waarvan het geboortejaar alleen nog bevestigd moest worden. De intake vult nooit een gegeven aan dat de gebruiker niet zelf noemde, en maakt van een afgewezen vraag geen bypass.
 
 **Intake (light-model intake)**:
-Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de regex-lookup de route.
+Eén kleine LLM-call per bericht (`mistral-small-latest` via de Chat Completions API, `app/intake.py`) die het bericht als JSON classificeert: intentie, domein, discipline, geboortejaar, confidence. Bepaalt samen met de herkenning van de app (lookup, onvolledige lookup of geen lookup) de route.
 
 **Direct-to-expert**:
 De app start een conversatie direct bij de domeinexpert (via `MISTRAL_AGENT_ID_KNWU`/`_REGIO`/`_CLUB`/`_ARCHIEF`) als de intake het domein met confidence ≥ drempel (`INTAKE_CONFIDENCE_THRESHOLD`, default 0,8) bepaalt — de router-call wordt zo bespaard.
@@ -116,6 +133,10 @@ _Avoid_: "cat. 3" zonder de nieuwe aanduiding erbij
 **Veldritseizoen**:
 Het wedstrijdseizoen veldrijden, dat over twee kalenderjaren loopt (Titel 20: september t/m maart). Een renner rijdt het hele veldritseizoen in de leeftijdscategorie waarin hij per 1 januari van dat seizoen valt, in het najaar dus een categorie hoger dan op de weg (bv. een jongen geboren in 2015: U12 op de weg in 2026, U13 in het veldritseizoen 2026-2027).
 _Avoid_: "winterseizoen", "crossseizoen" zonder jaartallen
+
+**Peiljaar**:
+Het kalenderjaar dat bepaalt in welke leeftijdscategorie een renner start: bij wegwielrennen het jaar van de wedstrijd, bij veldrijden het jaar waarin het veldritseizoen eindigt. De leeftijd voor de indeling is het peiljaar min het geboortejaar.
+_Avoid_: "seizoensjaar"; "wedstrijdjaar" bij veldrijden
 
 
 **Licentie**:

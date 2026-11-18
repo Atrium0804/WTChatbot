@@ -25,6 +25,8 @@ uitlegvragen. De app streamt de run (SSE) zodat de gebruiker de fase ziet
 prompt caching aan (cached input = 10% van de prijs). De architectuur is switchbaar via
 `scripts/architectures/active` (zie #95).
 
+_Amendment 2026-11-17 (#102, tweede implementatie #135): er kwam een uitzondering op de B1-bronweglating: elk deterministisch bypass-antwoord eindigde ook bij B1 op één `Bron:`-regel. Herziening 2026-11-17: die uitzondering is vervallen. B1-bypassantwoorden tonen geen bronregel; B2-bypassantwoorden tonen die wel, met artikelen. De oorspronkelijke motivering was dat het gecombineerde [categorieoverzicht](../reference/categorieoverzicht.md) feiten uit drie bronnen combineert; de keuze is herzien om de vaste B1-weergave zonder bronregel te behouden._
+
 ## Considered options
 
 - **Router large + aparte kleine zoek-agents (optie A)** — verworpen: de router heeft geen
@@ -52,4 +54,5 @@ prompt caching aan (cached input = 10% van de prijs). De architectuur is switchb
   uit `knwu_categories.json` alleen bij B2 — bij B1 (standaard, #52) staat er geen
   `Bron:`-regel, net als bij agent-antwoorden. Elk bypass-antwoord eindigt wel op een
   vaste disclaimerzin die aangeeft dat de library geraadpleegd wordt bij een
-  vervolgvraag ("waarom", versie, "heb je dit gecheckt").
+  vervolgvraag ("waarom", versie, "heb je dit gecheckt"). Sinds amendment 2026-11-17
+  draagt elk bypass-antwoord ook bij B1 een `Bron:`-regel.

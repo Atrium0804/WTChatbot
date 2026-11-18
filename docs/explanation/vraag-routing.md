@@ -11,12 +11,12 @@ Termen als *route*, *intake*, *deterministische bypass* en *fase* staan in het [
 
 ```mermaid
 flowchart TD
-    A["POST /chat"] --> B{"lookups.resolve_lookup_message<br/>+ match_lookup"}
-    B -- "match" --> C["synchroon 200-antwoord<br/>route: bypass — 0 LLM-calls"]
-    B -- "geen match" --> D["202 + background job"]
+    A["POST /chat"] --> B{"lookups.recognize_turn<br/>(bericht + lookup-toestand)"}
+    B -- "ReadyForBypass" --> C["synchroon 200-antwoord<br/>route: bypass — 0 LLM-calls"]
+    B -- "NeedsInputForBypass of<br/>NotEligibleForBypass" --> D["202 + background job"]
     D --> E["intake.classify_message<br/>1 call, mistral-small-latest"]
-    E --> F{"intake.decide_route<br/>(lookup + intake-data)"}
-    F -- "lookup met intake-data" --> G["route: bypass<br/>template uit knwu_categories.json"]
+    E --> F{"intake.decide_route<br/>(beslissing + intake-data)"}
+    F -- "NeedsInputForBypass, door<br/>complete_with_intake aangevuld" --> G["route: bypass<br/>overzicht uit knwu_categories.json"]
     F -- "domein bekend én<br/>confidence ≥ drempel" --> H["route: direct-domein<br/>conversatie start direct bij expert"]
     F -- "anders (ook bij intake-fout)" --> I["route: router<br/>router-agent als voordeur"]
     H --> J["mistral_client.stream_answer<br/>stream: true, SSE → fasen"]
@@ -31,7 +31,7 @@ Zonder `MISTRAL_API_KEY`/`MISTRAL_AGENT_ID` draait de app in stub-mode: elk beri
 
 | Route | Wanneer | LLM-calls | Bepaald in |
 | --- | --- | --- | --- |
-| `bypass` | Pure feitelijke lookup met complete data: leeftijdscategorie, licentie, maximaal verzet per discipline, vertaling van een oude categorie-aanduiding | 0 — Python antwoordt uit `app/knwu_categories.json` | `app/lookups.py` (`match_lookup`, `render_lookup_answer`) |
+| `bypass` | Herkende feitelijke lookup met complete invoer (geboortejaar, oude of nieuwe leeftijdscategorie), of een bestaande losse lookup zoals KNWU Licentie 17+: gecombineerd overzicht van categorie, oude indeling, verzet en licentie | 0 — Python antwoordt uit `app/knwu_categories.json`; 1 intake-call als de intake een herkende onvolledige vraag aanvult | `app/lookups.py` (`recognize_turn`, `complete_with_intake`, `render_answer`) |
 | `direct-<domein>` | Intake bepaalt het domein met `confidence ≥ INTAKE_CONFIDENCE_THRESHOLD` (default 0,8) én er is een expert-id geconfigureerd voor dat domein | 1 intake-call + de expert-call | `app/intake.py` (`decide_route`), `config.EXPERT_AGENT_IDS` |
 | `router` | Alles anders: vage vragen, lage confidence, geen expert-id, of een intake-fout (de fallback is altijd de router — veilig) | 1 intake-call + router-call (+ expert-call na handoff) | `app/intake.py`, `config.MISTRAL_AGENT_ID` |
 
@@ -50,34 +50,28 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 
 ## Vragen die Python zelf beantwoordt (deterministische bypass)
 
-`lookups.match_lookup()` herkent vier pure lookup-vragen, op basis van regex plus data uit `knwu_categories.json`:
+`lookups.recognize_turn()` herkent een bericht met regex plus data uit `knwu_categories.json` en geeft een van drie beslissingen terug:
 
-- **leeftijdscategorie** op basis van een geboortejaar (ook een kaal jaartal als vervolg in een bestaand gesprek);
-- **licentie** op basis van een geboortejaar;
-- **maximaal verzet** per geboortejaar of leeftijdscategorie én discipline, ook bij een oude of gecombineerde categorie-aanduiding;
-- **vertaling** van een oude aanduiding ("categorie 3", "nieuwelingen") of kalender-aanduiding ("MU12, VU13"), en van een nieuwe leeftijdscategorie terug naar de oude indeling.
+- **ReadyForBypass**: de invoer is compleet en consistent. De app antwoordt synchroon met een gecombineerd overzicht van leeftijdscategorie, oude categorie-indeling, maximaal verzet en licentie. Hoofdingang is een geboortejaar (ook een kaal jaartal), een oude categorie of een nieuwe leeftijdscategorie (U, JO/MO, MU/VU). Waar geen overzicht past, blijft een losse lookup bereikbaar, zoals KNWU Licentie 17+.
+- **NeedsInputForBypass**: een herkende lookup-vraag mist de hoofdingang, bijvoorbeeld "Welk verzet?". Alleen deze beslissing mag de intake aanvullen, via `complete_with_intake()`. Die neemt alleen een geboortejaar over dat al letterlijk in het bericht staat, nooit een jaar dat uit een leeftijd is afgeleid of dat de intake verzint.
+- **NotEligibleForBypass**: uitleg- of uitzonderingsvragen, tegenstrijdige of onbekende invoer, meerdere renners, een expliciet wedstrijdjaar, andere disciplines dan weg en veld, en berichten die niets met de lookup te maken hebben. De intake kiest dan alleen tussen expert en router en maakt er nooit een bypass van.
 
-Een korte aanvulling op een onvolledige lookup-vraag is geen verdiepingsvraag. `resolve_lookup_message()` combineert bijvoorbeeld "wlk verzet voor u8" met het volgende bericht "weg". Daarna antwoordt de app lokaal: maximaal 5,50 meter. Ook opeenvolgende aanvullingen zoals "Welk verzet?" → "2012" → "weg" behouden het vraagtype. De context komt alleen uit de in-memory feedbackgeschiedenis van dezelfde conversatie; een eerdere uitleg- of clubvraag wordt niet hergebruikt. De oorspronkelijke gebruikersberichten blijven ongewijzigd in die geschiedenis.
+Geslacht en discipline zijn optioneel: ontbreken ze, dan toont het overzicht beide. Het overzicht toont twee kandidaatseizoenen, afhankelijk van de appdatum. De exacte invoervormen, seizoensregels, overgangen en antwoordvorm staan in de [reference: categorieoverzicht](../reference/categorieoverzicht.md).
 
-Een gecombineerde categorie-aanduiding zoals "JO11/MO12" of "MU12, VU13" kan ook een korte aanvulling zijn: na "Welk verzet op de weg?" volgt dan het verzet per leeftijdscategorie, niet alleen een vertaling. De app onthoudt per beurt of de lookup is afgehandeld, ook wanneer de intake de ontbrekende gegevens heeft aangevuld. Latere losse fragmenten worden niet meer aan die afgehandelde vraag gekoppeld. Deze interne afhandelingsstatus wordt niet in de opgeslagen feedbackgeschiedenis opgenomen.
+### Lookup-toestand per conversatie
 
-Bij verzet op geboortejaar gebruikt de app voor weg het huidige kalenderjaar, en voor veldrijden het eindjaar van het lopende of eerstvolgende veldritseizoen. Een expliciete leeftijdscategorie wordt niet opnieuw berekend. Bij oude of gecombineerde categorieën noemt het antwoord het verzet van elke bijbehorende leeftijdscategorie. De omgekeerde categorievertaling noemt jongens en meisjes afzonderlijk als geen geslacht is opgegeven; dezelfde U-aanduiding kan voor hen naar verschillende oude categorieën verwijzen.
+De app bewaart per conversatie een lookup-toestand, los van de feedbackgeschiedenis: geen toestand, een openstaande onvolledige vraag, of een voltooid profiel met de gevalideerde invoer (geen berekende antwoorden). Een kort vervolgbericht werkt op dat profiel:
 
-Voor de omgekeerde vertaling herkent de app "categorie" samen met een U-/JO-/MO-aanduiding, of de expliciete term "oude indeling". Een geboortejaarvraag houdt voorrang: "Welke categorie voor geboortejaar 2015?" blijft een berekening van de huidige leeftijdscategorie. Woorden als "was" en "waren" zijn op zichzelf geen vertaalaanvraag.
+- een nieuw geboortejaar of nieuwe categorie ("en voor 2017?") vervangt de hoofdingang; geslacht en discipline blijven;
+- "alleen meisjes" of "alleen veldrijden" vervangt alleen dat filter. Na "JO11" wordt dat meisjes U11; na "JO11/MO12" blijft alleen meisjes U12 over;
+- een zelfstandige vraag erft niets;
+- een afgewezen of inhoudelijke beurt, ook "Waarom?", beëindigt het hergebruik. Alleen een openstaande onvolledige vraag blijft staan, zodat "Welk verzet?" → "2012" het volledige overzicht geeft.
 
-Die voorrang geldt ook voor "Wat is de categorie voor geboortejaar 2015, U12?": het geboortejaar blijft de basis van het antwoord.
+Een vervolgbericht hoort bij de vorige beurt (#143). Een los gegeven zonder openstaande of voltooide lookup, zoals "2014", "2014, meisje" of "categorie 3", is daarom alleen in de eerste beurt van een gesprek een eigen lookup (#102). Na een inhoudelijke beurt is zo'n bericht meestal het antwoord op een vraag van de agent: "Aan welke voorwaarden moet mijn dochter voldoen voor een clubwedstrijd?" → "2014" gaat naar de agent, die de categorie al via de contextregels krijgt. Een zelfstandige vraag ("Welke categorie voor geboortejaar 2014?") krijgt midden in een gesprek nog steeds de bypass. De app herkent geen onderwerpwissel; hij kijkt alleen naar de vorm van het bericht en de lookup-toestand.
 
-Wielie ondersteunt alleen wegwielrennen en veldrijden. Baanvragen krijgen geen deterministisch antwoord, ook niet wanneer ze tevens "weg" noemen. De baanwaarden blijven alleen in de brontabel staan voor de controle tegen de KNWU-documenten, niet als ondersteunde discipline in de lookup of intake.
+De app stelt bij elk geaccepteerd bericht synchroon de volgende toestand vast en verhoogt een beurtenteller, vóór er iets wordt afgewacht. Die teller bepaalt ook of een beurt de eerste is; een bericht dat binnenkomt terwijl de agent nog antwoordt, is dus al een vervolgbericht. Een background job die een onvolledige vraag met de intake aanvult, publiceert zijn toestand alleen als zijn teller nog de nieuwste is. Een oudere job kan zo een nieuwere toestand niet overschrijven of wissen; zijn eigen antwoord en status blijven ongewijzigd. Een rate-limited of ongeldig verzoek telt niet als beurt. Na een herstart van de app zijn toestand en teller weg, net als het agentgesprek; de volgende beurt is dan weer de eerste.
 
-Een bypass gebeurt alleen als de vraag alléén het kale feit vraagt. De guards in `lookups.py` sturen de rest door naar een agent:
-
-- `MEER_DAN_FEIT` (woorden als *waarom, versie, bron, heb je dit gecheckt, kosten, hoe meet, uitzonderingen*…) → geen bypass;
-- `REGELMENT_ONDERWERP` (wedstrijd, verzekering, contributie, training…) → geen bypass;
-- `BUITEN_SCOPE_DISCIPLINE` (baanwielrennen) → geen bypass;
-- meerdere onderwerpen in één vraag (bv. categorie én licentie) → geen bypass;
-- onvoldoende gegevens voor de lookup of een onbekende aanduiding → geen bypass, ook niet als daarnaast een bekende categorie staat of de intake aanvullende gegevens levert; de agent handelt de volledige vraag af.
-
-Het bypass-antwoord is een template met bron + versie + artikel — de `Bron:`-regel alleen bij taalniveau B2 (#52) — en eindigt altijd op een vaste disclaimer dat de library geraadpleegd wordt bij een vervolgvraag. De check draait niet alleen vóór een nieuwe job: `/chat` probeert `match_lookup` eerst zelf, ook midden in een bestaand gesprek, en antwoordt dan synchroon zonder job. In de background job kan `decide_route` met de intake-data (geboortejaar/discipline uit de LLM) alsnog een bypass opleveren; die job zet dan de fase "Ik bereken de leeftijdscategorie…".
+Het bypass-antwoord eindigt op een vooruitblikvoorbehoud en de vaste slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?". Een bypass start geen agentgesprek, dus een kort antwoord als "ja" komt bij de agent aan zonder de eerdere vraag; wie meer wil weten, stelt de vraag het best opnieuw. Bij B2 volgt een `Bron:`-regel met versiedatum en artikelnummers; bij B1 staat die regel niet, net als bij andere B1-antwoorden. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
 
 De chatrenderer ondersteunt alleen koppen, **vet**, platte lijsten, links en één `Bron:`-blok; de formatcheck staat in [`app/tests/test_lookups.py`](../../app/tests/test_lookups.py) en de renderercontracttest in [`app/tests/test_markdown_rendering.cjs`](../../app/tests/test_markdown_rendering.cjs).
 
@@ -95,14 +89,17 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 
 | Vraag | Route | Waarom |
 | --- | --- | --- |
-| "In welke leeftijdscategorie rijdt een jongen geboren in 2015?" | `bypass` | categorie-vraag + geboortejaar, geen "meer dan feit"-woorden |
-| "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?" | `bypass` | verzet-vraag met categorie U15 én discipline weg |
-| "2015" (kaal jaartal als vervolg op de vraag naar het geboortejaar) | `bypass` | kaal jaartal = geboortejaar (#91 besluit 5) |
-| "Wat is categorie 3 in de nieuwe indeling?" | `bypass` | vertaling van een oude aanduiding |
-| "Welke oude categorie is JO11/MO12?" | `bypass` | omgekeerde vertaling uit dezelfde categorietabel |
-| "Welke categorie is U12?" | `bypass` | omgekeerde vertaling; noemt de oude categorie voor jongens en meisjes |
-| "Welk verzet voor categorie 2 op de weg?" | `bypass` | verzet voor beide leeftijdscategorieën: U10 en U11 |
-| "weg" na "wlk verzet voor u8" | `bypass` | ontbrekende discipline aangevuld, geen verdiepingsvraag |
+| "In welke leeftijdscategorie rijdt een jongen geboren in 2015?" | `bypass` | geboortejaar als hoofdingang, geen "meer dan feit"-woorden |
+| "Wat is het maximaal toegestane verzet voor jongens U15 bij wegwielrennen?" | `bypass` | categorie U15 met geslacht en discipline als filter |
+| "2015" (kaal jaartal als vervolg op de vraag naar het geboortejaar) | `bypass` | vult de openstaande vraag aan (#91 besluit 5) |
+| "2015" als eerste bericht | `bypass` | los gegeven in de eerste beurt (#102) |
+| "2015" na een inhoudelijke beurt | `direct-<domein>` of `router` | vervolgbericht op de agent (#143) |
+| "Wat is categorie 3 in de nieuwe indeling?" | `bypass` | oude categorie als hoofdingang |
+| "Welke oude categorie is JO11/MO12?" | `bypass` | gecombineerde categorie; het overzicht noemt de oude categorie per regel |
+| "Welk verzet voor categorie 2 op de weg?" | `bypass` | overzicht voor jongens U10 en meisjes U11 |
+| "weg" na "wlk verzet voor u8" | `bypass` | discipline-filter op het voltooide profiel |
+| "jongen uit 2015, U12, weg" | `bypass` | bericht met alleen herkende gegevens, met een geboortejaar als hoofdingang |
+| "In welke categorie rijdt hij in 2026?" | géén bypass → agent | een expliciet wedstrijdjaar is geen invoerveld |
 | "Waarom is het verzet voor U15 maar 6,70 meter?" | géén bypass → agent | `MEER_DAN_FEIT` treft "waarom" |
 | "Hoe meet ik het verzet voor U13 op de weg?" | géén bypass → agent | meetinstructies zijn meer dan het maximale verzet |
 | "Wat kost de contributie bij WTC Woerden?" | `direct-club` (bij confidence ≥ 0,8) | intake ziet domein `club`; "kosten" is pas bij de lookup-guard een probleem, niet bij de intake-route |
@@ -112,8 +109,8 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 ## Zichtbaarheid, eval en tests
 
 - De route staat per job in `GET /chat/status/{job_id}` (`route`), de fase in dezelfde response (`app/phases.py`).
-- De eval spiegelt de productie-flow: `eval/run_eval.py` gebruikt dezelfde `match_lookup` + `intake.decide_route`. In `eval/evalset.yaml` assert `verwacht_route` per vraag de route; `eval/last_run.json` rapporteert `per_route`. Zie [reference: eval-set](../reference/eval-set.md).
-- Tests: `app/tests/test_intake.py` (route-beslissing incl. fallback), `app/tests/test_lookups.py` (inhoud van de lookups).
+- De eval spiegelt de productie-flow: `eval/run_eval.py` speelt `beurten` en `vraag` in volgorde af via `recognize_turn` en gebruikt `intake.decide_route`. In `eval/evalset.yaml` assert `verwacht_route` per vraag de route; `eval/last_run.json` rapporteert `per_route` en per vraag `route_reden`. Zie [reference: eval-set](../reference/eval-set.md).
+- Tests: `app/tests/test_intake.py` (route-beslissing incl. fallback), `app/tests/test_lookups.py` (herkenning, profielovergangen en inhoud van de lookups), `app/tests/test_app.py` (vervolgvragen en volgorde van jobs via `POST /chat`).
 - Routecontract: `app/tests/fixtures/routecontract.yaml` legt per gesprek vast of de app een deterministische bypass of de inhoudelijke route (`direct-<domein>` of `router`) kiest; `app/tests/test_routecontract.py` speelt elke regel af via `POST /chat`. Een nieuw routeringsgeval krijgt een regel in dat bestand, met `herkomst`; de test toetst alleen de route, niet de antwoordtekst.
 
 ## Configuratieknobs voor de routing
@@ -136,9 +133,9 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 
 ## Waar in de code
 
-- `app/main.py` — `POST /chat` (eerste lookup-check, 202 + job), `_run_chat_job` (intake → route → stream), `GET /chat/status`
+- `app/main.py` — `POST /chat` (lookup-beslissing en lookup-toestand per conversatie, 202 + job), `_run_chat_job` (intake → route → stream; publiceert de lookup-toestand alleen bij de nieuwste revisie), `GET /chat/status`
 - `app/intake.py` — `classify_message` (light LLM-call) en `decide_route` (bypass | direct | router)
-- `app/lookups.py` — `resolve_lookup_message` (korte aanvullingen), `match_lookup` (guards + patronen) en `render_lookup_answer` (template-antwoord)
+- `app/lookups.py` — `recognize_turn` (herkenning, profielovergangen en berekening), `complete_with_intake` (aanvulling van een onvolledige vraag) en `render_answer` (overzicht)
 - `app/context.py` — deterministische contextregels onder elk bericht
 - `app/phases.py` — SSE-event → fase-tekst
 - `app/mistral_client.py` — dunne API-laag: álle LLM-calls (stream, non-streaming fallback, intake-call)

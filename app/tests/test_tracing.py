@@ -103,7 +103,7 @@ def test_stub_is_explicit_and_conversation_grouping_is_stable(client):
 
 def test_intake_lookup_records_one_intake_but_no_agent(client, monkeypatch):
     enable_mistral(monkeypatch, {**intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012})
-    _, trace = post_and_wait(client, "Welke licentie heb ik nodig?")
+    _, trace = post_and_wait(client, "Welk verzet? 2012")
     assert trace["route"] == "bypass"
     assert [event["event"] for event in trace["events"]] == ["started", "intake", "route", "done"]
     assert trace["events"][2]["reason"] == "intake_lookup"

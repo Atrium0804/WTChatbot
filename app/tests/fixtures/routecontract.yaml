@@ -59,10 +59,20 @@ regels:
         intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
 
   # --- #99 bevinding 3: geboortejaar met categorie of leeftijdscategorie ---
+  # #136: sinds de twee kandidaatseizoenen (#102) is 2015 + U12 alleen in de
+  # zomer consistent; in november levert geen enkel seizoen U12 op.
   - id: geboortejaar-met-categorie-u12
-    herkomst: "#99 review, bevinding 3"
+    herkomst: "#99 review, bevinding 3; peildatum #136"
+    vandaag: 2026-06-01
     beurten:
       - {vraag: "Wat is de categorie voor geboortejaar 2015, U12?", route: bypass}
+
+  - id: geboortejaar-met-categorie-u12-buiten-kandidaatseizoenen
+    herkomst: "#102 Nul passende regels; #136"
+    beurten:
+      - vraag: "Wat is de categorie voor geboortejaar 2015, U12?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
 
   - id: geboortejaar-leeftijdscategorie
     herkomst: "#99 review, bevinding 3"
@@ -70,14 +80,17 @@ regels:
       - {vraag: "Wat is de leeftijdscategorie voor geboortejaar 2015?", route: bypass}
 
   # --- #99 bevinding 4: discipline-aanvulling wordt niet hergebruikt ---
+  # #136: de vraag is nu zelf compleet (discipline is optioneel). Een kale
+  # discipline daarna wijzigt alleen dat filter van het voltooide profiel
+  # (#125 besluit 3); intakevelden spelen geen rol meer.
   - id: intake-lookup-niet-hergebruikt-voor-latere-fragmenten
-    herkomst: "#99 review, bevinding 4"
+    herkomst: "#99 review, bevinding 4; toestandsmodel #125"
     beurten:
       - vraag: "Welk verzet voor U8 bij wegrennen?"
         route: bypass
         intake: {intentie: lookup, discipline: weg}
-      - {vraag: "veld", route: inhoudelijk}
-      - {vraag: "weg", route: inhoudelijk}
+      - {vraag: "veld", route: bypass}
+      - {vraag: "weg", route: bypass}
 
   # --- #102 Standards 1: categorie gecombineerd met een licentievraag ---
   - id: categorie-en-licentie-aanvragen
@@ -192,3 +205,256 @@ regels:
     vandaag: 2026-07-01
     beurten:
       - {vraag: "Hoe heet nieuwelingen nu?", route: bypass}
+
+  # --- #136: gecombineerd overzicht en korte aanvullingen via de chat ---
+  - id: overzicht-categorie-verzet-licentie
+    herkomst: "#102 Bereik en route; #136"
+    beurten:
+      - {vraag: "Welke categorie, verzet en licentie voor geboortejaar 2014?", route: bypass}
+
+  - id: welk-verzet-dan-kaal-jaartal-zonder-discipline
+    herkomst: "toestandsmodel #125 besluit 3 (Welk verzet? -> 2012)"
+    beurten:
+      - {vraag: "Welk verzet?", route: inhoudelijk}
+      - {vraag: "2012", route: bypass}
+      - {vraag: "weg", route: bypass}
+
+  - id: aanvulling-nieuwelingen
+    herkomst: "#99 korte aanvulling; #136"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "nieuwelingen", route: bypass}
+
+  - id: aanvulling-geboortejaar-met-sleutelwoord
+    herkomst: "#99 korte aanvulling; #136"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "geboortejaar 2015", route: bypass}
+
+  - id: verzet-afkorting-wlk-en-discipline
+    herkomst: "#99 chat-test wlk verzet voor u8; #136"
+    beurten:
+      - {vraag: "wlk verzet voor u8", route: bypass}
+      - {vraag: "weg", route: bypass}
+
+  - id: nieuwe-hoofdingang-in-vervolg
+    herkomst: "toestandsmodel #125 besluit 3 (jongen uit 2015, U12, weg)"
+    vandaag: 2026-06-01
+    beurten:
+      - {vraag: "Welke categorie voor jongen uit 2015, U12, weg?", route: bypass}
+      - {vraag: "en voor 2017?", route: bypass}
+      - {vraag: "2016", route: bypass}
+
+  - id: alleen-gegevens-als-eerste-bericht
+    herkomst: "#135 spec-review bevinding 1; voorbeeld #102/#125 (jongen uit 2015, U12, weg)"
+    vandaag: 2026-06-01
+    beurten:
+      - {vraag: "jongen uit 2015, U12, weg", route: bypass}
+      - {vraag: "en voor 2017?", route: bypass}
+
+  - id: alleen-gegevens-als-antwoord-op-open-vraag
+    herkomst: "#135 spec-review bevinding 1 (antwoord op een onvolledige lookup)"
+    beurten:
+      - {vraag: "Welk verzet op de weg?", route: inhoudelijk}
+      - {vraag: "jongen uit 2015", route: bypass}
+
+  - id: alleen-filters-zonder-hoofdingang
+    herkomst: "#135 spec-review bevinding 1 (gegevensbericht zonder hoofdingang)"
+    beurten:
+      - {vraag: "jongen, weg", route: inhoudelijk}
+
+  - id: gegevens-met-andere-woorden
+    herkomst: "#135 spec-review bevinding 1 (alleen herkende gegevens)"
+    beurten:
+      - {vraag: "jongen uit 2015 heeft een nieuwe fiets", route: inhoudelijk}
+
+  - id: geslacht-vervangt-enkel-prefix
+    herkomst: "toestandsmodel #125 besluit 4 (JO11 -> alleen meisjes)"
+    beurten:
+      - {vraag: "Welke categorie voor JO11?", route: bypass}
+      - {vraag: "alleen meisjes", route: bypass}
+
+  - id: geslacht-filtert-gecombineerde-categorie
+    herkomst: "toestandsmodel #125 besluit 4 (JO11/MO12 -> alleen meisjes)"
+    beurten:
+      - {vraag: "Welke categorie voor JO11/MO12?", route: bypass}
+      - {vraag: "alleen meisjes", route: bypass}
+
+  - id: prefix-en-geslacht-in-een-bericht
+    herkomst: "toestandsmodel #125 besluit 4 (JO11 meisjes)"
+    beurten:
+      - vraag: "Welke categorie voor JO11 meisjes?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2017, discipline: weg}
+
+  - id: waarom-beeindigt-hergebruik
+    herkomst: "toestandsmodel #125 besluit 3 (Waarom?)"
+    beurten:
+      - {vraag: "Welke categorie voor geboortejaar 2015 bij wegwielrennen?", route: bypass}
+      - {vraag: "Waarom?", route: inhoudelijk}
+      - {vraag: "alleen meisjes", route: inhoudelijk}
+      - {vraag: "en voor 2017?", route: inhoudelijk}
+
+  - id: onderwerpwissel-beeindigt-hergebruik
+    herkomst: "#102 Korte vervolgvragen (onderwerpwissel)"
+    beurten:
+      - {vraag: "Welke categorie voor JO11?", route: bypass}
+      - {vraag: "Wanneer is de volgende clubtraining?", route: inhoudelijk}
+      - {vraag: "alleen veldrijden", route: inhoudelijk}
+
+  - id: openstaande-vraag-na-inhoudelijke-route
+    herkomst: "toestandsmodel #125 besluit 3 (openstaande lookup)"
+    beurten:
+      - {vraag: "In welke categorie rijdt mijn zoon?", route: inhoudelijk}
+      - {vraag: "2015", route: bypass}
+      - {vraag: "alleen veldrijden", route: bypass}
+
+  - id: zelfstandige-licentie-17-plus
+    herkomst: "#102 losse lookups blijven bereikbaar"
+    beurten:
+      - {vraag: "Welke KNWU Licentie 17+ is nodig?", route: bypass}
+
+  # --- #136: intake vult alleen een herkende onvolledige lookup aan ---
+  - id: intake-bevestigt-ongekwalificeerd-jaartal
+    herkomst: "#136 NeedsInputForBypass + intake"
+    beurten:
+      - vraag: "Welk verzet? 2012"
+        route: bypass
+        intake: {intentie: lookup, geboortejaar: 2012}
+
+  - id: intake-vervangt-geen-genoemd-jaartal
+    herkomst: "#136 NeedsInputForBypass + intake"
+    beurten:
+      - vraag: "Welk verzet? 2012"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2013}
+
+  # Voorheen bypass (#91): een geboortejaar dat alleen de intake noemt, is
+  # verzonnen invoer en vult de lookup niet aan (#124).
+  - id: intake-verzint-geen-geboortejaar
+    herkomst: "#124 intake verzint geen feiten"
+    beurten:
+      - vraag: "Welke licentie heb ik nodig?"
+        route: inhoudelijk
+        intake: {intentie: lookup, domein: knwu, geboortejaar: 2012, confidence: 0.9}
+
+  - id: intake-leidt-geen-geboortejaar-af-uit-leeftijd
+    herkomst: "#102 leeftijd is geen hoofdingang"
+    beurten:
+      - vraag: "Welke categorie voor een 12-jarige?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2014, leeftijd: 12}
+
+  # --- #136: afgewezen invoer blijft afgewezen, ook met intake-extra's ---
+  - id: expliciet-wedstrijdjaar
+    herkomst: "#102 Seizoenjaar is geen invoerveld"
+    beurten:
+      - vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: meerdere-renners
+    herkomst: "#102 meerdere renners"
+    beurten:
+      - vraag: "Welke categorie voor mijn twee zoons geboren in 2015?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2015, discipline: weg}
+
+  - id: verzet-u11-mountainbiken-intake
+    herkomst: "#102 Spec, bevinding 2; #136"
+    beurten:
+      - vraag: "Welk verzet voor U11 bij mountainbiken?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2017, discipline: weg}
+
+  - id: verzet-u11-combinatiewedstrijden-intake
+    herkomst: "#102 Spec, bevinding 2; #136"
+    beurten:
+      - vraag: "Welk verzet voor U11 als ik hoger start bij combinatiewedstrijden?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2017, discipline: weg}
+
+  - id: afgewezen-vervolg-na-openstaande-vraag
+    herkomst: "toestandsmodel #125 besluit 1 (intake redt geen afwijzing)"
+    beurten:
+      - {vraag: "Welk verzet?", route: inhoudelijk}
+      - vraag: "Waarom is dat voor 2012 anders?"
+        route: inhoudelijk
+        intake: {intentie: lookup, geboortejaar: 2012, discipline: weg}
+      - {vraag: "weg", route: inhoudelijk}
+
+  # --- #143: een kaal geboortejaar is alleen een lookup als eerste beurt of
+  # als vervolg op een lookup; na een inhoudelijke beurt gaat het naar de agent.
+  # S2-S4 (vervolg op een open of voltooide lookup) staan al hierboven (#125). ---
+  - id: zelfstandig-geboortejaar-eerste-beurt
+    herkomst: "#143 S1, behoud #102"
+    beurten:
+      - {vraag: "2014", route: bypass}
+
+  - id: geboortejaar-antwoord-op-inhoudelijke-vraag
+    herkomst: "#143 S5"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-na-verduidelijking
+    herkomst: "#143 S6"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "Het gaat om een wedstrijd in de regio.", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-punt
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014.", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-vraagteken
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014?", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-geboren-in
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "geboren in 2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-geslacht
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014, meisje", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-geslacht-ervoor
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "meisje 2014", route: inhoudelijk}
+
+  - id: geboortejaar-antwoord-met-discipline
+    herkomst: "#143 S7"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "2014 weg", route: inhoudelijk}
+
+  - id: geboortejaar-na-inhoudelijke-beurt-zonder-vraag
+    herkomst: "#143 S8"
+    beurten:
+      - {vraag: "Hoe schrijf ik mijn dochter in voor de clubcompetitie?", route: inhoudelijk}
+      - {vraag: "2014", route: inhoudelijk}
+
+  - id: zelfstandige-lookupvraag-na-inhoudelijke-beurt
+    herkomst: "#143 S9, behoud #91"
+    beurten:
+      - {vraag: "Aan welke voorwaarden moet mijn dochter voldoen om mee te doen aan een clubwedstrijd?", route: inhoudelijk}
+      - {vraag: "Welke categorie voor geboortejaar 2014?", route: bypass}
+
+  - id: geboortejaar-na-waarom
+    herkomst: "#143 S10"
+    beurten:
+      - {vraag: "2014", route: bypass}
+      - {vraag: "Waarom?", route: inhoudelijk}
+      - {vraag: "2016", route: inhoudelijk}

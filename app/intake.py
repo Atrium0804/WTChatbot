@@ -3,16 +3,19 @@
 De intake classificeert het bericht als JSON via de Chat Completions API
 (mistral-small-latest; de HTTP-call zit in de dunne API-laag
 mistral_client.chat_completion): intentie, domein, discipline, geboortejaar
-en confidence. Samen met de deterministische regex-lookup
-(lookups.match_lookup) bepaalt decide_route() de route van het bericht:
+en confidence. Samen met de lookup-beslissing uit lookups.recognize_turn
+bepaalt decide_route() de route van het bericht:
 
-- "bypass": pure lookup met complete data -> direct app-antwoord uit
-  knwu_categories.json, de Mistral-conversation start niet eens (#88);
+- "bypass": alleen een herkende onvolledige lookup (NeedsInputForBypass) die
+  lookups.complete_with_intake met gegronde intakefeiten compleet maakt;
+  de Mistral-conversation start niet (#88, #136);
 - "direct": domein bekend én confidence >= drempel -> direct-to-expert
   (MISTRAL_AGENT_ID_<DOMEIN>), de router-call wordt bespaard (#88/#91);
 - "router": alles anders -> de router-agent als voordeur.
 
-Bij een intake-fout is de fallback altijd de router (veilig).
+Afgewezen invoer (NotEligibleForBypass) gebruikt de intake alleen voor de keuze
+tussen expert en router, nooit voor een bypass. Bij een intake-fout is de
+fallback altijd de router (veilig).
 
 De intake-prompt staat in een apart bestand (prompts/intake-system.md),
 volgens CODING_PRINCIPLES.md ("prompts staan in aparte bestanden").
@@ -21,9 +24,11 @@ volgens CODING_PRINCIPLES.md ("prompts staan in aparte bestanden").
 import json
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal, TypeAlias
 
 import requests
 
@@ -118,31 +123,75 @@ def classify_message(
         return dict(FALLBACK)
 
 
+@dataclass(frozen=True)
+class BypassRoute:
+    """Een onvolledige lookup die de intake compleet maakte: app-antwoord, geen agent."""
+
+    lookup: lookups.ReadyForBypass
+    kind: Literal["bypass"] = "bypass"
+
+
+@dataclass(frozen=True)
+class AgentRoute:
+    """Inhoudelijke route; `lookup` is de lookup-beslissing ná de intake."""
+
+    kind: Literal["direct", "router"]
+    lookup: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass
+    agent_id: str = ""
+    domein: str = ""
+
+
+Route: TypeAlias = BypassRoute | AgentRoute
+
+
 def decide_route(
     *,
-    message: str,
+    decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass,
     today: date,
     rules: dict,
     intake_result: dict,
     expert_agent_ids: dict[str, str],
     threshold: float,
-) -> dict:
-    """Route-beslissing per bericht (#91): bypass | direct | router.
+) -> Route:
+    """Route-beslissing na de intake (#91, #136): bypass | direct | router.
 
+    Alleen NeedsInputForBypass mag via complete_with_intake een bypass worden;
+    een ReadyForBypass-beslissing beantwoordt de aanroeper synchroon, zonder intake.
     `expert_agent_ids` mapt domein -> MISTRAL_AGENT_ID_<DOMEIN> (leeg =
     niet geconfigureerd -> dan kan er geen direct-to-expert plaatsvinden).
     """
-    lookup = lookups.match_lookup(message, today, rules, extra=intake_result)
-    if lookup:
-        return {"route": "bypass", "lookup": lookup, "intake": intake_result}
+    lookup: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass = decision
+    if isinstance(decision, lookups.NeedsInputForBypass):
+        completed = lookups.complete_with_intake(decision, intake_result, today, rules)
+        if isinstance(completed, lookups.ReadyForBypass):
+            return BypassRoute(completed)
+        lookup = completed
+    elif not isinstance(decision, lookups.NotEligibleForBypass):
+        raise TypeError(
+            "decide_route requires a NeedsInputForBypass or NotEligibleForBypass decision; "
+            "answer a ReadyForBypass decision directly with lookups.render_answer"
+        )
     domein = str(intake_result.get("domein") or "onbekend")
     confidence = float(intake_result.get("confidence") or 0.0)
     agent_id = expert_agent_ids.get(domein, "")
     if agent_id and confidence >= threshold:
-        return {
-            "route": "direct",
-            "agent_id": agent_id,
-            "domein": domein,
-            "intake": intake_result,
-        }
-    return {"route": "router", "intake": intake_result}
+        return AgentRoute("direct", lookup, agent_id=agent_id, domein=domein)
+    return AgentRoute("router", lookup)
+
+
+def route_reason(
+    route: Route,
+    intake_result: dict,
+    expert_agent_ids: dict[str, str],
+    fallback_reason: str = "",
+) -> str:
+    """Trace-reden van een route na de intake; app en eval gebruiken dezelfde redenen."""
+    if isinstance(route, BypassRoute):
+        return "intake_lookup"
+    if route.kind == "direct":
+        return "confident_domain"
+    if fallback_reason:
+        return fallback_reason
+    if not expert_agent_ids.get(str(intake_result.get("domein"))):
+        return "expert_not_configured"
+    return "low_confidence"

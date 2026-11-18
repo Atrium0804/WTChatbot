@@ -9,7 +9,8 @@
 #   taalniveau:        (optioneel) B1 (default) | B2 — het taalniveau dat de
 #                      runner in de contextregel injecteert (issue #52). Bij B2
 #                      moet het antwoord een "Bron:"-regel bevatten die matcht
-#                      met `bron`; bij B1 mag het antwoord géén Bron-regel bevatten.
+#                      met `bron`; bij B1 mag het antwoord géén Bron-regel bevatten,
+#                      ook niet bij bypass.
 #   vraag:             typische clubvraag
 #   verwacht_antwoord: korte kernfeiten, gescheiden door ";" — elk token moet
 #                      in het antwoord staan (getallen/korte woorden heel,
@@ -109,7 +110,8 @@ evalset:
     categorie: knwu
     type: strikethrough
     vraag: "Welk maximaal verzet geldt voor U17 (nieuwelingen) bij wegwielrennen?"
-    verwacht_antwoord: "7,68; U17; nieuwelingen; artikel 20.1.007"
+    # #136: het overzicht noemt de categorie "U17 Nieuweling"
+    verwacht_antwoord: "7,68; U17; Nieuweling; artikel 20.1.007"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
     doorhaal_waarde: "7,01"
@@ -160,7 +162,9 @@ evalset:
     bron: "knwu.nl/contact"
     versiedatum: "2026"
   - id: knwu-categorie-jongen-2013
-    verwacht_route: bypass  # #92: pure lookup -> direct app-antwoord, 0 LLM-calls
+    # #136: een expliciet wedstrijdjaar ("in 2026") is geen bypass-invoer
+    # (#102); de vraag gaat naar de inhoudelijke route, die via de intake
+    # direct-knwu of router kan zijn
     taalniveau: B2
     categorie: knwu
     type: standaard
@@ -206,7 +210,8 @@ evalset:
     beurten:
       - "In welke leeftijdscategorie rijdt mijn zoon?"
     vraag: "2015"
-    verwacht_antwoord: "U12; 2015"
+    # #136: op de peildatum zijn de kandidaatseizoenen veld 2026-2027 en weg 2027
+    verwacht_antwoord: "U13; 2015"
     # geen informatie over een andere leeftijdscategorie (feedback: "nieuwelingen")
     niet_in_antwoord: "Nieuweling"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
@@ -220,9 +225,23 @@ evalset:
     beurten:
       - "Wat kost de contributie voor jeugdleden bij WTC Woerden?"
     vraag: "Welke licentie heeft mijn zoon nodig? Hij is geboren in 2012."
-    # 14 jaar in 2026: leeftijdscategorie U15, licentie U17 (13 t/m 16 jaar, art. 20.0.002)
-    verwacht_antwoord: "KNWU Licentie U17; U15"
+    # #136: kandidaatseizoenen veld 2026-2027 en weg 2027: U17 Nieuweling,
+    # licentie U17 (13 t/m 16 jaar, art. 20.0.002)
+    verwacht_antwoord: "Licentie; U17; Nieuweling"
     bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl"
+    versiedatum: "2026-09-21"
+  - id: knwu-vervolg-alleen-meisjes-gecombineerde-categorie
+    # #136 (toestandsmodel #125): "alleen meisjes" filtert JO11/MO12 tot meisjes U12
+    verwacht_route: bypass
+    taalniveau: B2
+    categorie: knwu
+    type: standaard
+    beurten:
+      - "Welke categorie voor JO11/MO12?"
+    vraag: "alleen meisjes"
+    verwacht_antwoord: "Meisjes; U12; 5,90; artikel 20.1.007"
+    niet_in_antwoord: "Jongens; U11"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   # --- Club via de router: algemene vraag zonder KNWU-/regio-trefwoorden ---
   # De router moet direct handoff doen naar de club-agent, zonder
@@ -322,12 +341,22 @@ evalset:
 
   # --- B1-vragen (taalniveau B1 = standaard, issue #52): kort antwoord, géén Bron-regel ---
   - id: knwu-b1-categorie-jongen-2015
-    verwacht_route: bypass  # #92: baseline-vraag (lookup); B1 -> geen Bron-regel in het template
+    # #136: een expliciet wedstrijdjaar ("in 2026") is geen bypass-invoer
+    # (#102); de vraag gaat naar de inhoudelijke route
     taalniveau: B1
     categorie: knwu
     type: standaard
     vraag: "In welke leeftijdscategorie rijdt een jongen geboren in 2015 bij wegwielrennen in 2026?"
     verwacht_antwoord: "U12; 2015"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: knwu-b1-overzicht-geboortejaar-2014
+    verwacht_route: bypass  # #102/#136: gecombineerd overzicht
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Welke categorie, verzet en licentie voor geboortejaar 2014?"
+    verwacht_antwoord: "U14; 6,30; vrij; U13 t/m dec 2026; U17 vanaf jan 2027"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: knwu-leeftijd-in-jaren-kind-van-6

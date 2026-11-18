@@ -9,10 +9,30 @@ Hetzelfde bestand bevat de vertaling van de oude categorie-indeling
 """
 
 import json
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from typing import Literal
 
 RULES_PATH = Path(__file__).parent / "knwu_categories.json"
+
+Gender = Literal["jongens", "meisjes"]
+Discipline = Literal["weg", "baan", "veld"]
+
+
+@dataclass(frozen=True)
+class SourceFact:
+    name: str
+    version: str | None
+    article: str | None
+
+
+@dataclass(frozen=True)
+class RuleSources:
+    age_categories: SourceFact
+    gearing: SourceFact
+    licences: SourceFact
+    old_categories: SourceFact
 
 
 def load_rules(path: Path = RULES_PATH) -> dict:
@@ -48,25 +68,86 @@ def category_name(under: int, rules: dict) -> str | None:
     return None
 
 
-def max_gear(category: str, discipline: str, rules: dict) -> float | str | None:
-    """Maximaal toegestaan verzet (art. 20.1.007) voor een leeftijdscategorie.
+def max_gear(
+    category: str, discipline: Discipline, gender: Gender, rules: dict
+) -> float | str | None:
+    """Maximaal toegestaan verzet (art. 20.1.007) voor geslacht en leeftijdscategorie.
 
     `category` is bv. "U13" of "U17 Nieuweling" (uit age_category); `discipline`
     is "weg", "baan" of "veld". Geeft meters (float), "vrij" of None (NVT) terug.
+    Raises ValueError for unsupported input; None means a validated NVT source value.
     """
-    per_category = rules["verzetten"]["per_categorie"]
+    if gender not in ("jongens", "meisjes"):
+        raise ValueError(f"Onbekend geslacht: {gender}; geef 'jongens' of 'meisjes' mee")
+    if discipline not in ("weg", "baan", "veld"):
+        raise ValueError(f"Onbekende discipline: {discipline}; geef 'weg', 'baan' of 'veld' mee")
+
+    per_category = rules["verzetten"]["per_geslacht"].get(gender)
+    if per_category is None:
+        raise ValueError(
+            f"Geen verzetdata voor geslacht: {gender}; vul verzetten.per_geslacht.{gender} "
+            "aan in knwu_categories.json"
+        )
     if category not in per_category:
         token = category.split()[0]
-        category = next((name for name in per_category if name.split()[0] == token), category)
-    entry = per_category.get(category)
-    if not entry:
-        return None
-    return entry.get(discipline)
+        matches = [name for name in per_category if name.split()[0] == token]
+        if len(matches) != 1:
+            raise ValueError(
+                f"Onbekende leeftijdscategorie voor {gender}: {category}; "
+                f"kies een van {', '.join(per_category)}"
+            )
+        category = matches[0]
+    entry = per_category[category]
+    if discipline not in entry:
+        raise ValueError(
+            f"Geen verzetdata voor {category}, {gender}, {discipline}; "
+            "vul de waarde aan in knwu_categories.json (null voor NVT)"
+        )
+    return entry[discipline]
 
 
 def old_category_groups(number: int, rules: dict) -> list[dict] | None:
     """Gecombineerde categorieën van oude categorie <number>; None als die niet bestaat."""
     return rules["oude_categorie_indeling"]["categorieen"].get(str(number))
+
+
+def category_under(category: str) -> int:
+    """Het U-nummer van een categorie, ook als de naam een nadere aanduiding bevat."""
+    return int(category.split()[0][1:])
+
+
+def old_category_number(gender: Gender, category: str, rules: dict) -> int | None:
+    """Oud categorienummer voor een geslacht en nieuwe categorie, indien van toepassing."""
+    under = category_under(category)
+    for number_text, groups in rules["oude_categorie_indeling"]["categorieen"].items():
+        if any(group.get(gender) == under for group in groups):
+            return int(number_text)
+    return None
+
+
+def ages_for_category(category: str, rules: dict) -> tuple[int, ...]:
+    """Leeftijden die in de regels naar deze categorie verwijzen."""
+    return tuple(
+        int(age)
+        for age, name in rules["leeftijdscategorieen"]["per_leeftijd"].items()
+        if name == category
+    )
+
+
+def sources(rules: dict) -> RuleSources:
+    """Bronverwijzingen voor alle lookup-feiten."""
+    return RuleSources(
+        age_categories=SourceFact(
+            rules["bron"], rules["versie"], rules["leeftijdscategorieen"]["artikel"]
+        ),
+        gearing=SourceFact(
+            rules["verzetten"]["bron"],
+            rules["verzetten"]["versie"],
+            rules["verzetten"]["artikel"],
+        ),
+        licences=SourceFact(rules["bron"], rules["versie"], rules["licenties"]["artikel"]),
+        old_categories=SourceFact(rules["oude_categorie_indeling"]["bron"], None, None),
+    )
 
 
 def combined_notation(boys: int | None, girls: int | None) -> str:

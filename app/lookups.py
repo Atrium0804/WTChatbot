@@ -10,7 +10,7 @@ het bericht naar een agent.
 Drie pure operaties (geen netwerk/LLM, #124): recognize_turn herkent een
 beurt tegen de lookup-toestand van de conversatie, complete_with_intake vult
 alleen een herkende onvolledige lookup aan met gegronde intakefeiten, en
-render_answer zet een Ready-beslissing om in tekst. app/main.py,
+render_answer zet een ReadyForBypass-beslissing om in tekst. app/main.py,
 intake.decide_route en eval/run_eval.py (#92) gebruiken dezelfde operaties,
 zodat de eval de productie-flow spiegelt.
 """
@@ -218,31 +218,31 @@ class _ReadyLookup:
 
 
 @dataclass(frozen=True)
-class Ready:
-    kind: Literal["ready"]
+class ReadyForBypass:
+    kind: Literal["ready_for_bypass"]
     ready: _ReadyLookup
     next_state: _CompletedLookupState
 
 
 @dataclass(frozen=True)
-class NeedsInformation:
-    kind: Literal["needs_information"]
+class NeedsInputForBypass:
+    kind: Literal["needs_input_for_bypass"]
     next_state: _PendingLookupState
     evidence: _InputEvidence = _InputEvidence()
 
 
 @dataclass(frozen=True)
-class NotEligible:
-    kind: Literal["not_eligible"]
+class NotEligibleForBypass:
+    kind: Literal["not_eligible_for_bypass"]
     next_state: NoLookupState
 
 
-LookupDecision: TypeAlias = Ready | NeedsInformation | NotEligible
+BypassDecision: TypeAlias = ReadyForBypass | NeedsInputForBypass | NotEligibleForBypass
 
 
 @dataclass(frozen=True)
 class _ParsedTurn:
-    eligible: bool
+    eligible_for_bypass: bool
     profile: _LookupProfile
     evidence: _InputEvidence = _InputEvidence()
 
@@ -620,7 +620,7 @@ def _parse_lookup_turn(
     if explicit_inputs is None:
         return _ParsedTurn(False, empty_profile)
 
-    eligible = bool(
+    eligible_for_bypass = bool(
         message_recognition.is_bare_year_message(text)
         or shape.old_category_fragment
         or shape.is_complete_question
@@ -629,7 +629,7 @@ def _parse_lookup_turn(
             and isinstance(previous_state, (_PendingLookupState, _CompletedLookupState))
         )
     )
-    if not eligible:
+    if not eligible_for_bypass:
         return _ParsedTurn(False, empty_profile)
     profile = _apply_followup(explicit_inputs, text, shape, previous_state)
     return _ParsedTurn(True, profile, explicit_inputs.evidence)
@@ -885,12 +885,12 @@ def _render_ready(ready: _ReadyLookup, language_level: str) -> str:
     return "\n".join(lines)
 
 
-def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> LookupDecision:
+def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> BypassDecision:
     selector = profile.selector
     if selector is None:
-        return NotEligible("not_eligible", NoLookupState())
+        return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
     if isinstance(selector, _BirthYearSelector) and selector.birth_year > today.year:
-        return NotEligible("not_eligible", NoLookupState())
+        return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
 
     rows = _calculate_rows(profile, today, rules)
     outside_youth = None
@@ -904,7 +904,7 @@ def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> Lookup
         outside_youth = selector.birth_year
     is_standalone_license = isinstance(selector, _StandaloneLicenceSelector)
     if not rows and outside_youth is None and not is_standalone_license:
-        return NotEligible("not_eligible", NoLookupState())
+        return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
 
     ready = _ReadyLookup(
         selector=selector,
@@ -914,7 +914,7 @@ def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> Lookup
         sources=knwu_categories.sources(rules),
         outside_youth_birth_year=outside_youth,
     )
-    return Ready("ready", ready, _CompletedLookupState(profile=profile))
+    return ReadyForBypass("ready_for_bypass", ready, _CompletedLookupState(profile=profile))
 
 
 def recognize_turn(
@@ -922,34 +922,34 @@ def recognize_turn(
     previous_state: LookupState | None,
     today: date,
     rules: dict,
-) -> LookupDecision:
+) -> BypassDecision:
     """Recognize, validate and calculate a deterministic lookup without side effects."""
     state = previous_state or NoLookupState()
     parsed = _parse_lookup_turn(message, rules, state)
-    if not parsed.eligible:
-        return NotEligible("not_eligible", NoLookupState())
+    if not parsed.eligible_for_bypass:
+        return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
     if parsed.profile.selector is None:
         pending = _PendingLookupState(profile=parsed.profile)
-        return NeedsInformation("needs_information", pending, parsed.evidence)
+        return NeedsInputForBypass("needs_input_for_bypass", pending, parsed.evidence)
     return _decide_profile(parsed.profile, today, rules)
 
 
 def complete_with_intake(
-    needs_information: NeedsInformation,
+    needs_input: NeedsInputForBypass,
     intake_result: dict[str, object],
     today: date,
     rules: dict,
-) -> LookupDecision:
+) -> BypassDecision:
     """Complete only a recognized pending lookup with explicit intake facts."""
-    if not isinstance(needs_information, NeedsInformation):
+    if not isinstance(needs_input, NeedsInputForBypass):
         raise TypeError(
-            "complete_with_intake requires a NeedsInformation decision; "
-            "answer Ready directly and route NotEligible without intake completion"
+            "complete_with_intake requires a NeedsInputForBypass decision; "
+            "answer ReadyForBypass directly and route NotEligibleForBypass without intake completion"
         )
-    profile = needs_information.next_state.profile
+    profile = needs_input.next_state.profile
     year = intake_result.get("geboortejaar")
     age = intake_result.get("leeftijd")
-    evidence = needs_information.evidence
+    evidence = needs_input.evidence
     grounded_year = evidence.requires_intake and year in evidence.explicit_birth_years
     if (
         profile.selector is None
@@ -966,17 +966,17 @@ def complete_with_intake(
             profile.category_filter,
         )
     if profile.selector is None:
-        return NeedsInformation(
-            "needs_information", _PendingLookupState(profile=profile), needs_information.evidence
+        return NeedsInputForBypass(
+            "needs_input_for_bypass", _PendingLookupState(profile=profile), needs_input.evidence
         )
     return _decide_profile(profile, today, rules)
 
 
-def render_answer(ready: Ready, language_level: str) -> str:
+def render_answer(ready: ReadyForBypass, language_level: str) -> str:
     """Render validated answer facts without reading or interpreting user text."""
-    if not isinstance(ready, Ready):
+    if not isinstance(ready, ReadyForBypass):
         raise TypeError(
-            "render_answer requires a Ready decision; "
-            "route NeedsInformation and NotEligible through intake.decide_route"
+            "render_answer requires a ReadyForBypass decision; "
+            "route NeedsInputForBypass and NotEligibleForBypass through intake.decide_route"
         )
     return _render_ready(ready.ready, language_level)

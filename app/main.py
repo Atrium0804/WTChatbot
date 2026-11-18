@@ -6,7 +6,7 @@ MISTRAL_API_KEY/MISTRAL_AGENT_ID draait de app in stub-mode (duidelijk gemarkeer
 — handig voor offline development en tests.
 
 Flow per bericht (#88/#91/#93/#136): lookups.recognize_turn herkent de vraag
-tegen het lookup-profiel van de conversatie -> Ready: direct app-antwoord zonder
+tegen het lookup-profiel van de conversatie -> ReadyForBypass: direct app-antwoord zonder
 LLM-call; anders 202 + background job met light-model intake (intake.py), route
 bypass (alleen een aangevulde onvolledige lookup), direct-to-expert of router,
 en een streaming Mistral-call wier SSE-events de fase in /chat/status voeden
@@ -59,9 +59,9 @@ class FeedbackRequest(BaseModel):
 
 @dataclass(frozen=True)
 class ConversationLookup:
-    """Lookup-toestand van één conversatie; `revision` stijgt per geaccepteerde beurt."""
+    """Lookup-toestand van één conversatie; `accepted_turn_count` stijgt per geaccepteerde beurt."""
 
-    revision: int
+    accepted_turn_count: int
     state: lookups.LookupState
 
 
@@ -71,8 +71,8 @@ class LookupTurn:
     zijn lookup-toestand is vastgelegd."""
 
     conversation_id: str
-    revision: int
-    decision: lookups.NeedsInformation | lookups.NotEligible
+    accepted_turn_count: int
+    decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass
 
 
 def rate_limit_ok(buckets: dict[str, list[float]], key: str, limit: int, window: int) -> bool:
@@ -191,7 +191,7 @@ def create_app(
 
     def _accept_lookup_turn(
         conversation_id: str, message: str, today_date: date
-    ) -> tuple[lookups.LookupDecision, int]:
+    ) -> tuple[lookups.BypassDecision, int]:
         """Herken de beurt en leg de volgende lookup-toestand direct vast.
 
         Synchroon, zonder await: een latere beurt ziet altijd deze toestand.
@@ -200,17 +200,17 @@ def create_app(
             0, lookups.NoLookupState()
         )
         decision = lookups.recognize_turn(message, previous.state, today_date, category_rules)
-        revision = previous.revision + 1
-        lookup_states[conversation_id] = ConversationLookup(revision, decision.next_state)
-        return decision, revision
+        accepted_turn_count = previous.accepted_turn_count + 1
+        lookup_states[conversation_id] = ConversationLookup(accepted_turn_count, decision.next_state)
+        return decision, accepted_turn_count
 
     def _publish_lookup_state(turn: LookupTurn, next_state: lookups.LookupState) -> bool:
         """Compare-and-set: alleen de job van de laatst geaccepteerde beurt mag
         de lookup-toestand bijwerken. Synchroon, zonder await tussen check en set."""
         current = lookup_states.get(turn.conversation_id)
-        if current is None or current.revision != turn.revision:
+        if current is None or current.accepted_turn_count != turn.accepted_turn_count:
             return False
-        lookup_states[turn.conversation_id] = ConversationLookup(turn.revision, next_state)
+        lookup_states[turn.conversation_id] = ConversationLookup(turn.accepted_turn_count, next_state)
         return True
 
     def _direct_response(
@@ -274,7 +274,7 @@ def create_app(
                 expert_agent_ids=expert_agent_ids,
                 threshold=config.INTAKE_CONFIDENCE_THRESHOLD,
             )
-            if isinstance(turn.decision, lookups.NeedsInformation) and not _publish_lookup_state(
+            if isinstance(turn.decision, lookups.NeedsInputForBypass) and not _publish_lookup_state(
                 turn, route.lookup.next_state
             ):
                 trace.record("lookup_state", reason="stale_revision")
@@ -390,10 +390,10 @@ def create_app(
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         trace = traces.start(conversation_id)
         today_date = today()
-        decision, revision = _accept_lookup_turn(conversation_id, message, today_date)
+        decision, accepted_turn_count = _accept_lookup_turn(conversation_id, message, today_date)
         # #91/#136: herkende lookup met complete data -> direct app-antwoord
         # (0 LLM-calls, géén job/fase), ook midden in een bestaand gesprek
-        if isinstance(decision, lookups.Ready):
+        if isinstance(decision, lookups.ReadyForBypass):
             trace.record("route", route="bypass", reason="regex_lookup")
             answer = lookups.render_answer(decision, payload.language_level)
             return _direct_response(conversation_id, message, answer, trace)
@@ -416,7 +416,7 @@ def create_app(
             job_task = asyncio.create_task(
                 _run_chat_job(
                     job_id,
-                    LookupTurn(conversation_id, revision, decision),
+                    LookupTurn(conversation_id, accepted_turn_count, decision),
                     message,
                     context.add_context(message, context_lines),
                     mistral_conv_id,

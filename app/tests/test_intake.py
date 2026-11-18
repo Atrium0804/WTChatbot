@@ -20,7 +20,7 @@ EXPERTS = {"knwu": "ag_knwu", "regio": "ag_regio", "club": "ag_club", "archief":
 
 def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> intake.Route:
     decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
-    assert not isinstance(decision, lookups.Ready), message
+    assert not isinstance(decision, lookups.ReadyForBypass), message
     return intake.decide_route(
         decision=decision,
         today=NOVEMBER_2026,
@@ -37,7 +37,7 @@ def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> inta
 def test_route_bypass_only_completes_a_grounded_pending_lookup():
     route = route_for("Welk verzet? 2012", {**intake.FALLBACK, "geboortejaar": 2012})
     assert route.kind == "bypass"
-    assert isinstance(route.lookup, lookups.Ready)
+    assert isinstance(route.lookup, lookups.ReadyForBypass)
 
 
 def test_rejected_input_is_never_rescued_into_a_bypass():
@@ -51,7 +51,7 @@ def test_rejected_input_is_never_rescued_into_a_bypass():
 
 def test_decide_route_refuses_a_ready_decision():
     ready = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
-    with pytest.raises(TypeError, match="NeedsInformation or NotEligible"):
+    with pytest.raises(TypeError, match="NeedsInputForBypass or NotEligibleForBypass"):
         intake.decide_route(
             decision=ready,  # type: ignore[arg-type]
             today=NOVEMBER_2026,

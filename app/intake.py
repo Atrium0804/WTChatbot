@@ -6,14 +6,14 @@ mistral_client.chat_completion): intentie, domein, discipline, geboortejaar
 en confidence. Samen met de lookup-beslissing uit lookups.recognize_turn
 bepaalt decide_route() de route van het bericht:
 
-- "bypass": alleen een herkende onvolledige lookup (NeedsInformation) die
+- "bypass": alleen een herkende onvolledige lookup (NeedsInputForBypass) die
   lookups.complete_with_intake met gegronde intakefeiten compleet maakt;
   de Mistral-conversation start niet (#88, #136);
 - "direct": domein bekend én confidence >= drempel -> direct-to-expert
   (MISTRAL_AGENT_ID_<DOMEIN>), de router-call wordt bespaard (#88/#91);
 - "router": alles anders -> de router-agent als voordeur.
 
-Afgewezen invoer (NotEligible) gebruikt de intake alleen voor de keuze
+Afgewezen invoer (NotEligibleForBypass) gebruikt de intake alleen voor de keuze
 tussen expert en router, nooit voor een bypass. Bij een intake-fout is de
 fallback altijd de router (veilig).
 
@@ -127,7 +127,7 @@ def classify_message(
 class BypassRoute:
     """Een onvolledige lookup die de intake compleet maakte: app-antwoord, geen agent."""
 
-    lookup: lookups.Ready
+    lookup: lookups.ReadyForBypass
     kind: Literal["bypass"] = "bypass"
 
 
@@ -136,7 +136,7 @@ class AgentRoute:
     """Inhoudelijke route; `lookup` is de lookup-beslissing ná de intake."""
 
     kind: Literal["direct", "router"]
-    lookup: lookups.NeedsInformation | lookups.NotEligible
+    lookup: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass
     agent_id: str = ""
     domein: str = ""
 
@@ -146,7 +146,7 @@ Route: TypeAlias = BypassRoute | AgentRoute
 
 def decide_route(
     *,
-    decision: lookups.NeedsInformation | lookups.NotEligible,
+    decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass,
     today: date,
     rules: dict,
     intake_result: dict,
@@ -155,21 +155,21 @@ def decide_route(
 ) -> Route:
     """Route-beslissing na de intake (#91, #136): bypass | direct | router.
 
-    Alleen NeedsInformation mag via complete_with_intake een bypass worden;
-    een Ready-beslissing beantwoordt de aanroeper synchroon, zonder intake.
+    Alleen NeedsInputForBypass mag via complete_with_intake een bypass worden;
+    een ReadyForBypass-beslissing beantwoordt de aanroeper synchroon, zonder intake.
     `expert_agent_ids` mapt domein -> MISTRAL_AGENT_ID_<DOMEIN> (leeg =
     niet geconfigureerd -> dan kan er geen direct-to-expert plaatsvinden).
     """
-    lookup: lookups.NeedsInformation | lookups.NotEligible = decision
-    if isinstance(decision, lookups.NeedsInformation):
+    lookup: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass = decision
+    if isinstance(decision, lookups.NeedsInputForBypass):
         completed = lookups.complete_with_intake(decision, intake_result, today, rules)
-        if isinstance(completed, lookups.Ready):
+        if isinstance(completed, lookups.ReadyForBypass):
             return BypassRoute(completed)
         lookup = completed
-    elif not isinstance(decision, lookups.NotEligible):
+    elif not isinstance(decision, lookups.NotEligibleForBypass):
         raise TypeError(
-            "decide_route requires a NeedsInformation or NotEligible decision; "
-            "answer a Ready decision directly with lookups.render_answer"
+            "decide_route requires a NeedsInputForBypass or NotEligibleForBypass decision; "
+            "answer a ReadyForBypass decision directly with lookups.render_answer"
         )
     domein = str(intake_result.get("domein") or "onbekend")
     confidence = float(intake_result.get("confidence") or 0.0)

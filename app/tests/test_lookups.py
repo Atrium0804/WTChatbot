@@ -19,7 +19,7 @@ NOVEMBER_2026 = date(2026, 11, 9)
 def test_recognize_birth_year_renders_combined_gender_specific_overview():
     decision = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert decision.next_state.kind == "completed"
     answer = lookups.render_answer(decision, "B1")
 
@@ -36,7 +36,7 @@ def test_paired_category_keeps_its_gender_specific_members_per_season():
         "Welke categorie voor JO11/MO12?", None, today, RULES
     )
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     answer = lookups.render_answer(decision, "B2")
 
     assert "**JO11/MO12**" in answer
@@ -57,13 +57,13 @@ def test_paired_category_keeps_its_gender_specific_members_per_season():
 )
 def test_gender_followup_replaces_single_prefix_or_filters_a_pair(question, expected_category):
     first = lookups.recognize_turn(question, None, date(2026, 6, 1), RULES)
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "alleen meisjes", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {row.gender for row in followup.ready.rows} == {"meisjes"}
     assert {row.category for row in followup.ready.rows} == {expected_category}
 
@@ -75,13 +75,13 @@ def test_new_primary_year_fragment_replaces_category_but_keeps_filters():
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "en voor 2017?", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {row.birth_year for row in followup.ready.rows} == {2017}
     assert {row.gender for row in followup.ready.rows} == {"jongens"}
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
@@ -90,7 +90,7 @@ def test_new_primary_year_fragment_replaces_category_but_keeps_filters():
 def test_data_only_message_starts_a_profile_that_a_new_year_replaces():
     first = lookups.recognize_turn("jongen uit 2015, U12, weg", None, date(2026, 6, 1), RULES)
 
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
     assert [
         (row.season.discipline, row.gender, row.category, row.birth_year)
         for row in first.ready.rows
@@ -98,7 +98,7 @@ def test_data_only_message_starts_a_profile_that_a_new_year_replaces():
 
     followup = lookups.recognize_turn("en voor 2017?", first.next_state, date(2026, 6, 1), RULES)
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {(row.gender, row.season.discipline, row.birth_year) for row in followup.ready.rows} == {
         ("jongens", "weg", 2017)
     }
@@ -106,11 +106,11 @@ def test_data_only_message_starts_a_profile_that_a_new_year_replaces():
 
 def test_data_only_reply_completes_a_pending_lookup_and_keeps_its_filters():
     pending = lookups.recognize_turn("Welk verzet op de weg?", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     reply = lookups.recognize_turn("jongen uit 2015", pending.next_state, NOVEMBER_2026, RULES)
 
-    assert reply.kind == "ready"
+    assert reply.kind == "ready_for_bypass"
     assert {(row.gender, row.season.discipline, row.birth_year) for row in reply.ready.rows} == {
         ("jongens", "weg", 2015)
     }
@@ -119,7 +119,7 @@ def test_data_only_reply_completes_a_pending_lookup_and_keeps_its_filters():
 def test_bare_year_in_a_data_only_message_is_a_birth_year():
     decision = lookups.recognize_turn("2015, meisjes", None, NOVEMBER_2026, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert decision.ready.heading == "Geboortejaar 2015"
     assert {row.gender for row in decision.ready.rows} == {"meisjes"}
 
@@ -129,7 +129,7 @@ def test_bare_year_in_a_data_only_message_is_a_birth_year():
     ["jongen, weg", "jongen uit 2015 heeft een nieuwe fiets", "2015, 2017"],
 )
 def test_data_only_message_needs_a_primary_input_and_only_known_data(message):
-    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible"
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible_for_bypass"
 
 
 def test_complete_question_starts_without_inherited_filters():
@@ -139,7 +139,7 @@ def test_complete_question_starts_without_inherited_filters():
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     new_question = lookups.recognize_turn(
         "Welke categorie voor geboortejaar 2017?",
@@ -148,20 +148,20 @@ def test_complete_question_starts_without_inherited_filters():
         RULES,
     )
 
-    assert new_question.kind == "ready"
+    assert new_question.kind == "ready_for_bypass"
     assert {row.gender for row in new_question.ready.rows} == {"jongens", "meisjes"}
     assert {row.season.discipline for row in new_question.ready.rows} == {"weg", "veld"}
 
 
 def test_unrelated_turn_clears_a_pending_profile():
     pending = lookups.recognize_turn("Welk verzet?", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     unrelated = lookups.recognize_turn(
         "Hoi", pending.next_state, NOVEMBER_2026, RULES
     )
 
-    assert unrelated.kind == "not_eligible"
+    assert unrelated.kind == "not_eligible_for_bypass"
     assert unrelated.next_state.kind == "none"
 
 
@@ -172,13 +172,13 @@ def test_discipline_followup_replaces_only_the_discipline_filter():
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "alleen veldrijden", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {row.gender for row in followup.ready.rows} == {"jongens"}
     assert {row.season.discipline for row in followup.ready.rows} == {"veld"}
 
@@ -190,13 +190,13 @@ def test_old_category_gender_followup_filters_its_mapped_pairs():
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "alleen meisjes", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {row.gender for row in followup.ready.rows} == {"meisjes"}
     assert {row.category for row in followup.ready.rows} == {"U9", "U10"}
 
@@ -208,13 +208,13 @@ def test_short_old_category_fragment_replaces_primary_and_keeps_other_filters():
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "cat. 3", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert "**Oude cat. 3 (JO11/MO12)**" in lookups.render_answer(followup, "B1")
     assert {row.gender for row in followup.ready.rows} == {"jongens"}
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
@@ -227,13 +227,13 @@ def test_calendar_category_fragment_keeps_existing_gender_and_discipline_filters
         date(2026, 6, 1),
         RULES,
     )
-    assert first.kind == "ready"
+    assert first.kind == "ready_for_bypass"
 
     followup = lookups.recognize_turn(
         "MU11, VU12", first.next_state, date(2026, 6, 1), RULES
     )
 
-    assert followup.kind == "ready"
+    assert followup.kind == "ready_for_bypass"
     assert {row.gender for row in followup.ready.rows} == {"jongens"}
     assert {row.season.discipline for row in followup.ready.rows} == {"weg"}
     assert {row.category for row in followup.ready.rows} == {"U11"}
@@ -241,12 +241,12 @@ def test_calendar_category_fragment_keeps_existing_gender_and_discipline_filters
 
 def test_missing_lookup_primary_input_can_be_completed_by_a_birth_year():
     pending = lookups.recognize_turn("Welk verzet?", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
     assert pending.next_state.kind == "pending"
 
     completed = lookups.recognize_turn("2012", pending.next_state, NOVEMBER_2026, RULES)
 
-    assert completed.kind == "ready"
+    assert completed.kind == "ready_for_bypass"
     assert {row.season.discipline for row in completed.ready.rows} == {"weg", "veld"}
     assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
 
@@ -261,11 +261,11 @@ def test_missing_lookup_primary_input_can_be_completed_by_a_birth_year():
 )
 def test_pending_lookup_accepts_short_keyword_replies(reply, expected_category):
     pending = lookups.recognize_turn("Welk verzet op de weg?", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     completed = lookups.recognize_turn(reply, pending.next_state, NOVEMBER_2026, RULES)
 
-    assert completed.kind == "ready"
+    assert completed.kind == "ready_for_bypass"
     assert {row.category for row in completed.ready.rows} == {expected_category}
     assert {row.season.discipline for row in completed.ready.rows} == {"weg"}
 
@@ -273,34 +273,34 @@ def test_pending_lookup_accepts_short_keyword_replies(reply, expected_category):
 def test_abbreviated_question_word_is_a_complete_gearing_question():
     decision = lookups.recognize_turn("wlk verzet voor u8", None, NOVEMBER_2026, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert {row.category for row in decision.ready.rows} == {"U8"}
 
 
 def test_intake_completes_only_the_explicit_unqualified_year_from_the_request():
     pending = lookups.recognize_turn("Welk verzet? 2012", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     completed = lookups.complete_with_intake(
         pending, {"geboortejaar": 2012}, NOVEMBER_2026, RULES
     )
 
-    assert completed.kind == "ready"
+    assert completed.kind == "ready_for_bypass"
     assert {row.season.discipline for row in completed.ready.rows} == {"weg", "veld"}
     assert {row.gender for row in completed.ready.rows} == {"jongens", "meisjes"}
 
 
 def test_intake_completion_matches_direct_lookup_outside_the_youth_classification():
     pending = lookups.recognize_turn("Welk verzet? 2005", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     completed = lookups.complete_with_intake(
         pending, {"geboortejaar": 2005}, NOVEMBER_2026, RULES
     )
     direct = lookups.recognize_turn("2005", None, NOVEMBER_2026, RULES)
 
-    assert completed.kind == "ready"
-    assert direct.kind == "ready"
+    assert completed.kind == "ready_for_bypass"
+    assert direct.kind == "ready_for_bypass"
     assert lookups.render_answer(completed, "B1") == lookups.render_answer(direct, "B1")
     assert "Geboortejaar 2005 valt buiten de jeugdindeling." in lookups.render_answer(
         completed, "B1"
@@ -309,13 +309,13 @@ def test_intake_completion_matches_direct_lookup_outside_the_youth_classificatio
 
 def test_intake_cannot_replace_the_unqualified_year_with_another_year():
     pending = lookups.recognize_turn("Welk verzet? 2012", None, NOVEMBER_2026, RULES)
-    assert pending.kind == "needs_information"
+    assert pending.kind == "needs_input_for_bypass"
 
     completed = lookups.complete_with_intake(
         pending, {"geboortejaar": 2013}, NOVEMBER_2026, RULES
     )
 
-    assert completed.kind == "needs_information"
+    assert completed.kind == "needs_input_for_bypass"
 
 
 def test_intake_cannot_infer_a_birth_year_from_age_or_unstated_input():
@@ -328,14 +328,14 @@ def test_intake_cannot_infer_a_birth_year_from_age_or_unstated_input():
         RULES,
     )
 
-    assert completed.kind == "needs_information"
+    assert completed.kind == "needs_input_for_bypass"
 
 
 def test_intake_completion_rejects_non_pending_decisions():
     ready = lookups.recognize_turn("2015", None, NOVEMBER_2026, RULES)
-    assert ready.kind == "ready"
+    assert ready.kind == "ready_for_bypass"
 
-    with pytest.raises(TypeError, match="NeedsInformation"):
+    with pytest.raises(TypeError, match="NeedsInputForBypass"):
         lookups.complete_with_intake(ready, {}, NOVEMBER_2026, RULES)
 
 
@@ -347,7 +347,7 @@ def test_old_category_one_keeps_both_pairs_and_corrected_girls_field_gearing():
         RULES,
     )
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert decision.ready.heading == "Oude cat. 1 (JO9/MO10)"
     assert {
         (row.gender, row.category)
@@ -379,7 +379,7 @@ def test_old_category_one_keeps_both_pairs_and_corrected_girls_field_gearing():
 def test_candidate_seasons_follow_the_calendar_boundaries(today, expected):
     decision = lookups.recognize_turn("2014", None, today, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     actual = []
     for row in decision.ready.rows:
         season_key = (row.season.discipline, row.season.start_year, row.season.end_year)
@@ -391,7 +391,7 @@ def test_candidate_seasons_follow_the_calendar_boundaries(today, expected):
 def test_cross_season_answer_shows_calendar_year_licence_switch_on_one_line():
     decision = lookups.recognize_turn("2014", None, date(2026, 3, 1), RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     row = next(
         row
         for row in decision.ready.rows
@@ -413,7 +413,7 @@ def test_birth_year_and_paired_category_filter_the_same_gender_category_pair():
         RULES,
     )
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert [
         (row.season.discipline, row.gender, row.category, row.birth_year)
         for row in decision.ready.rows
@@ -442,7 +442,7 @@ def test_birth_year_and_paired_category_filter_the_same_gender_category_pair():
 def test_unsupported_or_conflicting_input_is_not_bypass_eligible(message):
     decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
 
-    assert decision.kind == "not_eligible"
+    assert decision.kind == "not_eligible_for_bypass"
     assert decision.next_state.kind == "none"
 
 
@@ -456,7 +456,7 @@ def test_unsupported_or_conflicting_input_is_not_bypass_eligible(message):
 def test_season_rows_include_the_supported_age_boundaries(birth_year, today, expected_age):
     decision = lookups.recognize_turn(str(birth_year), None, today, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert all(row.season.reference_year - row.birth_year == expected_age for row in decision.ready.rows)
     assert decision.ready.outside_youth_birth_year is None
 
@@ -464,7 +464,7 @@ def test_season_rows_include_the_supported_age_boundaries(birth_year, today, exp
 def test_birth_year_beyond_supported_age_range_uses_only_safe_standalone_answer():
     decision = lookups.recognize_turn("2009", None, date(2026, 2, 1), RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert decision.ready.rows == ()
     assert decision.ready.outside_youth_birth_year == 2009
     assert "valt buiten de jeugdindeling" in lookups.render_answer(decision, "B1")
@@ -473,7 +473,7 @@ def test_birth_year_beyond_supported_age_range_uses_only_safe_standalone_answer(
 def test_no_candidate_season_does_not_mislabel_a_current_youth_year_as_outside():
     decision = lookups.recognize_turn("2010", None, date(2026, 10, 1), RULES)
 
-    assert decision.kind == "not_eligible"
+    assert decision.kind == "not_eligible_for_bypass"
 
 
 def test_u16_normalizes_to_the_newling_category_for_both_seasons():
@@ -484,7 +484,7 @@ def test_u16_normalizes_to_the_newling_category_for_both_seasons():
         RULES,
     )
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert {row.category for row in decision.ready.rows} == {"U17 Nieuweling"}
     assert {row.gender for row in decision.ready.rows} == {"jongens", "meisjes"}
 
@@ -497,7 +497,7 @@ def test_standalone_knwu_17_plus_licence_remains_reachable():
         RULES,
     )
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     answer = lookups.render_answer(decision, "B2")
     assert "**KNWU Licentie 17+**" in answer
     assert "artikel 20.0.002" in answer
@@ -514,7 +514,7 @@ def test_combined_overview_uses_flat_markdown_and_level_appropriate_source_line(
         date(2026, 6, 1),
         RULES,
     )
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
 
     answer = lookups.render_answer(decision, language_level)
     lines = answer.splitlines()
@@ -534,7 +534,7 @@ def test_combined_overview_uses_flat_markdown_and_level_appropriate_source_line(
 
 def test_b2_source_line_names_each_document_once():
     decision = lookups.recognize_turn("2014", None, NOVEMBER_2026, RULES)
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
 
     b1_answer = lookups.render_answer(decision, "B1")
     assert not any(line.startswith("Bron:") for line in b1_answer.splitlines())
@@ -557,7 +557,7 @@ def test_conflicting_category_and_birth_year_does_not_fall_back_to_partial_answe
         RULES,
     )
 
-    assert decision.kind == "not_eligible"
+    assert decision.kind == "not_eligible_for_bypass"
 
 
 def test_old_category_and_explicit_new_category_must_match():
@@ -568,7 +568,7 @@ def test_old_category_and_explicit_new_category_must_match():
         RULES,
     )
 
-    assert decision.kind == "not_eligible"
+    assert decision.kind == "not_eligible_for_bypass"
 
 
 @pytest.mark.parametrize(
@@ -584,7 +584,7 @@ def test_old_category_and_explicit_new_category_must_match():
 def test_original_category_translation_forms_remain_recognizable(message, expected_heading):
     decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
 
-    assert decision.kind == "ready"
+    assert decision.kind == "ready_for_bypass"
     assert decision.ready.heading == expected_heading
 
 
@@ -607,7 +607,7 @@ def test_original_category_translation_forms_remain_recognizable(message, expect
     ],
 )
 def test_explanations_rules_and_unrelated_questions_stay_out_of_the_bypass(message):
-    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible"
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "not_eligible_for_bypass"
 
 
 @pytest.mark.parametrize(
@@ -619,7 +619,7 @@ def test_explanations_rules_and_unrelated_questions_stay_out_of_the_bypass(messa
     ],
 )
 def test_question_without_primary_input_waits_for_it(message):
-    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "needs_information"
+    assert lookups.recognize_turn(message, None, NOVEMBER_2026, RULES).kind == "needs_input_for_bypass"
 
 
 @pytest.mark.parametrize(
@@ -640,7 +640,7 @@ def test_question_without_primary_input_waits_for_it(message):
 @pytest.mark.parametrize("language_level", ["B1", "B2"])
 def test_every_bypass_answer_uses_supported_markdown_format(message, language_level):
     decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES)
-    assert decision.kind == "ready", message
+    assert decision.kind == "ready_for_bypass", message
 
     answer = lookups.render_answer(decision, language_level)
     assert re.search(r"^[ \t]+[-*]\s", answer, re.MULTILINE) is None

@@ -316,14 +316,14 @@ regels:
 
   # --- #136: intake vult alleen een herkende onvolledige lookup aan ---
   - id: intake-bevestigt-ongekwalificeerd-jaartal
-    herkomst: "#136 NeedsInformation + intake"
+    herkomst: "#136 NeedsInputForBypass + intake"
     beurten:
       - vraag: "Welk verzet? 2012"
         route: bypass
         intake: {intentie: lookup, geboortejaar: 2012}
 
   - id: intake-vervangt-geen-genoemd-jaartal
-    herkomst: "#136 NeedsInformation + intake"
+    herkomst: "#136 NeedsInputForBypass + intake"
     beurten:
       - vraag: "Welk verzet? 2012"
         route: inhoudelijk

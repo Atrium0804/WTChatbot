@@ -12,11 +12,11 @@ Termen als *route*, *intake*, *deterministische bypass* en *fase* staan in het [
 ```mermaid
 flowchart TD
     A["POST /chat"] --> B{"lookups.recognize_turn<br/>(bericht + lookup-toestand)"}
-    B -- "Ready" --> C["synchroon 200-antwoord<br/>route: bypass — 0 LLM-calls"]
-    B -- "NeedsInformation of<br/>NotEligible" --> D["202 + background job"]
+    B -- "ReadyForBypass" --> C["synchroon 200-antwoord<br/>route: bypass — 0 LLM-calls"]
+    B -- "NeedsInputForBypass of<br/>NotEligibleForBypass" --> D["202 + background job"]
     D --> E["intake.classify_message<br/>1 call, mistral-small-latest"]
     E --> F{"intake.decide_route<br/>(beslissing + intake-data)"}
-    F -- "NeedsInformation, door<br/>complete_with_intake aangevuld" --> G["route: bypass<br/>overzicht uit knwu_categories.json"]
+    F -- "NeedsInputForBypass, door<br/>complete_with_intake aangevuld" --> G["route: bypass<br/>overzicht uit knwu_categories.json"]
     F -- "domein bekend én<br/>confidence ≥ drempel" --> H["route: direct-domein<br/>conversatie start direct bij expert"]
     F -- "anders (ook bij intake-fout)" --> I["route: router<br/>router-agent als voordeur"]
     H --> J["mistral_client.stream_answer<br/>stream: true, SSE → fasen"]
@@ -52,9 +52,9 @@ Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call s
 
 `lookups.recognize_turn()` herkent een bericht met regex plus data uit `knwu_categories.json` en geeft een van drie beslissingen terug:
 
-- **Ready**: de invoer is compleet en consistent. De app antwoordt synchroon met een gecombineerd overzicht van leeftijdscategorie, oude categorie-indeling, maximaal verzet en licentie. Hoofdingang is een geboortejaar (ook een kaal jaartal), een oude categorie of een nieuwe leeftijdscategorie (U, JO/MO, MU/VU). Waar geen overzicht past, blijft een losse lookup bereikbaar, zoals KNWU Licentie 17+.
-- **NeedsInformation**: een herkende lookup-vraag mist de hoofdingang, bijvoorbeeld "Welk verzet?". Alleen deze beslissing mag de intake aanvullen, via `complete_with_intake()`. Die neemt alleen een geboortejaar over dat al letterlijk in het bericht staat, nooit een jaar dat uit een leeftijd is afgeleid of dat de intake verzint.
-- **NotEligible**: uitleg- of uitzonderingsvragen, tegenstrijdige of onbekende invoer, meerdere renners, een expliciet wedstrijdjaar, andere disciplines dan weg en veld, en berichten die niets met de lookup te maken hebben. De intake kiest dan alleen tussen expert en router en maakt er nooit een bypass van.
+- **ReadyForBypass**: de invoer is compleet en consistent. De app antwoordt synchroon met een gecombineerd overzicht van leeftijdscategorie, oude categorie-indeling, maximaal verzet en licentie. Hoofdingang is een geboortejaar (ook een kaal jaartal), een oude categorie of een nieuwe leeftijdscategorie (U, JO/MO, MU/VU). Waar geen overzicht past, blijft een losse lookup bereikbaar, zoals KNWU Licentie 17+.
+- **NeedsInputForBypass**: een herkende lookup-vraag mist de hoofdingang, bijvoorbeeld "Welk verzet?". Alleen deze beslissing mag de intake aanvullen, via `complete_with_intake()`. Die neemt alleen een geboortejaar over dat al letterlijk in het bericht staat, nooit een jaar dat uit een leeftijd is afgeleid of dat de intake verzint.
+- **NotEligibleForBypass**: uitleg- of uitzonderingsvragen, tegenstrijdige of onbekende invoer, meerdere renners, een expliciet wedstrijdjaar, andere disciplines dan weg en veld, en berichten die niets met de lookup te maken hebben. De intake kiest dan alleen tussen expert en router en maakt er nooit een bypass van.
 
 Geslacht en discipline zijn optioneel: ontbreken ze, dan toont het overzicht beide. Het overzicht toont twee kandidaatseizoenen, afhankelijk van de appdatum. De exacte invoervormen, seizoensregels, overgangen en antwoordvorm staan in de [reference: categorieoverzicht](../reference/categorieoverzicht.md).
 

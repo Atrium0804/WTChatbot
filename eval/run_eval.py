@@ -159,7 +159,7 @@ def replay_beurt(
     """Volgende lookup-toestand na een eerdere beurt, zoals de app die vastlegt:
     een herkende onvolledige vraag krijgt de intake-aanvulling uit de job."""
     decision = lookups.recognize_turn(message, state, today, rules)
-    if not isinstance(decision, lookups.NeedsInformation):
+    if not isinstance(decision, lookups.NeedsInputForBypass):
         return decision.next_state
     intake_result, _, _ = classify_with_reason(message, api_key)
     return lookups.complete_with_intake(decision, intake_result, today, rules).next_state
@@ -170,7 +170,7 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
 
     Zelfde volgorde als app/main.py: `beurten` en `vraag` gaan in volgorde
     door lookups.recognize_turn (de lookup-toestand loopt mee, geen tekst
-    plakken). Een Ready-beslissing is een deterministische bypass (0
+    plakken). Een ReadyForBypass-beslissing is een deterministische bypass (0
     LLM-calls, geen conversation); anders `via: router` (vaste router-route om
     end-to-end handoff te testen), anders de light intake (1 kleine call) met
     decide_route -> intake-ondersteunde bypass, direct-<domein> of router.
@@ -180,7 +180,7 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     for message in entry.get("beurten", []):
         state = replay_beurt(message, state, api_key, today, rules)
     decision = lookups.recognize_turn(entry["vraag"], state, today, rules)
-    if isinstance(decision, lookups.Ready):
+    if isinstance(decision, lookups.ReadyForBypass):
         return {
             "route": "bypass", "route_reden": "regex_lookup", "agent_id": None,
             "lookup": decision, "intake_ms": 0.0,

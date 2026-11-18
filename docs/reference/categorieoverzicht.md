@@ -11,9 +11,9 @@ Alle drie in `app/lookups.py`, puur (geen netwerk, geen LLM). Datum en regels wo
 
 | Operatie | Invoer | Uitvoer |
 | --- | --- | --- |
-| `recognize_turn(message, previous_state, today, rules)` | bericht, lookup-toestand van de conversatie (of `None`), appdatum, `knwu_categories.load_rules()` | `Ready` \| `NeedsInformation` \| `NotEligible`, elk met `next_state` |
-| `complete_with_intake(needs_information, intake_result, today, rules)` | alleen een `NeedsInformation`; anders `TypeError` | `Ready` \| `NeedsInformation` \| `NotEligible` |
-| `render_answer(ready, language_level)` | alleen een `Ready`; anders `TypeError`. `language_level` `B1` of `B2` | markdown-antwoord |
+| `recognize_turn(message, previous_state, today, rules)` | bericht, lookup-toestand van de conversatie (of `None`), appdatum, `knwu_categories.load_rules()` | `ReadyForBypass` \| `NeedsInputForBypass` \| `NotEligibleForBypass`, elk met `next_state` |
+| `complete_with_intake(needs_input, intake_result, today, rules)` | alleen een `NeedsInputForBypass`; anders `TypeError` | `ReadyForBypass` \| `NeedsInputForBypass` \| `NotEligibleForBypass` |
+| `render_answer(ready, language_level)` | alleen een `ReadyForBypass`; anders `TypeError`. `language_level` `B1` of `B2` | markdown-antwoord |
 
 Aanroepers: `POST /chat` en `_run_chat_job` in `app/main.py`, `decide_route` in `app/intake.py`, `plan_entry` in `eval/run_eval.py`.
 
@@ -21,9 +21,9 @@ Aanroepers: `POST /chat` en `_run_chat_job` in `app/main.py`, `decide_route` in 
 
 | Beslissing | Wanneer | Volgende toestand | Route |
 | --- | --- | --- | --- |
-| `Ready` | herkende lookup met complete, consistente invoer en minstens één passende regel; ook de losse lookup KNWU Licentie 17+ en een geboortejaar buiten de jeugdindeling | `completed` | `bypass`, 0 LLM-calls |
-| `NeedsInformation` | herkende lookup zonder hoofdingang, of met één jaartal dat alleen de intake als geboortejaar kan bevestigen (bijv. "Welk verzet? 2012") | `pending` | intake; `bypass` (`intake_lookup`) alleen als `complete_with_intake` `Ready` geeft |
-| `NotEligible` | alles wat niet positief herkend is, zie [Niet in de bypass](#niet-in-de-bypass) | `none` | inhoudelijke route (`direct-<domein>` of `router`) |
+| `ReadyForBypass` | herkende lookup met complete, consistente invoer en minstens één passende regel; ook de losse lookup KNWU Licentie 17+ en een geboortejaar buiten de jeugdindeling | `completed` | `bypass`, 0 LLM-calls |
+| `NeedsInputForBypass` | herkende lookup zonder hoofdingang, of met één jaartal dat alleen de intake als geboortejaar kan bevestigen (bijv. "Welk verzet? 2012") | `pending` | intake; `bypass` (`intake_lookup`) alleen als `complete_with_intake` `ReadyForBypass` geeft |
+| `NotEligibleForBypass` | alles wat niet positief herkend is, zie [Niet in de bypass](#niet-in-de-bypass) | `none` | inhoudelijke route (`direct-<domein>` of `router`) |
 
 ## Invoer
 
@@ -37,7 +37,7 @@ Precies één hoofdingang per bericht.
 | Oude categorie | `categorie N`, `cat. N`, `cat N` (N = 1 t/m 7) | "Wat is cat. 3?" |
 | Nieuwe leeftijdscategorie | `U<n>`, `JO<n>`, `MO<n>`, `MU<n>`, `VU<n>`; "nieuweling(en)" | "U11", "JO11/MO12", "MU12, VU13" |
 | Losse licentie | "licentie 17+" met een vraagwoord | "Welke KNWU Licentie 17+ is nodig?" |
-| Alleen gegevens | een bericht met alleen herkende gegevens, gescheiden door komma's, "en" of spaties: geslachtswoord, geboortejaarvorm (ook een kaal jaartal), categorie, oude categorie, discipline. Minstens één hoofdingang; elk ander woord geeft `NotEligible` | "jongen uit 2015, U12, weg", "2015, meisjes" |
+| Alleen gegevens | een bericht met alleen herkende gegevens, gescheiden door komma's, "en" of spaties: geslachtswoord, geboortejaarvorm (ook een kaal jaartal), categorie, oude categorie, discipline. Minstens één hoofdingang; elk ander woord geeft `NotEligibleForBypass` | "jongen uit 2015, U12, weg", "2015, meisjes" |
 
 Een geboortejaar samen met een categorie: het geboortejaar is de hoofdingang, de categorie een extra filter. Een oude en een nieuwe categorie samen: de oude categorie is de hoofdingang, de nieuwe een filter.
 
@@ -56,7 +56,7 @@ Een geboortejaar samen met een categorie: het geboortejaar is de hoofdingang, de
 
 ### Niet in de bypass
 
-Deze invoer geeft `NotEligible`. De intake maakt er nooit een bypass van.
+Deze invoer geeft `NotEligibleForBypass`. De intake maakt er nooit een bypass van.
 
 | Invoer | Voorbeeld |
 | --- | --- |
@@ -96,7 +96,7 @@ Appdatum in jaar J. Het overzicht toont de twee seizoenen in deze volgorde. Dit 
 | Categorie zonder geboortejaar | geboortejaren per seizoen afgeleid; kan per seizoen verschillen (jongens U12: weg 2026 → 2015, veld 2026-2027 → 2016) |
 | Licentie | per kalenderjaar, onafhankelijk van discipline en geslacht; wisselt die binnen een veldritseizoen, dan "t/m dec J" en "vanaf jan J+1" |
 | Oude categorie 1 | jongens U8/U9 en meisjes U9/U10; de kop toont "Oude cat. 1 (JO9/MO10)" |
-| Geboortejaar buiten de jeugd | geen regels, geen jeugdcategorie en geen jeugdlicentie in het huidige jaar → `Ready` met "valt buiten de jeugdindeling" |
+| Geboortejaar buiten de jeugd | geen regels, geen jeugdcategorie en geen jeugdlicentie in het huidige jaar → `ReadyForBypass` met "valt buiten de jeugdindeling" |
 | Toekomstig seizoen | laatst bekende regels, met het vooruitblikvoorbehoud; geen geldigheidslogica |
 
 ## Lookup-toestand

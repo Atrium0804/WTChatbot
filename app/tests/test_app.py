@@ -1028,7 +1028,9 @@ def test_category_and_gearing_lookup_routes(lookup_client, monkeypatch, message,
     assert resp.status_code == 200, "Een pure categorie- of verzetvraag moet lokaal worden beantwoord."
     for fragment in expected:
         assert fragment in resp.json()["answer"]
-    assert resp.json()["answer"].splitlines()[-1].startswith("Bron:")
+    answer_lines = resp.json()["answer"].splitlines()
+    assert answer_lines[-1] == "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
+    assert not any(line.startswith("Bron:") for line in answer_lines), "B1 heeft geen bronregel"
     assert calls == []
 
 

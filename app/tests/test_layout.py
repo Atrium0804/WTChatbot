@@ -91,7 +91,7 @@ def test_background_area_stays_between_collapsed_settings_and_composer(
     assert_composer_visible(page)
 
 
-def test_portrait_background_fills_conversation_height_without_distortion(page: Page, shell_url: str) -> None:
+def test_landscape_background_fills_conversation_height_without_distortion(page: Page, shell_url: str) -> None:
     page.set_viewport_size({"width": 390, "height": 844})
     page.goto(shell_url)
     background = page.locator("#messages").evaluate("""async node => {
@@ -108,8 +108,8 @@ def test_portrait_background_fills_conversation_height_without_distortion(page: 
         };
     }""")
     assert background is not None
-    assert "Achtergrond%20A5" in background["url"]
-    assert background["width"] < background["height"]
+    assert "Achtergrond%20A5%20liggend" in background["url"]
+    assert background["width"] > background["height"]
     assert background["size"] == "auto 100%"
     assert background["position"] == "50% 50%"
     assert background["repeat"] == "no-repeat"

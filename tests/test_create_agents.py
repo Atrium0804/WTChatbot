@@ -407,6 +407,36 @@ class RunCreateTests(unittest.TestCase):
         # router-agent heeft een override -> die wint
         self.assertEqual(calls["router-agent"]["model"], "mistral-medium-latest")
 
+    def test_per_agent_completion_args_merge_over_global(self) -> None:
+        # #144: mistral-small kent alleen reasoning_effort none/high; de router
+        # overschrijft daarom één sleutel, de rest van de globale args blijft.
+        router = self.router_agent()
+        router["completion_args"] = {"reasoning_effort": "none"}
+        config_path = self.make_config([self.knwu_agent(), router])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(rc, 0, report["errors"])
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(calls["knwu-agent"]["completion_args"], {"temperature": 0, "top_p": 1})
+        self.assertEqual(
+            calls["router-agent"]["completion_args"],
+            {"temperature": 0, "top_p": 1, "reasoning_effort": "none"},
+        )
+
+    def test_load_config_rejects_non_dict_per_agent_completion_args(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            data = minimal_config()
+            data["agents"][0]["completion_args"] = "none"
+            path = write_json(Path(tmp), "agents_config.json", data)
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.load_config(path)
+            self.assertIn("completion_args", str(ctx.exception))
+
     def test_load_config_rejects_non_string_per_agent_model(self) -> None:
         # #83: een per-agent model dat geen string is, wordt afgekeurd
         with tempfile.TemporaryDirectory() as tmp:
@@ -490,15 +520,13 @@ class ProductieConfigTests(unittest.TestCase):
         self.assertIn("verzet", prompt.lower())
         self.assertIn("20.1.007", prompt)
 
-    def test_knwu_agent_licentievragen_noemen_kenniscentrum_paginas(self) -> None:
-        # eval run 5: licentieprijzen staan niet in de library (Nationale
-        # Besluiten art. 18.1 verwijst naar het Kenniscentrum); de agent gaf
-        # op bij de Tarieven-KNWU-pagina. De prompt moet die pagina's noemen.
+    def test_knwu_agent_verwijst_voor_tarieven_en_verzekeringen_naar_kenniscentrum(self) -> None:
+        # Tarieven (PDF) en verzekeringen staan niet in de library. Tarieven:
+        # verwijzen naar de tarievenpagina; verzekeringen: direct websearch.
         prompts_dir = create_agents.SCRIPT_DIR / "prompts"
         prompt = (prompts_dir / "knwu-agent.md").read_text(encoding="utf-8")
         self.assertIn("Tarieven-KNWU", prompt)
-        self.assertIn("knwu-licenties", prompt)
-        self.assertIn("verzekeringen", prompt)
+        self.assertIn("kenniscentrum.knwu.nl/verzekeringen", prompt)
 
     def test_shared_schrijft_dagen_voluit(self) -> None:
         # eval run 5: "di-vr" in de prompt liet de agent de dagen afkorten

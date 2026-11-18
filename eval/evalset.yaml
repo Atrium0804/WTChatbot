@@ -43,7 +43,7 @@
 #
 # Verdeling: 16 knwu / 5 regio / 6 club (27 vragen; 5 via de router, 4 met
 # taalniveau B1). Harde 100%-gate op type strikethrough (min. 3) en websearch
-# (min. 2, licentie/verzekering);
+# (min. 2, verzekering/bronconflict);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
 # Q7); na eval run 3 handmatig gecontroleerd tegen PDF en live bronnen (#28).
@@ -69,22 +69,24 @@ evalset:
     # baseline-vraag #92 (library/websearch): route via intake, duur_ms/llm_calls in last_run
     taalniveau: B2
     categorie: knwu
-    type: websearch
+    type: standaard
     vraag: "Welke licentiepakketten kent de KNWU voor jeugd in 2026 en wat kost elk pakket?"
-    # review 2026-11-12: "startrecht" was een false negative — een goed antwoord
-    # noemt welke wedstrijden per pakket mogen ("wedstrijden"), niet het woord "startrecht"
-    verwacht_antwoord: "Basis; Plus; Premium; 26; 72; 135; wedstrijden; internationa; verzeker"
-    bron: "kenniscentrum.knwu.nl/knwu-licenties"
+    # 2026-11-18: de tarieven staan in een PDF op het Kenniscentrum; de agent
+    # parset die niet meer (snelheid) maar verwijst naar de tarievenpagina
+    verwacht_antwoord: "Tarieven-KNWU"
+    niet_in_antwoord: "72; 135"
+    bron: "kenniscentrum.knwu.nl/Tarieven-KNWU | Nationale_Besluiten_20260918"
     versiedatum: "2026"
   - id: knwu-licentie-u13-geen-pakketten
     taalniveau: B2
     categorie: knwu
-    type: websearch
+    type: standaard
     vraag: "Welke licentie en welk licentiepakket heeft mijn dochter nodig? Ze is geboren in 2016."
-    # De KNWU Licentie U13 kent één variant (€26); de pakketprijzen van U17 (72/135) horen er niet bij
-    verwacht_antwoord: "KNWU Licentie U13; 26"
+    # 2026-11-18: licentie uit Titel 20; voor pakket en prijs verwijst de agent
+    # naar de tarievenpagina in plaats van de tarieven-PDF te parsen
+    verwacht_antwoord: "KNWU Licentie U13; Tarieven-KNWU"
     niet_in_antwoord: "72; 135"
-    bron: "kenniscentrum.knwu.nl/knwu-licenties/jeugd-u13 | TITEL_20-Jeugdwielrennen_20260921"
+    bron: "TITEL_20-Jeugdwielrennen_20260921 | kenniscentrum.knwu.nl/Tarieven-KNWU"
     versiedatum: "2026"
   - id: knwu-verzekering-dekking
     taalniveau: B2

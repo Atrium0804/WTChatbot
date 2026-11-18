@@ -3,7 +3,8 @@
 Reads an architecture variant JSON (default: via the `active` pointer,
 scripts/architectures/active -> <naam>.json, #95): model, completion_args
 and the agent list (name, description, prompt files, optional library,
-websearch flag, handoffs). Prompt texts live in separate files under
+websearch flag, handoffs, optional per-agent model and completion_args;
+per-agent completion_args are merged key by key over the global ones). Prompt texts live in separate files under
 prompts_folder (relative to the variant file; CODING_PRINCIPLES).
 
 An existing remote agent with the same name is updated, a missing one is
@@ -83,6 +84,7 @@ class AgentConfig(TypedDict, total=False):
     websearch: bool
     handoffs: list[str]
     model: str  # optionele per-agent model-override (#83); default = config["model"]
+    completion_args: dict  # optioneel, per sleutel over de globale completion_args heen (#144)
 
 
 class Config(TypedDict, total=False):
@@ -122,6 +124,10 @@ def load_config(path: Path) -> Config:
         if "model" in entry and not isinstance(entry["model"], str):
             raise SystemExit(
                 f"error: config {path}: per-agent 'model' must be a string: {entry}"
+            )
+        if "completion_args" in entry and not isinstance(entry["completion_args"], dict):
+            raise SystemExit(
+                f"error: config {path}: per-agent 'completion_args' must be an object: {entry}"
             )
     data.setdefault("prompts_folder", "prompts")
     return data
@@ -276,7 +282,7 @@ def run_create(
             "description": agent["description"],
             "instructions": instructions,
             "tools": tools,
-            "completion_args": config["completion_args"],
+            "completion_args": {**config["completion_args"], **agent.get("completion_args", {})},
         }
         if handoff_ids is not None:
             payload["handoffs"] = handoff_ids

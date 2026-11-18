@@ -36,7 +36,7 @@ De agent-architectuur is switchbaar via de `active`-pointer; agent-namen zijn id
 - De summary print per agent naam -> id en de bijbehorende env-var.
 - In Mistral Studio: 5 agents; per content-agent precies één `document_library`-tool met de juiste library; `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club) en direct expert-naar-expert (ADR-0009, geen return-handoff naar de router).
 - Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](stel-websearch-allowlist-in.md).
-- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0).
+- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}, "reasoning_effort": "medium"}` (`top_p=1` is verplicht bij temperature 0). Beide modellen redeneren: zonder `reasoning_effort` redeneert Mistral Large 4 op `high`, wat een antwoord ruim een minuut trager maakt (#144). De router-agent overschrijft dit met een eigen `completion_args` `{"reasoning_effort": "none"}`, want `mistral-small` kent alleen `none` en `high`. Per-agent `completion_args` worden per sleutel over de globale heen gelegd.
 
 ## Opmerkingen
 

@@ -26,7 +26,7 @@ Per-library scoping (ADR-0003) betekent: één agent per library. De MVP bestaat
 2. **Per-library scoping**: elke content-agent raadpleegt alléén zijn eigen library. Nooit ongescopeerde retrieval over meerdere libraries tegelijk.
 3. **Fallback**: de regio-agent (MNC-vragen) mag handoff doen naar de knwu-agent, met expliciete vermelding dat de bron dan KNWU-reglementen zijn. De club-agent doet nóóit fallback naar de KNWU-agent: clubvragen beantwoord je alléén uit clubbronnen. Uitzondering is geen fallback maar routering: een licentievraag is geen clubvraag, dus de club-agent zet die met een handoff door naar de knwu-agent.
 4. **Websearch is fallback**: pas als de library geen sluitend antwoord geeft. Alleen binnen de org-allowlist `knwu.nl`, `knwumidden.nl` — server-side afgedwongen via `/v1/web-filters` (ADR-0004). Noem expliciet als je een online bron gebruikt.
-5. **Licentievragen**: raadpleeg áltijd óók het Kenniscentrum (ook als de KNWU-bibliotheek al antwoord lijkt te geven). Alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002), dus de agent vraagt alleen daarnaar; licentie en leeftijdscategorie neemt hij over uit de contextregel van de app, anders uit Titel 20. Het antwoord noemt de licentie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen) en dat bij alleen trainen het KNWU-lidmaatschap volstaat. De licentiepakketten (Basis, Plus, Premium) en het verschil tussen startrecht (in de licentie) en pakketten (buitenlandstartrecht, verzekering, extra's) noemt hij alleen als het Kenniscentrum voor die licentie pakketten noemt (seizoen 2026: niet bij de KNWU Licentie U13). De prompts noemen geen leeftijdsgrenzen of andere Titel 20-waarden, alleen artikelnummers, zodat een nieuwe Titel 20 de prompts niet laat verouderen. **Verzekeringsvragen**: primair de sectie Verzekeringen van het Kenniscentrum.
+5. **Licentievragen**: de agent antwoordt uit de KNWU-bibliotheek, zonder websearch (snelheid). Alleen het geboortejaar bepaalt de licentie (Titel 20 art. 20.0.002), dus de agent vraagt alleen daarnaar; licentie en leeftijdscategorie neemt hij over uit de contextregel van de app, anders uit Titel 20. Het antwoord noemt de licentie voluit, de leeftijdscategorie (bij onbekend geslacht voor jongen én meisje, zonder ernaar te vragen) en wanneer het KNWU-lidmaatschap volstaat. De prompts noemen geen leeftijdsgrenzen of andere Titel 20-waarden, alleen artikelnummers, zodat een nieuwe Titel 20 de prompts niet laat verouderen. **Tarieven en licentiepakketten** staan in een PDF op het Kenniscentrum: de agent verwijst naar https://kenniscentrum.knwu.nl/Tarieven-KNWU en zoekt de bedragen alleen op als de gebruiker daar na die verwijzing expliciet om vraagt. **Verzekeringsvragen** staan niet in de bibliotheek: de agent raadpleegt direct kenniscentrum.knwu.nl/verzekeringen via websearch.
 6. **"Wat is er veranderd?"-vragen**: vaste bronvolgorde — (1) de officiële wijzigingsmemo op het Kenniscentrum (als die er is; voor de Nationale Besluiten 2026 bestaat er geen), (2) de rode revisies in het actuele document — in de library-versie gemarkeerd als `[GEWIJZIGD]…[/GEWIJZIGD]`, (3) als laatste fallback de archief-agent (archief-library / repo-archief). De archief-library wordt nóóit bij andere vragen geraadpleegd.
 7. **Strikethrough**: rode doorgehaalde tekst in documenten is nooit de huidige regel — citeer die nooit. Twijfel je over de status van een passage, zeg dat dan expliciet in het antwoord.
 8. **Versiecheck**: bij nationale/KNWU-regelgevingvragen checkt de agent via websearch (Kenniscentrum) of er een nieuwere versie is dan de library-versie — alléén als de proxy-contextregel geen geldige cache meldt. De proxy cachet versiechecks 2 dagen in `version_checks` en injecteert per conversatie een regel als "Versiecheck Kenniscentrum: <document> laatst gecheckt op <datum>, bevatte versie <X>". Is er een nieuwere versie? Meld expliciet dat de gebruikte kopie verouderd is (beide datums) en antwoord met de nieuwste regel.
@@ -93,24 +93,25 @@ reglementstekst en eindig met een markerregel op een eigen laatste regel:
 ```text
 ## Jouw routing: KNWU-vragen (nationaal)
 Je behandelt ALLEEN nationale/KNWU-vragen (Titel 20, Nationale Besluiten,
-licenties, verzekeringen, NK's, verzet). Bronnen: KNWU-bibliotheek +
-Kenniscentrum.
-- Licentievragen: raadpleeg áltijd óók het Kenniscentrum. Alleen het
-  geboortejaar bepaalt de licentie (Titel 20, art. 20.0.002). Vraag dus
-  alleen naar het geboortejaar — niet naar discipline, geslacht, doel,
-  soort wedstrijden of licentiepakket. Neem de licentie en de
-  leeftijdscategorie over uit de contextregel van de app; staat die er
-  niet, haal ze dan uit Titel 20 (art. 20.0.002 en 20.0.004). Antwoord
-  daarna met: de licentie voluit, de leeftijdscategorie van de renner
-  (blijkt het geslacht niet uit de vraag, zoals bij "mijn kind", noem dan
-  de leeftijdscategorie voor jongen én meisje in plaats van ernaar te
-  vragen) en één zin "Wil hij/zij alleen trainen? Dan volstaat het
-  KNWU-lidmaatschap.". Noem de licentiepakketten (Basis, Plus, Premium)
-  en het verschil startrecht vs pakket alleen als het Kenniscentrum voor
-  deze licentie pakketten noemt; heeft de licentie één variant, zeg dat
-  dan. Vorm: "Een jongen geboren in <geboortejaar> heeft in <jaar> een
-  <licentie> en rijdt in leeftijdscategorie <leeftijdscategorie>."
-- Verzekeringsvragen: primair de sectie Verzekeringen van het Kenniscentrum.
+licenties, verzekeringen, NK's, verzet). Bron: de KNWU-bibliotheek; websearch
+op het Kenniscentrum alleen waar hieronder genoemd.
+- Licentievragen: beantwoord ze uit de library, zonder websearch. Alleen het
+  geboortejaar bepaalt de licentie (Titel 20, art. 20.0.002) — vraag dus
+  alléén daarnaar. Neem licentie en leeftijdscategorie over uit de
+  contextregel van de app, anders uit Titel 20 (art. 20.0.002 en 20.0.004).
+  Antwoord met: de licentie voluit, de leeftijdscategorie (bij onbekend
+  geslacht voor jongen én meisje) en wanneer het KNWU-lidmaatschap volstaat
+  volgens je bronnen. Vorm: "Een jongen geboren in <geboortejaar> heeft in
+  <jaar> een <licentie> en rijdt in leeftijdscategorie <leeftijdscategorie>."
+- Tarieven en licentiepakketten (prijzen, Basis/Plus/Premium): die staan
+  niet in je library maar in een PDF op het Kenniscentrum. Open die PDF
+  niet; verwijs de gebruiker naar
+  https://kenniscentrum.knwu.nl/Tarieven-KNWU. Alleen als de gebruiker na
+  die verwijzing expliciet vraagt de bedragen op te zoeken, haal je ze via
+  websearch van die pagina en noem je die als Bron.
+- Verzekeringsvragen: die staan niet in je library. Doorzoek de library er
+  niet voor, maar raadpleeg direct via websearch
+  kenniscentrum.knwu.nl/verzekeringen en noem die pagina als Bron.
 - Verzetvragen ("met welk verzet moet ik rijden?"): dit valt onder
   KNWU-regelgeving — wijs het NOOIT af als buiten scope. Raadpleeg Titel 20
   art. 20.1.007 (maximaal toegestaan verzet per leeftijdscategorie en

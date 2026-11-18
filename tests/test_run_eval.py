@@ -362,7 +362,9 @@ class CheckEntryRun3Tests(unittest.TestCase):
 RUN3_OORDEEL = {
     # false negatives van de oude matcher/evalset
     "club-zmc-wanneer": True,
-    "knwu-licentie-pakketten": True,
+    # 2026-11-18: de agent verwijst voor tarieven naar de tarievenpagina; het
+    # run-3-antwoord noemde de bedragen uit de PDF en faalt nu dus
+    "knwu-licentie-pakketten": False,
     "knwu-verzekering-dekking": True,
     "knwu-inschrijfgeld-jeugd": True,
     "knwu-nk-dispensatie-u10": True,

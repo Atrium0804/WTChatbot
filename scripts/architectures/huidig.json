@@ -3,7 +3,8 @@
   "completion_args": {
     "temperature": 0,
     "top_p": 1,
-    "response_format": { "type": "text" }
+    "response_format": { "type": "text" },
+    "reasoning_effort": "medium"
   },
   "prompts_folder": "../prompts",
   "agents": [
@@ -43,6 +44,7 @@
       "description": "Router-agent: bepaalt het vraagtype (KNWU/regio/club) en doet de handoff",
       "prompt_files": ["_shared.md", "router-agent.md"],
       "model": "mistral-small-latest",
+      "completion_args": { "reasoning_effort": null },
       "handoffs": ["knwu-agent", "regio-agent", "club-agent"]
     }
   ]

@@ -25,6 +25,7 @@ AGENT_FASE = {
     "regio-agent": PHASE_REGIO_CLUB,
     "club-agent": PHASE_REGIO_CLUB,
     "archief-agent": PHASE_REGIO_CLUB,
+    "verzet-agent": PHASE_VERZET,
     "router-agent": PHASE_LEES,
 }
 

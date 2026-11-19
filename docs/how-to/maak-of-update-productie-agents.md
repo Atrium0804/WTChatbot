@@ -19,7 +19,7 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 4. Voer uit: `python scripts/create_agents.py --apply`
 5. Neem de agent-ids uit de summary over in `.env`:
    - `MISTRAL_AGENT_ID` = id van de router-agent (de app praat met de router; handoffs gaan via de Conversations API)
-   - `MISTRAL_AGENT_ID_KNWU` / `MISTRAL_AGENT_ID_REGIO` / `MISTRAL_AGENT_ID_CLUB` / `MISTRAL_AGENT_ID_ARCHIEF` = ids van de content-agents (voor direct-to-expert in de app en voor `eval/run_eval.py`)
+   - `MISTRAL_AGENT_ID_KNWU` / `MISTRAL_AGENT_ID_REGIO` / `MISTRAL_AGENT_ID_CLUB` / `MISTRAL_AGENT_ID_ARCHIEF` / `MISTRAL_AGENT_ID_VERZET` = ids van de content-agents (voor direct-to-expert in de app en voor `eval/run_eval.py`)
 
 ## Architectuur switchen (#95)
 

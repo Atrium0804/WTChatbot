@@ -129,7 +129,7 @@ def expert_agent_ids_from_env() -> dict[str, str]:
     """Domein -> expert-agent-id uit de env (zelfde vars als de app, #88)."""
     return {
         domein: os.environ.get(f"MISTRAL_AGENT_ID_{domein.upper()}", "")
-        for domein in ("knwu", "regio", "club", "archief")
+        for domein in ("knwu", "regio", "club", "archief", "verzet")
     }
 
 

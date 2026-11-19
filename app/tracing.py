@@ -14,7 +14,7 @@ from fastapi import Request
 
 logger = logging.getLogger("uvicorn.error.trace")
 
-AGENTS = {"router-agent", "knwu-agent", "regio-agent", "club-agent", "archief-agent"}
+AGENTS = {"router-agent", "knwu-agent", "regio-agent", "club-agent", "archief-agent", "verzet-agent"}
 FIELDS = {
     "route", "reason", "agent", "previous_agent", "tool", "confidence", "duration_ms",
     "input", "outcome",

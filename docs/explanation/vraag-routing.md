@@ -120,7 +120,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | `MISTRAL_INTAKE_MODEL` | `mistral-small-latest` | Model van de intake-call |
 | `INTAKE_CONFIDENCE_THRESHOLD` | `0.8` | Drempel voor direct-to-expert |
 | `INTAKE_TIMEOUT` | `30` | Timeout van de intake-call (seconden) |
-| `MISTRAL_AGENT_ID_KNWU/_REGIO/_CLUB/_ARCHIEF` | leeg | Zonder id start er voor dat domein nooit direct een expert-conversatie |
+| `MISTRAL_AGENT_ID_KNWU/_REGIO/_CLUB/_ARCHIEF/_VERZET` | leeg | Zonder id start er voor dat domein nooit direct een expert-conversatie; `_VERZET` is de verzet-agent ([ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md)), ook het doel van een positief antwoord op het verzetaanbod |
 | `MISTRAL_AGENT_ID` | leeg | Router-agent; zonder key + id draait de app in stub-mode |
 | `PROMPT_CACHE_KEY` | `wtchatbot-v1` | Prompt caching aan (gecachte input = 10% prijs) |
 

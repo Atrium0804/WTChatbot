@@ -54,7 +54,7 @@ FALLBACK: dict = {
     "confidence": 0.0,
 }
 
-DOMAINS = ("knwu", "regio", "club", "archief")
+DOMAINS = ("knwu", "regio", "club", "archief", "verzet")
 
 
 def _normalize(data: dict) -> dict:

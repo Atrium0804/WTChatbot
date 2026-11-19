@@ -34,11 +34,13 @@ MISTRAL_AGENT_ID_KNWU = os.environ.get("MISTRAL_AGENT_ID_KNWU", "")
 MISTRAL_AGENT_ID_REGIO = os.environ.get("MISTRAL_AGENT_ID_REGIO", "")
 MISTRAL_AGENT_ID_CLUB = os.environ.get("MISTRAL_AGENT_ID_CLUB", "")
 MISTRAL_AGENT_ID_ARCHIEF = os.environ.get("MISTRAL_AGENT_ID_ARCHIEF", "")
+MISTRAL_AGENT_ID_VERZET = os.environ.get("MISTRAL_AGENT_ID_VERZET", "")
 EXPERT_AGENT_IDS = {
     "knwu": MISTRAL_AGENT_ID_KNWU,
     "regio": MISTRAL_AGENT_ID_REGIO,
     "club": MISTRAL_AGENT_ID_CLUB,
     "archief": MISTRAL_AGENT_ID_ARCHIEF,
+    "verzet": MISTRAL_AGENT_ID_VERZET,
 }
 
 # Light-model intake (#91): klein model, drempel voor direct-to-expert.

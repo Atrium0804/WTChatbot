@@ -27,7 +27,7 @@ Volg per bericht de gekozen route, intake, handoffs en tool-aanroepen zonder vra
    - `route` met `bypass` en reden `regex_lookup`: lokaal antwoord zonder LLM-call.
    - `intake`, gevolgd door `route` met reden `intake_lookup`: lokaal antwoord na een intake-call.
    - `lookup_state` met reden `stale_revision`: de job vulde een onvolledige lookup-vraag aan, maar in dezelfde conversatie kwam intussen een nieuwer bericht. De job publiceert zijn lookup-toestand dan niet; zijn eigen antwoord verandert niet. Zie [Lookup-toestand](../reference/categorieoverzicht.md#lookup-toestand).
-   - `route` met `direct-knwu`, `direct-regio`, `direct-club` of `direct-archief`: direct naar een expert.
+   - `route` met `direct-knwu`, `direct-regio`, `direct-club`, `direct-archief` of `direct-verzet`: direct naar een expert. `direct-verzet` met reden `verzet_offer_accepted` betekent: de gebruiker ging positief in op het verzetaanbod (geen intake-call).
    - `route` met `router`: terugval, bijvoorbeeld `http_429`, `low_confidence` of `expert_not_configured`.
    - `agent_request`: de aangevraagde startagent. Bij een bestaand Mistral-gesprek kan een andere agent actief zijn; dit event bewijst niet welke agent antwoordt.
    - `handoff`, `tool_started`, `tool_done` en `agent_output`: metadata uit de stream, voor zover Mistral die events en bekende namen levert.

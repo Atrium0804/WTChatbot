@@ -74,6 +74,7 @@ class LookupTurn:
     conversation_id: str
     accepted_turn_count: int
     decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass
+    verzet_offer: lookups.VerzetOffer | None = None
 
 
 def rate_limit_ok(buckets: dict[str, list[float]], key: str, limit: int, window: int) -> bool:
@@ -192,14 +193,16 @@ def create_app(
 
     def _accept_lookup_turn(
         conversation_id: str, message: str, today_date: date
-    ) -> tuple[lookups.BypassDecision, int]:
+    ) -> tuple[lookups.BypassDecision, int, lookups.VerzetOffer | None]:
         """Herken de beurt en leg de volgende lookup-toestand direct vast.
 
         Synchroon, zonder await: een latere beurt ziet altijd deze toestand.
+        Geeft ook het verzetaanbod waarop deze beurt positief ingaat (#150).
         """
         previous = lookup_states.get(conversation_id) or ConversationLookup(
             0, lookups.NoLookupState()
         )
+        offer = lookups.accepted_verzet_offer(message, previous.state)
         decision = lookups.recognize_turn(
             message,
             previous.state,
@@ -209,7 +212,7 @@ def create_app(
         )
         accepted_turn_count = previous.accepted_turn_count + 1
         lookup_states[conversation_id] = ConversationLookup(accepted_turn_count, decision.next_state)
-        return decision, accepted_turn_count
+        return decision, accepted_turn_count, offer
 
     def _publish_lookup_state(turn: LookupTurn, next_state: lookups.LookupState) -> bool:
         """Compare-and-set: alleen de job van de laatst geaccepteerde beurt mag
@@ -231,6 +234,43 @@ def create_app(
             headers={"X-Trace-ID": trace.id},
         )
 
+    async def _route_after_intake(
+        turn: LookupTurn, message: str, today_date: date, trace: tracing.Trace
+    ) -> tuple[intake.Route, str]:
+        """#91: light intake (1 kleine call) + lookup-beslissing bepalen de route."""
+        intake_started = time.monotonic()
+        fallback_reason = ""
+
+        def on_intake_fallback(reason: str) -> None:
+            nonlocal fallback_reason
+            fallback_reason = reason
+
+        intake_result = await run_in_threadpool(
+            intake.classify_message,
+            api_key=config.MISTRAL_API_KEY,
+            base_url=config.MISTRAL_CHAT_COMPLETIONS_URL,
+            model=config.MISTRAL_INTAKE_MODEL,
+            message=message,
+            timeout=config.INTAKE_TIMEOUT,
+            on_fallback=on_intake_fallback,
+        )
+        trace.record(
+            "intake",
+            confidence=intake_result["confidence"],
+            duration_ms=round((time.monotonic() - intake_started) * 1000, 1),
+            reason=fallback_reason or "classified",
+        )
+        route = intake.decide_route(
+            decision=turn.decision,
+            today=today_date,
+            rules=category_rules,
+            intake_result=intake_result,
+            expert_agent_ids=expert_agent_ids,
+            threshold=config.INTAKE_CONFIDENCE_THRESHOLD,
+        )
+        reason = intake.route_reason(route, intake_result, expert_agent_ids, fallback_reason)
+        return route, reason
+
     async def _run_chat_job(
         job_id: str,
         turn: LookupTurn,
@@ -250,37 +290,13 @@ def create_app(
         job["status"] = "working"
         job["phase"] = phases.PHASE_LEES
         try:
-            intake_started = time.monotonic()
-            fallback_reason = ""
-
-            def on_intake_fallback(reason: str) -> None:
-                nonlocal fallback_reason
-                fallback_reason = reason
-
-            # #91: light intake (1 kleine call) + lookup-beslissing bepalen de route
-            intake_result = await run_in_threadpool(
-                intake.classify_message,
-                api_key=config.MISTRAL_API_KEY,
-                base_url=config.MISTRAL_CHAT_COMPLETIONS_URL,
-                model=config.MISTRAL_INTAKE_MODEL,
-                message=message,
-                timeout=config.INTAKE_TIMEOUT,
-                on_fallback=on_intake_fallback,
-            )
-            trace.record(
-                "intake",
-                confidence=intake_result["confidence"],
-                duration_ms=round((time.monotonic() - intake_started) * 1000, 1),
-                reason=fallback_reason or "classified",
-            )
-            route = intake.decide_route(
-                decision=turn.decision,
-                today=today_date,
-                rules=category_rules,
-                intake_result=intake_result,
-                expert_agent_ids=expert_agent_ids,
-                threshold=config.INTAKE_CONFIDENCE_THRESHOLD,
-            )
+            if turn.verzet_offer:
+                route: intake.Route = intake.AgentRoute(
+                    "direct", turn.decision, agent_id=expert_agent_ids["verzet"], domein="verzet"
+                )
+                route_reason = "verzet_offer_accepted"
+            else:
+                route, route_reason = await _route_after_intake(turn, message, today_date, trace)
             if isinstance(turn.decision, lookups.NeedsInputForBypass) and not _publish_lookup_state(
                 turn, route.lookup.next_state
             ):
@@ -288,11 +304,7 @@ def create_app(
             job["route"] = route.kind
             if isinstance(route, intake.AgentRoute) and route.kind == "direct":
                 job["route"] = f"direct-{route.domein}"
-            trace.record(
-                "route",
-                route=job["route"],
-                reason=intake.route_reason(route, intake_result, expert_agent_ids, fallback_reason),
-            )
+            trace.record("route", route=job["route"], reason=route_reason)
             if isinstance(route, intake.BypassRoute):
                 # aangevulde lookup met complete data: direct app-antwoord,
                 # de Mistral-conversation start niet (#88/#91)
@@ -423,7 +435,12 @@ def create_app(
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         trace = traces.start(conversation_id)
         today_date = today()
-        decision, accepted_turn_count = _accept_lookup_turn(conversation_id, message, today_date)
+        decision, accepted_turn_count, offer = _accept_lookup_turn(
+            conversation_id, message, today_date
+        )
+        # #150: een positief antwoord op het verzetaanbod start de verzet-agent (zonder
+        # intake); is die niet geconfigureerd, dan volgt de beurt de gewone weg
+        verzet_offer = offer if "verzet" in expert_agent_ids else None
         # #91/#136: herkende lookup met complete data -> direct app-antwoord
         # (0 LLM-calls, géén job/fase), ook midden in een bestaand gesprek
         if isinstance(decision, lookups.ReadyForBypass):
@@ -432,7 +449,8 @@ def create_app(
             return _direct_response(conversation_id, message, answer, trace)
         if config.MISTRAL_API_KEY and config.MISTRAL_AGENT_ID:
             # #85: 202 + job-id; intake + Mistral-call draaien in een background task.
-            mistral_conv_id = state["conversations"].get(conversation_id)
+            # de verzet-agent kent het eerdere gesprek niet: nieuwe conversatie met de bypass-feiten
+            mistral_conv_id = None if verzet_offer else state["conversations"].get(conversation_id)
             context_lines = context.build_context_lines(
                 message,
                 today_date,
@@ -440,6 +458,8 @@ def create_app(
                 new_conversation=not mistral_conv_id,
                 language_level=payload.language_level,
             )
+            if verzet_offer:
+                context_lines.extend(lookups.verzet_offer_context(verzet_offer))
             job_id = uuid.uuid4().hex
             state["jobs"][job_id] = {
                 "status": "pending",
@@ -449,7 +469,7 @@ def create_app(
             job_task = asyncio.create_task(
                 _run_chat_job(
                     job_id,
-                    LookupTurn(conversation_id, accepted_turn_count, decision),
+                    LookupTurn(conversation_id, accepted_turn_count, decision, verzet_offer),
                     message,
                     context.add_context(message, context_lines),
                     mistral_conv_id,

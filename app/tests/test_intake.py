@@ -18,7 +18,9 @@ NOVEMBER_2026 = date(2026, 11, 9)
 EXPERTS = {"knwu": "ag_knwu", "regio": "ag_regio", "club": "ag_club", "archief": ""}
 
 
-def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> intake.Route:
+def route_for(
+    message: str, intake_result: dict, threshold: float = 0.8, experts: dict | None = None
+) -> intake.Route:
     decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES, is_first_turn=True)
     assert not isinstance(decision, lookups.ReadyForBypass), message
     return intake.decide_route(
@@ -26,7 +28,7 @@ def route_for(message: str, intake_result: dict, threshold: float = 0.8) -> inta
         today=NOVEMBER_2026,
         rules=RULES,
         intake_result=intake_result,
-        expert_agent_ids=EXPERTS,
+        expert_agent_ids=experts or EXPERTS,
         threshold=threshold,
     )
 
@@ -145,6 +147,32 @@ def test_classify_message_normaliseert_ongeldige_waarden():
     assert result["domein"] == "club"
     assert result["confidence"] == 1.0  # afgekapt
     assert result["geboortejaar"] is None  # string wordt niet als int geaccepteerd
+
+
+def test_verzet_is_an_intake_domain_that_routes_directly_to_the_verzet_agent():
+    with patch("requests.post", return_value=_resp('{"domein": "verzet", "confidence": 0.9}')):
+        result = intake.classify_message(api_key="k", base_url="u", model="m", message="vraag")
+    assert result["domein"] == "verzet"
+    assert '"verzet"' in intake._system_prompt()
+    route = route_for(
+        "Controleer het verzet van mijn fiets: 50/34 met 11-28",
+        result,
+        experts={**EXPERTS, "verzet": "ag_verzet"},
+    )
+    assert (route.kind, route.agent_id, route.domein) == ("direct", "ag_verzet", "verzet")
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Welk verzet mag mijn zoon uit 2012 met 50/34 en 11-28 op 28-622?",
+        "Kun je het verzet van mijn dochter uit 2013 controleren?",
+        "Ik wil het verzet van mijn fiets aanpassen, geboren 2012",
+    ],
+)
+def test_verzet_questions_with_bike_data_or_a_check_request_are_not_a_bypass(message):
+    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES, is_first_turn=True)
+    assert decision.kind == "not_eligible_for_bypass"
 
 
 def test_classify_message_does_not_accept_track_as_supported_discipline():

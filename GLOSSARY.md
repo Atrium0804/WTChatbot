@@ -102,6 +102,9 @@ _Avoid_: Mistral-conversatie (als domeinterm), "het gesprek" als je alleen het a
 Een kort bericht dat alleen samen met de vorige beurt iets betekent, zoals "2014", "weg" of "alleen meisjes". Het hoort bij de vorige beurt: na een lookup vult of wijzigt het die lookup, na een antwoord van een agent gaat het naar de agent. Alleen als eerste beurt van een gesprek is een los gegeven een eigen lookup. Een vervolgbericht op een onvolledige lookup-vraag heet een **aanvulling**. Tegenhanger: de zelfstandige vraag, die op zichzelf te begrijpen is en niets van eerdere beurten erft.
 _Avoid_: vervolgvraag (zegt niet of het bericht zelfstandig is), verdiepingsvraag
 
+**Antwoord op een aanbod**:
+Een vervolgbericht dat ingaat op een hulpaanbod in het vorige antwoord, zoals "ja graag" na "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?". Bij een positief antwoord start het agentgesprek bij de verzet-agent, met de gegevens uit het bypass-antwoord (geboortejaar, geslacht, categorie, grens) als context. Een ander antwoord volgt de gewone weg.
+
 **Deterministische bypass**:
 Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een overzicht met bron en versie — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een gesprek: bij een zelfstandige lookup-vraag, of bij een vervolgbericht op een eerdere lookup. Twee ingangen: de app herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call) bij een herkende vraag waarvan het geboortejaar alleen nog bevestigd moest worden. De intake vult nooit een gegeven aan dat de gebruiker niet zelf noemde, en maakt van een afgewezen vraag geen bypass.
 
@@ -185,8 +188,30 @@ _Avoid_: "testronde", "even testen"
 De reeks laatste vraag/antwoord-paren (turns) van een conversatie die bij een duim-omlaag samen met de feedback wordt opgeslagen, puur voor triage — standaard de laatste 10 turns binnen één sessie. De laatste turn staat ook los als vraag/antwoord bij de feedback-row.
 _Avoid_: "chatlog", "conversatielog", "de hele conversatie opslaan"
 
-**Verzettenadvies**:
-De geplande uitbreiding (post-MVP) waarmee de chatbot adviseert welk verzet geschikt is voor een renner, gegeven geboortejaar en fiets. Hybride: RAG voor de KNWU-regel, een deterministische calculator-tool voor alle mogelijke combinaties kettingblad × cassette × bandenmaat, plus een beschikbaarheidscheck in de handel.
+**Verzetadvies**:
+De geplande uitbreiding waarmee Wielie controleert of het verzet van de fiets van een renner binnen het maximaal toegestane verzet valt en, zo niet, wat er aangepast moet worden (kleiner kettingblad of groter kleinste tandkransje). Alleen voor wegwielrennen; de uitkomst vermeldt dat in een voetnoot. De rekensom is deterministisch (Python), nooit het taalmodel.
+_Avoid_: Verzettenadvies, verzetcontrole (dat is de controle op een wedstrijd)
+
+**Zwaarste verzet**:
+Het verzet van de fiets bij het grootste kettingblad en het kleinste tandkransje. Het mag niet boven het maximaal toegestane verzet uitkomen. Tegenhanger: **lichtste verzet** (kleinste kettingblad, grootste tandkransje).
+_Avoid_: "maximale verzet" voor de fiets zelf (dat is de KNWU-grens)
+
+**Bereik**:
+De verhouding zwaarste verzet / lichtste verzet van een configuratie, als percentage (bijv. 320%). Bij één kettingblad is dat grootste / kleinste tandkransje. Een kleiner voorblad of een cassette met een groter kleinste tandkransje verkleint het bereik.
+
+**Wielomtrek**:
+De afgerolde omtrek van het wiel in meters of millimeters, berekend uit de ETRTO-bandenmaat: π × (velgdiameter + 2 × banddikte).
+_Avoid_: bandomtrek; de wielmaat in inches gebruiken om een verzet te berekenen
+
+**ETRTO-bandenmaat**:
+De gestandaardiseerde aanduiding op de bandzijkant: banddikte-velgdiameter in mm (bijv. 28-622). Verplichte invoer voor het verzetadvies.
+_Avoid_: wielmaat (24", 26", 28") als invoer voor een berekening; dat is alleen een globale aanduiding
+
+**Reguliere cassette**:
+Cassette met een 11T of 12T als kleinste tandkransje, goed verkrijgbaar in de detailhandel. Bij het verzetadvies is 11T de voorkeur; 12T alleen als de 11T-variant net boven het maximaal toegestane verzet uitkomt.
+
+**Jeugdcassette**:
+Cassette met een kleinste tandkransje van 13 t/m 16T; vaak op bestelling.
 
 **Maximaal toegestaan verzet**:
 De KNWU-grens aan de afstand die een fiets per volle pedaalomwenteling mag afleggen, uitgedrukt in meters. De toepasselijke regel wordt bepaald door discipline, geslacht, leeftijdscategorie en wedstrijdjaar of veldritseizoen; dezelfde leeftijdscategorie kan voor jongens en meisjes een verschillende grens hebben.

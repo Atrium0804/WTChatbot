@@ -2,7 +2,7 @@
 
 Pure functies zonder netwerk: wielomtrek uit de ETRTO-maat, zwaarste en
 lichtste verzet, bereik, topsnelheid en drie berekeningen die een aanpassing
-voorstellen. De grens komt uit knwu_categories.json (art. 20.1.007), alleen
+voorstellen. Het maximaal toegestane verzet komt uit knwu_categories.json (art. 20.1.007), alleen
 voor wegwielrennen. Ongeldige invoer geeft een InvalidInput als resultaat.
 """
 
@@ -50,15 +50,17 @@ class Wheel:
 
 @dataclass(frozen=True)
 class Limit:
-    """Het maximaal toegestane verzet voor een omtrek; de grens telt mee (<=)."""
+    """Het maximaal toegestane verzet voor een omtrek; een gelijk verzet is toegestaan (<=)."""
 
     circumference_mm: float
     max_gear_m: float
 
     def gear_m(self, chainring: int, sprocket: int) -> float:
+        """Verzet in meters bij deze omtrek voor de combinatie blad/kransje."""
         return gear_m(chainring, sprocket, self.circumference_mm)
 
     def allows(self, chainring: int, sprocket: int) -> bool:
+        """True als de combinatie blad/kransje binnen het maximaal toegestane verzet valt."""
         return self.gear_m(chainring, sprocket) <= self.max_gear_m
 
 
@@ -98,6 +100,7 @@ def gear_m(chainring: int, sprocket: int, circumference_mm: float) -> float:
 
 
 def _evaluate(setup: Setup, limit: Limit) -> SetupResult:
+    """Zwaarste en lichtste verzet, bereik, topsnelheid en grenscontrole van een configuratie."""
     heaviest = limit.gear_m(setup.chainring, setup.smallest_sprocket)
     lightest = limit.gear_m(setup.small_chainring or setup.chainring, setup.largest_sprocket)
     return SetupResult(
@@ -111,6 +114,7 @@ def _evaluate(setup: Setup, limit: Limit) -> SetupResult:
 
 
 def _largest_allowed_chainring(step: int, sprocket: int, limit: Limit) -> int:
+    """Grootste toegestane blad bij `sprocket`, afgerond op een veelvoud van `step`."""
     chainring = math.floor(limit.max_gear_m * 1000 * sprocket / limit.circumference_mm)
     chainring -= chainring % step
     while chainring > 0 and not limit.allows(chainring, sprocket):
@@ -119,6 +123,7 @@ def _largest_allowed_chainring(step: int, sprocket: int, limit: Limit) -> int:
 
 
 def _smallest_allowed_sprocket(chainring: int, limit: Limit) -> int:
+    """Kleinste kransje (minimaal 1T) waarmee `chainring` binnen de grens blijft."""
     sprocket = max(math.ceil(limit.circumference_mm * chainring / (limit.max_gear_m * 1000)), 1)
     while not limit.allows(chainring, sprocket):
         sprocket += 1
@@ -155,7 +160,7 @@ def _sprocket_proposal(current: Setup, limit: Limit) -> SetupResult | None:
 
 
 def _regular_cassette_proposals(current: Setup, limit: Limit) -> tuple[SetupResult, ...]:
-    """11T heeft voorkeur; 12T alleen als die dichter bij de grens uitkomt."""
+    """11T heeft voorkeur; 12T alleen als die dichter bij het maximaal toegestane verzet uitkomt."""
     proposals: list[SetupResult] = []
     for sprocket in REGULAR_CASSETTE_SPROCKETS:
         candidate = _chainring_proposal(current, sprocket, limit)
@@ -168,7 +173,7 @@ def _regular_cassette_proposals(current: Setup, limit: Limit) -> tuple[SetupResu
 
 
 def _is_too_light(current: Setup, limit: Limit) -> bool:
-    """Ruim te licht: meer dan een stap (blad of kransje) onder de grens."""
+    """Ruim te licht: meer dan een stap (blad of kransje) onder het maximaal toegestane verzet."""
     if not limit.allows(current.chainring, current.smallest_sprocket):
         return False
     chainring_room = (
@@ -182,6 +187,7 @@ def _is_too_light(current: Setup, limit: Limit) -> bool:
 
 
 def _validate(setup: Setup, wheel: Wheel) -> str | None:
+    """Foutmelding voor de eerste ongeldige invoer, of None als alles klopt."""
     checks = [
         ("kleinste tandkransje", setup.smallest_sprocket, SMALLEST_SPROCKET_RANGE, "T"),
         ("grootste tandkransje", setup.largest_sprocket, LARGEST_SPROCKET_RANGE, "T"),
@@ -213,6 +219,7 @@ def _validate(setup: Setup, wheel: Wheel) -> str | None:
 def _road_limit(
     birth_year: int, gender: Gender, year: int, rules: dict
 ) -> tuple[str, float] | InvalidInput:
+    """Leeftijdscategorie en maximaal toegestaan wegverzet, of InvalidInput als die ontbreken."""
     category = knwu_categories.age_category(birth_year, year, rules)
     if category is None:
         return InvalidInput(

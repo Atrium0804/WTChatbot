@@ -14,9 +14,9 @@ import verzet_advies  # noqa: E402
 from verzet_advies import InvalidInput, VerzetAdvies, Wheel, advise  # noqa: E402
 
 RULES = knwu_categories.load_rules()
-# Geboortejaar 2012 in 2026 = 14 jaar = U15 jongens, grens 6.70 m.
+# Geboortejaar 2012 in 2026 = 14 jaar = U15 jongens, maximaal toegestaan verzet 6.70 m.
 U15 = {"birth_year": 2012, "gender": "jongens", "year": 2026, "rules": RULES}
-# Geboortejaar 2010 in 2026 = 16 jaar = U17 Nieuweling jongens, grens 7.68 m.
+# Geboortejaar 2010 in 2026 = 16 jaar = U17 Nieuweling jongens, maximaal toegestaan verzet 7.68 m.
 U17 = {**U15, "birth_year": 2010}
 TIRE = {"tire_width_mm": 28, "rim_diameter_mm": 622}
 CIRCUMFERENCE = Wheel(28, 622).circumference_mm
@@ -102,7 +102,7 @@ def test_double_chainring_becomes_1x_when_allowed_ring_drops_below_small_ring():
         # Bij 12T is 36T het grootste 1x-blad; een stap is 2 tanden.
         ({"chainring": 32, "smallest_sprocket": 12}, True),
         ({"chainring": 34, "smallest_sprocket": 12}, False),
-        # 34T past al vanaf 11T; op 14T zit je drie kransjes onder de grens.
+        # 34T past al vanaf 11T; op 14T zit je drie kransjes onder het maximaal toegestane verzet.
         ({"chainring": 34, "smallest_sprocket": 14}, True),
     ],
 )

@@ -18,6 +18,9 @@ als productie, offline — niet tegen de draaiende bot) en checkt:
 - `verwacht_route` (optioneel, #92): assert de productie-route van de app —
   `bypass` (deterministische lookup, 0 LLM-calls), `direct-<domein>`
   (direct-to-expert via de light intake) of `router`; mismatch = FAIL
+- `verwacht_tool_aanroep` (optioneel, #152): `true`/`false` — de agent moet in
+  de laatste beurt wel/niet een function call (bereken_verzet) doen
+  (de runner voert die uit zoals de app); mismatch = FAIL
 - `beurten` (optioneel): eerdere gebruikersberichten in dezelfde
   conversatie, vóór `vraag`; alleen het antwoord op `vraag` wordt gecheckt
 - `verwachte_agent` (optioneel): naam van de agent die het antwoord op
@@ -43,6 +46,7 @@ Environment (uit .env in de repo-root; de file wint van shellvariabelen):
 - MISTRAL_API_KEY               (verplicht)
 - MISTRAL_AGENT_ID_KNWU / MISTRAL_AGENT_ID_REGIO / MISTRAL_AGENT_ID_CLUB
   (agent per categorie; fallback: MISTRAL_AGENT_ID)
+- MISTRAL_AGENT_ID_VERZET       (verzet-agent voor route direct-verzet, #152)
 
 Afhankelijkheden: pip install requests pyyaml python-dotenv
 """
@@ -64,9 +68,12 @@ ENV_PATH = EVAL_DIR.parent / ".env"
 sys.path.insert(0, str(EVAL_DIR.parent / "app"))
 
 import context  # noqa: E402  (app-module: dezelfde contextregels als de proxy)
+import function_calls  # noqa: E402  (#152: function-call-lus van de verzet-agent, zoals de app)
 import intake  # noqa: E402  (#91: light intake, zelfde route-beslissing als de app)
 import knwu_categories  # noqa: E402
 import lookups  # noqa: E402  (#91: deterministische bypass, zelfde templates als de app)
+import mistral_client  # noqa: E402
+import verzet_advies  # noqa: E402  (#152: rekenmodule; tests controleren de verwachte getallen)
 
 API_URL = "https://api.mistral.ai/v1/conversations"
 CHAT_COMPLETIONS_URL = os.environ.get(
@@ -192,7 +199,19 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     if isinstance(decision, lookups.ReadyForBypass):
         return {
             "route": "bypass", "route_reden": "regex_lookup", "agent_id": None,
-            "lookup": decision, "intake_ms": 0.0,
+            "lookup": decision, "intake_ms": 0.0, "offer": None,
+        }
+    expert_agent_ids = {k: v for k, v in expert_agent_ids_from_env().items() if v}
+    # #150: een positief antwoord op het verzetaanbod start de verzet-agent zonder intake
+    offer = lookups.accepted_verzet_offer(entry["vraag"], state)
+    if offer and "verzet" in expert_agent_ids:
+        return {
+            "route": "direct-verzet",
+            "route_reden": "verzet_offer_accepted",
+            "agent_id": expert_agent_ids["verzet"],
+            "lookup": None,
+            "intake_ms": 0.0,
+            "offer": offer,
         }
     if entry.get("via") == "router":
         return {
@@ -201,9 +220,9 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
             "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
             "lookup": None,
             "intake_ms": 0.0,
+            "offer": None,
         }
     intake_result, fallback_reason, intake_ms = classify_with_reason(entry["vraag"], api_key)
-    expert_agent_ids = {k: v for k, v in expert_agent_ids_from_env().items() if v}
     route = intake.decide_route(
         decision=decision,
         today=today,
@@ -216,7 +235,7 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
     if isinstance(route, intake.BypassRoute):
         return {
             "route": "bypass", "route_reden": reden, "agent_id": None,
-            "lookup": route.lookup, "intake_ms": intake_ms,
+            "lookup": route.lookup, "intake_ms": intake_ms, "offer": None,
         }
     if route.kind == "direct":
         return {
@@ -225,6 +244,7 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
             "agent_id": route.agent_id,
             "lookup": None,
             "intake_ms": intake_ms,
+            "offer": None,
         }
     return {
         "route": "router",
@@ -232,6 +252,7 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
         "agent_id": os.environ.get("MISTRAL_AGENT_ID"),
         "lookup": None,
         "intake_ms": intake_ms,
+        "offer": None,
     }
 
 
@@ -332,6 +353,22 @@ def ask_with_retry(
     return {}, error
 
 
+def _function_calls_in(outputs: list[dict]) -> list[mistral_client.FunctionCall]:
+    calls = []
+    for out in outputs:
+        if out.get("type") != "function.call":
+            continue
+        arguments = out.get("arguments", "")
+        if not isinstance(arguments, str):
+            arguments = json.dumps(arguments)
+        calls.append(
+            mistral_client.FunctionCall(
+                str(out.get("tool_call_id", "")), str(out.get("name", "")), arguments
+            )
+        )
+    return calls
+
+
 def play_conversation(
     entry: dict,
     agent_id: str,
@@ -339,15 +376,22 @@ def play_conversation(
     today: date,
     rules: dict,
     agent_names: dict[str, str],
+    offer: lookups.VerzetOffer | None = None,
 ) -> dict:
     """Speel `beurten` + `vraag` één keer af in een nieuwe conversation, met de
     contextregels van de proxy; geef het laatste antwoord, de trace per beurt
     en een error. Geen retry per beurt: na een timeout kan Mistral het bericht
-    al verwerkt hebben, dus opnieuw posten zou de conversatie vervuilen."""
+    al verwerkt hebben, dus opnieuw posten zou de conversatie vervuilen.
+
+    Function calls van de agent (bereken_verzet) worden uitgevoerd en
+    beantwoord zoals in de app (#152). Bij een aangenomen verzetaanbod (`offer`)
+    start alleen `vraag` een nieuwe conversation met de bypass-feiten als
+    context: de eerdere beurten waren in productie een bypass zonder agent."""
     conversation_id = None
     trace: list[dict] = []
     outputs: list[dict] = []
-    for message in entry.get("beurten", []) + [entry["vraag"]]:
+    messages = [entry["vraag"]] if offer else entry.get("beurten", []) + [entry["vraag"]]
+    for message in messages:
         beurt_t0 = time.monotonic()
         lines = context.build_context_lines(
             message,
@@ -356,21 +400,45 @@ def play_conversation(
             new_conversation=conversation_id is None,
             language_level=entry.get("taalniveau", "B1"),
         )
-        response, error = ask_with_retry(
-            context.add_context(message, lines),
-            api_key,
-            vraagtype=entry["type"],
-            attempts=1,
-            agent_id=None if conversation_id else agent_id,
-            conversation_id=conversation_id,
-        )
-        if error:
-            return {"antwoord": "", "trace": trace, "error": error, "duur_ms": 0.0}
-        conversation_id = response.get("conversation_id") or conversation_id
-        outputs = response.get("outputs", [])
+        if offer:
+            lines.extend(lookups.verzet_offer_context(offer))
+        called: list[str] = []
+
+        def send(
+            inputs: mistral_client.Inputs,
+            conv_id: str | None,
+            on_function_call,
+        ) -> tuple[str, str]:
+            nonlocal outputs
+            response, error = ask_with_retry(
+                inputs,  # type: ignore[arg-type]  (ook function.result-lijsten)
+                api_key,
+                vraagtype=entry["type"],
+                attempts=1,
+                agent_id=None if conv_id else agent_id,
+                conversation_id=conv_id,
+            )
+            if error:
+                raise RuntimeError(error)
+            outputs = response.get("outputs", [])
+            for call in _function_calls_in(outputs):
+                on_function_call(call)
+            return response.get("conversation_id") or conv_id or "", extract_text(outputs)
+
+        try:
+            conversation_id, _ = function_calls.run_turn(
+                send=send,
+                message=context.add_context(message, lines),
+                conversation_id=conversation_id,
+                execute=lambda call: function_calls.execute(call, year=today.year, rules=rules),
+                on_outcome=lambda call, _outcome: called.append(call.name),
+            )
+        except RuntimeError as exc:
+            return {"antwoord": "", "trace": trace, "error": str(exc), "duur_ms": 0.0}
         trace.append({
             "vraag": message,
             "agents": answering_agents(outputs, agent_names),
+            "function_calls": called,
             "duur_ms": round((time.monotonic() - beurt_t0) * 1000, 1),
         })
     return {"antwoord": extract_text(outputs), "trace": trace, "error": ""}
@@ -383,13 +451,14 @@ def run_conversation(
     today: date,
     rules: dict,
     agent_names: dict[str, str],
+    offer: lookups.VerzetOffer | None = None,
 ) -> dict:
     """Speel de conversation af; bij een netwerkfout start hij helemaal opnieuw
     (zelfde aantal pogingen als ask_with_retry voor dit vraagtype)."""
     _, attempts = TIMEOUT_EN_POGINGEN.get(entry["type"], STANDAARD_TIMEOUT_EN_POGINGEN)
     run: dict = {}
     for _ in range(attempts):
-        run = play_conversation(entry, agent_id, api_key, today, rules, agent_names)
+        run = play_conversation(entry, agent_id, api_key, today, rules, agent_names, offer)
         if not run["error"]:
             break
     return run
@@ -500,6 +569,10 @@ def check_entry(
     # #92: `verwacht_route` assert de productie-route van de app (bypass | direct-<domein> | router)
     verwachte_route = entry.get("verwacht_route", "")
     route_ok = not verwachte_route or (route == verwachte_route)
+    # #152: `verwacht_tool_aanroep` assert dat de agent in de laatste beurt wel/niet rekende
+    verwacht_tool = entry.get("verwacht_tool_aanroep")
+    tool_calls = trace[-1].get("function_calls", []) if trace else []
+    tool_ok = verwacht_tool is None or verwacht_tool == bool(tool_calls)
     ok = (
         bron_ok
         and agent_ok
@@ -508,6 +581,7 @@ def check_entry(
         and not doorhaal_gevonden
         and not verboden_gevonden
         and route_ok
+        and tool_ok
     )
     return {
         "id": entry["id"],
@@ -525,6 +599,9 @@ def check_entry(
         "route": route,
         "verwachte_route": entry.get("verwacht_route", ""),
         "route_ok": route_ok,
+        "verwacht_tool_aanroep": verwacht_tool,
+        "tool_ok": tool_ok,
+        "function_calls_laatste_beurt": tool_calls,
         "agents_laatste_beurt": agents_laatste_beurt,
         # Volledige trace per vraag: wat verwacht werd + wat de agent teruggaf.
         "beurten": entry.get("beurten", []),
@@ -571,7 +648,9 @@ def main() -> int:
                 "llm_calls": 0,
             }
         else:
-            run = run_conversation(entry, plan["agent_id"], api_key, today, rules, agent_names)
+            run = run_conversation(
+                entry, plan["agent_id"], api_key, today, rules, agent_names, plan["offer"]
+            )
             run["llm_calls"] = len(run["trace"][-1]["agents"]) if run["trace"] else 0
         result = check_entry(entry, run["antwoord"], run["trace"], route=plan["route"])
         result["route"] = plan["route"]

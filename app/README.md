@@ -53,6 +53,10 @@ duidelijk gemarkeerd STUB-antwoord — geen API-key nodig om te ontwikkelen.
    "Ik doorzoek de KNWU-regelgeving…"); de UI pollt `/chat/status/{job_id}`
    en toont de fase in de typing-bubble. Prompt caching staat aan
    (`PROMPT_CACHE_KEY`).
+4. Vraagt de agent een function call (bv. `bereken_verzet`), dan voert
+   `function_calls.py` die uit en stuurt het resultaat terug in hetzelfde
+   gesprek, tot de agent antwoordt: maximaal 3 aanroepen per beurt, fouten
+   gaan als `{"error": ...}` terug naar de agent, fase "Ik bereken je verzet…".
 
 ## Tests
 

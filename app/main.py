@@ -33,6 +33,7 @@ from starlette.concurrency import run_in_threadpool
 
 import config
 import context
+import function_calls
 import intake
 import knwu_categories
 import lookups
@@ -327,32 +328,58 @@ def create_app(
                         new_phase, current_agent = mapping
                         job["phase"] = new_phase
 
+                def send(
+                    inputs: mistral_client.Inputs,
+                    conv_id: str | None,
+                    on_function_call: Callable[[mistral_client.FunctionCall], None],
+                ) -> tuple[str, str]:
+                    request = {
+                        "api_key": config.MISTRAL_API_KEY,
+                        "agent_id": agent_id,
+                        "base_url": config.MISTRAL_CONVERSATIONS_URL,
+                        "message": inputs,
+                        "conversation_id": conv_id or None,
+                        "metadata": {"app_conversation_id": conversation_id},
+                        "prompt_cache_key": config.PROMPT_CACHE_KEY,
+                        "on_function_call": on_function_call,
+                    }
+                    try:
+                        return mistral_client.stream_answer(**request, on_event=on_event)
+                    except mistral_client.StreamStartError:
+                        # stream startte niet: val terug op de non-streaming call (#93)
+                        job["phase"] = phases.PHASE_OPSTELLEN
+                        trace.record("stream_fallback", reason="stream_start_error")
+                        return mistral_client.answer_question(**request)
+
+                def execute(call: mistral_client.FunctionCall) -> function_calls.Outcome:
+                    job["phase"] = phases.FUNCTION_FASE.get(call.name, job["phase"])
+                    return function_calls.execute(call, year=today_date.year, rules=category_rules)
+
+                def on_outcome(
+                    call: mistral_client.FunctionCall, outcome: function_calls.Outcome
+                ) -> None:
+                    # #149: setup en uitkomst, nooit geboortejaar of geslacht
+                    trace.record(
+                        "function_call",
+                        tool=call.name if call.name in function_calls.KNOWN_FUNCTIONS else "unknown",
+                        reason=outcome.status,
+                        input=outcome.trace_input,
+                        outcome=outcome.trace_outcome,
+                    )
+
                 try:
                     new_conv_id, answer = await run_in_threadpool(
-                        mistral_client.stream_answer,
-                        api_key=config.MISTRAL_API_KEY,
-                        agent_id=agent_id,
-                        base_url=config.MISTRAL_CONVERSATIONS_URL,
+                        function_calls.run_turn,
+                        send=send,
                         message=context_message,
                         conversation_id=mistral_conv_id or None,
-                        metadata={"app_conversation_id": conversation_id},
-                        prompt_cache_key=config.PROMPT_CACHE_KEY,
-                        on_event=on_event,
+                        execute=execute,
+                        on_outcome=on_outcome,
                     )
-                except mistral_client.StreamStartError:
-                    # stream startte niet: val terug op de non-streaming call (#93)
-                    job["phase"] = phases.PHASE_OPSTELLEN
-                    trace.record("stream_fallback", reason="stream_start_error")
-                    new_conv_id, answer = await run_in_threadpool(
-                        mistral_client.answer_question,
-                        api_key=config.MISTRAL_API_KEY,
-                        agent_id=agent_id,
-                        base_url=config.MISTRAL_CONVERSATIONS_URL,
-                        message=context_message,
-                        conversation_id=mistral_conv_id or None,
-                        metadata={"app_conversation_id": conversation_id},
-                        prompt_cache_key=config.PROMPT_CACHE_KEY,
-                    )
+                except function_calls.TooManyRoundsError:
+                    # dat Mistral-gesprek wacht nog op een functieresultaat: begin opnieuw
+                    state["conversations"].pop(conversation_id, None)
+                    raise
             if not answer.strip():
                 # bv. een agent die alleen "thinking" teruggeeft: liever een foutmelding dan een leeg antwoord
                 raise RuntimeError("het model gaf een leeg antwoord")

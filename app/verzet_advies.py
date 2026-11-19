@@ -33,7 +33,7 @@ class Setup:
 
     @property
     def chainring_step(self) -> int:
-        """Eén kettingblad heeft een even aantal tanden, dus de stap is 2."""
+        """Een 1x-kettingblad heeft een even aantal tanden, dus de stap is 2."""
         return 2 if self.small_chainring is None else 1
 
 

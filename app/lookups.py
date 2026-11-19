@@ -57,7 +57,7 @@ _VERZET_VRAAG = re.compile(
     r"verzet|tandwiel|versnelling|rollout|afgerolde\s+afstand", re.IGNORECASE
 )
 # Fietsgegevens (50/34, 11-28, 28-622, kettingblad) of een vraag om het verzet van
-# de fiets te controleren of aan te passen: dat is geen kale grens-lookup (#150).
+# de fiets te controleren of aan te passen: dat is geen kale lookup van het maximaal toegestane verzet (#150).
 _FIETSGEGEVENS = re.compile(
     r"\b\d{2}\s*[/x×]\s*\d{2}\b"
     r"|\b(?:9|1[0-6])\s*-\s*(?:2\d|[3-5]\d)\b"
@@ -1006,7 +1006,7 @@ def accepted_verzet_offer(message: str, previous_state: LookupState | None) -> V
 
 
 def verzet_offer_context(offer: VerzetOffer) -> list[str]:
-    """Contextregels voor de verzet-agent: geboortejaar, geslacht, categorie, grens, bron en versie."""
+    """Contextregels voor de verzet-agent: geboortejaar, geslacht, categorie, maximaal toegestaan verzet, bron en versie."""
     source = offer.gearing
     article = f", artikel {source.article}" if source.article else ""
     return [

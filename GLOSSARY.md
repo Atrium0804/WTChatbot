@@ -103,7 +103,8 @@ Een kort bericht dat alleen samen met de vorige beurt iets betekent, zoals "2014
 _Avoid_: vervolgvraag (zegt niet of het bericht zelfstandig is), verdiepingsvraag
 
 **Antwoord op een aanbod**:
-Een vervolgbericht dat ingaat op een hulpaanbod in het vorige antwoord, zoals "ja graag" na "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?". Bij een positief antwoord start het agentgesprek bij de verzet-agent, met de gegevens uit het bypass-antwoord (geboortejaar, geslacht, categorie, grens) als context. Een ander antwoord volgt de gewone weg.
+Een vervolgbericht dat ingaat op een hulpaanbod in het vorige antwoord, zoals "ja graag" na "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?". Bij een positief antwoord start het agentgesprek bij de verzet-agent, met de gegevens uit het bypass-antwoord (geboortejaar, geslacht, categorie, maximaal toegestaan verzet, bron en versie) als context. Een ander antwoord volgt de gewone weg.
+Het aanbod staat alleen onder het bypass-antwoord op een initiële verzetvraag voor wegwielrennen en vervangt dan de slotvraag over het doorzoeken van de KNWU-documenten. Andere bypass-antwoorden blijven zonder aanbod: categorie- en licentievragen, gecombineerde vragen waarin verzet bijzaak is, en verzetvragen voor veldrijden (daar is het verzet vrij).
 
 **Deterministische bypass**:
 Een pure feitelijke lookup-vraag (leeftijdscategorie, licentie, maximaal verzet per discipline, oude categorie-indeling) beantwoordt de app zelf uit `app/knwu_categories.json` met een overzicht met bron en versie — zonder agentgesprek; de Mistral-conversation start dan niet eens. Ook midden in een gesprek: bij een zelfstandige lookup-vraag, of bij een vervolgbericht op een eerdere lookup. Twee ingangen: de app herkent de vraag direct (geen enkele LLM-call), of de bypass volgt pas na de intake (één intake-call) bij een herkende vraag waarvan het geboortejaar alleen nog bevestigd moest worden. De intake vult nooit een gegeven aan dat de gebruiker niet zelf noemde, en maakt van een afgewezen vraag geen bypass.
@@ -194,7 +195,7 @@ _Avoid_: Verzettenadvies, verzetcontrole (dat is de controle op een wedstrijd)
 
 **Zwaarste verzet**:
 Het verzet van de fiets bij het grootste kettingblad en het kleinste tandkransje. Het mag niet boven het maximaal toegestane verzet uitkomen. Tegenhanger: **lichtste verzet** (kleinste kettingblad, grootste tandkransje).
-_Avoid_: "maximale verzet" voor de fiets zelf (dat is de KNWU-grens)
+_Avoid_: "maximale verzet" voor de fiets zelf (dat is het maximaal toegestane verzet)
 
 **Bereik**:
 De verhouding zwaarste verzet / lichtste verzet van een configuratie, als percentage (bijv. 320%). Bij één kettingblad is dat grootste / kleinste tandkransje. Een kleiner voorblad of een cassette met een groter kleinste tandkransje verkleint het bereik.
@@ -214,7 +215,8 @@ Cassette met een 11T of 12T als kleinste tandkransje, goed verkrijgbaar in de de
 Cassette met een kleinste tandkransje van 13 t/m 16T; vaak op bestelling.
 
 **Maximaal toegestaan verzet**:
-De KNWU-grens aan de afstand die een fiets per volle pedaalomwenteling mag afleggen, uitgedrukt in meters. De toepasselijke regel wordt bepaald door discipline, geslacht, leeftijdscategorie en wedstrijdjaar of veldritseizoen; dezelfde leeftijdscategorie kan voor jongens en meisjes een verschillende grens hebben.
+De KNWU-regel voor de afstand die een fiets per volle pedaalomwenteling mag afleggen, uitgedrukt in meters. De toepasselijke regel wordt bepaald door discipline, geslacht, leeftijdscategorie en wedstrijdjaar of veldritseizoen; dezelfde leeftijdscategorie kan voor jongens en meisjes een ander maximaal toegestaan verzet hebben.
+_Avoid_: "grens" (zegt niet of het de regel, de uitkomst of een afbakening bedoelt)
 
 **Verzet**:
 De afstand die een fiets aflegt bij één volle pedaalomwenteling, in meters — de gangbare term in de wielersport. De KNWU drukt het maximaal toegestane jeugdverzet uit in meters per omwenteling. De bandenmaat (via de wielomtrek) zet een tandwielverhouding om in verzet: `verzet (m) = wielomtrek (mm) × (tanden voor / tanden achter) / 1000`.

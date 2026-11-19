@@ -44,3 +44,7 @@ Staat een aanduiding niet in de tabel (bijv. "categorie 8", "junioren",
 "aspiranten"), vertaal hem dan niet en leid er niets uit af: noem hem zoals
 de bron hem geeft. Categorie 1 omvat twee jaargangen; noem altijd beide en
 kies er nooit één.
+
+- Fietsgegevens (kettingblad, cassette, bandenmaat) of een vraag om het
+  verzet van de fiets te controleren of aan te passen: doe direct handoff
+  naar de verzet-agent, zonder tekst.

@@ -13,7 +13,7 @@
       "prompt_files": ["_shared.md", "knwu-agent.md"],
       "library": "knwu",
       "websearch": true,
-      "handoffs": ["regio-agent", "club-agent"]
+      "handoffs": ["regio-agent", "club-agent", "verzet-agent"]
     },
     {
       "name": "regio-agent",
@@ -21,7 +21,7 @@
       "prompt_files": ["_shared.md", "regio-agent.md"],
       "library": "regio",
       "websearch": true,
-      "handoffs": ["knwu-agent", "club-agent"]
+      "handoffs": ["knwu-agent", "club-agent", "verzet-agent"]
     },
     {
       "name": "club-agent",
@@ -29,7 +29,7 @@
       "prompt_files": ["_shared.md", "club-agent.md"],
       "library": "club",
       "websearch": false,
-      "handoffs": ["knwu-agent", "regio-agent"]
+      "handoffs": ["knwu-agent", "regio-agent", "verzet-agent"]
     },
     {
       "name": "archief-agent",
@@ -39,11 +39,19 @@
       "websearch": false
     },
     {
+      "name": "verzet-agent",
+      "description": "Verzet-agent: controleert en past het verzet van een fiets aan (wegwielrennen) met de rekentool bereken_verzet",
+      "prompt_files": ["_shared.md", "verzet-agent.md"],
+      "library": null,
+      "websearch": false,
+      "function_tools": ["bereken_verzet"]
+    },
+    {
       "name": "router-agent",
       "description": "Router-agent: bepaalt het vraagtype (KNWU/regio/club) en doet de handoff",
       "prompt_files": ["_shared.md", "router-agent.md"],
       "model": "mistral-small-latest",
-      "handoffs": ["knwu-agent", "regio-agent", "club-agent"]
+      "handoffs": ["knwu-agent", "regio-agent", "club-agent", "verzet-agent"]
     }
   ]
 }

@@ -41,6 +41,9 @@ except ModuleNotFoundError:
 import sync_libraries
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR.parent / "app"))
+import function_calls  # noqa: E402  (schema van de function tools komt uit de app)
+
 ARCHITECTURES_DIR = SCRIPT_DIR / "architectures"
 ACTIVE_POINTER_PATH = ARCHITECTURES_DIR / "active"
 
@@ -81,6 +84,7 @@ class AgentConfig(TypedDict, total=False):
     prompt_files: list[str]
     library: str | None
     websearch: bool
+    function_tools: list[str]  # namen van function tools uit app/function_calls.py
     handoffs: list[str]
     model: str  # optionele per-agent model-override (#83); default = config["model"]
 
@@ -131,7 +135,8 @@ def build_tools(agent: AgentConfig, library_ids: dict[str, str]) -> list[dict]:
     """Build the tools list for one agent.
 
     library -> document_library tool with the resolved library id;
-    websearch -> bare web_search tool (org-level web-filters enforce domains).
+    websearch -> bare web_search tool (org-level web-filters enforce domains);
+    function_tools -> function tool with the schema from the app.
     """
     tools: list[dict] = []
     library_name = agent.get("library")
@@ -145,6 +150,10 @@ def build_tools(agent: AgentConfig, library_ids: dict[str, str]) -> list[dict]:
         tools.append({"type": "document_library", "library_ids": [library_id]})
     if agent.get("websearch", False):
         tools.append({"type": "web_search"})
+    for tool_name in agent.get("function_tools", []):
+        if tool_name != function_calls.BEREKEN_VERZET:
+            raise ValueError(f"function tool '{tool_name}' is onbekend in app/function_calls.py")
+        tools.append(function_calls.BEREKEN_VERZET_TOOL)
     return tools
 
 

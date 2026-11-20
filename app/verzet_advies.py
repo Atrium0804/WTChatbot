@@ -270,6 +270,15 @@ def advise(
     category, max_gear_m = road_limit
 
     limit = Limit(wheel.circumference_mm, max_gear_m)
+    sprocket_proposal = _sprocket_proposal(setup, limit)
+    chainring_proposal = _chainring_proposal(
+        setup, smallest_sprocket, limit, step=setup.chainring_step
+    )
+    # Een reguliere-cassettevoorstel dat een ander voorstel herhaalt, is geen apart advies.
+    earlier = {p.setup for p in (sprocket_proposal, chainring_proposal) if p is not None}
+    regular_proposals = tuple(
+        p for p in _regular_cassette_proposals(setup, limit) if p.setup not in earlier
+    )
     return VerzetAdvies(
         category=category,
         limit_m=max_gear_m,
@@ -277,9 +286,7 @@ def advise(
         wheel_circumference_mm=round(wheel.circumference_mm, 1),
         current=_evaluate(setup, limit),
         too_light=_is_too_light(setup, limit),
-        smallest_sprocket_proposal=_sprocket_proposal(setup, limit),
-        largest_chainring_proposal=_chainring_proposal(
-            setup, smallest_sprocket, limit, step=setup.chainring_step
-        ),
-        regular_cassette_proposals=_regular_cassette_proposals(setup, limit),
+        smallest_sprocket_proposal=sprocket_proposal,
+        largest_chainring_proposal=chainring_proposal,
+        regular_cassette_proposals=regular_proposals,
     )

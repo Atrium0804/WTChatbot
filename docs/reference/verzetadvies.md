@@ -109,7 +109,7 @@ Het maximaal toegestane verzet komt uit `app/knwu_categories.json` (art. 20.1.00
 | --- | --- |
 | `smallest_sprocket_proposal` | Kleinste kransje waarmee het huidige blad binnen het maximum blijft; ontbreekt als dat 17T of meer zou zijn |
 | `largest_chainring_proposal` | Grootste blad bij het huidige kleinste kransje; bij 1x een even aantal tanden. Zakt het onder het kleine blad, dan wordt het 1x |
-| `regular_cassette_proposals` | Grootste blad met een even aantal tanden bij een reguliere cassette met 11T; 12T alleen als die dichter bij het maximum uitkomt |
+| `regular_cassette_proposals` | Grootste blad met een even aantal tanden bij een reguliere cassette met 11T; 12T alleen als die dichter bij het maximum uitkomt. Een voorstel dat dezelfde configuratie geeft als `smallest_sprocket_proposal` of `largest_chainring_proposal` valt weg |
 | `too_light` | Binnen het maximum, maar meer dan één stap (blad of kransje) eronder |
 
 Een voorstel met een blad onder 32T vervalt.

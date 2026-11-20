@@ -46,7 +46,8 @@ def test_over_limit_current_setup_with_all_three_proposals():
     assert result.smallest_sprocket_proposal.setup.smallest_sprocket == 16
     assert result.largest_chainring_proposal is not None
     assert result.largest_chainring_proposal.setup.chainring == 34
-    assert [p.setup.smallest_sprocket for p in result.regular_cassette_proposals] == [11]
+    # 34T met 11T is al het kleiner-blad-voorstel: geen apart voorstel met een reguliere cassette
+    assert result.regular_cassette_proposals == ()
 
 
 def test_limit_is_inclusive_without_margin():
@@ -60,12 +61,14 @@ def test_limit_is_inclusive_without_margin():
 
 
 def test_regular_cassette_adds_12t_only_when_closer_to_limit():
-    # U17 1x: 11T -> 38T (7.36 m), 12T -> 42T (7.45 m) ligt dichter bij 7.68 m.
+    # U17 1x: 11T -> 38T (7.36 m) is al het kleiner-blad-voorstel; 12T -> 42T (7.45 m)
+    # ligt dichter bij 7.68 m en blijft als apart voorstel over.
     result = _advise(chainring=50, smallest_sprocket=11, **U17)
 
-    first, second = result.regular_cassette_proposals
-    assert (first.setup.chainring, first.setup.smallest_sprocket) == (38, 11)
-    assert (second.setup.chainring, second.setup.smallest_sprocket) == (42, 12)
+    assert result.largest_chainring_proposal is not None
+    assert result.largest_chainring_proposal.setup.chainring == 38
+    (only,) = result.regular_cassette_proposals
+    assert (only.setup.chainring, only.setup.smallest_sprocket) == (42, 12)
 
 
 def test_regular_cassette_proposals_have_even_chainrings_also_with_two_chainrings():
@@ -78,6 +81,21 @@ def test_regular_cassette_proposals_have_even_chainrings_also_with_two_chainring
         for p in result.regular_cassette_proposals
     ]
     assert proposals == [(38, 34, 11), (42, 34, 12)]
+
+
+def test_regular_cassette_proposal_is_dropped_when_it_equals_the_smaller_chainring_proposal():
+    # 2014 meisjes (5.9 m), 38T met 12-28: "kleiner blad" geeft 32T met 12T; een reguliere
+    # cassette met 12T zou exact dezelfde configuratie zijn en is geen apart voorstel.
+    result = _advise(
+        chainring=38, smallest_sprocket=12, **{**U15, "birth_year": 2014, "gender": "meisjes"}
+    )
+
+    assert result.largest_chainring_proposal is not None
+    assert (
+        result.largest_chainring_proposal.setup.chainring,
+        result.largest_chainring_proposal.setup.smallest_sprocket,
+    ) == (32, 12)
+    assert result.regular_cassette_proposals == ()
 
 
 def test_single_chainring_proposals_have_even_teeth_and_never_17t_or_more():

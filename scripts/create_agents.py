@@ -3,7 +3,7 @@
 Reads an architecture variant JSON (default: via the `active` pointer,
 scripts/architectures/active -> <naam>.json, #95): model, completion_args
 and the agent list (name, description, prompt files, optional library,
-websearch flag, handoffs). Prompt texts live in separate files under
+websearch flag, handoffs, optional model and reasoning_effort). Prompt texts live in separate files under
 prompts_folder (relative to the variant file; CODING_PRINCIPLES).
 
 An existing remote agent with the same name is updated, a missing one is
@@ -87,6 +87,10 @@ class AgentConfig(TypedDict, total=False):
     function_tools: list[str]  # namen van function tools uit app/function_calls.py
     handoffs: list[str]
     model: str  # optionele per-agent model-override (#83); default = config["model"]
+    reasoning_effort: str  # optionele per-agent override van completion_args.reasoning_effort
+
+
+REASONING_EFFORTS = ("none", "minimal", "low", "medium", "high", "xhigh", "max")
 
 
 class Config(TypedDict, total=False):
@@ -127,6 +131,11 @@ def load_config(path: Path) -> Config:
             raise SystemExit(
                 f"error: config {path}: per-agent 'model' must be a string: {entry}"
             )
+        if "reasoning_effort" in entry and entry["reasoning_effort"] not in REASONING_EFFORTS:
+            raise SystemExit(
+                f"error: config {path}: per-agent 'reasoning_effort' must be one of "
+                f"{list(REASONING_EFFORTS)}: {entry}"
+            )
     data.setdefault("prompts_folder", "prompts")
     return data
 
@@ -155,6 +164,14 @@ def build_tools(agent: AgentConfig, library_ids: dict[str, str]) -> list[dict]:
             raise ValueError(f"function tool '{tool_name}' is onbekend in app/function_calls.py")
         tools.append(function_calls.BEREKEN_VERZET_TOOL)
     return tools
+
+
+def completion_args_for(agent: AgentConfig, config: Config) -> dict:
+    """Globale completion_args, met de per-agent reasoning_effort erover als die gezet is."""
+    args = dict(config["completion_args"])
+    if "reasoning_effort" in agent:
+        args["reasoning_effort"] = agent["reasoning_effort"]
+    return args
 
 
 def load_prompt(prompts_dir: Path, agent: AgentConfig) -> str:
@@ -285,7 +302,7 @@ def run_create(
             "description": agent["description"],
             "instructions": instructions,
             "tools": tools,
-            "completion_args": config["completion_args"],
+            "completion_args": completion_args_for(agent, config),
         }
         if handoff_ids is not None:
             payload["handoffs"] = handoff_ids

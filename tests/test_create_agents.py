@@ -430,6 +430,34 @@ class RunCreateTests(unittest.TestCase):
                 create_agents.load_config(path)
             self.assertIn("model", str(ctx.exception))
 
+    def test_per_agent_reasoning_effort_lands_in_completion_args(self) -> None:
+        router = self.router_agent()
+        router["reasoning_effort"] = "medium"
+        config_path = self.make_config([self.knwu_agent(), router])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(rc, 0, report["errors"])
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(calls["knwu-agent"]["completion_args"], {"temperature": 0, "top_p": 1})
+        self.assertEqual(
+            calls["router-agent"]["completion_args"],
+            {"temperature": 0, "top_p": 1, "reasoning_effort": "medium"},
+        )
+
+    def test_load_config_rejects_unknown_reasoning_effort(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            data = minimal_config()
+            data["agents"][0]["reasoning_effort"] = "extreme"
+            path = write_json(Path(tmp), "agents_config.json", data)
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.load_config(path)
+            self.assertIn("reasoning_effort", str(ctx.exception))
+
     def test_productie_config_router_agent_heeft_kleiner_model(self) -> None:
         # #83/#88: in de productieconfig staat de router-agent op een kleiner model,
         # de content-agents (knwu/regio/club/archief) op de default.

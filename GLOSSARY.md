@@ -190,15 +190,31 @@ De reeks laatste vraag/antwoord-paren (turns) van een conversatie die bij een du
 _Avoid_: "chatlog", "conversatielog", "de hele conversatie opslaan"
 
 **Verzetadvies**:
-De functie waarmee Wielie controleert of het verzet van de fiets van een renner binnen het maximaal toegestane verzet valt en, zo niet, wat er aangepast moet worden (kleiner kettingblad of groter kleinste tandkransje). Alleen voor wegwielrennen; de uitkomst vermeldt dat in een voetnoot. De rekensom is deterministisch (Python), nooit het taalmodel.
+De functie waarmee Wielie controleert of het verzet van de fiets van een renner binnen het maximaal toegestane verzet valt en een passend verzet adviseert: een kettingbladadvies, een cassetteadvies en een reguliere-cassetteadvies — ook als het huidige verzet ruim te licht is. Alleen voor wegwielrennen; de uitkomst vermeldt dat in een voetnoot. De rekensom is deterministisch (Python), nooit het taalmodel.
 _Avoid_: Verzettenadvies, verzetcontrole (dat is de controle op een wedstrijd)
+
+**Kettingblad**:
+Het tandwiel voor aan de crank. Bij twee kettingbladen is het **buitenblad** het grootste en het **binnenblad** het kleinste; met één kettingblad heet de fiets **1x**.
+_Avoid_: voorblad, groot/klein voorblad
+
+**Optimale configuratie**:
+Een combinatie van een geldig kleinste tandkransje met het grootste kettingblad waarbij het zwaarste verzet nog binnen het maximaal toegestane verzet valt. Het aantal tanden mag oneven zijn.
+
+**Kettingbladadvies**:
+Advies met het huidige kleinste tandkransje en een ander kettingblad: het grootste dat binnen het maximaal toegestane verzet valt. Past dat kettingblad niet meer boven het binnenblad, dan gaat het buitenblad eraf (1x).
+
+**Cassetteadvies**:
+Advies met het huidige kettingblad en een andere cassette: het kleinste geldige tandkransje dat binnen het maximaal toegestane verzet valt. Bij twee kettingbladen eerst met het buitenblad; lukt dat niet, dan met het binnenblad zonder buitenblad.
+
+**Reguliere-cassetteadvies**:
+Advies voor een 1x-fiets met een reguliere cassette en een kettingblad met een even aantal tanden, waarvan het verzet het dichtst bij het maximaal toegestane verzet ligt. Vervalt als het kettingblad- of cassetteadvies al een reguliere cassette heeft.
 
 **Zwaarste verzet**:
 Het verzet van de fiets bij het grootste kettingblad en het kleinste tandkransje. Het mag niet boven het maximaal toegestane verzet uitkomen. Tegenhanger: **lichtste verzet** (kleinste kettingblad, grootste tandkransje).
 _Avoid_: "maximale verzet" voor de fiets zelf (dat is het maximaal toegestane verzet)
 
 **Bereik**:
-De verhouding zwaarste verzet / lichtste verzet van een configuratie, als percentage (bijv. 320%). Bij één kettingblad is dat grootste / kleinste tandkransje. Een kleiner voorblad of een cassette met een groter kleinste tandkransje verkleint het bereik.
+De verhouding zwaarste verzet / lichtste verzet van een configuratie, als percentage (bijv. 320%). Bij één kettingblad is dat grootste / kleinste tandkransje. Een kleiner kettingblad of een cassette met een groter kleinste tandkransje verkleint het bereik.
 
 **Wielomtrek**:
 De afgerolde omtrek van het wiel in meters of millimeters, berekend uit de ETRTO-bandenmaat: π × (velgdiameter + 2 × banddikte).
@@ -209,7 +225,7 @@ De gestandaardiseerde aanduiding op de bandzijkant: banddikte-velgdiameter in mm
 _Avoid_: wielmaat (24", 26", 28") als invoer voor een berekening; dat is alleen een globale aanduiding
 
 **Reguliere cassette**:
-Cassette met een 11T of 12T als kleinste tandkransje, goed verkrijgbaar in de detailhandel. Bij het verzetadvies is 11T de voorkeur; 12T alleen als de 11T-variant net boven het maximaal toegestane verzet uitkomt.
+Cassette met een 11T of 12T als kleinste tandkransje, goed verkrijgbaar in de detailhandel. Bij het reguliere-cassetteadvies wint de variant die het dichtst bij het maximaal toegestane verzet uitkomt; bij gelijke stand 11T.
 
 **Jeugdcassette**:
 Cassette met een kleinste tandkransje van 13 t/m 16T; vaak op bestelling.

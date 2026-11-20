@@ -11,6 +11,7 @@
       "name": "knwu-agent",
       "description": "KNWU-agent: nationale/KNWU-vragen (Titel 20, Nationale Besluiten, licenties, verzekeringen, NK's, verzet)",
       "prompt_files": ["_shared.md", "knwu-agent.md"],
+      "reasoning_effort": "medium",
       "library": "knwu",
       "websearch": true,
       "handoffs": ["regio-agent", "club-agent", "verzet-agent"]
@@ -19,6 +20,7 @@
       "name": "regio-agent",
       "description": "Regio-agent: MNC Veldrijden / MNC wegwielrennen (ook Hans van den Hengel Competitie), regio Midden, fallback naar knwu-agent",
       "prompt_files": ["_shared.md", "regio-agent.md"],
+      "reasoning_effort": "medium",
       "library": "regio",
       "websearch": true,
       "handoffs": ["knwu-agent", "club-agent", "verzet-agent"]
@@ -27,6 +29,7 @@
       "name": "club-agent",
       "description": "Club-agent: clubvragen WTC Woerden (ZMC, clubreglementen, Website-teksten), nooit fallback naar KNWU; licentievragen via handoff naar knwu-agent",
       "prompt_files": ["_shared.md", "club-agent.md"],
+      "reasoning_effort": "medium",
       "library": "club",
       "websearch": false,
       "handoffs": ["knwu-agent", "regio-agent", "verzet-agent"]
@@ -42,6 +45,8 @@
       "name": "verzet-agent",
       "description": "Verzet-agent: controleert en past het verzet van een fiets aan (wegwielrennen) met de rekentool bereken_verzet",
       "prompt_files": ["_shared.md", "verzet-agent.md"],
+      "model": "mistral-small-latest",
+      "reasoning_effort": "none",
       "library": null,
       "websearch": false,
       "function_tools": ["bereken_verzet"]

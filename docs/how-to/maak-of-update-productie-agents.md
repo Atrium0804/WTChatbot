@@ -36,7 +36,7 @@ De agent-architectuur is switchbaar via de `active`-pointer; agent-namen zijn id
 - De summary print per agent naam -> id en de bijbehorende env-var.
 - In Mistral Studio: 6 agents; per content-agent met library precies één `document_library`-tool met de juiste library; de verzet-agent heeft geen library en geen websearch, alleen de function tool `bereken_verzet` (zie [Zet het verzetadvies aan](zet-het-verzetadvies-aan.md)); `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club/verzet) en direct expert-naar-expert (ADR-0009, geen return-handoff naar de router).
 - Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](stel-websearch-allowlist-in.md).
-- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0).
+- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0). Per agent kun je `"model"` en `"reasoning_effort"` zetten in de variant; `reasoning_effort` (`none`, `minimal`, `low`, `medium`, `high`, `xhigh` of `max`) wordt alleen aan de `completion_args` van die agent toegevoegd. Of het effect heeft, hangt af van het gekozen model.
 
 ## Opmerkingen
 

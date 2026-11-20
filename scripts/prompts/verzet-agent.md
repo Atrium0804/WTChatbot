@@ -35,13 +35,39 @@ waarde ongeldig (de tool geeft een foutmelding), leg dan kort uit wat er
 niet klopt en vraag die waarde opnieuw.
 
 ### Het antwoord
-Noem na de tool-aanroep: het zwaarste en lichtste verzet, het bereik, de
-topsnelheid (bij 100 omwentelingen per minuut), het maximaal toegestane
-verzet met bron en versie, en of de fiets daarbinnen blijft. Een gelijk
-verzet is toegestaan. Past de fiets niet, noem dan de
-voorstellen uit de tool (kleiner kettingblad, groter kleinste tandkransje,
-reguliere cassette) en laat de keuze aan de gebruiker. Past de fiets wel,
-meld dan ook als het verzet erg licht is (de tool geeft dit aan).
+Geef na de tool-aanroep een puntsgewijs overzicht in deze vorm. Alle
+getallen komen uit de tool; vul alleen in wat de tool teruggeeft.
+
+**Maximaal toegestaan verzet**
+- <Jongen/Meisje>, <categorie>: <maximaal toegestaan verzet> m
+- Bron: <bron>, versie <versie>
+
+**Je huidige configuratie**
+- Kettingblad(en): <groot>T (of <groot>/<klein>T)
+- Cassette: <kleinste>-<grootste>T
+- Zwaarste verzet: <zwaarste verzet> m
+- Lichtste verzet: <lichtste verzet> m
+- Bereik: <bereik>%
+- Snelheid bij cadans 100 rpm: <topsnelheid> km/u
+
+**Oordeel**
+- Eén zin: binnen het maximaal toegestane verzet (een gelijk verzet is
+  toegestaan), te zwaar (de fiets moet worden aangepast), of binnen maar
+  erg licht (de tool geeft dit aan).
+
+**Mogelijkheid 1: <korte titel>**
+- Alleen bij een te zwaar verzet: één blok per voorstel uit de tool
+  (groter kleinste tandkransje, kleiner kettingblad, reguliere cassette).
+  Noem per voorstel wat verandert (kettingblad en/of kleinste kransje) en
+  het nieuwe zwaarste verzet. Laat de keuze aan de gebruiker.
+
+**Tips**
+- Eén tot drie korte tips uit de richtlijnen hieronder die bij deze
+  situatie passen (bijvoorbeeld bereik, beschikbaarheid, compatibiliteit).
+
+Sluit af met de voetnoot "berekend voor wegwielrennen" en daarna één
+vervolgvraag die de gebruiker verder helpt, bijvoorbeeld: "Heb je een
+nieuwe cassette op het oog? Dan vergelijk ik die met wat je nu hebt."
 
 ### Richtlijnen en compatibiliteit
 Dit zijn richtlijnen, geen garanties; zeg dat de gebruiker de

@@ -155,6 +155,56 @@ def test_stream_answer_negeert_ongeldige_sse_regels():
     assert text == ""
 
 
+@pytest.mark.parametrize("flat", [False, True])
+def test_stream_answer_reports_function_calls_assembled_from_deltas(flat):
+    lines = [
+        sse("conversation.response.started", {"conversation_id": "conv-f"}, flat=flat),
+        sse("function.call.delta", {"tool_call_id": "c1", "name": "bereken_verzet", "arguments": '{"chain'}, flat=flat),
+        sse("function.call.delta", {"tool_call_id": "c1", "name": "", "arguments": 'ring": 50}'}, flat=flat),
+        sse("function.call.delta", {"tool_call_id": "c2", "name": "bereken_verzet", "arguments": "{}"}, flat=flat),
+        sse("conversation.response.done", {}, flat=flat),
+    ]
+    calls = []
+    with patch("requests.post", return_value=FakeResp(lines)):
+        conv, text = mistral_client.stream_answer(
+            api_key="k", agent_id="a", base_url="u", message="m", on_function_call=calls.append
+        )
+    assert conv == "conv-f"
+    assert text == ""
+    assert calls == [
+        mistral_client.FunctionCall("c1", "bereken_verzet", '{"chainring": 50}'),
+        mistral_client.FunctionCall("c2", "bereken_verzet", "{}"),
+    ]
+
+
+def test_stream_answer_sends_function_results_as_inputs():
+    results = [{"type": "function.result", "tool_call_id": "c1", "result": "{}"}]
+    with patch("requests.post", return_value=FakeResp([])) as post:
+        mistral_client.stream_answer(
+            api_key="k", agent_id="a", base_url="u", message=results, conversation_id="conv-f"
+        )
+    assert post.call_args.kwargs["json"]["inputs"] == results
+
+
+def test_answer_question_reports_function_call_outputs():
+    payload = {
+        "conversation_id": "c1",
+        "outputs": [
+            {"type": "function.call", "tool_call_id": "t1", "name": "bereken_verzet", "arguments": '{"a": 1}'},
+            {"type": "function.call", "tool_call_id": "t2", "name": "bereken_verzet", "arguments": {"b": 2}},
+        ],
+    }
+    calls = []
+    with patch("requests.post", return_value=FakeResp([], payload=payload)):
+        mistral_client.answer_question(
+            api_key="k", agent_id="ag", base_url="u", message="m", on_function_call=calls.append
+        )
+    assert calls == [
+        mistral_client.FunctionCall("t1", "bereken_verzet", '{"a": 1}'),
+        mistral_client.FunctionCall("t2", "bereken_verzet", '{"b": 2}'),
+    ]
+
+
 def test_answer_question_stuurt_prompt_cache_key():
     with patch("requests.post", return_value=FakeResp([], payload={"conversation_id": "c1", "outputs": []})) as post:
         conv, _ = mistral_client.answer_question(

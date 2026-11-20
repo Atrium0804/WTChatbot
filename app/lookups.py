@@ -16,7 +16,7 @@ zodat de eval de productie-flow spiegelt.
 """
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from typing import Literal, TypeAlias
 
@@ -56,6 +56,49 @@ _VRAAG_WOORD = re.compile(
 _VERZET_VRAAG = re.compile(
     r"verzet|tandwiel|versnelling|rollout|afgerolde\s+afstand", re.IGNORECASE
 )
+# Fietsgegevens (50/34, 46x12, 11-28, 28-622, kettingblad) of een vraag om het verzet van
+# de fiets te controleren, aan te passen of te adviseren: dat is geen kale lookup van het
+# maximaal toegestane verzet, maar werk voor de verzet-agent (#150). Een blad heeft 32-60
+# tanden, zodat een datum (14/09) of seizoen (25/26) niet meetelt.
+_FIETSGEGEVENS = re.compile(
+    r"\b(?:3[2-9]|[45]\d|60)\s*[/x×]\s*(?:9|[1-5]\d|60)\b"
+    r"|\b(?:9|1[0-6])\s*-\s*(?:2\d|[3-5]\d)\b"
+    r"|\b\d{2}\s*-\s*(?:406|507|520|540|559|584|622)\b"
+    r"|\b(?:kettingbla(?:d|den)|voorbla(?:d|den)|cassette|tandkrans\w*|kransje\w*|bandenmaat|etrto)\b",
+    re.IGNORECASE,
+)
+_VERZET_CONTROLE = re.compile(
+    r"\bcontrol\w*|\bnakij\w*|\baanpas\w*|\bpast\s+(?:mijn|het|de)\b"
+    r"|\bmag\s+(?:mijn|de)\s+fiets\b|\bte\s+zwaar\b",
+    re.IGNORECASE,
+)
+_VERZET_WOORD = re.compile(r"verzet|versnelling|tandwiel", re.IGNORECASE)
+_VERZETADVIES = re.compile(r"verzet\s*-?\s*advies|\badvies\b.{0,30}\bverzet", re.IGNORECASE)
+
+
+def _is_verzet_question(text: str) -> bool:
+    return bool(_VERZET_VRAAG.search(text) and (_VRAAG_WOORD.search(text) or "?" in text))
+
+
+def _asks_only_verzet(text: str) -> bool:
+    """Een gecombineerde vraag (categorie, licentie) blijft kaal: daar is het verzet bijzaak."""
+    return (
+        _is_verzet_question(text)
+        and not _CATEGORIE_VRAAG.search(text)
+        and not _LICENTIE_MENTION.search(text)
+    )
+
+
+def asks_verzetadvies(text: str) -> bool:
+    """Fietsgegevens, of een vraag om het verzet van de fiets te controleren, aan te passen
+    of te adviseren (#150). "Controle" of "te zwaar" telt alleen samen met een verzetwoord."""
+    return bool(
+        _FIETSGEGEVENS.search(text)
+        or _VERZETADVIES.search(text)
+        or (_VERZET_CONTROLE.search(text) and _VERZET_WOORD.search(text))
+    )
+
+
 _VERTALING_VRAAG = re.compile(
     r"wat\s+(is|betekent)|hoe\s+heet|betekenis|vertaling|nieuwe\s+aanduiding"
     r"|hoe\s+heet\s+.*\s+nu|omgerekend|in\s+de\s+nieuwe",
@@ -102,6 +145,14 @@ _DATA_PRIMARY_INPUT = re.compile(
 # KNWU-documenten te doorzoeken. Een vervolgvraag gaat naar de inhoudelijke route.
 _DISCLAIMER_LIBRARY = (
     "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
+)
+# Aanbod bij een initiële verzetvraag; vervangt dan de slotvraag hierboven, zodat
+# een "ja" maar één betekenis heeft (#150).
+VERZET_OFFER = "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?"
+_POSITIVE_REPLY = re.compile(
+    r"\s*(?:ja|jazeker|graag|ok|oke|oké|okay|prima|doe\s+maar)"
+    r"(?:[\s,!.]+(?:ja|graag|hoor|alsjeblieft|alstublieft|doe\s+maar|bedankt|dankjewel))*[\s.!]*",
+    re.IGNORECASE,
 )
 
 _Gender = knwu_categories.Gender
@@ -153,6 +204,7 @@ class _LookupProfile:
     gender: _Gender | None
     discipline: _SupportedDiscipline | None
     category_filter: tuple[tuple[_CategoryMember, ...], ...] = ()
+    verzet_question: bool = False
 
 
 @dataclass(frozen=True)
@@ -167,9 +219,18 @@ class _PendingLookupState:
 
 
 @dataclass(frozen=True)
+class VerzetOffer:
+    """De wegrijen-feiten van een bypass-antwoord waarop de gebruiker kan ingaan (#150)."""
+
+    rows: tuple["_AnswerRow", ...]
+    gearing: knwu_categories.SourceFact
+
+
+@dataclass(frozen=True)
 class _CompletedLookupState:
     kind: Literal["completed"] = "completed"
     profile: _LookupProfile = _LookupProfile(None, None, None)
+    offer: VerzetOffer | None = None
 
 
 LookupState: TypeAlias = NoLookupState | _PendingLookupState | _CompletedLookupState
@@ -215,6 +276,7 @@ class _ReadyLookup:
     rows: tuple[_AnswerRow, ...]
     sources: knwu_categories.RuleSources
     outside_youth_birth_year: int | None = None
+    offer: VerzetOffer | None = None
 
 
 @dataclass(frozen=True)
@@ -358,10 +420,7 @@ def _old_category_members(number: int, rules: dict) -> tuple[_CategoryMember, ..
 
 def _turn_shape(text: str) -> _TurnShape:
     licence_question = bool(_LICENTIE_MENTION.search(text) and _VRAAG_WOORD.search(text))
-    verzet_question = bool(
-        _VERZET_VRAAG.search(text)
-        and (_VRAAG_WOORD.search(text) or "?" in text)
-    )
+    verzet_question = _is_verzet_question(text)
     old_category_fragment = bool(
         message_recognition.has_old_category_fragment(text.rstrip(".?!"))
     )
@@ -616,6 +675,8 @@ def _parse_lookup_turn(
     text = message.strip()
     empty_profile = _LookupProfile(None, None, None)
     shape = _turn_shape(text)
+    if asks_verzetadvies(text):
+        return _ParsedTurn(False, empty_profile)
     explicit_inputs = _parse_explicit_inputs(text, rules, shape)
     if explicit_inputs is None:
         return _ParsedTurn(False, empty_profile)
@@ -637,6 +698,12 @@ def _parse_lookup_turn(
     if not eligible_for_bypass:
         return _ParsedTurn(False, empty_profile)
     profile = _apply_followup(explicit_inputs, text, shape, previous_state)
+    inherited = (
+        shape.is_fragment
+        and isinstance(previous_state, (_PendingLookupState, _CompletedLookupState))
+        and previous_state.profile.verzet_question
+    )
+    profile = replace(profile, verzet_question=_asks_only_verzet(text) or inherited)
     return _ParsedTurn(True, profile, explicit_inputs.evidence)
 
 
@@ -879,12 +946,7 @@ def _render_ready(ready: _ReadyLookup, language_level: str) -> str:
                 "",
             ]
         )
-    lines.extend(
-        [
-            "Vooruitblik op basis van de bekende regels; die kunnen wijzigen.",
-            _DISCLAIMER_LIBRARY,
-        ]
-    )
+    lines.append(VERZET_OFFER if ready.offer else _DISCLAIMER_LIBRARY)
     if level == "B2":
         lines.extend(["", _render_source_line(ready.sources, level)])
     return "\n".join(lines)
@@ -911,15 +973,51 @@ def _decide_profile(profile: _LookupProfile, today: date, rules: dict) -> Bypass
     if not rows and outside_youth is None and not is_standalone_license:
         return NotEligibleForBypass("not_eligible_for_bypass", NoLookupState())
 
+    sources = knwu_categories.sources(rules)
     ready = _ReadyLookup(
         selector=selector,
         profile=profile,
         heading=_heading_for(profile, rules),
         rows=rows,
-        sources=knwu_categories.sources(rules),
+        sources=sources,
         outside_youth_birth_year=outside_youth,
+        offer=_verzet_offer(profile, rows, sources),
     )
-    return ReadyForBypass("ready_for_bypass", ready, _CompletedLookupState(profile=profile))
+    return ReadyForBypass(
+        "ready_for_bypass", ready, _CompletedLookupState(profile=profile, offer=ready.offer)
+    )
+
+
+def _verzet_offer(
+    profile: _LookupProfile, rows: tuple[_AnswerRow, ...], sources: knwu_categories.RuleSources
+) -> VerzetOffer | None:
+    """Alleen bij een verzetvraag en alleen met wegwielrennen: bij veldrijden is het verzet vrij."""
+    if not profile.verzet_question:
+        return None
+    road_rows = tuple(
+        row for row in rows if row.season.discipline == "weg" and isinstance(row.gear, float)
+    )
+    return VerzetOffer(road_rows, sources.gearing) if road_rows else None
+
+
+def accepted_verzet_offer(message: str, previous_state: LookupState | None) -> VerzetOffer | None:
+    """Het aanbod uit het vorige bypass-antwoord, als dit bericht er positief op ingaat."""
+    if not isinstance(previous_state, _CompletedLookupState) or previous_state.offer is None:
+        return None
+    return previous_state.offer if _POSITIVE_REPLY.fullmatch(message) else None
+
+
+def verzet_offer_context(offer: VerzetOffer) -> list[str]:
+    """Contextregels voor de verzet-agent: geboortejaar, geslacht, categorie, maximaal toegestaan verzet, bron en versie."""
+    source = offer.gearing
+    article = f", artikel {source.article}" if source.article else ""
+    return [
+        f"Gegevens uit het bypass-antwoord, berekend door de app uit {source.name} "
+        f"(versie {source.version}{article}): geboortejaar {row.birth_year}, {row.gender}, "
+        f"categorie {row.category}, maximaal toegestaan verzet wegwielrennen "
+        f"{_gear_text(row.gear)}."
+        for row in offer.rows
+    ]
 
 
 def recognize_turn(
@@ -969,12 +1067,7 @@ def complete_with_intake(
         and isinstance(year, int)
         and not isinstance(year, bool)
     ):
-        profile = _LookupProfile(
-            _BirthYearSelector("birth_year", year),
-            profile.gender,
-            profile.discipline,
-            profile.category_filter,
-        )
+        profile = replace(profile, selector=_BirthYearSelector("birth_year", year))
     if profile.selector is None:
         return NeedsInputForBypass(
             "needs_input_for_bypass", _PendingLookupState(profile=profile), needs_input.evidence

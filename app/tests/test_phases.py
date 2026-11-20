@@ -50,6 +50,13 @@ def test_overige_events_geven_geen_wijziging():
     assert phases.phase_for_event("conversation.response.started", {}, "router-agent") is None
 
 
+def test_function_call_bereken_verzet_zet_verzet_fase():
+    assert phases.phase_for_event(
+        "function.call.delta", {"name": "bereken_verzet", "arguments": "{"}, "verzet-agent"
+    ) == ("Ik bereken je verzet…", "verzet-agent")
+    assert phases.phase_for_event("function.call.delta", {"name": "iets"}, "verzet-agent") is None
+
+
 def test_fase_voor_startagent_direct_to_expert():
     assert phases.fase_voor_startagent("knwu-agent") == phases.PHASE_KNWU
     assert phases.fase_voor_startagent("club-agent") == phases.PHASE_REGIO_CLUB

@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by ADR-0010
 ---
 
 # Verzettenadvies: hybride — RAG voor de regel, deterministische calculator-tool voor de rekensom

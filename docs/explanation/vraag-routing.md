@@ -32,7 +32,7 @@ Zonder `MISTRAL_API_KEY`/`MISTRAL_AGENT_ID` draait de app in stub-mode: elk beri
 | Route | Wanneer | LLM-calls | Bepaald in |
 | --- | --- | --- | --- |
 | `bypass` | Herkende feitelijke lookup met complete invoer (geboortejaar, oude of nieuwe leeftijdscategorie), of een bestaande losse lookup zoals KNWU Licentie 17+: gecombineerd overzicht van categorie, oude indeling, verzet en licentie | 0 — Python antwoordt uit `app/knwu_categories.json`; 1 intake-call als de intake een herkende onvolledige vraag aanvult | `app/lookups.py` (`recognize_turn`, `complete_with_intake`, `render_answer`) |
-| `direct-<domein>` | Intake bepaalt het domein met `confidence ≥ INTAKE_CONFIDENCE_THRESHOLD` (default 0,8) én er is een expert-id geconfigureerd voor dat domein | 1 intake-call + de expert-call | `app/intake.py` (`decide_route`), `config.EXPERT_AGENT_IDS` |
+| `direct-<domein>` | Intake bepaalt het domein met `confidence ≥ INTAKE_CONFIDENCE_THRESHOLD` (default 0,8) én er is een expert-id geconfigureerd voor dat domein. `direct-verzet` volgt ook zonder intake bij een vraag om verzetadvies of een aangenomen verzetaanbod ([Verzetadvies](../reference/verzetadvies.md#routes)) | 1 intake-call + de expert-call; bij `direct-verzet` zonder intake alleen de expert-call | `app/intake.py` (`route_before_intake`, `decide_route`), `config.EXPERT_AGENT_IDS` |
 | `router` | Alles anders: vage vragen, lage confidence, geen expert-id, of een intake-fout (de fallback is altijd de router — veilig) | 1 intake-call + router-call (+ expert-call na handoff) | `app/intake.py`, `config.MISTRAL_AGENT_ID` |
 
 De route is zichtbaar in `GET /chat/status/{job_id}` als `route` (`bypass` \| `direct-knwu` \| `router`) en in de eval (zie onder).
@@ -46,7 +46,7 @@ De route is zichtbaar in `GET /chat/status/{job_id}` als `route` (`bypass` \| `d
 | `mistral-large-latest` | De domeinexperts `knwu-agent`, `regio-agent`, `club-agent`, `archief-agent` (RAG via `document_library`, `web_search`, handoffs) | Conversations API, `stream: true` | `scripts/architectures/huidig.json` |
 | geen model (Python) | `bypass`-antwoorden uit `app/knwu_categories.json` | — | `app/lookups.py` |
 
-Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call streamt (SSE); de events voeden de fase in `/chat/status` (`app/phases.py`). Als de stream niet start, valt de job terug op de non-streaming call (`StreamStartError`, #93). Prompt caching staat aan via `PROMPT_CACHE_KEY` (gecachte input kost 10% van de prijs). De agent-definities (model, library, websearch, handoffs per agent) zijn switchbaar via de active-pointer `scripts/architectures/active` (#95).
+Alle LLM-calls zitten in de dunne laag `app/mistral_client.py`. De expert-call streamt (SSE); de events voeden de fase in `/chat/status` (`app/phases.py`). Als de stream niet start, valt de job terug op de non-streaming call (`StreamStartError`, #93). Vraagt een agent een function call, dan voert de app die uit (`app/function_calls.py`, #149) en stuurt het resultaat terug in hetzelfde gesprek, met maximaal 3 aanroepen per beurt (ADR-0010). Prompt caching staat aan via `PROMPT_CACHE_KEY` (gecachte input kost 10% van de prijs). De agent-definities (model, library, websearch, handoffs per agent) zijn switchbaar via de active-pointer `scripts/architectures/active` (#95).
 
 ## Vragen die Python zelf beantwoordt (deterministische bypass)
 
@@ -71,7 +71,7 @@ Een vervolgbericht hoort bij de vorige beurt (#143). Een los gegeven zonder open
 
 De app stelt bij elk geaccepteerd bericht synchroon de volgende toestand vast en verhoogt een beurtenteller, vóór er iets wordt afgewacht. Die teller bepaalt ook of een beurt de eerste is; een bericht dat binnenkomt terwijl de agent nog antwoordt, is dus al een vervolgbericht. Een background job die een onvolledige vraag met de intake aanvult, publiceert zijn toestand alleen als zijn teller nog de nieuwste is. Een oudere job kan zo een nieuwere toestand niet overschrijven of wissen; zijn eigen antwoord en status blijven ongewijzigd. Een rate-limited of ongeldig verzoek telt niet als beurt. Na een herstart van de app zijn toestand en teller weg, net als het agentgesprek; de volgende beurt is dan weer de eerste.
 
-Het bypass-antwoord eindigt op een vooruitblikvoorbehoud en de vaste slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?". Een bypass start geen agentgesprek, dus een kort antwoord als "ja" komt bij de agent aan zonder de eerdere vraag; wie meer wil weten, stelt de vraag het best opnieuw. Bij B2 volgt een `Bron:`-regel met versiedatum en artikelnummers; bij B1 staat die regel niet, net als bij andere B1-antwoorden. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
+Het bypass-antwoord eindigt op de vaste slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?", of bij een initiële verzetvraag voor wegwielrennen op het verzetaanbod. Een bypass start geen agentgesprek, dus een kort antwoord als "ja" komt bij de agent aan zonder de eerdere vraag; wie meer wil weten, stelt de vraag het best opnieuw. Bij B2 volgt een `Bron:`-regel met versiedatum en artikelnummers; bij B1 staat die regel niet, net als bij andere B1-antwoorden. Een bypass via de intake zet in de job de fase "Ik bereken de leeftijdscategorie…".
 
 De chatrenderer ondersteunt alleen koppen, **vet**, platte lijsten, links en één `Bron:`-blok; de formatcheck staat in [`app/tests/test_lookups.py`](../../app/tests/test_lookups.py) en de renderercontracttest in [`app/tests/test_markdown_rendering.cjs`](../../app/tests/test_markdown_rendering.cjs).
 
@@ -81,7 +81,7 @@ Ook als een vraag naar een agent gaat, rekent de app zelf: `app/context.py` voeg
 
 ## Agents, tools en handoffs
 
-De router en vier experts staan in `scripts/architectures/huidig.json`. Elke expert heeft één eigen library (`knwu`, `regio`, `club`, `archive`) en opzoekt via `document_library`; `web_search` is alleen aan voor de knwu- en regio-agent, met een allowlist van `knwu.nl` en `knwumidden.nl` (zie [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md)). Experts handoffen bij onderwerpwissel direct naar elkaar, niet meer terug naar de router (zie [ADR-0009](../adr/0009-agent-architectuur-snelheid.md)). De bronvolgorde per vraagtype staat in het [GLOSSARY.md](../../GLOSSARY.md) en in [ADR-0003](../adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md).
+De router, vier experts met een library en de verzet-agent staan in `scripts/architectures/huidig.json`. Elke expert met een library heeft één eigen library (`knwu`, `regio`, `club`, `archive`) en opzoekt via `document_library`; `web_search` is alleen aan voor de knwu- en regio-agent, met een allowlist van `knwu.nl` en `knwumidden.nl` (zie [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md)). De verzet-agent heeft geen library en geen websearch, alleen de function tool `bereken_verzet` ([ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md)). Experts handoffen bij onderwerpwissel direct naar elkaar, niet meer terug naar de router (zie [ADR-0009](../adr/0009-agent-architectuur-snelheid.md)). De bronvolgorde per vraagtype staat in het [GLOSSARY.md](../../GLOSSARY.md) en in [ADR-0003](../adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md).
 
 ## Voorbeelden van vragen per route
 
@@ -102,6 +102,8 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | "In welke categorie rijdt hij in 2026?" | géén bypass → agent | een expliciet wedstrijdjaar is geen invoerveld |
 | "Waarom is het verzet voor U15 maar 6,70 meter?" | géén bypass → agent | `MEER_DAN_FEIT` treft "waarom" |
 | "Hoe meet ik het verzet voor U13 op de weg?" | géén bypass → agent | meetinstructies zijn meer dan het maximale verzet |
+| "ik wil mijn verzet aanpassen" | `direct-verzet` (zonder intake) | vraag om verzetadvies (`lookups.asks_verzetadvies`) |
+| "ja" na het verzetaanbod van een bypass-antwoord | `direct-verzet` (zonder intake) | aangenomen verzetaanbod |
 | "Wat kost de contributie bij WTC Woerden?" | `direct-club` (bij confidence ≥ 0,8) | intake ziet domein `club`; "kosten" is pas bij de lookup-guard een probleem, niet bij de intake-route |
 | "Hoe zit het met die wedstrijd?" | `router` | vage vraag, lage confidence |
 | "Wat is er veranderd in Titel 20?" | `router` als er geen archief-expert-id is geconfigureerd | zonder `MISTRAL_AGENT_ID_ARCHIEF` is geen direct-to-expert mogelijk |
@@ -111,7 +113,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 - De route staat per job in `GET /chat/status/{job_id}` (`route`), de fase in dezelfde response (`app/phases.py`).
 - De eval spiegelt de productie-flow: `eval/run_eval.py` speelt `beurten` en `vraag` in volgorde af via `recognize_turn` en gebruikt `intake.decide_route`. In `eval/evalset.yaml` assert `verwacht_route` per vraag de route; `eval/last_run.json` rapporteert `per_route` en per vraag `route_reden`. Zie [reference: eval-set](../reference/eval-set.md).
 - Tests: `app/tests/test_intake.py` (route-beslissing incl. fallback), `app/tests/test_lookups.py` (herkenning, profielovergangen en inhoud van de lookups), `app/tests/test_app.py` (vervolgvragen en volgorde van jobs via `POST /chat`).
-- Routecontract: `app/tests/fixtures/routecontract.yaml` legt per gesprek vast of de app een deterministische bypass of de inhoudelijke route (`direct-<domein>` of `router`) kiest; `app/tests/test_routecontract.py` speelt elke regel af via `POST /chat`. Een nieuw routeringsgeval krijgt een regel in dat bestand, met `herkomst`; de test toetst alleen de route, niet de antwoordtekst.
+- Routecontract: `app/tests/fixtures/routecontract.yaml` legt per gesprek vast of de app een deterministische bypass, `direct-verzet` of een andere inhoudelijke route (`direct-<domein>` of `router`) kiest; `app/tests/test_routecontract.py` speelt elke regel af via `POST /chat`. Een nieuw routeringsgeval krijgt een regel in dat bestand, met `herkomst`; de test toetst alleen de route, niet de antwoordtekst.
 
 ## Configuratieknobs voor de routing
 
@@ -120,7 +122,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 | `MISTRAL_INTAKE_MODEL` | `mistral-small-latest` | Model van de intake-call |
 | `INTAKE_CONFIDENCE_THRESHOLD` | `0.8` | Drempel voor direct-to-expert |
 | `INTAKE_TIMEOUT` | `30` | Timeout van de intake-call (seconden) |
-| `MISTRAL_AGENT_ID_KNWU/_REGIO/_CLUB/_ARCHIEF` | leeg | Zonder id start er voor dat domein nooit direct een expert-conversatie |
+| `MISTRAL_AGENT_ID_KNWU/_REGIO/_CLUB/_ARCHIEF/_VERZET` | leeg | Zonder id start er voor dat domein nooit direct een expert-conversatie via de intake; `_VERZET` is de verzet-agent ([ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md)). Een vraag om verzetadvies of aangenomen verzetaanbod zonder `_VERZET` faalt hard |
 | `MISTRAL_AGENT_ID` | leeg | Router-agent; zonder key + id draait de app in stub-mode |
 | `PROMPT_CACHE_KEY` | `wtchatbot-v1` | Prompt caching aan (gecachte input = 10% prijs) |
 
@@ -129,7 +131,7 @@ Voorbeelden uit `app/tests/test_intake.py` en `eval/evalset.yaml` (`verwacht_rou
 - [ADR-0009](../adr/0009-agent-architectuur-snelheid.md): kleine router als voordeur, direct-to-expert bij hoge intake-confidence, deterministische bypass voor pure lookups, geen aparte zoek-agents en geen return-handoff. Een makkelijke lookup kost zo 0 LLM-calls (was 2). Trade-off: een small router is zwakker bij vage vragen — gecompenseerd doordat de intake bij lage confidence altijd de router inschakelt.
 - [ADR-0003](../adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md): RAG zit in de domeinexperts, niet in aparte zoek-agents; bronvolgorde per vraagtype.
 - [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md): websearch alleen via allowlist, als fallback op de bibliotheken.
-- [ADR-0006](../adr/0006-verzettenadvies-hybride-rag-plus-calculator.md): het geplande verzettenadvies (post-MVP) houdt de regel via RAG en de rekensom deterministisch — de bypass van het kale max-verzet raakt dat niet.
+- [ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md): het verzetadvies (vervangt ADR-0006) haalt het maximaal toegestane verzet uit dezelfde data als de bypass en rekent in Python; een vraag om verzetadvies of een aangenomen verzetaanbod gaat zonder intake naar de verzet-agent. Zie [Verzetadvies](../reference/verzetadvies.md).
 
 ## Waar in de code
 

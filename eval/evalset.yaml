@@ -36,13 +36,15 @@
 #   beurten:           (optioneel) lijst eerdere gebruikersberichten in
 #                      dezelfde conversatie, vóór `vraag`; alleen het
 #                      antwoord op `vraag` wordt gecheckt
+#   verwacht_tool_aanroep: (optioneel, #152) true/false — de agent moet in de
+#                      laatste beurt wel/niet een function call (bereken_verzet) doen
 #   verwachte_agent:   (optioneel) agent die `vraag` moet beantwoorden
 #                      (router-agent | knwu-agent | regio-agent | club-agent)
 #   (type=verheldering: vage vraag, de bot moet een wedervraag stellen;
 #    geen bron-check, bron/versiedatum optioneel)
 #
-# Verdeling: 16 knwu / 5 regio / 6 club (27 vragen; 5 via de router, 4 met
-# taalniveau B1). Harde 100%-gate op type strikethrough (min. 3) en websearch
+# Verdeling: 27 knwu / 5 regio / 6 club (38 vragen, waarvan 8 verzetadvies
+# (#152); 4 via de router). Harde 100%-gate op type strikethrough (min. 3) en websearch
 # (min. 2, licentie/verzekering);
 # verheldering telt mee voor de >=90%-gate maar heeft geen bron-check.
 # Oorspronkelijk een door de agent gegenereerd voorstel (wayfinder-ticket #13,
@@ -389,3 +391,92 @@ evalset:
     verwacht_antwoord: "gratis"
     bron: "ZMC - Info en reglement Zaterdagmiddag Competitie"
     versiedatum: "2026-10-29"
+
+  # --- Verzetadvies (#147/#152, ADR-0010) ---
+  # Alle fietsen zijn van een jongen geboren in 2011 (U17 Nieuweling, maximaal 7,68 m) met
+  # banden 28-622, tenzij anders vermeld. De getallen staan vast in
+  # VerzetEvalsetTests (tests/test_run_eval.py) tegen app/verzet_advies.py; de
+  # eval toetst route, function call en tekst. Het taalniveau is B1: de
+  # bron staat dan niet in het antwoord, alleen de voetnoot.
+  - id: verzet-voldoet
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: true
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft een kettingblad van 42, een cassette 12-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden?"
+    verwacht_antwoord: "7,45; 7,68; wegwielrennen"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-te-zwaar-kransje
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: true
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft één kettingblad van 52, een cassette 12-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden en wat moet er anders?"
+    verwacht_antwoord: "9,23; 7,68; 15; 7,38"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-te-zwaar-blad
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: true
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft kettingbladen 54/36, een cassette 14-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden en wat moet er anders?"
+    verwacht_antwoord: "8,22; 7,68; 50; 7,61"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-reguliere-cassette
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: true
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft kettingbladen 52/36, een cassette 14-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden en welke gewone cassette past dan?"
+    verwacht_antwoord: "7,91; 7,68; 12; 7,45"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-te-licht
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: true
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft één kettingblad van 36, een cassette 13-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden?"
+    verwacht_antwoord: "5,90; 7,68; licht"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-alleen-wielmaat
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: false
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft kettingbladen 50/34, een cassette 11-28 en wielen van 28 inch. Mag hij hiermee een wegwedstrijd rijden?"
+    verwacht_antwoord: "etrto"
+    niet_in_antwoord: "9,68; 2130"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-bypass-alleen-maximaal-verzet
+    verwacht_route: bypass
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    vraag: "Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?"
+    verwacht_antwoord: "7,68; hulp; controleren; aanpassen"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"
+  - id: verzet-hulpaanbod-aangenomen
+    verwacht_route: direct-verzet
+    verwacht_tool_aanroep: false
+    taalniveau: B1
+    categorie: knwu
+    type: standaard
+    beurten:
+      - "Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?"
+    vraag: "Ja, graag"
+    verwacht_antwoord: "kettingbla"
+    bron: "TITEL_20-Jeugdwielrennen_20260921"
+    versiedatum: "2026-09-21"

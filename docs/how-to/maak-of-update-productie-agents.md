@@ -3,7 +3,7 @@
 > [!WARNING]
 > Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
 
-Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, archief-agent) aanmaakt of bijwerkt op Mistral Studio vanuit de actieve architectuur-variant (`scripts/architectures/active` wijst naar `scripts/architectures/<naam>.json`, standaard `huidig.json`) en de prompt-bestanden in `scripts/prompts/`. Architectuur en routeringsregels: [docs/system-prompt.md](../system-prompt.md) en [ADR-0009](../adr/0009-agent-architectuur-snelheid.md); per-library RAG: [ADR-0003](../adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md); websearch-scope: [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md).
+Hoe je de zes agents (router-agent, knwu-agent, regio-agent, club-agent, archief-agent, verzet-agent) aanmaakt of bijwerkt op Mistral Studio vanuit de actieve architectuur-variant (`scripts/architectures/active` wijst naar `scripts/architectures/<naam>.json`, standaard `huidig.json`) en de prompt-bestanden in `scripts/prompts/`. Architectuur en routeringsregels: [docs/system-prompt.md](../system-prompt.md) en [ADR-0009](../adr/0009-agent-architectuur-snelheid.md); per-library RAG: [ADR-0003](../adr/0003-rag-over-eigen-documenten-kenniscentrum-autoriteit.md); websearch-scope: [ADR-0004](../adr/0004-websearch-beperkt-tot-kenniscentrum.md).
 
 ## Voorwaarden
 
@@ -19,7 +19,7 @@ Hoe je de vijf MVP-agents (router-agent, knwu-agent, regio-agent, club-agent, ar
 4. Voer uit: `python scripts/create_agents.py --apply`
 5. Neem de agent-ids uit de summary over in `.env`:
    - `MISTRAL_AGENT_ID` = id van de router-agent (de app praat met de router; handoffs gaan via de Conversations API)
-   - `MISTRAL_AGENT_ID_KNWU` / `MISTRAL_AGENT_ID_REGIO` / `MISTRAL_AGENT_ID_CLUB` / `MISTRAL_AGENT_ID_ARCHIEF` = ids van de content-agents (voor direct-to-expert in de app en voor `eval/run_eval.py`)
+   - `MISTRAL_AGENT_ID_KNWU` / `MISTRAL_AGENT_ID_REGIO` / `MISTRAL_AGENT_ID_CLUB` / `MISTRAL_AGENT_ID_ARCHIEF` / `MISTRAL_AGENT_ID_VERZET` = ids van de content-agents (voor direct-to-expert in de app en voor `eval/run_eval.py`)
 
 ## Architectuur switchen (#95)
 
@@ -34,9 +34,9 @@ De agent-architectuur is switchbaar via de `active`-pointer; agent-namen zijn id
 ## Controle dat het gelukt is
 
 - De summary print per agent naam -> id en de bijbehorende env-var.
-- In Mistral Studio: 5 agents; per content-agent precies één `document_library`-tool met de juiste library; `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club) en direct expert-naar-expert (ADR-0009, geen return-handoff naar de router).
+- In Mistral Studio: 6 agents; per content-agent met library precies één `document_library`-tool met de juiste library; de verzet-agent heeft geen library en geen websearch, alleen de function tool `bereken_verzet` (zie [Zet het verzetadvies aan](zet-het-verzetadvies-aan.md)); `web_search` alleen bij knwu-/regio-/club-agent; `handoffs` op de router-agent (naar knwu/regio/club/verzet) en direct expert-naar-expert (ADR-0009, geen return-handoff naar de router).
 - Zet géén `tool_configuration.include` op de `web_search`-tool: in `mistralai` 3.6.0 wordt de call dan wel geëmit maar nooit uitgevoerd. De domein-allowlist regelt server-side via org-level `/v1/web-filters` — zie [websearch-allowlist](stel-websearch-allowlist-in.md).
-- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0).
+- Model is `mistral-large-latest` voor de content-agents en `mistral-small-latest` voor de router-agent (ADR-0009), met `completion_args` `{"temperature": 0, "top_p": 1, "response_format": {"type": "text"}}` (`top_p=1` is verplicht bij temperature 0). Per agent kun je `"model"` en `"reasoning_effort"` zetten in de variant; `reasoning_effort` (`none`, `minimal`, `low`, `medium`, `high`, `xhigh` of `max`) wordt alleen aan de `completion_args` van die agent toegevoegd. Of het effect heeft, hangt af van het gekozen model.
 
 ## Opmerkingen
 

@@ -117,7 +117,8 @@ class ActivePointerTests(unittest.TestCase):
         self.assertEqual(config["prompts_folder"], "../prompts")
         names = {a["name"] for a in config["agents"]}
         self.assertEqual(
-            names, {"router-agent", "knwu-agent", "regio-agent", "club-agent", "archief-agent"}
+            names,
+            {"router-agent", "knwu-agent", "regio-agent", "club-agent", "archief-agent", "verzet-agent"},
         )
 
 
@@ -145,6 +146,18 @@ class BuildToolsTests(unittest.TestCase):
     def test_no_library_no_websearch_gives_empty_list(self) -> None:
         agent = {"name": "router-agent"}
         self.assertEqual(create_agents.build_tools(agent, {}), [])
+
+    def test_function_tool_gets_app_schema(self) -> None:
+        agent = {"name": "verzet-agent", "function_tools": ["bereken_verzet"]}
+        tools = create_agents.build_tools(agent, {})
+        self.assertEqual(len(tools), 1)
+        self.assertEqual(tools[0]["type"], "function")
+        self.assertEqual(tools[0]["function"]["name"], "bereken_verzet")
+
+    def test_unknown_function_tool_raises(self) -> None:
+        agent = {"name": "verzet-agent", "function_tools": ["bestaat-niet"]}
+        with self.assertRaises(ValueError):
+            create_agents.build_tools(agent, {})
 
     def test_missing_library_raises_with_sync_hint(self) -> None:
         agent = {"name": "knwu-agent", "library": "knwu", "websearch": False}
@@ -417,6 +430,34 @@ class RunCreateTests(unittest.TestCase):
                 create_agents.load_config(path)
             self.assertIn("model", str(ctx.exception))
 
+    def test_per_agent_reasoning_effort_lands_in_completion_args(self) -> None:
+        router = self.router_agent()
+        router["reasoning_effort"] = "medium"
+        config_path = self.make_config([self.knwu_agent(), router])
+        client = make_client(remote_libraries=[make_lib("knwu", "lib-knwu-1")])
+        report = self.empty_report()
+
+        rc = create_agents.run_create(
+            client, create_agents.load_config(config_path), apply=True, report=report, config_path=config_path
+        )
+
+        self.assertEqual(rc, 0, report["errors"])
+        calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
+        self.assertEqual(calls["knwu-agent"]["completion_args"], {"temperature": 0, "top_p": 1})
+        self.assertEqual(
+            calls["router-agent"]["completion_args"],
+            {"temperature": 0, "top_p": 1, "reasoning_effort": "medium"},
+        )
+
+    def test_load_config_rejects_unknown_reasoning_effort(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            data = minimal_config()
+            data["agents"][0]["reasoning_effort"] = "extreme"
+            path = write_json(Path(tmp), "agents_config.json", data)
+            with self.assertRaises(SystemExit) as ctx:
+                create_agents.load_config(path)
+            self.assertIn("reasoning_effort", str(ctx.exception))
+
     def test_productie_config_router_agent_heeft_kleiner_model(self) -> None:
         # #83/#88: in de productieconfig staat de router-agent op een kleiner model,
         # de content-agents (knwu/regio/club/archief) op de default.
@@ -444,7 +485,7 @@ class ProductieConfigTests(unittest.TestCase):
 
         self.assertEqual(rc, 0, report["errors"])
         calls = {c.kwargs["name"]: c.kwargs for c in client.beta.agents.create.call_args_list}
-        self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent", "agent-regio-agent"])
+        self.assertEqual(calls["club-agent"]["handoffs"], ["agent-knwu-agent", "agent-regio-agent", "agent-verzet-agent"])
 
     def test_knwu_agent_kan_doorverwijzen_na_onderwerpwissel(self) -> None:
         # Bug: na een KNWU-handoff blijft de conversatie bij de knwu-agent
@@ -469,9 +510,22 @@ class ProductieConfigTests(unittest.TestCase):
             if "handoffs" in c:
                 final_handoffs[agent_id.removeprefix("agent-")] = c["handoffs"]
         # #88: geen return-handoff naar de router; experts handoffen direct naar elkaar
-        self.assertEqual(final_handoffs["knwu-agent"], ["agent-regio-agent", "agent-club-agent"])
-        self.assertEqual(final_handoffs["club-agent"], ["agent-knwu-agent", "agent-regio-agent"])
-        self.assertEqual(final_handoffs["regio-agent"], ["agent-knwu-agent", "agent-club-agent"])
+        self.assertEqual(
+            final_handoffs["knwu-agent"], ["agent-regio-agent", "agent-club-agent", "agent-verzet-agent"]
+        )
+        self.assertEqual(
+            final_handoffs["club-agent"], ["agent-knwu-agent", "agent-regio-agent", "agent-verzet-agent"]
+        )
+        self.assertEqual(
+            final_handoffs["regio-agent"], ["agent-knwu-agent", "agent-club-agent", "agent-verzet-agent"]
+        )
+        self.assertEqual(
+            final_handoffs["router-agent"],
+            ["agent-knwu-agent", "agent-regio-agent", "agent-club-agent", "agent-verzet-agent"],
+        )
+        verzet = creates["verzet-agent"]
+        self.assertEqual([t["type"] for t in verzet["tools"]], ["function"])
+        self.assertNotIn("handoffs", verzet)
         for name in ("knwu-agent", "regio-agent", "club-agent"):
             prompt = " ".join(creates[name]["instructions"].split())
             self.assertNotIn("router-agent", prompt)

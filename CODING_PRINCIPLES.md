@@ -36,6 +36,7 @@ def calculate_gear_development(chainring: int, sprocket: int, wheel_circumferenc
 ## Fouten, logging en secrets
 
 - **Informatieve fouten** met context en een actie (`"Library 'KNWU' not found; check MISTRAL_LIBRARY_ID in .env"`). Geen kale `except: pass`.
+- **Hard falen, geen stille fallbacks.** Ontbreekt configuratie of klopt een aanname niet (bijv. een agent-id voor een route die de app kiest), gooi dan een informatieve fout in plaats van stil een andere route of standaardwaarde te kiezen. Zulke fouten moeten in de OTAP-straat bovenkomen, niet verborgen blijven. Voeg alleen een fallback toe als die bewust is besloten (bijv. in een ADR), zoals de terugval op de router bij een mislukte intake-call.
 - **Log op grenzen** (inkomende vraag, tool-call, LLM-call, fout), niet in elke functie. Log geen secrets of volledige persoonsgegevens.
 - **Secrets alleen via `.env`/environment variables**, nooit in code of commits. Lever een `.env.example` met lege waarden.
 

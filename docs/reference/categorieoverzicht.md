@@ -99,7 +99,7 @@ Appdatum in jaar J. Het overzicht toont de twee seizoenen in deze volgorde. Dit 
 | Licentie | per kalenderjaar, onafhankelijk van discipline en geslacht; wisselt die binnen een veldritseizoen, dan "t/m dec J" en "vanaf jan J+1" |
 | Oude categorie 1 | jongens U8/U9 en meisjes U9/U10; de kop toont "Oude cat. 1 (JO9/MO10)" |
 | Geboortejaar buiten de jeugd | geen regels, geen jeugdcategorie en geen jeugdlicentie in het huidige jaar → `ReadyForBypass` met "valt buiten de jeugdindeling" |
-| Toekomstig seizoen | laatst bekende regels, met het vooruitblikvoorbehoud; geen geldigheidslogica |
+| Toekomstig seizoen | laatst bekende regels; geen geldigheidslogica |
 
 ## Lookup-toestand
 
@@ -165,7 +165,7 @@ Disciplines in de data: `weg`, `veld` en `baan`. `baan` staat er alleen voor de 
 | Blokkop | `### <Discipline> <seizoen> · <Jongens\|Meisjes>`; bij categorie-invoer `· geboortejaar NNNN` erachter |
 | Volgorde | seizoenen chronologisch, jongens vóór meisjes, oplopend geboortejaar |
 | Regels per blok | `- **Categorie:** U14 (oude cat. 5)` of `(oude cat. n.v.t.)`; `- **Verzet:** 6,30 meter`, `vrij` of `NVT (niet van toepassing)`; `- **Licentie:** U13 (t/m dec 2026), U17 (vanaf jan 2027)` |
-| Slot | vooruitblikvoorbehoud, de slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" (`DISCLAIMER_LIBRARY`), één `Bron:`-regel als laatste regel |
+| Slot | de slotvraag "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" (`DISCLAIMER_LIBRARY`), of bij een initiële verzetvraag voor wegwielrennen het verzetaanbod (`VERZET_OFFER`); bij B2 een `Bron:`-regel als laatste regel |
 | Opmaak | geen ingesprongen lijstregels; de renderer blijft ongewijzigd |
 
 ### Bronregel

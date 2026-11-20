@@ -30,6 +30,57 @@ def test_recognize_birth_year_renders_combined_gender_specific_overview():
     assert not any(line.startswith("Bron:") for line in answer.splitlines())
 
 
+def test_initial_verzet_question_offers_help_instead_of_the_library_question():
+    decision = lookups.recognize_turn(
+        "Welk verzet mag ik met geboortejaar 2012?", None, NOVEMBER_2026, RULES, is_first_turn=True
+    )
+
+    answer = lookups.render_answer(decision, "B1")
+
+    assert answer.splitlines()[-1] == (
+        "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?"
+    )
+    assert "doorzoeken" not in answer
+
+
+@pytest.mark.parametrize(
+    "message",
+    ["2015", "Welke categorie is geboortejaar 2012?", "Welk verzet in het veld voor geboortejaar 2012?"],
+)
+def test_other_bypass_answers_stay_bare(message):
+    decision = lookups.recognize_turn(message, None, NOVEMBER_2026, RULES, is_first_turn=True)
+
+    answer = lookups.render_answer(decision, "B1")
+
+    assert "hulp nodig" not in answer
+    assert lookups.accepted_verzet_offer("ja graag", decision.next_state) is None
+
+
+def test_positive_reply_to_the_offer_hands_the_bypass_facts_to_the_verzet_agent():
+    decision = lookups.recognize_turn(
+        "Welk verzet mag mijn zoon uit 2014?", None, NOVEMBER_2026, RULES, is_first_turn=True
+    )
+
+    offer = lookups.accepted_verzet_offer("Ja, graag!", decision.next_state)
+
+    assert offer is not None
+    context = "\n".join(lookups.verzet_offer_context(offer))
+    for fact in ("2014", "jongens", "U14", "6,30 meter", "TITEL_20", "2026-09-21", "20.1.007"):
+        assert fact in context
+    assert "meisjes" not in context
+    assert lookups.accepted_verzet_offer("nee bedankt", decision.next_state) is None
+    assert lookups.accepted_verzet_offer("ja graag", lookups.NoLookupState()) is None
+
+
+def test_offer_follows_a_pending_verzet_question_completed_by_a_birth_year():
+    pending = lookups.recognize_turn("Welk verzet mag ik?", None, NOVEMBER_2026, RULES, is_first_turn=True)
+    assert pending.kind == "needs_input_for_bypass"
+
+    decision = lookups.recognize_turn("2012", pending.next_state, NOVEMBER_2026, RULES, is_first_turn=False)
+
+    assert "hulp nodig" in lookups.render_answer(decision, "B1")
+
+
 def test_paired_category_keeps_its_gender_specific_members_per_season():
     today = date(2026, 6, 1)
     decision = lookups.recognize_turn(
@@ -685,4 +736,7 @@ def test_every_bypass_answer_uses_supported_markdown_format(message, language_le
         assert source_line_indexes == [len(lines) - 1]
     else:
         assert source_line_indexes == []
-    assert "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" in answer
+    # elk antwoord sluit met precies één slotvraag: de bibliotheekvraag of het verzetaanbod
+    assert ("Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?" in answer) != (
+        lookups.VERZET_OFFER in answer
+    )

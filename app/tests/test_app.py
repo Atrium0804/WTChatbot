@@ -1029,10 +1029,15 @@ def test_category_and_gearing_lookup_routes(lookup_client, monkeypatch, message,
     for fragment in expected:
         assert fragment in resp.json()["answer"]
     answer_lines = resp.json()["answer"].splitlines()
-    assert answer_lines[-1] == "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
+    # een initiële verzetvraag voor de weg krijgt het hulpaanbod (#150), de rest de bibliotheekvraag
+    offers_help = message.startswith("Welk verzet") and "op de weg" in message
+    assert answer_lines[-1] == (
+        "Heb je hulp nodig bij het controleren of aanpassen van het verzet van je fiets?"
+        if offers_help
+        else "Moet ik de KNWU-documenten doorzoeken voor een gedetailleerder antwoord?"
+    )
     assert not any(line.startswith("Bron:") for line in answer_lines), "B1 heeft geen bronregel"
     assert calls == []
-
 
 def test_gearing_question_is_completed_by_a_bare_year_without_discipline(lookup_client, monkeypatch):
     """#125: `Welk verzet?` -> `2012` geeft het volledige overzicht; discipline is
@@ -1201,6 +1206,91 @@ def test_current_intake_completion_bypasses_and_commits_the_profile(lookup_clien
     assert "**Geboortejaar 2012**" in followup.json()["answer"]
     assert {gender for _, gender, _ in overview_rows(followup.json()["answer"])} == {"Meisjes"}
     assert [kind for kind, _ in model_calls] == ["intake"]
+
+
+def test_positive_reply_to_the_verzet_offer_starts_the_verzet_agent_with_the_bypass_facts(
+    lookup_client, monkeypatch
+):
+    import intake
+    import lookups
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"verzet": "verzet-id"})
+    client = lookup_client()
+    first = client.post(
+        "/chat", json={"message": "Welk verzet mag mijn zoon uit 2014?", "client_id": "c"}
+    )
+    assert first.status_code == 200
+    assert first.json()["answer"].splitlines()[-1] == lookups.VERZET_OFFER
+
+    reply = post_in(client, first.json()["conversation_id"], "ja graag")
+
+    assert reply.status_code == 202
+    result = _wait_for_job(client, reply.json()["job_id"])
+    assert result["route"] == "direct-verzet"
+    assert [kind for kind, _ in model_calls] == ["agent"]
+    request = model_calls[0][1]
+    assert request["agent_id"] == "verzet-id"
+    for fact in ("2014", "jongens", "U14", "6,30 meter", "20.1.007"):
+        assert fact in str(request["message"])
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "ik wil mijn verzet aanpassen",
+        "ik wil verzetadvies",
+        "Mijn fiets heeft 50/34, 11-28 en 25-622. Mag dat voor een jongen van 2013?",
+    ],
+)
+def test_verzetadvies_request_goes_straight_to_the_verzet_agent_without_intake(
+    lookup_client, monkeypatch, message
+):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "verzet": "verzet-id"})
+    client = lookup_client()
+
+    resp = client.post("/chat", json={"message": message, "client_id": "c"})
+
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["route"] == "direct-verzet"
+    assert [kind for kind, _ in model_calls] == ["agent"]
+    assert model_calls[0][1]["agent_id"] == "verzet-id"
+
+
+def test_verzetadvies_request_without_a_configured_verzet_agent_fails_hard(lookup_client, monkeypatch):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id"})
+    client = lookup_client()
+
+    resp = client.post("/chat", json={"message": "ik wil mijn verzet aanpassen", "client_id": "c"})
+
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["status"] == "error"
+    assert "MISTRAL_AGENT_ID_VERZET" in result["error"]
+    assert model_calls == []
+
+
+def test_other_reply_to_the_verzet_offer_follows_the_normal_route(lookup_client, monkeypatch):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"verzet": "verzet-id"})
+    client = lookup_client()
+    first = client.post(
+        "/chat", json={"message": "Welk verzet mag mijn zoon uit 2014?", "client_id": "c"}
+    )
+
+    reply = post_in(client, first.json()["conversation_id"], "nee, maar wat is de NK-datum?")
+
+    result = _wait_for_job(client, reply.json()["job_id"])
+    assert result["route"] == "router"
+    assert [kind for kind, _ in model_calls] == ["intake", "agent"]
+    assert model_calls[1][1]["agent_id"] == "router-id"
 
 
 def test_intake_cannot_invent_a_birth_year_but_the_pending_question_remains(lookup_client, monkeypatch):

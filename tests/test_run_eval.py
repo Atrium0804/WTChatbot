@@ -696,6 +696,205 @@ class EvalsetSchemaTests(unittest.TestCase):
                 self.assertIn(e.get("verwachte_agent", "knwu-agent"), self.BEKENDE_AGENTS)
 
 
+class VerzetFunctionCallTests(unittest.TestCase):
+    """#152: de runner beantwoordt function calls van de verzet-agent zoals de app."""
+
+    ARGS = (
+        '{"birth_year": 2011, "gender": "jongens", "chainring": 42, "smallest_sprocket": 14, '
+        '"largest_sprocket": 28, "tire_width_mm": 28, "rim_diameter_mm": 622}'
+    )
+
+    def play(self, entry: dict, responses: list[dict], offer=None) -> tuple[dict, list[dict]]:
+        sent = []
+
+        def fake_send(message, api_key, timeout, agent_id=None, conversation_id=None):
+            sent.append({"message": message, "agent_id": agent_id, "conversation_id": conversation_id})
+            return responses[len(sent) - 1]
+
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.object(run_eval, "send_message", side_effect=fake_send):
+            run = run_eval.run_conversation(
+                entry, "ag_verzet", "key", PEILDATUM, rules, {"ag_verzet": "verzet-agent"}, offer=offer
+            )
+        return run, sent
+
+    def call_then_answer(self) -> list[dict]:
+        return [
+            {"conversation_id": "c1", "outputs": [
+                {"type": "function.call", "tool_call_id": "t1", "name": "bereken_verzet", "arguments": self.ARGS},
+            ]},
+            {"conversation_id": "c1", "outputs": [
+                {"type": "message.output", "agent_id": "ag_verzet", "content": "Je zwaarste verzet is 6,39 m."},
+            ]},
+        ]
+
+    def test_function_call_wordt_uitgevoerd_en_beantwoord(self) -> None:
+        entry = {"id": "x", "type": "standaard", "vraag": "Mag mijn fiets? 42, 14-28, 28-622"}
+        run, sent = self.play(entry, self.call_then_answer())
+        self.assertEqual(run["error"], "")
+        self.assertEqual(run["antwoord"], "Je zwaarste verzet is 6,39 m.")
+        self.assertEqual(sent[1]["conversation_id"], "c1")
+        result = sent[1]["message"][0]
+        self.assertEqual((result["type"], result["tool_call_id"]), ("function.result", "t1"))
+        self.assertIn("6.39", result["result"])
+        self.assertEqual(run["trace"][0]["function_calls"], ["bereken_verzet"])
+        self.assertEqual(run["trace"][0]["agents"], ["verzet-agent"])
+
+    def test_zonder_function_call_is_de_lijst_leeg(self) -> None:
+        entry = {"id": "x", "type": "standaard", "vraag": "Mag mijn fiets?"}
+        answer = {"conversation_id": "c1", "outputs": [
+            {"type": "message.output", "agent_id": "ag_verzet", "content": "Wat is je ETRTO-maat?"}
+        ]}
+        run, _ = self.play(entry, [answer])
+        self.assertEqual(run["trace"][0]["function_calls"], [])
+
+    def test_agent_die_blijft_aanroepen_geeft_een_error(self) -> None:
+        entry = {"id": "x", "type": "standaard", "vraag": "Mag mijn fiets?"}
+        call = {"conversation_id": "c1", "outputs": [
+            {"type": "function.call", "tool_call_id": "t1", "name": "bereken_verzet", "arguments": self.ARGS},
+        ]}
+        run, _ = self.play(entry, [call] * 20)
+        self.assertIn("functieaanroepen", run["error"])
+
+    def test_aangenomen_aanbod_start_een_verse_conversation_met_bypass_context(self) -> None:
+        rules = run_eval.knwu_categories.load_rules()
+        state = run_eval.replay_beurt(
+            "Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?",
+            run_eval.lookups.NoLookupState(), "key", PEILDATUM, rules, is_first_turn=True,
+        )
+        offer = run_eval.lookups.accepted_verzet_offer("Ja, graag", state)
+        entry = {"id": "x", "type": "standaard", "beurten": ["eerdere vraag"], "vraag": "Ja, graag"}
+        answer = {"conversation_id": "c1", "outputs": [
+            {"type": "message.output", "agent_id": "ag_verzet", "content": "Welk kettingblad?"}
+        ]}
+        run, sent = self.play(entry, [answer], offer=offer)
+        self.assertEqual(len(sent), 1)  # de bypass-beurt gaat niet naar de agent
+        self.assertEqual(sent[0]["agent_id"], "ag_verzet")
+        self.assertIn("geboortejaar 2011", sent[0]["message"])
+        self.assertIn("7,68", sent[0]["message"])
+        self.assertEqual(run["antwoord"], "Welk kettingblad?")
+
+
+class ToolAanroepCheckTests(unittest.TestCase):
+    ENTRY = {
+        "id": "x", "categorie": "knwu", "type": "standaard", "vraag": "Vraag?",
+        "verwacht_antwoord": "ETRTO",
+    }
+
+    def check(self, expected: bool, calls: list[str]) -> dict:
+        entry = {**self.ENTRY, "verwacht_tool_aanroep": expected}
+        trace = [{"vraag": "Vraag?", "agents": [], "function_calls": calls}]
+        return run_eval.check_entry(entry, "Wat is je ETRTO-maat?", trace)
+
+    def test_verwachte_aanroep_ontbreekt_faalt(self) -> None:
+        self.assertFalse(self.check(True, [])["ok"])
+        self.assertTrue(self.check(True, ["bereken_verzet"])["ok"])
+
+    def test_onverwachte_aanroep_faalt(self) -> None:
+        result = self.check(False, ["bereken_verzet"])
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["tool_ok"])
+        self.assertTrue(self.check(False, [])["ok"])
+
+    def test_zonder_verwachting_geen_check(self) -> None:
+        trace = [{"vraag": "Vraag?", "agents": [], "function_calls": ["bereken_verzet"]}]
+        self.assertTrue(run_eval.check_entry(self.ENTRY, "ETRTO", trace)["ok"])
+
+
+class VerzetPlanTests(unittest.TestCase):
+    """#152: plan_entry spiegelt de route na het verzetaanbod van de bypass."""
+
+    ENV = {"MISTRAL_AGENT_ID": "ag_router", "MISTRAL_AGENT_ID_VERZET": "ag_verzet"}
+
+    def test_ja_na_het_aanbod_gaat_zonder_intake_naar_de_verzet_agent(self) -> None:
+        entry = {
+            "id": "x",
+            "beurten": ["Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?"],
+            "vraag": "Ja, graag",
+        }
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.dict(os.environ, self.ENV), patch.object(run_eval.intake, "classify_message") as classify:
+            plan = run_eval.plan_entry(entry, "key", PEILDATUM, rules)
+        classify.assert_not_called()
+        self.assertEqual(plan["route"], "direct-verzet")
+        self.assertEqual(plan["route_reden"], "verzet_offer_accepted")
+        self.assertEqual(plan["agent_id"], "ag_verzet")
+        self.assertIsNotNone(plan["offer"])
+
+    def test_zonder_verzet_agent_faalt_de_verzetroute_hard(self) -> None:
+        entry = {
+            "id": "x",
+            "beurten": ["Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?"],
+            "vraag": "Ja, graag",
+        }
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}, clear=True), self.assertRaisesRegex(
+            RuntimeError, "MISTRAL_AGENT_ID_VERZET"
+        ):
+            run_eval.plan_entry(entry, "key", PEILDATUM, rules)
+
+    def test_vraag_om_verzetadvies_gaat_zonder_intake_naar_de_verzet_agent(self) -> None:
+        entry = {"id": "x", "vraag": "ik wil mijn verzet aanpassen"}
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.dict(os.environ, self.ENV), patch.object(run_eval.intake, "classify_message") as classify:
+            plan = run_eval.plan_entry(entry, "key", PEILDATUM, rules)
+        classify.assert_not_called()
+        self.assertEqual(plan["route"], "direct-verzet")
+        self.assertEqual(plan["route_reden"], "verzetadvies_vraag")
+        self.assertEqual(plan["agent_id"], "ag_verzet")
+        self.assertIsNone(plan["offer"])
+
+
+class VerzetEvalsetTests(unittest.TestCase):
+    """#152: de getallen in de verzet-entries komen uit de rekenmodule (ADR-0010)."""
+
+    # id -> (kettingbladen, cassette, ETRTO) van een jongen geboren in 2011 (U17 Nieuweling, 7,68 m)
+    SETUPS = {
+        "verzet-voldoet": dict(chainring=42, small_chainring=None, smallest_sprocket=12, largest_sprocket=28),
+        "verzet-te-zwaar-kransje": dict(chainring=52, small_chainring=None, smallest_sprocket=12, largest_sprocket=28),
+        "verzet-te-zwaar-blad": dict(chainring=54, small_chainring=36, smallest_sprocket=14, largest_sprocket=28),
+        "verzet-reguliere-cassette": dict(chainring=52, small_chainring=36, smallest_sprocket=14, largest_sprocket=28),
+        "verzet-te-licht": dict(chainring=36, small_chainring=None, smallest_sprocket=13, largest_sprocket=28),
+    }
+
+    def advice(self, setup: dict):
+        args = dict(birth_year=2011, gender="jongens", year=2026, tire_width_mm=28, rim_diameter_mm=622)
+        args.update(setup)
+        return run_eval.verzet_advies.advise(**args, rules=run_eval.knwu_categories.load_rules())
+
+    def numbers(self, advice) -> set[str]:
+        values = [advice.limit_m, advice.current.heaviest_gear_m]
+        values += [a.result.heaviest_gear_m for a in advice.advices]
+        return {f"{v:.2f}".replace(".", ",") for v in values}
+
+    def test_verwachte_getallen_komen_uit_de_rekenmodule(self) -> None:
+        entries = {e["id"]: e for e in run_eval.load_evalset(EVALSET)}
+        for entry_id, setup in self.SETUPS.items():
+            with self.subTest(entry_id):
+                entry = entries[entry_id]
+                expected = {t for t in run_eval.tokens(entry["verwacht_antwoord"]) if "," in t}
+                self.assertTrue(expected)
+                self.assertLessEqual(
+                    {run_eval._canoniek(n) for n in expected}, {run_eval._canoniek(n) for n in self.numbers(self.advice(setup))}
+                )
+
+    def test_ruim_te_licht_is_te_licht_en_voldoet_niet(self) -> None:
+        self.assertTrue(self.advice(self.SETUPS["verzet-te-licht"]).too_light)
+        self.assertFalse(self.advice(self.SETUPS["verzet-voldoet"]).too_light)
+        self.assertTrue(self.advice(self.SETUPS["verzet-voldoet"]).current.within_limit)
+
+    def test_reguliere_cassette_geeft_1x_met_12t(self) -> None:
+        regular = self.advice(self.SETUPS["verzet-reguliere-cassette"]).advice(3)
+        assert regular is not None
+        self.assertEqual((regular.result.setup.chainring, regular.result.setup.smallest_sprocket), (42, 12))
+
+    def test_alle_verzet_entries_routeren_naar_de_verzet_agent_of_bypass(self) -> None:
+        entries = [e for e in run_eval.load_evalset(EVALSET) if e["id"].startswith("verzet-")]
+        routes = {e["id"]: e.get("verwacht_route") for e in entries}
+        self.assertEqual(sum(r == "bypass" for r in routes.values()), 1)
+        self.assertGreaterEqual(sum(r == "direct-verzet" for r in routes.values()), 7)
+        self.assertTrue(all(routes.values()))
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -750,8 +949,8 @@ class PlanEntryTests(unittest.TestCase):
         self.assertEqual(plan["route"], "router")
 
     def test_earlier_incomplete_beurt_gets_the_intake_completion_like_the_app(self) -> None:
-        entry = {"vraag": "alleen meisjes", "beurten": ["Welk verzet? 2012"]}
-        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+        entry = {"vraag": "alleen meisjes", "beurten": ["Welk verzet? 2011"]}
+        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2011}
         with patch.object(
             run_eval.intake, "classify_message", return_value=intake_result
         ) as classify:
@@ -760,7 +959,7 @@ class PlanEntryTests(unittest.TestCase):
         self.assertEqual(plan["route"], "bypass")
         self.assertEqual(plan["route_reden"], "regex_lookup")
         answer = run_eval.lookups.render_answer(plan["lookup"], "B1")
-        self.assertIn("**Geboortejaar 2012**", answer)
+        self.assertIn("**Geboortejaar 2011**", answer)
         self.assertNotIn("Jongens", answer)
 
     def test_intake_direct_to_expert_bij_hoge_confidence(self) -> None:
@@ -802,15 +1001,15 @@ class PlanEntryTests(unittest.TestCase):
 
     def test_intake_kan_onvolledige_lookup_compleet_maken(self) -> None:
         # het kale jaartal is pas met de intake een geboortejaar -> intake-bypass
-        entry = {"id": "x", "vraag": "Welk verzet? 2012"}
-        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2012}
+        entry = {"id": "x", "vraag": "Welk verzet? 2011"}
+        intake_result = {**run_eval.intake.FALLBACK, "intentie": "lookup", "geboortejaar": 2011}
         with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}), patch.object(
             run_eval.intake, "classify_message", return_value=intake_result
         ):
             plan = run_eval.plan_entry(entry, "key", self.today, self.rules)
         self.assertEqual(plan["route"], "bypass")
         self.assertEqual(plan["route_reden"], "intake_lookup")
-        self.assertIn("**Geboortejaar 2012**", run_eval.lookups.render_answer(plan["lookup"], "B1"))
+        self.assertIn("**Geboortejaar 2011**", run_eval.lookups.render_answer(plan["lookup"], "B1"))
 
     def test_intake_redt_afgewezen_invoer_niet(self) -> None:
         entry = {"id": "x", "vraag": "Welke categorie voor geboortejaar 2015 in 2025?"}

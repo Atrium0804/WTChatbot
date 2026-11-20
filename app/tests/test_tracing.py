@@ -29,7 +29,9 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "LOCAL_DEBUG_TRACES", True)
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "")
-    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "club": "club-id"})
+    monkeypatch.setattr(
+        config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "club": "club-id", "verzet": "verzet-id"}
+    )
     with TestClient(
         create_app(db_path=str(tmp_path / "test.db")),
         base_url="http://127.0.0.1",
@@ -169,6 +171,77 @@ def test_stream_handoffs_tools_and_errors_omit_payloads(client, monkeypatch, cap
     assert any(event["event"] == "agent_output" and event["agent"] == "knwu-agent" for event in events)
     assert events[-1]["reason"] == "RuntimeError"
     assert "secret" not in json.dumps(trace) + caplog.text
+
+
+@pytest.mark.parametrize("stream_fails", [False, True])
+def test_function_call_is_executed_answered_and_traced_without_personal_data(
+    client, monkeypatch, caplog, stream_fails
+):
+    enable_mistral(monkeypatch)
+    arguments = {
+        "birth_year": 2012, "gender": "meisjes", "chainring": 50, "smallest_sprocket": 11,
+        "largest_sprocket": 28, "tire_width_mm": 28, "rim_diameter_mm": 622,
+    }
+    sent = []
+
+    def reply(**kwargs):
+        sent.append(kwargs)
+        if len(sent) == 1:
+            kwargs["on_function_call"](
+                mistral_client.FunctionCall("call-1", "bereken_verzet", json.dumps(arguments))
+            )
+            return "conv-v", ""
+        return "conv-v", "Je verzet is te zwaar."
+
+    def broken_stream(**kwargs):
+        raise mistral_client.StreamStartError("start mislukt")
+
+    monkeypatch.setattr(mistral_client, "stream_answer", broken_stream if stream_fails else reply)
+    monkeypatch.setattr(mistral_client, "answer_question", reply)
+    caplog.set_level(logging.INFO, logger="uvicorn.error.trace")
+
+    response, trace = post_and_wait(client, "Mag mijn dochter met 50x11 rijden? 28-622")
+
+    status = client.get(f"/chat/status/{response.json()['job_id']}").json()
+    assert status["answer"] == "Je verzet is te zwaar."
+    result_entry = sent[1]["message"][0]
+    assert sent[1]["conversation_id"] == "conv-v"
+    assert result_entry["tool_call_id"] == "call-1"
+    assert json.loads(result_entry["result"])["current"]["heaviest_gear_m"] == 9.68
+    call = next(event for event in trace["events"] if event["event"] == "function_call")
+    assert call["tool"] == "bereken_verzet"
+    assert call["reason"] == "ok"
+    assert call["input"] == "50 11-28 28-622"
+    assert call["outcome"].endswith("te zwaar")
+    serialized = json.dumps(trace) + caplog.text
+    assert "2012" not in serialized
+    assert "meisjes" not in serialized
+
+
+def test_agent_that_never_stops_calling_starts_a_fresh_conversation_next_turn(client, monkeypatch):
+    enable_mistral(monkeypatch)
+    sent = []
+    stuck = {"on": False}
+
+    def agent(**kwargs):
+        sent.append(kwargs)
+        if stuck["on"]:
+            kwargs["on_function_call"](mistral_client.FunctionCall("c", "bereken_verzet", "{}"))
+            return "conv-1", ""
+        return "conv-1", "antwoord"
+
+    monkeypatch.setattr(mistral_client, "stream_answer", agent)
+    response, _ = post_and_wait(client, "Wanneer zijn de wedstrijden?")
+    conversation_id = response.json()["conversation_id"]
+    stuck["on"] = True
+    _, trace = post_and_wait(client, "Klopt mijn verzet? 50x11", conversation_id)
+    assert trace["status"] == "error"
+    assert sent[-1]["conversation_id"] == "conv-1"
+
+    stuck["on"] = False
+    sent.clear()
+    post_and_wait(client, "Nog een vraag over wedstrijden", conversation_id)
+    assert sent[0]["conversation_id"] is None
 
 
 def test_stream_start_fallback_is_visible(client, monkeypatch):

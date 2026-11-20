@@ -7,11 +7,14 @@ blijven als fallback. Bij een deterministische bypass (#91) is er géén
 fase — het antwoord verschijnt direct.
 """
 
+import function_calls
+
 PHASE_LEES = "Ik lees je vraag…"
 PHASE_BEREKEN = "Ik bereken de leeftijdscategorie…"
 PHASE_KNWU = "Ik doorzoek de KNWU-regelgeving…"
 PHASE_REGIO_CLUB = "Ik doorzoek de regio-/clubdocumenten…"
 PHASE_WEB = "Ik raadpleeg kenniscentrum.knwu.nl…"
+PHASE_VERZET = "Ik bereken je verzet…"
 PHASE_OPSTELLEN = "Ik stel je antwoord op…"
 PHASE_KLAAR = "Klaar"
 PHASE_FOUT = "Fout"
@@ -22,8 +25,12 @@ AGENT_FASE = {
     "regio-agent": PHASE_REGIO_CLUB,
     "club-agent": PHASE_REGIO_CLUB,
     "archief-agent": PHASE_REGIO_CLUB,
+    "verzet-agent": PHASE_VERZET,
     "router-agent": PHASE_LEES,
 }
+
+# function-naam -> fase bij een function call van de agent (#149)
+FUNCTION_FASE = {function_calls.BEREKEN_VERZET: PHASE_VERZET}
 
 
 def fase_voor_startagent(agent_naam: str) -> str:
@@ -49,6 +56,9 @@ def phase_for_event(event: str, data: dict, current_agent: str) -> tuple[str, st
         if name.startswith("web_search"):
             return PHASE_WEB, current_agent
         return None
+    if event == "function.call.delta":
+        phase = FUNCTION_FASE.get(str(data.get("name") or ""))
+        return (phase, current_agent) if phase else None
     if event == "message.output.delta":
         return PHASE_OPSTELLEN, current_agent
     return None

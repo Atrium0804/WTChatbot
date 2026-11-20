@@ -30,10 +30,28 @@ Per entry in `evalset`:
 | `niet_in_antwoord` | string | nee | Woorden gescheiden door `;` die NIET in het antwoord mogen staan, bv. termen uit een ongewenste routeringsvraag of overbodige verheldervragen. Zelfde tokenmatching als de kernfeiten |
 | `via` | enum | nee | Alleen `router`: de vraag gaat naar de router-agent (`MISTRAL_AGENT_ID`) in plaats van de categorie-agent, dus end-to-end met handoff |
 | `verwacht_route` | enum | nee | Assert de productie-route van de app (#92): `bypass` (deterministische lookup, 0 LLM-calls), `direct-<domein>` (direct-to-expert via de light intake) of `router`. Mismatch = FAIL |
+| `verwacht_tool_aanroep` | boolean | nee | Assert het gedrag van de agent in de laatste beurt (#152): `true` = de agent roept `bereken_verzet` aan, `false` = geen aanroep (bijv. omdat de ETRTO-maat ontbreekt). Mismatch = FAIL |
 | `beurten` | lijst van strings | nee | Eerdere gebruikersberichten in dezelfde conversatie, vóór `vraag`. De runner stuurt ze in volgorde; alleen het antwoord op `vraag` wordt gecheckt |
 | `verwachte_agent` | string | nee | Agent die `vraag` moet beantwoorden (`router-agent` \| `knwu-agent` \| `regio-agent` \| `club-agent`). Vangt een conversatie die na een handoff bij de verkeerde agent blijft hangen |
 
-Huidige verdeling: 30 vragen — 19 knwu, 5 regio, 6 club; 21 standaard, 3 strikethrough, 4 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `verwachte_agent`; 4 vragen hebben `beurten` (issue #44). Alle entries hebben expliciet `taalniveau: B2`, behalve de 6 B1-vragen (issue #52).
+Huidige verdeling: 38 vragen — 27 knwu, 5 regio, 6 club; 29 standaard, 3 strikethrough, 4 websearch, 2 verheldering. 4 vragen gaan via de router, waarvan 3 met `verwachte_agent`; 5 vragen hebben `beurten` (issue #44). Alle entries hebben expliciet `taalniveau: B2`, behalve de 14 B1-vragen (issue #52).
+
+### Verzetadvies-entries (#152)
+
+Acht entries met id `verzet-*` (categorie `knwu`, `taalniveau: B1`) toetsen het [verzetadvies](../../GLOSSARY.md) (ADR-0010) van een jongen geboren in 2011 (U17 Nieuweling, maximaal 7,68 m, banden 28-622):
+
+| Entry | Route | Wat het toetst |
+| --- | --- | --- |
+| `verzet-voldoet` | `direct-verzet` | fiets blijft binnen het maximaal toegestane verzet |
+| `verzet-te-zwaar-kransje` | `direct-verzet` | te zwaar; voorstel groter kleinste kransje |
+| `verzet-te-zwaar-blad` | `direct-verzet` | te zwaar; voorstel kleiner kettingblad |
+| `verzet-reguliere-cassette` | `direct-verzet` | te zwaar; voorstel reguliere cassette (11T en 12T) |
+| `verzet-te-licht` | `direct-verzet` | ruim te licht |
+| `verzet-alleen-wielmaat` | `direct-verzet` | alleen wielmaat in inches: de agent vraagt de ETRTO-maat en rekent niet (`verwacht_tool_aanroep: false`) |
+| `verzet-bypass-alleen-maximaal-verzet` | `bypass` | alleen het maximaal toegestane verzet, met het hulpaanbod |
+| `verzet-hulpaanbod-aangenomen` | `direct-verzet` | "Ja, graag" op het hulpaanbod start de verzet-agent met de bypass-gegevens als context |
+
+De getallen in `verwacht_antwoord` komen uit `app/verzet_advies.py`; `VerzetEvalsetTests` in `tests/test_run_eval.py` controleert dat ze nog kloppen. De eval toetst alleen route, function call en tekst. Gebruik een geboortejaar waarvan de categorie in het huidige en het volgende seizoen gelijk is (bijv. 2011): de bypass toont na november ook het volgend seizoen, terwijl de rekentool het huidige jaar gebruikt.
 
 Bij `type: verheldering` is de vraag expres vaag (bv. "in welke categorie rijdt mijn kind?"); de bot moet dan een wedervraag stellen. De bot stelt één vraag per bericht, dus `verwacht_antwoord` bevat alleen wat in de éérste vraag hoort (bv. `geboortejaar`); met `niet_in_antwoord` controleer je dat er geen overbodige vragen bij staan. De bron-check vervalt, dus `bron` en `versiedatum` zijn daarbij optioneel.
 
@@ -51,6 +69,8 @@ Deterministisch, zonder LLM-judge (kosten en non-determinisme):
 6. **Agent** (alleen met `verwachte_agent`): de agent die het antwoord op `vraag` gaf moet de verwachte agent zijn. De naam komt uit `agent_id` van de `message.output` in de response, vertaald via de `MISTRAL_AGENT_ID*`-variabelen.
 7. **Route** (alleen met `verwacht_route`, #92): de route die de runner spiegelt uit de app (`bypass` | `direct-<domein>` | `router`) moet gelijk zijn aan `verwacht_route`.
 
+8. **Tool-aanroep** (alleen met `verwacht_tool_aanroep`, #152): de agent riep in de laatste beurt wel of niet een function call aan. De runner voert function calls uit en beantwoordt ze met dezelfde code als de app (`function_calls.run_turn`); `last_run.json` toont ze onder `function_calls_laatste_beurt`.
+
 Een vraag is "correct mét correcte bron" als alle checks slagen.
 
 Websearch-vragen krijgen 300 s timeout en 3 pogingen, overige vragen 180 s en 2 pogingen. `eval/last_run.json` bevat per vraag het volledige antwoord, een `trace` (per beurt de vraag, de agent(s) die antwoordden en `duur_ms`), en per vraag `route`, `route_reden` (`regex_lookup` of `intake_lookup` bij een bypass, `via_router` bij `via: router`, anders de trace-reden van de app: `confident_domain`, `low_confidence`, `expert_not_configured` of de reden van een intake-fout), `duur_ms`, `llm_calls` (aantal `message.output`-calls in de laatste beurt; 0 bij `bypass`) en `intake_ms` (de light-intake-call, #91). In de summary staat per route een aggregatie (`per_route`: n, ok, gemiddelde_duur_ms, llm_calls_totaal) — daarmee zijn de 4 baseline-vragen (#92: 2 lookup, 2 library) vóór/na de snelheidsflow direct vergelijkbaar.
@@ -61,7 +81,7 @@ Elk bericht krijgt dezelfde contextregels als in productie (`app/context.py`): p
 
 ## Route spiegelen (#91/#92)
 
-De runner spiegelt de route-beslissing van de app per vraag (`plan_entry` in `run_eval.py`, zelfde operaties als productie — `app/lookups.py` + `app/intake.py`): `beurten` en `vraag` gaan in volgorde door `lookups.recognize_turn`, met de lookup-toestand van de vorige beurt. Is een eerdere beurt een herkende onvolledige vraag, dan vult de runner die net als de app aan met de light intake en `lookups.complete_with_intake`. Is de beslissing voor `vraag` ReadyForBypass, dan is de route `bypass` (`route_reden: regex_lookup`) en komt het antwoord uit `lookups.render_answer`, zonder conversation te starten; het taalniveau bepaalt of er een bronregel staat. Anders geldt `via: router` als vaste router-route, en start de runner de light intake (1 call naar `mistral-small-latest`, `MISTRAL_CHAT_COMPLETIONS_URL`/`MISTRAL_INTAKE_MODEL`). `intake.decide_route` kiest dan een intake-ondersteunde bypass (`route_reden: intake_lookup`, alleen voor een herkende onvolledige vraag), direct-to-expert (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`) of router.
+De runner spiegelt de route-beslissing van de app per vraag (`plan_entry` in `run_eval.py`, zelfde operaties als productie — `app/lookups.py` + `app/intake.py`): `beurten` en `vraag` gaan in volgorde door `lookups.recognize_turn`, met de lookup-toestand van de vorige beurt. Is een eerdere beurt een herkende onvolledige vraag, dan vult de runner die net als de app aan met de light intake en `lookups.complete_with_intake`. Is de beslissing voor `vraag` ReadyForBypass, dan is de route `bypass` (`route_reden: regex_lookup`) en komt het antwoord uit `lookups.render_answer`, zonder conversation te starten; het taalniveau bepaalt of er een bronregel staat. Gaat `vraag` positief in op het verzetaanbod van het vorige bypass-antwoord (`lookups.accepted_verzet_offer`) of is het een vraag om verzetadvies (`lookups.asks_verzetadvies`), dan kiest `intake.route_before_intake` de route `direct-verzet` (`route_reden: verzet_offer_accepted` of `verzetadvies_vraag`, zonder intake), zoals de app; ontbreekt `MISTRAL_AGENT_ID_VERZET`, dan stopt de runner met een `RuntimeError`. Bij een aangenomen aanbod start de runner alleen met `vraag` een nieuwe conversation met de bypass-feiten als contextregels. Anders geldt `via: router` als vaste router-route, en start de runner de light intake (1 call naar `mistral-small-latest`, `MISTRAL_CHAT_COMPLETIONS_URL`/`MISTRAL_INTAKE_MODEL`). `intake.decide_route` kiest dan een intake-ondersteunde bypass (`route_reden: intake_lookup`, alleen voor een herkende onvolledige vraag), direct-to-expert (confidence ≥ `INTAKE_CONFIDENCE_THRESHOLD`, expert-id uit `MISTRAL_AGENT_ID_<DOMEIN>`) of router.
 
 ## Gate
 
@@ -83,6 +103,7 @@ python eval/run_eval.py
 | --- | --- |
 | `MISTRAL_API_KEY` | Verplicht |
 | `MISTRAL_AGENT_ID_KNWU` / `_REGIO` / `_CLUB` | Agent per categorie; fallback `MISTRAL_AGENT_ID` |
+| `MISTRAL_AGENT_ID_VERZET` | Verzet-agent, voor de `direct-verzet`-route (#152); zonder deze variabele stopt de runner bij de eerste verzet-entry met een `RuntimeError` |
 | `MISTRAL_AGENT_ID` | Router-agent, voor vragen met `via: router` |
 
 Waarden uit de env-file overschrijven gelijknamige shellvariabelen (`load_dotenv(override=True)`), zodat nieuwe agent-ids na `scripts/create_agents.py --apply` direct gelden.

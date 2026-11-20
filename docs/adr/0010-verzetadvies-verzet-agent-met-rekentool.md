@@ -21,5 +21,6 @@ De feature geldt alleen voor wegwielrennen: bij veldrijden is het verzet vrij. D
 - De rekentool valideert de invoer (kleinste kransje 9–16T, grootste kransje 23–59T, voorblad 32–60T, banddikte 23–40 mm, velgdiameter 406, 507, 520, 540, 559, 584 of 622 mm) en weigert daarbuiten, zodat de agent niets hoeft te raden.
 - De agent geeft nooit zelf een maximaal toegestaan verzet op: die komt alleen uit de tool, met bron en versie.
 - Er komt een nieuwe route `direct-verzet` (intake-domein) en een nieuwe env-variabele `MISTRAL_AGENT_ID_VERZET`. De bypass biedt bij een initiële verzetvraag hulp aan; een positief antwoord start de verzet-agent met de bypass-gegevens als context.
+- Een positief antwoord op dat aanbod en een vraag om verzetadvies (fietsgegevens, of een vraag om het verzet te controleren, aan te passen of te adviseren) gaan zonder intake-call naar de verzet-agent (`intake.route_before_intake`): de intake koos in de praktijk de knwu-agent. Ontbreekt `MISTRAL_AGENT_ID_VERZET`, dan faalt de beurt hard in plaats van stil naar een andere agent te gaan.
 - De Park Tool-verwijzingen in de prompt komen uit een vaste lijst; de agent verzint geen links.
 - `knowledge-documents/bandenmaat-wielomtrek.md` is geen rekenbron meer en gaat uit de library.

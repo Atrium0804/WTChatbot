@@ -29,7 +29,9 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "LOCAL_DEBUG_TRACES", True)
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "")
-    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "club": "club-id"})
+    monkeypatch.setattr(
+        config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "club": "club-id", "verzet": "verzet-id"}
+    )
     with TestClient(
         create_app(db_path=str(tmp_path / "test.db")),
         base_url="http://127.0.0.1",

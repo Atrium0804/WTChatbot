@@ -56,10 +56,12 @@ _VRAAG_WOORD = re.compile(
 _VERZET_VRAAG = re.compile(
     r"verzet|tandwiel|versnelling|rollout|afgerolde\s+afstand", re.IGNORECASE
 )
-# Fietsgegevens (50/34, 11-28, 28-622, kettingblad) of een vraag om het verzet van
-# de fiets te controleren of aan te passen: dat is geen kale lookup van het maximaal toegestane verzet (#150).
+# Fietsgegevens (50/34, 46x12, 11-28, 28-622, kettingblad) of een vraag om het verzet van
+# de fiets te controleren, aan te passen of te adviseren: dat is geen kale lookup van het
+# maximaal toegestane verzet, maar werk voor de verzet-agent (#150). Een blad heeft 32-60
+# tanden, zodat een datum (14/09) of seizoen (25/26) niet meetelt.
 _FIETSGEGEVENS = re.compile(
-    r"\b\d{2}\s*[/x×]\s*\d{2}\b"
+    r"\b(?:3[2-9]|[45]\d|60)\s*[/x×]\s*(?:9|[1-5]\d|60)\b"
     r"|\b(?:9|1[0-6])\s*-\s*(?:2\d|[3-5]\d)\b"
     r"|\b\d{2}\s*-\s*(?:406|507|520|540|559|584|622)\b"
     r"|\b(?:kettingbla(?:d|den)|voorbla(?:d|den)|cassette|tandkrans\w*|kransje\w*|bandenmaat|etrto)\b",
@@ -70,6 +72,8 @@ _VERZET_CONTROLE = re.compile(
     r"|\bmag\s+(?:mijn|de)\s+fiets\b|\bte\s+zwaar\b",
     re.IGNORECASE,
 )
+_VERZET_WOORD = re.compile(r"verzet|versnelling|tandwiel", re.IGNORECASE)
+_VERZETADVIES = re.compile(r"verzet\s*-?\s*advies|\badvies\b.{0,30}\bverzet", re.IGNORECASE)
 
 
 def _is_verzet_question(text: str) -> bool:
@@ -85,10 +89,13 @@ def _asks_only_verzet(text: str) -> bool:
     )
 
 
-def _is_verzet_check(text: str) -> bool:
+def asks_verzetadvies(text: str) -> bool:
+    """Fietsgegevens, of een vraag om het verzet van de fiets te controleren, aan te passen
+    of te adviseren (#150). "Controle" of "te zwaar" telt alleen samen met een verzetwoord."""
     return bool(
         _FIETSGEGEVENS.search(text)
-        or (_VERZET_CONTROLE.search(text) and re.search(r"verzet|fiets", text, re.IGNORECASE))
+        or _VERZETADVIES.search(text)
+        or (_VERZET_CONTROLE.search(text) and _VERZET_WOORD.search(text))
     )
 
 
@@ -668,7 +675,7 @@ def _parse_lookup_turn(
     text = message.strip()
     empty_profile = _LookupProfile(None, None, None)
     shape = _turn_shape(text)
-    if _is_verzet_check(text):
+    if asks_verzetadvies(text):
         return _ParsedTurn(False, empty_profile)
     explicit_inputs = _parse_explicit_inputs(text, rules, shape)
     if explicit_inputs is None:

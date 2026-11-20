@@ -821,18 +821,27 @@ class VerzetPlanTests(unittest.TestCase):
         self.assertEqual(plan["agent_id"], "ag_verzet")
         self.assertIsNotNone(plan["offer"])
 
-    def test_zonder_verzet_agent_volgt_de_gewone_route(self) -> None:
+    def test_zonder_verzet_agent_faalt_de_verzetroute_hard(self) -> None:
         entry = {
             "id": "x",
             "beurten": ["Wat is het maximaal toegestane verzet voor een jongen geboren in 2011 bij wegwielrennen?"],
             "vraag": "Ja, graag",
         }
         rules = run_eval.knwu_categories.load_rules()
-        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}, clear=True), patch.object(
-            run_eval.intake, "classify_message", return_value=dict(run_eval.intake.FALLBACK)
+        with patch.dict(os.environ, {"MISTRAL_AGENT_ID": "ag_router"}, clear=True), self.assertRaisesRegex(
+            RuntimeError, "MISTRAL_AGENT_ID_VERZET"
         ):
+            run_eval.plan_entry(entry, "key", PEILDATUM, rules)
+
+    def test_vraag_om_verzetadvies_gaat_zonder_intake_naar_de_verzet_agent(self) -> None:
+        entry = {"id": "x", "vraag": "ik wil mijn verzet aanpassen"}
+        rules = run_eval.knwu_categories.load_rules()
+        with patch.dict(os.environ, self.ENV), patch.object(run_eval.intake, "classify_message") as classify:
             plan = run_eval.plan_entry(entry, "key", PEILDATUM, rules)
-        self.assertEqual(plan["route"], "router")
+        classify.assert_not_called()
+        self.assertEqual(plan["route"], "direct-verzet")
+        self.assertEqual(plan["route_reden"], "verzetadvies_vraag")
+        self.assertEqual(plan["agent_id"], "ag_verzet")
         self.assertIsNone(plan["offer"])
 
 

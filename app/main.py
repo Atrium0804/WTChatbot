@@ -290,11 +290,14 @@ def create_app(
         job["status"] = "working"
         job["phase"] = phases.PHASE_LEES
         try:
-            if turn.verzet_offer:
-                route: intake.Route = intake.AgentRoute(
-                    "direct", turn.decision, agent_id=expert_agent_ids["verzet"], domein="verzet"
-                )
-                route_reason = "verzet_offer_accepted"
+            early = intake.route_before_intake(
+                message=message,
+                decision=turn.decision,
+                offer=turn.verzet_offer,
+                expert_agent_ids=expert_agent_ids,
+            )
+            if early is not None:
+                route, route_reason = early
             else:
                 route, route_reason = await _route_after_intake(turn, message, today_date, trace)
             if isinstance(turn.decision, lookups.NeedsInputForBypass) and not _publish_lookup_state(
@@ -435,12 +438,9 @@ def create_app(
         conversation_id = payload.conversation_id.strip() or uuid.uuid4().hex
         trace = traces.start(conversation_id)
         today_date = today()
-        decision, accepted_turn_count, offer = _accept_lookup_turn(
+        decision, accepted_turn_count, verzet_offer = _accept_lookup_turn(
             conversation_id, message, today_date
         )
-        # #150: een positief antwoord op het verzetaanbod start de verzet-agent (zonder
-        # intake); is die niet geconfigureerd, dan volgt de beurt de gewone weg
-        verzet_offer = offer if "verzet" in expert_agent_ids else None
         # #91/#136: herkende lookup met complete data -> direct app-antwoord
         # (0 LLM-calls, géén job/fase), ook midden in een bestaand gesprek
         if isinstance(decision, lookups.ReadyForBypass):

@@ -190,7 +190,7 @@ De reeks laatste vraag/antwoord-paren (turns) van een conversatie die bij een du
 _Avoid_: "chatlog", "conversatielog", "de hele conversatie opslaan"
 
 **Verzetadvies**:
-De geplande uitbreiding waarmee Wielie controleert of het verzet van de fiets van een renner binnen het maximaal toegestane verzet valt en, zo niet, wat er aangepast moet worden (kleiner kettingblad of groter kleinste tandkransje). Alleen voor wegwielrennen; de uitkomst vermeldt dat in een voetnoot. De rekensom is deterministisch (Python), nooit het taalmodel.
+De functie waarmee Wielie controleert of het verzet van de fiets van een renner binnen het maximaal toegestane verzet valt en, zo niet, wat er aangepast moet worden (kleiner kettingblad of groter kleinste tandkransje). Alleen voor wegwielrennen; de uitkomst vermeldt dat in een voetnoot. De rekensom is deterministisch (Python), nooit het taalmodel.
 _Avoid_: Verzettenadvies, verzetcontrole (dat is de controle op een wedstrijd)
 
 **Zwaarste verzet**:

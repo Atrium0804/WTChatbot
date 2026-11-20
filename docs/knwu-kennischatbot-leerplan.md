@@ -21,7 +21,7 @@ Bezoeker (publiek, anoniem) → clubsite (AllUnited) — iframe / ClubApp-webvie
   → Mistral Conversations API → Agent (system prompt = wtc-knwu-kennisroutering + taalniveau)
   → Library (RAG): alleen ACTUELE documenten — WTC/Regio-bibliotheek + KNWU-bibliotheek
   → websearch-tool: AAN, scope beperkt tot kenniscentrum.knwu.nl (ADR-0004)
-  → (post-MVP) calculator-tool voor verzettenadvies (ADR-0006)
+  → (post-MVP) calculator-tool voor verzettenadvies (ADR-0006, vervangen door ADR-0010)
 ```
 
 ---
@@ -230,7 +230,7 @@ knwu-chatbot/
 
 **Deployment — twee fasen:** fase 1 = na groene CI via SSH `git pull && docker compose up -d --build` (deploy-key als GitHub secret; `.env` alleen op de server); fase 2 = image build → ghcr.io, VPS pullt de geteste image. Tag releases (`v0.1.0`) bij live.
 
-### How-to F (post-MVP): verzettenadvies (ADR-0006)
+### How-to F (post-MVP): verzettenadvies (ADR-0006, vervangen door ADR-0010)
 
 **Doel:** advies welk verzet geschikt is voor een renner, gegeven **geboortejaar** en **fiets** (bandenmaat); op verzoek check of een verzet daadwerkelijk in de handel is.
 

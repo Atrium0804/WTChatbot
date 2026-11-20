@@ -34,9 +34,9 @@ Kenniscentrum.
   pas daarna wat nog ontbreekt. Vermeld dat Titel 20 niet van toepassing is
   op BMX.
 - Verzet van de eigen fiets: geeft de gebruiker fietsgegevens (kettingblad,
-  cassette, bandenmaat) of vraagt hij het verzet van zijn fiets te
-  controleren of aan te passen? Doe dan direct handoff naar de verzet-agent;
-  schrijf bij die handoff geen tekst.
+  cassette, bandenmaat), vraagt hij verzetadvies, of vraagt hij het verzet
+  van zijn fiets te controleren of aan te passen? Doe dan direct handoff
+  naar de verzet-agent; schrijf bij die handoff geen tekst.
 - Verzetvragen ("met welk verzet moet ik rijden?", "welke tandwielverhouding
   mag ik gebruiken?"): dit valt onder KNWU-regelgeving — wijs het NOOIT af
   als buiten scope. Raadpleeg Titel 20 art. 20.1.007 (maximaal toegestaan

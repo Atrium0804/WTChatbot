@@ -1,5 +1,6 @@
 # Routecontract (#107, #117): per gesprek de route die de app kiest.
-# `bypass` = deterministische bypass; `inhoudelijk` = direct-<domein> of router.
+# `bypass` = deterministische bypass; `direct-verzet` = verzet-agent zonder intake;
+# `inhoudelijk` = een andere direct-<domein> of router.
 # Alleen de route wordt getoetst, niet de antwoordtekst.
 # Nieuw routeringsgeval? Voeg hier een regel toe, met `herkomst`.
 #
@@ -458,3 +459,57 @@ regels:
       - {vraag: "2014", route: bypass}
       - {vraag: "Waarom?", route: inhoudelijk}
       - {vraag: "2016", route: inhoudelijk}
+
+  # --- #147 review: verzetcontrole en verzetaanbod gaan zonder intake naar de verzet-agent ---
+  - id: verzet-aanpassen
+    herkomst: "#147 review: werd direct-knwu via de intake"
+    beurten:
+      - {vraag: "ik wil mijn verzet aanpassen", route: direct-verzet}
+
+  - id: verzetadvies
+    herkomst: "#147 review: werd direct-knwu via de intake"
+    beurten:
+      - {vraag: "ik wil verzetadvies", route: direct-verzet}
+
+  - id: verzet-fietsgegevens
+    herkomst: "#147 review: werd direct-knwu via de intake"
+    beurten:
+      - vraag: "Mijn fiets heeft 50/34, 11-28 en 25-622. Mag dat voor een jongen van 2013?"
+        route: direct-verzet
+        intake: {domein: knwu, confidence: 0.9}
+
+  - id: verzetaanbod-aangenomen
+    herkomst: "#147 review: 'ja' ging naar de router"
+    beurten:
+      - {vraag: "Wat is het maximale verzet voor een jongen geboren in 2013?", route: bypass}
+      - {vraag: "ja", route: direct-verzet}
+
+  - id: maximaal-verzet-zonder-gegevens-blijft-knwu
+    herkomst: "#150: alleen het maximaal toegestane verzet is geen verzetcontrole"
+    beurten:
+      - {vraag: "Wat is het maximale verzet op de weg?", route: inhoudelijk}
+
+  - id: geen-verzetadvies-datum-seizoen-of-fietscontrole
+    herkomst: "#147 review: te brede herkenning stuurde dit naar de verzet-agent"
+    beurten:
+      - {vraag: "Wanneer is de clubwedstrijd op 14/09?", route: inhoudelijk}
+
+  - id: geen-verzetadvies-seizoen
+    herkomst: "#147 review: te brede herkenning stuurde dit naar de verzet-agent"
+    beurten:
+      - {vraag: "Welke categorie in seizoen 25/26?", route: inhoudelijk}
+
+  - id: geen-verzetadvies-fietscontrole-wedstrijd
+    herkomst: "#147 review: te brede herkenning stuurde dit naar de verzet-agent"
+    beurten:
+      - {vraag: "Is er een controle van de fiets voor de wedstrijd?", route: inhoudelijk}
+
+  - id: geen-verzetadvies-fiets-te-zwaar
+    herkomst: "#147 review: te brede herkenning stuurde dit naar de verzet-agent"
+    beurten:
+      - {vraag: "Mijn fiets is te zwaar, mag ik starten?", route: inhoudelijk}
+
+  - id: verzetadvies-kettingblad-maal-kransje
+    herkomst: "#147 review: blijft verzetadvies na aanscherping"
+    beurten:
+      - {vraag: "Is mijn verzet met 46x12 te zwaar?", route: direct-verzet}

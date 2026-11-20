@@ -144,6 +144,35 @@ class AgentRoute:
 Route: TypeAlias = BypassRoute | AgentRoute
 
 
+def route_before_intake(
+    *,
+    message: str,
+    decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass,
+    offer: lookups.VerzetOffer | None,
+    expert_agent_ids: dict[str, str],
+) -> tuple[AgentRoute, str] | None:
+    """Route direct-verzet zonder intake-call (#150), met de trace-reden; anders None.
+
+    Een aangenomen verzetaanbod of een vraag om verzetadvies (fietsgegevens, of een
+    vraag om het verzet te controleren, aan te passen of te adviseren) gaat altijd naar
+    de verzet-agent. Ontbreekt die, dan is dat een configuratiefout: hard falen, niet
+    stil naar een andere agent.
+    """
+    if offer is not None:
+        reason = "verzet_offer_accepted"
+    elif lookups.asks_verzetadvies(message):
+        reason = "verzetadvies_vraag"
+    else:
+        return None
+    agent_id = expert_agent_ids.get("verzet")
+    if not agent_id:
+        raise RuntimeError(
+            "Verzetvraag, maar de verzet-agent is niet geconfigureerd; "
+            "zet MISTRAL_AGENT_ID_VERZET in .env en herstart de app."
+        )
+    return AgentRoute("direct", decision, agent_id=agent_id, domein="verzet"), reason
+
+
 def decide_route(
     *,
     decision: lookups.NeedsInputForBypass | lookups.NotEligibleForBypass,

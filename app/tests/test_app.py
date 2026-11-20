@@ -1235,6 +1235,46 @@ def test_positive_reply_to_the_verzet_offer_starts_the_verzet_agent_with_the_byp
         assert fact in str(request["message"])
 
 
+@pytest.mark.parametrize(
+    "message",
+    [
+        "ik wil mijn verzet aanpassen",
+        "ik wil verzetadvies",
+        "Mijn fiets heeft 50/34, 11-28 en 25-622. Mag dat voor een jongen van 2013?",
+    ],
+)
+def test_verzetadvies_request_goes_straight_to_the_verzet_agent_without_intake(
+    lookup_client, monkeypatch, message
+):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "verzet": "verzet-id"})
+    client = lookup_client()
+
+    resp = client.post("/chat", json={"message": message, "client_id": "c"})
+
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["route"] == "direct-verzet"
+    assert [kind for kind, _ in model_calls] == ["agent"]
+    assert model_calls[0][1]["agent_id"] == "verzet-id"
+
+
+def test_verzetadvies_request_without_a_configured_verzet_agent_fails_hard(lookup_client, monkeypatch):
+    import intake
+
+    model_calls = install_lookup_mistral(monkeypatch, lambda **kw: dict(intake.FALLBACK))
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id"})
+    client = lookup_client()
+
+    resp = client.post("/chat", json={"message": "ik wil mijn verzet aanpassen", "client_id": "c"})
+
+    result = _wait_for_job(client, resp.json()["job_id"])
+    assert result["status"] == "error"
+    assert "MISTRAL_AGENT_ID_VERZET" in result["error"]
+    assert model_calls == []
+
+
 def test_other_reply_to_the_verzet_offer_follows_the_normal_route(lookup_client, monkeypatch):
     import intake
 

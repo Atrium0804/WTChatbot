@@ -202,13 +202,17 @@ def plan_entry(entry: dict, api_key: str, today: date, rules: dict) -> dict:
             "lookup": decision, "intake_ms": 0.0, "offer": None,
         }
     expert_agent_ids = {k: v for k, v in expert_agent_ids_from_env().items() if v}
-    # #150: een positief antwoord op het verzetaanbod start de verzet-agent zonder intake
+    # #150: verzetaanbod aangenomen of vraag om verzetadvies -> verzet-agent zonder intake, zoals de app
     offer = lookups.accepted_verzet_offer(entry["vraag"], state)
-    if offer and "verzet" in expert_agent_ids:
+    early = intake.route_before_intake(
+        message=entry["vraag"], decision=decision, offer=offer, expert_agent_ids=expert_agent_ids
+    )
+    if early is not None:
+        route, reden = early
         return {
             "route": "direct-verzet",
-            "route_reden": "verzet_offer_accepted",
-            "agent_id": expert_agent_ids["verzet"],
+            "route_reden": reden,
+            "agent_id": route.agent_id,
             "lookup": None,
             "intake_ms": 0.0,
             "offer": offer,

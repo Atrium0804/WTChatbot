@@ -1,4 +1,4 @@
-"""Routecontract (#107, #117): één tabel voor bypass of inhoudelijke route.
+"""Routecontract (#107, #117): één tabel voor bypass, direct-verzet of inhoudelijke route.
 
 Elke regel in fixtures/routecontract.yaml is een gesprek; de test speelt het via
 POST /chat af met een nep-Mistral en controleert de route van elke beurt.
@@ -62,6 +62,7 @@ def _install_fake_mistral(monkeypatch) -> tuple[list[dict], list[dict], dict]:
 
     monkeypatch.setattr(config, "MISTRAL_API_KEY", "test-key")
     monkeypatch.setattr(config, "MISTRAL_AGENT_ID", "router-id")
+    monkeypatch.setattr(config, "EXPERT_AGENT_IDS", {"knwu": "knwu-id", "verzet": "verzet-id"})
     monkeypatch.setattr(intake, "classify_message", classify_message)
     monkeypatch.setattr(mistral_client, "stream_answer", stream_answer)
     monkeypatch.setattr(mistral_client, "answer_question", stream_answer)
@@ -102,9 +103,12 @@ def _play_rule(
         else:
             status = _wait_for_job(client, resp.json()["job_id"])
             assert status["status"] == "done", f"{label}: {status}"
-            route = "bypass" if status["route"] == "bypass" else "inhoudelijk"
+            route = status["route"] if status["route"] in ("bypass", "direct-verzet") else "inhoudelijk"
             conversation_id = status["conversation_id"]
         assert route == turn["route"], f"{label}: verwachtte {turn['route']}, kreeg {route}"
+        if turn["route"] == "direct-verzet":
+            assert len(intake_calls) == intake_before, f"{label}: direct-verzet deed een intake-call"
+            continue
         if turn["route"] != "bypass":
             continue
         assert len(agent_calls) == agent_before, f"{label}: bypass startte een agentgesprek"

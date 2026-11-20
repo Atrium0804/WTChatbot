@@ -48,7 +48,7 @@ _Amendment 2026-11-17 (#102, tweede implementatie #135): er kwam een uitzonderin
 - `agents_config.json` is gemigreerd naar
   `scripts/architectures/huidig.json`; de prompts in `scripts/prompts/` zijn al
   aangepast (geen return-handoff, direct expert→expert, lookups via de contextregel).
-- ADR-0006 (verzettencalculator, post-MVP) raakt de deterministische max-verzet-lookup
+- ADR-0006 (verzettencalculator, post-MVP; vervangen door ADR-0010) raakt de deterministische max-verzet-lookup
   (#94) maar niet deze architectuur.
 - Het deterministische bypass-antwoord (#91 besluit 4) vermeldt bron + versie + artikel
   uit `knwu_categories.json` alleen bij B2 — bij B1 (standaard, #52) staat er geen

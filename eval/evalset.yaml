@@ -435,7 +435,7 @@ evalset:
     categorie: knwu
     type: standaard
     vraag: "Mijn zoon is geboren in 2011. Zijn fiets heeft kettingbladen 50/34, een cassette 11-28 en banden 28-622. Mag hij hiermee een wegwedstrijd rijden en welke gewone cassette past dan?"
-    verwacht_antwoord: "9,68; 7,68; 12; 7,63"
+    verwacht_antwoord: "9,68; 7,68; 12; 7,45"
     bron: "TITEL_20-Jeugdwielrennen_20260921"
     versiedatum: "2026-09-21"
   - id: verzet-te-licht

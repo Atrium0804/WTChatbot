@@ -130,9 +130,11 @@ def _smallest_allowed_sprocket(chainring: int, limit: Limit) -> int:
     return sprocket
 
 
-def _chainring_proposal(current: Setup, sprocket: int, limit: Limit) -> SetupResult | None:
-    """Grootste toegestane blad bij `sprocket`; zakt het onder het kleine blad, dan 1x."""
-    chainring = _largest_allowed_chainring(current.chainring_step, sprocket, limit)
+def _chainring_proposal(
+    current: Setup, sprocket: int, limit: Limit, step: int
+) -> SetupResult | None:
+    """Grootste toegestane blad (veelvoud van `step`) bij `sprocket`; zakt het onder het kleine blad, dan 1x."""
+    chainring = _largest_allowed_chainring(step, sprocket, limit)
     small_chainring = current.small_chainring
     if small_chainring is not None and chainring <= small_chainring:
         small_chainring = None
@@ -160,10 +162,11 @@ def _sprocket_proposal(current: Setup, limit: Limit) -> SetupResult | None:
 
 
 def _regular_cassette_proposals(current: Setup, limit: Limit) -> tuple[SetupResult, ...]:
-    """11T heeft voorkeur; 12T alleen als die dichter bij het maximaal toegestane verzet uitkomt."""
+    """11T heeft voorkeur; 12T alleen als die dichter bij het maximaal toegestane verzet uitkomt.
+    Het blad heeft altijd een even aantal tanden, ook bij twee bladen (#147)."""
     proposals: list[SetupResult] = []
     for sprocket in REGULAR_CASSETTE_SPROCKETS:
-        candidate = _chainring_proposal(current, sprocket, limit)
+        candidate = _chainring_proposal(current, sprocket, limit, step=2)
         if candidate is None:
             continue
         if proposals and candidate.heaviest_gear_m <= proposals[0].heaviest_gear_m:
@@ -275,6 +278,8 @@ def advise(
         current=_evaluate(setup, limit),
         too_light=_is_too_light(setup, limit),
         smallest_sprocket_proposal=_sprocket_proposal(setup, limit),
-        largest_chainring_proposal=_chainring_proposal(setup, smallest_sprocket, limit),
+        largest_chainring_proposal=_chainring_proposal(
+            setup, smallest_sprocket, limit, step=setup.chainring_step
+        ),
         regular_cassette_proposals=_regular_cassette_proposals(setup, limit),
     )

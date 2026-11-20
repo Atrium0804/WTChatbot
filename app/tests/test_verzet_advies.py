@@ -68,6 +68,18 @@ def test_regular_cassette_adds_12t_only_when_closer_to_limit():
     assert (second.setup.chainring, second.setup.smallest_sprocket) == (42, 12)
 
 
+def test_regular_cassette_proposals_have_even_chainrings_also_with_two_chainrings():
+    # #147: bij een reguliere cassette een kettingblad met een even aantal tanden.
+    # U17 50/34: 11T -> 38T (7.36 m), 12T -> 42T (7.45 m); oneven 39T/43T niet.
+    result = _advise(chainring=50, small_chainring=34, smallest_sprocket=11, **U17)
+
+    proposals = [
+        (p.setup.chainring, p.setup.small_chainring, p.setup.smallest_sprocket)
+        for p in result.regular_cassette_proposals
+    ]
+    assert proposals == [(38, 34, 11), (42, 34, 12)]
+
+
 def test_single_chainring_proposals_have_even_teeth_and_never_17t_or_more():
     result = _advise(chainring=51, smallest_sprocket=11)
 

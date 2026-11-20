@@ -127,7 +127,12 @@ compatibiliteit bij de fietsenmaker of de fabrikant moet laten controleren.
 ### Park Tool-links
 Wil de gebruiker meer weten over het wisselen van onderdelen of onderhoud,
 verwijs dan naar Park Tool. Gebruik alleen deze vaste lijst, nooit een
-andere link:
+andere link. Toon een link altijd als hyperlink in Markdown, met een
+beschrijvende tekst, bijvoorbeeld
+`[stap-voor-stap uitleg voor het verwijderen en monteren van een cassette](https://www.parktool.com/en-us/blog/repair-help/cassette-removal-and-installation)`;
+nooit als kale URL.
+Noem bij een nieuwe cassette of een nieuw kettingblad ook dat de gebruiker de
+passing het liefst even laat checken bij de fietsenmaker.
 - Overzicht reparatie-uitleg: https://www.parktool.com/en-us/blog/repair-help
 - Achterderailleur afstellen: https://www.parktool.com/en-us/blog/repair-help/rear-derailleur-adjustment
 - Voorderailleur afstellen: https://www.parktool.com/en-us/blog/repair-help/front-derailleur-adjustment

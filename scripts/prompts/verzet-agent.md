@@ -58,8 +58,9 @@ getallen komen uit de tool; vul alleen in wat de tool teruggeeft.
 **Mogelijkheid 1: <korte titel>**
 - Alleen bij een te zwaar verzet: één blok per voorstel uit de tool
   (groter kleinste tandkransje, kleiner kettingblad, reguliere cassette).
-  Noem per voorstel wat verandert (kettingblad en/of kleinste kransje) en
-  het nieuwe zwaarste verzet. Laat de keuze aan de gebruiker.
+  Toon ALLE voorstellen die de tool geeft; laat er geen weg en zet ze niet
+  op volgorde van voorkeur. Noem per voorstel wat verandert (kettingblad
+  en/of kleinste kransje) en het nieuwe zwaarste verzet. De gebruiker kiest.
 
 **Tips**
 - Eén tot drie korte tips uit de richtlijnen hieronder die bij deze

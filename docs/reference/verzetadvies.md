@@ -3,13 +3,13 @@
 > [!WARNING]
 > Deze pagina is door AI gegenereerd en nog niet door een mens gereviewd.
 
-Exacte details van het verzetadvies: routes, herkenning, de rekentool `bereken_verzet`, invoergrenzen, voorstellen en configuratie. Het besluit en de afwegingen staan in [ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md); de termen (Verzetadvies, Zwaarste verzet, Bereik, Wielomtrek, ETRTO-bandenmaat, Reguliere cassette, Jeugdcassette) in [GLOSSARY.md](../../GLOSSARY.md). Instellen en controleren: [Zet het verzetadvies aan](../how-to/zet-het-verzetadvies-aan.md).
+Exacte details van het verzetadvies: routes, herkenning, de rekentool `bereken_verzet`, invoergrenzen, adviezen en configuratie. Het besluit en de afwegingen staan in [ADR-0010](../adr/0010-verzetadvies-verzet-agent-met-rekentool.md); de termen (Verzetadvies, Kettingblad, Optimale configuratie, Kettingbladadvies, Cassetteadvies, Reguliere-cassetteadvies, Zwaarste verzet, Bereik, Wielomtrek, ETRTO-bandenmaat, Reguliere cassette, Jeugdcassette) in [GLOSSARY.md](../../GLOSSARY.md). Instellen en controleren: [Zet het verzetadvies aan](../how-to/zet-het-verzetadvies-aan.md).
 
 ## Bestanden
 
 | Bestand | Inhoud |
 | --- | --- |
-| `app/verzet_advies.py` | Rekenmodule: `advise()`, invoervalidatie, voorstellen |
+| `app/verzet_advies.py` | Rekenmodule: `advise()`, invoervalidatie, adviezen |
 | `app/function_calls.py` | Tool-schema `BEREKEN_VERZET_TOOL`, `execute()`, function-call-lus `run_turn()` |
 | `app/lookups.py` | `asks_verzetadvies()`, verzetaanbod (`VERZET_OFFER`, `accepted_verzet_offer()`, `verzet_offer_context()`) |
 | `app/intake.py` | `route_before_intake()`: route `direct-verzet` zonder intake-call |
@@ -67,8 +67,8 @@ Zie de term **Antwoord op een aanbod** in [GLOSSARY.md](../../GLOSSARY.md).
 | --- | --- | --- | --- |
 | `birth_year` | integer | ja | Geboortejaar van de renner |
 | `gender` | `jongens` \| `meisjes` | ja | Geslacht |
-| `chainring` | integer | ja | Tanden van het grootste (of enige) kettingblad |
-| `small_chainring` | integer | nee | Tanden van het kleine kettingblad; weglaten bij één blad (1x) |
+| `chainring` | integer | ja | Tanden van het buitenblad (of het enige kettingblad) |
+| `small_chainring` | integer | nee | Tanden van het binnenblad; weglaten bij één kettingblad (1x) |
 | `smallest_sprocket` | integer | ja | Tanden van het kleinste tandkransje |
 | `largest_sprocket` | integer | ja | Tanden van het grootste tandkransje |
 | `tire_width_mm` | integer | ja | Banddikte uit de ETRTO-maat |
@@ -82,7 +82,7 @@ Het wedstrijdjaar is het huidige jaar van de app; de agent geeft het niet mee.
 | --- | --- |
 | Kleinste tandkransje | 9–16T |
 | Grootste tandkransje | 23–59T |
-| Voorblad (groot en klein) | 32–60T |
+| Kettingblad (buiten- en binnenblad) | 28–60T |
 | Banddikte | 23–40 mm |
 | Velgdiameter | 406, 507, 520, 540, 559, 584 of 622 mm |
 | Geboortejaar | binnen de jeugdcategorieën U6 t/m U17 van het wedstrijdjaar |
@@ -94,29 +94,62 @@ Daarbuiten geeft de tool `{"error": ...}` met een Nederlandse melding (`invalid_
 | Grootheid | Formule |
 | --- | --- |
 | Wielomtrek (mm) | π × (velgdiameter + 2 × banddikte) |
-| Verzet (m) | wielomtrek × tanden voorblad / tanden kransje / 1000 |
-| Zwaarste verzet | grootste blad / kleinste kransje |
-| Lichtste verzet | kleinste blad (of het enige) / grootste kransje |
+| Verzet (m) | wielomtrek × tanden kettingblad / tanden kransje / 1000 |
+| Zwaarste verzet | buitenblad (of het enige) / kleinste kransje |
+| Lichtste verzet | binnenblad (of het enige) / grootste kransje |
 | Bereik (%) | zwaarste / lichtste verzet × 100, afgerond |
 | Topsnelheid (km/u) | zwaarste verzet × 100 omw/min × 60 / 1000 |
 | Binnen het maximaal toegestane verzet | zwaarste verzet ≤ maximum (gelijk is toegestaan) |
 
 Het maximaal toegestane verzet komt uit `app/knwu_categories.json` (art. 20.1.007), alleen voor wegwielrennen.
 
-### Voorstellen
+### Adviezen
 
-| Uitvoerveld | Regel |
+*Opt* is het grootste toegestane kettingblad bij een kransje (oneven mag). Geldige kleinste kransjes voor een nieuwe cassette: 11–16T (`VALID_SPROCKETS`).
+
+De tool berekent drie configuraties en geeft ze in de lijst `advices`, op volgorde van `number`. Het nummer en de titel volgen uit wat er verandert, niet uit de berekening:
+
+| `number` | `title` | Wat verandert |
+| --- | --- | --- |
+| 1 | Kettingblad aanpassen | Het kettingblad; de cassette blijft |
+| 2 | Cassette wijzigen | De cassette; het kettingblad blijft (of alleen het binnenblad) |
+| 3 | Cassette en kettingblad (1x) wijzigen | Kettingblad en cassette |
+
+De drie berekeningen:
+
+| Berekening | Regel |
 | --- | --- |
-| `smallest_sprocket_proposal` | Kleinste kransje waarmee het huidige blad binnen het maximum blijft; ontbreekt als dat 17T of meer zou zijn |
-| `largest_chainring_proposal` | Grootste blad bij het huidige kleinste kransje; bij 1x een even aantal tanden. Zakt het onder het kleine blad, dan wordt het 1x |
-| `regular_cassette_proposals` | Grootste blad met een even aantal tanden bij een reguliere cassette met 11T; 12T alleen als die dichter bij het maximum uitkomt. Een voorstel dat dezelfde configuratie geeft als `smallest_sprocket_proposal` of `largest_chainring_proposal` valt weg |
-| `too_light` | Binnen het maximum, maar meer dan één stap (blad of kransje) eronder |
+| Kettingbladadvies | Bij het huidige kleinste kransje. 1x: *opt* afgerond naar beneden op even. Twee bladen: *opt* > binnenblad → nieuw buitenblad *opt*; *opt* = binnenblad → buitenblad eraf, 1x op het binnenblad; *opt* < binnenblad → geen configuratie (het reguliere-cassetteadvies geeft dan de 1x-configuratie) |
+| Cassetteadvies | Kleinste kransje uit 11–16T waarmee het huidige blad binnen het maximum blijft. Bij twee bladen eerst het buitenblad; past dat bij geen kransje, dan het binnenblad zonder buitenblad. Het grootste kransje blijft gelijk |
+| Reguliere-cassetteadvies | 1x met 11T of 12T en *opt* afgerond naar beneden op even, minstens 30T; het verzet dat het dichtst bij het maximum ligt, bij gelijke stand 11T. Vervalt als het kettingblad- of cassetteadvies al 11T of 12T heeft. Is het huidige kleinste kransje al dat kransje, dan verandert alleen het kettingblad en wordt het advies 1 (bijv. U12, 50/40 met 11-25 → 30T met 11-25) |
 
-Een voorstel met een blad onder 32T vervalt.
+`too_light`: binnen het maximum, maar meer dan één stap (blad of kransje) eronder.
+
+Voor alle adviezen geldt:
+
+| Regel | Waarde |
+| --- | --- |
+| Kleinste nieuwe kettingblad | 30T (`MIN_ADVISED_CHAINRING`); een configuratie met een kleiner nieuw blad vervalt |
+| Dubbel advies | Een configuratie gelijk aan de huidige, of met dezelfde configuratie of hetzelfde nummer als een eerdere berekening, vervalt |
+
+Elk advies heeft deze velden:
+
+| Veld | Betekenis |
+| --- | --- |
+| `number`, `title` | Uit wat er verandert (`ADVICE_TITLES`) |
+| `result` | Dezelfde velden als `current` |
+| `chainring_status` | `huidig`, `aangepast` of `binnenblad` (het huidige binnenblad wordt het enige kettingblad) |
+| `cassette_status` | `huidig` of `aangepast` |
+| `removes_outer_chainring` | Het buitenblad gaat eraf; het binnenblad wordt het enige kettingblad |
+| `replaces_both_chainrings` | Twee kettingbladen worden één nieuw kettingblad |
+| `single_sprocket_swap` | Het kleinste kransje wijkt precies 1 tand af van het huidige |
+| `chain_may_be_too_short` | Grootste blad + grootste kransje is groter dan nu |
+
+De agent toont de adviezen alleen bij een te zwaar verzet of bij `too_light`.
 
 ### Uitvoer
 
-`{"discipline": "weg", ...}` met de velden van `VerzetAdvies`: `category`, `limit_m`, `source` (naam, versie, artikel), `wheel_circumference_mm`, `current`, `too_light` en de voorstellen hierboven. `current` en elk voorstel hebben dezelfde velden: `setup`, `heaviest_gear_m`, `lightest_gear_m`, `range_percent`, `range_percent_with_34t` (het bereik met een grootste kransje van minstens 34T, `COMMON_LARGEST_SPROCKET`), `top_speed_kmh` en `within_limit`.
+`{"discipline": "weg", ...}` met de velden van `VerzetAdvies`: `category`, `limit_m`, `source` (naam, versie, artikel), `wheel_circumference_mm`, `current`, `too_light` en `advices` (hierboven). `current` en `result` van elk advies hebben dezelfde velden: `setup`, `heaviest_gear_m`, `lightest_gear_m`, `range_percent`, `with_34t` (dezelfde configuratie met 34T als grootste kransje, `COMMON_LARGEST_SPROCKET`: `cassette`, bijv. `"15-34"`, `range_percent` en `tip`, de zin die de agent letterlijk overneemt, bijv. "Met een 15-34 in plaats van een 15-25 wordt het bereik 227% in plaats van 167%; het zwaarste verzet blijft gelijk."; `null` als het grootste kransje al 34T of groter is), `top_speed_kmh` en `within_limit`.
 
 ### Limieten
 

@@ -31,7 +31,8 @@ BEREKEN_VERZET_TOOL = {
         "description": (
             "Berekent het verzet van een fiets voor wegwielrennen: wielomtrek, zwaarste en "
             "lichtste verzet, bereik, topsnelheid en het maximaal toegestane verzet voor de "
-            "leeftijdscategorie, met voorstellen voor een kleiner blad of groter kransje."
+            "leeftijdscategorie, met een kettingbladadvies, cassetteadvies en "
+            "reguliere-cassetteadvies."
         ),
         "parameters": {
             "type": "object",
@@ -40,11 +41,11 @@ BEREKEN_VERZET_TOOL = {
                 "gender": {"type": "string", "enum": ["jongens", "meisjes"]},
                 "chainring": {
                     "type": "integer",
-                    "description": "Tanden van het grootste (of enige) kettingblad.",
+                    "description": "Tanden van het buitenblad (of het enige kettingblad).",
                 },
                 "small_chainring": {
                     "type": "integer",
-                    "description": "Tanden van het kleine kettingblad; weglaten bij één blad.",
+                    "description": "Tanden van het binnenblad; weglaten bij één kettingblad (1x).",
                 },
                 "smallest_sprocket": {
                     "type": "integer",

@@ -1,13 +1,15 @@
 """Deterministische rekenmodule voor het verzetadvies (issue #148, ADR-0010).
 
 Pure functies zonder netwerk: wielomtrek uit de ETRTO-maat, zwaarste en
-lichtste verzet, bereik, topsnelheid en drie berekeningen die een aanpassing
-voorstellen. Het maximaal toegestane verzet komt uit knwu_categories.json (art. 20.1.007), alleen
-voor wegwielrennen. Ongeldige invoer geeft een InvalidInput als resultaat.
+lichtste verzet, bereik, topsnelheid en drie adviezen (kettingbladadvies,
+cassetteadvies, reguliere-cassetteadvies; zie GLOSSARY.md). Het maximaal toegestane verzet komt
+uit knwu_categories.json (art. 20.1.007), alleen voor wegwielrennen. Ongeldige invoer geeft een
+InvalidInput als resultaat.
 """
 
 import math
 from dataclasses import dataclass, replace
+from typing import Literal
 
 import knwu_categories
 from knwu_categories import Gender, SourceFact
@@ -17,11 +19,19 @@ SMALLEST_SPROCKET_RANGE = (9, 16)
 LARGEST_SPROCKET_RANGE = (23, 59)
 CHAINRING_RANGE = (28, 60)
 TIRE_WIDTH_RANGE_MM = (23, 40)
+# Kleinste tandkransjes waarop een cassetteadvies mag uitkomen (de optimale configuraties).
+VALID_SPROCKETS = (11, 12, 13, 14, 15, 16)
 REGULAR_CASSETTE_SPROCKETS = (11, 12)
-FIRST_NON_PROPOSABLE_SPROCKET = 17
+# Een nieuw kettingblad adviseren we nooit kleiner; als invoer mag een kleiner blad wel.
+MIN_ADVISED_CHAINRING = 30
 RPM_FOR_TOP_SPEED = 100
 # Cassettes tot 34T passen meestal zonder problemen op de achterderailleur.
 COMMON_LARGEST_SPROCKET = 34
+ADVICE_TITLES = {
+    1: "Kettingblad aanpassen",
+    2: "Cassette wijzigen",
+    3: "Cassette en kettingblad (1x) wijzigen",
+}
 
 
 @dataclass(frozen=True)
@@ -67,27 +77,64 @@ class Limit:
 
 
 @dataclass(frozen=True)
+class CassetteRange:
+    """Een cassette als tekst (bv. "15-34") met het bereik dat de configuratie daarmee krijgt,
+    en `tip`: de zin die de agent letterlijk overneemt."""
+
+    cassette: str
+    range_percent: int
+    tip: str
+
+
+@dataclass(frozen=True)
 class SetupResult:
     setup: Setup
     heaviest_gear_m: float
     lightest_gear_m: float
     range_percent: int
-    range_percent_with_34t: int
+    # None als het grootste kransje al 34T of groter is.
+    with_34t: CassetteRange | None
     top_speed_kmh: float
     within_limit: bool
 
 
 @dataclass(frozen=True)
+class Advice:
+    """Een geadviseerde configuratie met wat er verandert ten opzichte van de huidige.
+
+    `number` en `title` volgen uit wat er verandert (zie ADVICE_TITLES). `chainring_status` is
+    "binnenblad" als het huidige binnenblad het enige kettingblad wordt
+    (`removes_outer_chainring`); `replaces_both_chainrings`: twee bladen worden één nieuw
+    kettingblad. `single_sprocket_swap`: het kleinste kransje wijkt 1 tand af, dus mogelijk
+    volstaat het vervangen van dat ene kransje. `chain_may_be_too_short`: grootste blad +
+    grootste kransje is groter dan nu, dus de ketting moet mogelijk langer.
+    """
+
+    number: int
+    title: str
+    result: SetupResult
+    chainring_status: Literal["huidig", "aangepast", "binnenblad"]
+    cassette_status: Literal["huidig", "aangepast"]
+    removes_outer_chainring: bool
+    replaces_both_chainrings: bool
+    single_sprocket_swap: bool
+    chain_may_be_too_short: bool
+
+
+@dataclass(frozen=True)
 class VerzetAdvies:
+    """`advices` bevat alleen de adviezen die gelden, op volgorde van `number`."""
+
     category: str
     limit_m: float
     source: SourceFact
     wheel_circumference_mm: float
     current: SetupResult
     too_light: bool
-    smallest_sprocket_proposal: SetupResult | None
-    largest_chainring_proposal: SetupResult | None
-    regular_cassette_proposals: tuple[SetupResult, ...]
+    advices: tuple[Advice, ...]
+
+    def advice(self, number: int) -> Advice | None:
+        return next((a for a in self.advices if a.number == number), None)
 
 
 @dataclass(frozen=True)
@@ -102,21 +149,37 @@ def gear_m(chainring: int, sprocket: int, circumference_mm: float) -> float:
     return circumference_mm * chainring / sprocket / 1000
 
 
-def _evaluate(setup: Setup, limit: Limit) -> SetupResult:
-    """Zwaarste en lichtste verzet, bereik, topsnelheid en grenscontrole van een configuratie.
-    `range_percent_with_34t` is het bereik als het grootste kransje minstens 34T is."""
-    heaviest = limit.gear_m(setup.chainring, setup.smallest_sprocket)
-    lightest_chainring = setup.small_chainring or setup.chainring
-    lightest = limit.gear_m(lightest_chainring, setup.largest_sprocket)
-    lightest_with_34t = limit.gear_m(
-        lightest_chainring, max(setup.largest_sprocket, COMMON_LARGEST_SPROCKET)
+def _with_34t(
+    setup: Setup, heaviest: float, range_percent: int, limit: Limit
+) -> CassetteRange | None:
+    """Dezelfde configuratie met een 34T als grootste kransje, als indicatie van het bereik."""
+    if setup.largest_sprocket >= COMMON_LARGEST_SPROCKET:
+        return None
+    lightest = limit.gear_m(setup.small_chainring or setup.chainring, COMMON_LARGEST_SPROCKET)
+    cassette = f"{setup.smallest_sprocket}-{COMMON_LARGEST_SPROCKET}"
+    range_with_34t = round(heaviest / lightest * 100)
+    current_cassette = f"{setup.smallest_sprocket}-{setup.largest_sprocket}"
+    return CassetteRange(
+        cassette=cassette,
+        range_percent=range_with_34t,
+        tip=(
+            f"Met een {cassette} in plaats van een {current_cassette} wordt het bereik "
+            f"{range_with_34t}% in plaats van {range_percent}%; het zwaarste verzet blijft gelijk."
+        ),
     )
+
+
+def _evaluate(setup: Setup, limit: Limit) -> SetupResult:
+    """Zwaarste en lichtste verzet, bereik, topsnelheid en grenscontrole van een configuratie."""
+    heaviest = limit.gear_m(setup.chainring, setup.smallest_sprocket)
+    lightest = limit.gear_m(setup.small_chainring or setup.chainring, setup.largest_sprocket)
+    range_percent = round(heaviest / lightest * 100)
     return SetupResult(
         setup=setup,
         heaviest_gear_m=round(heaviest, 2),
         lightest_gear_m=round(lightest, 2),
-        range_percent=round(heaviest / lightest * 100),
-        range_percent_with_34t=round(heaviest / lightest_with_34t * 100),
+        range_percent=range_percent,
+        with_34t=_with_34t(setup, heaviest, range_percent, limit),
         top_speed_kmh=round(heaviest * RPM_FOR_TOP_SPEED * 60 / 1000, 1),
         within_limit=limit.allows(setup.chainring, setup.smallest_sprocket),
     )
@@ -139,49 +202,133 @@ def _smallest_allowed_sprocket(chainring: int, limit: Limit) -> int:
     return sprocket
 
 
-def _chainring_proposal(
-    current: Setup, sprocket: int, limit: Limit, step: int
-) -> SetupResult | None:
-    """Grootste toegestane blad (veelvoud van `step`) bij `sprocket`; zakt het onder het kleine blad, dan 1x."""
-    chainring = _largest_allowed_chainring(step, sprocket, limit)
-    small_chainring = current.small_chainring
-    if small_chainring is not None and chainring <= small_chainring:
-        small_chainring = None
+def _chainring_advice(current: Setup, limit: Limit) -> Setup | None:
+    """Kettingbladadvies: grootste toegestane blad bij het huidige kleinste kransje.
+
+    1x: even aantal tanden. Twee bladen: het binnenblad blijft altijd. Een groter blad dan het
+    binnenblad wordt het nieuwe buitenblad; is het precies het binnenblad, dan gaat het
+    buitenblad eraf. Is het kleiner, dan zou geen van beide bladen blijven: geen advies hier;
+    het reguliere-cassetteadvies (1x) vangt dat op.
+    """
+    sprocket = current.smallest_sprocket
+    inner = current.small_chainring
+    if inner is None:
         chainring = _largest_allowed_chainring(2, sprocket, limit)
-    if chainring < CHAINRING_RANGE[0]:
-        return None
-    setup = replace(
-        current, chainring=chainring, small_chainring=small_chainring, smallest_sprocket=sprocket
-    )
-    return _evaluate(setup, limit)
+        if chainring != current.chainring and chainring < MIN_ADVISED_CHAINRING:
+            return None
+        return replace(current, chainring=chainring)
+    optimal = _largest_allowed_chainring(1, sprocket, limit)
+    if optimal > inner:
+        if optimal < MIN_ADVISED_CHAINRING:
+            return None
+        return replace(current, chainring=optimal)
+    if optimal == inner:
+        return replace(current, chainring=inner, small_chainring=None)
+    return None
 
 
-def _sprocket_proposal(current: Setup, limit: Limit) -> SetupResult | None:
-    """Kleinste toegestaan kransje bij het huidige blad; nooit 17T of groter."""
-    sprocket = _smallest_allowed_sprocket(current.chainring, limit)
-    if sprocket >= FIRST_NON_PROPOSABLE_SPROCKET:
-        return None
-    sprocket = max(sprocket, SMALLEST_SPROCKET_RANGE[0])
-    setup = replace(
-        current,
-        smallest_sprocket=sprocket,
-        largest_sprocket=max(current.largest_sprocket, sprocket),
-    )
-    return _evaluate(setup, limit)
+def _cassette_advice(current: Setup, limit: Limit) -> Setup | None:
+    """Cassetteadvies: kleinste geldige kransje bij het huidige blad.
+
+    Bij twee bladen eerst met het buitenblad; past dat bij geen enkel geldig kransje, dan
+    met het binnenblad zonder buitenblad.
+    """
+    candidates = [(current.chainring, current.small_chainring)]
+    if current.small_chainring is not None:
+        candidates.append((current.small_chainring, None))
+    for chainring, small_chainring in candidates:
+        for sprocket in VALID_SPROCKETS:
+            if limit.allows(chainring, sprocket):
+                return replace(
+                    current,
+                    chainring=chainring,
+                    small_chainring=small_chainring,
+                    smallest_sprocket=sprocket,
+                )
+    return None
 
 
-def _regular_cassette_proposals(current: Setup, limit: Limit) -> tuple[SetupResult, ...]:
-    """11T heeft voorkeur; 12T alleen als die dichter bij het maximaal toegestane verzet uitkomt.
-    Het blad heeft altijd een even aantal tanden, ook bij twee bladen (#147)."""
-    proposals: list[SetupResult] = []
+def _regular_cassette_advice(current: Setup, limit: Limit) -> Setup | None:
+    """Reguliere-cassetteadvies: 1x met 11T of 12T en een even blad van minstens 30T,
+    het dichtst bij het maximaal toegestane verzet; bij gelijke stand 11T."""
+    candidates = []
     for sprocket in REGULAR_CASSETTE_SPROCKETS:
-        candidate = _chainring_proposal(current, sprocket, limit, step=2)
-        if candidate is None:
+        chainring = _largest_allowed_chainring(2, sprocket, limit)
+        if chainring >= MIN_ADVISED_CHAINRING:
+            candidates.append(
+                replace(current, chainring=chainring, small_chainring=None, smallest_sprocket=sprocket)
+            )
+    if not candidates:
+        return None
+    return max(candidates, key=lambda setup: limit.gear_m(setup.chainring, setup.smallest_sprocket))
+
+
+def _chainring_status(advised: Setup, current: Setup) -> Literal["huidig", "aangepast", "binnenblad"]:
+    if (advised.chainring, advised.small_chainring) == (current.chainring, current.small_chainring):
+        return "huidig"
+    if advised.small_chainring is None and advised.chainring == current.small_chainring:
+        return "binnenblad"
+    return "aangepast"
+
+
+def _advice_number(
+    chainring_status: Literal["huidig", "aangepast", "binnenblad"], cassette_changed: bool
+) -> int | None:
+    """1: alleen het kettingblad verandert; 2: alleen de cassette (het kettingblad blijft, of
+    alleen het binnenblad); 3: allebei. None als er niets verandert."""
+    if not cassette_changed:
+        return None if chainring_status == "huidig" else 1
+    return 3 if chainring_status == "aangepast" else 2
+
+
+def _advice(advised: Setup, current: Setup, limit: Limit) -> Advice | None:
+    sprocket_change = abs(advised.smallest_sprocket - current.smallest_sprocket)
+    cassette_changed = sprocket_change > 0 or advised.largest_sprocket != current.largest_sprocket
+    chainring_status = _chainring_status(advised, current)
+    number = _advice_number(chainring_status, cassette_changed)
+    if number is None:
+        return None
+    to_1x = current.small_chainring is not None and advised.small_chainring is None
+    return Advice(
+        number=number,
+        title=ADVICE_TITLES[number],
+        result=_evaluate(advised, limit),
+        chainring_status=chainring_status,
+        cassette_status="aangepast" if cassette_changed else "huidig",
+        removes_outer_chainring=to_1x and chainring_status == "binnenblad",
+        replaces_both_chainrings=to_1x and chainring_status == "aangepast",
+        single_sprocket_swap=sprocket_change == 1,
+        chain_may_be_too_short=advised.chainring + advised.largest_sprocket
+        > current.chainring + current.largest_sprocket,
+    )
+
+
+def _advices(current: Setup, limit: Limit) -> tuple[Advice, ...]:
+    """Adviezen uit drie berekeningen: kettingbladadvies, cassetteadvies en
+    reguliere-cassetteadvies. Het reguliere-cassetteadvies vervalt als een van de eerste twee al
+    een reguliere cassette heeft. Nummer en titel volgen uit wat er verandert (_advice_number);
+    een advies gelijk aan de huidige configuratie, of met hetzelfde nummer of dezelfde
+    configuratie als een eerder advies, vervalt."""
+    chainring_setup = _chainring_advice(current, limit)
+    cassette_setup = _cassette_advice(current, limit)
+    regular_setup = _regular_cassette_advice(current, limit)
+    if any(
+        setup is not None and setup.smallest_sprocket in REGULAR_CASSETTE_SPROCKETS
+        for setup in (chainring_setup, cassette_setup)
+    ):
+        regular_setup = None
+
+    advices: dict[int, Advice] = {}
+    seen = {current}
+    for setup in (chainring_setup, cassette_setup, regular_setup):
+        if setup is None or setup in seen:
             continue
-        if proposals and candidate.heaviest_gear_m <= proposals[0].heaviest_gear_m:
+        advice = _advice(setup, current, limit)
+        if advice is None or advice.number in advices:
             continue
-        proposals.append(candidate)
-    return tuple(proposals)
+        seen.add(setup)
+        advices[advice.number] = advice
+    return tuple(advices[number] for number in sorted(advices))
 
 
 def _is_too_light(current: Setup, limit: Limit) -> bool:
@@ -203,11 +350,11 @@ def _validate(setup: Setup, wheel: Wheel) -> str | None:
     checks = [
         ("kleinste tandkransje", setup.smallest_sprocket, SMALLEST_SPROCKET_RANGE, "T"),
         ("grootste tandkransje", setup.largest_sprocket, LARGEST_SPROCKET_RANGE, "T"),
-        ("voorblad", setup.chainring, CHAINRING_RANGE, "T"),
+        ("kettingblad", setup.chainring, CHAINRING_RANGE, "T"),
         ("banddikte", wheel.tire_width_mm, TIRE_WIDTH_RANGE_MM, " mm"),
     ]
     if setup.small_chainring is not None:
-        checks.append(("klein voorblad", setup.small_chainring, CHAINRING_RANGE, "T"))
+        checks.append(("binnenblad", setup.small_chainring, CHAINRING_RANGE, "T"))
     for name, value, (low, high), unit in checks:
         if not low <= value <= high:
             return f"Het {name} moet tussen {low} en {high}{unit} liggen, niet {value}{unit}."
@@ -222,8 +369,8 @@ def _validate(setup: Setup, wheel: Wheel) -> str | None:
         )
     if setup.small_chainring is not None and setup.small_chainring > setup.chainring:
         return (
-            f"Het kleine voorblad ({setup.small_chainring}T) kan niet groter zijn dan "
-            f"het grote voorblad ({setup.chainring}T)."
+            f"Het binnenblad ({setup.small_chainring}T) kan niet groter zijn dan "
+            f"het buitenblad ({setup.chainring}T)."
         )
     return None
 
@@ -262,10 +409,10 @@ def advise(
     rules: dict,
     small_chainring: int | None = None,
 ) -> VerzetAdvies | InvalidInput:
-    """Controleer het verzet van een fiets tegen de wegwedstrijdgrens en stel aanpassingen voor.
+    """Controleer het verzet van een fiets tegen de wegwedstrijdgrens en adviseer aanpassingen.
 
-    `chainring` is het grootste voorblad, `small_chainring` het kleine bij twee
-    bladen (None = 1x). `year` is het wedstrijdjaar.
+    `chainring` is het buitenblad (of het enige kettingblad), `small_chainring` het binnenblad
+    bij twee bladen (None = 1x). `year` is het wedstrijdjaar.
     """
     setup = Setup(chainring, small_chainring, smallest_sprocket, largest_sprocket)
     wheel = Wheel(tire_width_mm, rim_diameter_mm)
@@ -279,15 +426,6 @@ def advise(
     category, max_gear_m = road_limit
 
     limit = Limit(wheel.circumference_mm, max_gear_m)
-    sprocket_proposal = _sprocket_proposal(setup, limit)
-    chainring_proposal = _chainring_proposal(
-        setup, smallest_sprocket, limit, step=setup.chainring_step
-    )
-    # Een reguliere-cassettevoorstel dat een ander voorstel herhaalt, is geen apart advies.
-    earlier = {p.setup for p in (sprocket_proposal, chainring_proposal) if p is not None}
-    regular_proposals = tuple(
-        p for p in _regular_cassette_proposals(setup, limit) if p.setup not in earlier
-    )
     return VerzetAdvies(
         category=category,
         limit_m=max_gear_m,
@@ -295,7 +433,5 @@ def advise(
         wheel_circumference_mm=round(wheel.circumference_mm, 1),
         current=_evaluate(setup, limit),
         too_light=_is_too_light(setup, limit),
-        smallest_sprocket_proposal=sprocket_proposal,
-        largest_chainring_proposal=chainring_proposal,
-        regular_cassette_proposals=regular_proposals,
+        advices=_advices(setup, limit),
     )

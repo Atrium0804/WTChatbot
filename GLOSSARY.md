@@ -198,16 +198,16 @@ Het tandwiel voor aan de crank. Bij twee kettingbladen is het **buitenblad** het
 _Avoid_: voorblad, groot/klein voorblad
 
 **Optimale configuratie**:
-Een combinatie van een geldig kleinste tandkransje met het grootste kettingblad waarbij het zwaarste verzet nog binnen het maximaal toegestane verzet valt. Het aantal tanden mag oneven zijn.
+Een combinatie van een geldig kleinste tandkransje (11 t/m 16T) met het grootste kettingblad waarbij het zwaarste verzet nog binnen het maximaal toegestane verzet valt. Het aantal tanden mag oneven zijn.
 
 **Kettingbladadvies**:
-Advies met het huidige kleinste tandkransje en een ander kettingblad: het grootste dat binnen het maximaal toegestane verzet valt. Past dat kettingblad niet meer boven het binnenblad, dan gaat het buitenblad eraf (1x).
+Advies waarin alleen het kettingblad verandert en de cassette blijft: het grootste kettingblad dat bij het huidige kleinste tandkransje binnen het maximaal toegestane verzet valt. Bij twee kettingbladen kan het buitenblad wijzigen, alleen het binnenblad overblijven, of één nieuw kettingblad beide vervangen.
 
 **Cassetteadvies**:
-Advies met het huidige kettingblad en een andere cassette: het kleinste geldige tandkransje dat binnen het maximaal toegestane verzet valt. Bij twee kettingbladen eerst met het buitenblad; lukt dat niet, dan met het binnenblad zonder buitenblad.
+Advies waarin alleen de cassette verandert en het kettingblad blijft (of alleen het binnenblad overblijft): het kleinste geldige tandkransje dat binnen het maximaal toegestane verzet valt.
 
 **Reguliere-cassetteadvies**:
-Advies voor een 1x-fiets met een reguliere cassette en een kettingblad met een even aantal tanden, waarvan het verzet het dichtst bij het maximaal toegestane verzet ligt. Vervalt als het kettingblad- of cassetteadvies al een reguliere cassette heeft.
+Advies waarin kettingblad en cassette allebei veranderen: één kettingblad met een even aantal tanden en een reguliere cassette, waarvan het verzet het dichtst bij het maximaal toegestane verzet ligt. Vervalt als het kettingblad- of cassetteadvies al een reguliere cassette heeft.
 
 **Zwaarste verzet**:
 Het verzet van de fiets bij het grootste kettingblad en het kleinste tandkransje. Het mag niet boven het maximaal toegestane verzet uitkomen. Tegenhanger: **lichtste verzet** (kleinste kettingblad, grootste tandkransje).

@@ -853,7 +853,7 @@ class VerzetEvalsetTests(unittest.TestCase):
         "verzet-voldoet": dict(chainring=42, small_chainring=None, smallest_sprocket=12, largest_sprocket=28),
         "verzet-te-zwaar-kransje": dict(chainring=52, small_chainring=None, smallest_sprocket=12, largest_sprocket=28),
         "verzet-te-zwaar-blad": dict(chainring=54, small_chainring=36, smallest_sprocket=14, largest_sprocket=28),
-        "verzet-reguliere-cassette": dict(chainring=50, small_chainring=34, smallest_sprocket=11, largest_sprocket=28),
+        "verzet-reguliere-cassette": dict(chainring=52, small_chainring=36, smallest_sprocket=14, largest_sprocket=28),
         "verzet-te-licht": dict(chainring=36, small_chainring=None, smallest_sprocket=13, largest_sprocket=28),
     }
 
@@ -864,12 +864,7 @@ class VerzetEvalsetTests(unittest.TestCase):
 
     def numbers(self, advice) -> set[str]:
         values = [advice.limit_m, advice.current.heaviest_gear_m]
-        proposals = [
-            advice.smallest_sprocket_proposal,
-            advice.largest_chainring_proposal,
-            *advice.regular_cassette_proposals,
-        ]
-        values += [p.heaviest_gear_m for p in proposals if p]
+        values += [a.result.heaviest_gear_m for a in advice.advices]
         return {f"{v:.2f}".replace(".", ",") for v in values}
 
     def test_verwachte_getallen_komen_uit_de_rekenmodule(self) -> None:
@@ -888,9 +883,10 @@ class VerzetEvalsetTests(unittest.TestCase):
         self.assertFalse(self.advice(self.SETUPS["verzet-voldoet"]).too_light)
         self.assertTrue(self.advice(self.SETUPS["verzet-voldoet"]).current.within_limit)
 
-    def test_reguliere_cassette_stelt_ook_12t_voor(self) -> None:
-        advice = self.advice(self.SETUPS["verzet-reguliere-cassette"])
-        self.assertEqual([p.setup.smallest_sprocket for p in advice.regular_cassette_proposals], [11, 12])
+    def test_reguliere_cassette_geeft_1x_met_12t(self) -> None:
+        regular = self.advice(self.SETUPS["verzet-reguliere-cassette"]).advice(3)
+        assert regular is not None
+        self.assertEqual((regular.result.setup.chainring, regular.result.setup.smallest_sprocket), (42, 12))
 
     def test_alle_verzet_entries_routeren_naar_de_verzet_agent_of_bypass(self) -> None:
         entries = [e for e in run_eval.load_evalset(EVALSET) if e["id"].startswith("verzet-")]

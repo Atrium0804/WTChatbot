@@ -946,12 +946,7 @@ def _render_ready(ready: _ReadyLookup, language_level: str) -> str:
                 "",
             ]
         )
-    lines.extend(
-        [
-            "Vooruitblik op basis van de bekende regels; die kunnen wijzigen.",
-            VERZET_OFFER if ready.offer else _DISCLAIMER_LIBRARY,
-        ]
-    )
+    lines.append(VERZET_OFFER if ready.offer else _DISCLAIMER_LIBRARY)
     if level == "B2":
         lines.extend(["", _render_source_line(ready.sources, level)])
     return "\n".join(lines)

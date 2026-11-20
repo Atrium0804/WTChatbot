@@ -98,6 +98,26 @@ def test_regular_cassette_proposal_is_dropped_when_it_equals_the_smaller_chainri
     assert result.regular_cassette_proposals == ()
 
 
+def test_every_result_gives_the_range_with_a_34t_largest_sprocket():
+    # 2014 meisjes (5.9 m), 38T met 12-28: het kleiner-blad-voorstel is 32T met 12-28.
+    # Bereik 1x = grootste/kleinste kransje: 28/12 = 233%, met 34T 34/12 = 283%.
+    result = _advise(
+        chainring=38, smallest_sprocket=12, **{**U15, "birth_year": 2014, "gender": "meisjes"}
+    )
+
+    proposal = result.largest_chainring_proposal
+    assert proposal is not None
+    assert (proposal.range_percent, proposal.range_percent_with_34t) == (233, 283)
+    # de huidige cassette 12-28: 38/12 -> 38/28 = 233%; met 34T 283%
+    assert (result.current.range_percent, result.current.range_percent_with_34t) == (233, 283)
+
+
+def test_range_with_34t_does_not_shrink_a_cassette_that_is_already_larger():
+    result = _advise(chainring=50, smallest_sprocket=11, largest_sprocket=36)
+
+    assert result.current.range_percent == result.current.range_percent_with_34t == 327
+
+
 def test_single_chainring_proposals_have_even_teeth_and_never_17t_or_more():
     result = _advise(chainring=51, smallest_sprocket=11)
 

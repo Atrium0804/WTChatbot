@@ -116,7 +116,7 @@ Een voorstel met een blad onder 32T vervalt.
 
 ### Uitvoer
 
-`{"discipline": "weg", ...}` met de velden van `VerzetAdvies`: `category`, `limit_m`, `source` (naam, versie, artikel), `wheel_circumference_mm`, `current` (`heaviest_gear_m`, `lightest_gear_m`, `range_percent`, `top_speed_kmh`, `within_limit`), `too_light` en de voorstellen hierboven.
+`{"discipline": "weg", ...}` met de velden van `VerzetAdvies`: `category`, `limit_m`, `source` (naam, versie, artikel), `wheel_circumference_mm`, `current`, `too_light` en de voorstellen hierboven. `current` en elk voorstel hebben dezelfde velden: `setup`, `heaviest_gear_m`, `lightest_gear_m`, `range_percent`, `range_percent_with_34t` (het bereik met een grootste kransje van minstens 34T, `COMMON_LARGEST_SPROCKET`), `top_speed_kmh` en `within_limit`.
 
 ### Limieten
 

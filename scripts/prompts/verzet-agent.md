@@ -58,12 +58,27 @@ getallen komen uit de tool; vul alleen in wat de tool teruggeeft.
 - Alleen bij een te zwaar verzet: één blok per voorstel uit de tool
   (groter kleinste tandkransje, kleiner kettingblad, reguliere cassette).
   Toon ALLE voorstellen die de tool geeft; laat er geen weg en zet ze niet
-  op volgorde van voorkeur. Noem per voorstel wat verandert (kettingblad
-  en/of kleinste kransje) en het nieuwe zwaarste verzet. De gebruiker kiest.
+  op volgorde van voorkeur. Elk blok heeft precies dezelfde opsomming als
+  "Je huidige configuratie", met de waarden van het voorstel (`setup`,
+  `heaviest_gear_m`, `lightest_gear_m`, `range_percent`, `top_speed_kmh`):
+  - Kettingblad(en): <groot>T (of <groot>/<klein>T)
+  - Cassette: <kleinste>-<grootste>T
+  - Zwaarste verzet: <zwaarste verzet> m
+  - Lichtste verzet: <lichtste verzet> m
+  - Bereik: <bereik>%
+  - Snelheid bij cadans 100 rpm: <topsnelheid> km/u
+  De gebruiker kiest.
 
 **Tips**
 - Eén tot drie korte tips uit de richtlijnen hieronder die bij deze
   situatie passen (bijvoorbeeld bereik, beschikbaarheid, compatibiliteit).
+- Wordt het bereik van een voorstel kleiner dan het huidige bereik, leg dat
+  dan kort uit en noem de 34T-optie, tenzij het huidige grootste kransje al
+  34T of groter is: een cassette met 34T als grootste kransje (bijvoorbeeld
+  11-34) past meestal zonder problemen op de achterderailleur. Noem het
+  bereik daarmee uit `range_percent_with_34t` van dat voorstel, bijvoorbeeld
+  "Met een 11-34 wordt het bereik 283%". Noem als kleinste kransje dat van
+  het voorstel. Reken dit nooit zelf uit.
 
 Sluit af met de voetnoot "berekend voor wegwielrennen" en daarna één
 vervolgvraag die de gebruiker verder helpt, bijvoorbeeld: "Heb je een

@@ -15,11 +15,13 @@ from knwu_categories import Gender, SourceFact
 RIM_DIAMETERS_MM = (406, 507, 520, 540, 559, 584, 622)
 SMALLEST_SPROCKET_RANGE = (9, 16)
 LARGEST_SPROCKET_RANGE = (23, 59)
-CHAINRING_RANGE = (32, 60)
+CHAINRING_RANGE = (28, 60)
 TIRE_WIDTH_RANGE_MM = (23, 40)
 REGULAR_CASSETTE_SPROCKETS = (11, 12)
 FIRST_NON_PROPOSABLE_SPROCKET = 17
 RPM_FOR_TOP_SPEED = 100
+# Cassettes tot 34T passen meestal zonder problemen op de achterderailleur.
+COMMON_LARGEST_SPROCKET = 34
 
 
 @dataclass(frozen=True)
@@ -70,6 +72,7 @@ class SetupResult:
     heaviest_gear_m: float
     lightest_gear_m: float
     range_percent: int
+    range_percent_with_34t: int
     top_speed_kmh: float
     within_limit: bool
 
@@ -100,14 +103,20 @@ def gear_m(chainring: int, sprocket: int, circumference_mm: float) -> float:
 
 
 def _evaluate(setup: Setup, limit: Limit) -> SetupResult:
-    """Zwaarste en lichtste verzet, bereik, topsnelheid en grenscontrole van een configuratie."""
+    """Zwaarste en lichtste verzet, bereik, topsnelheid en grenscontrole van een configuratie.
+    `range_percent_with_34t` is het bereik als het grootste kransje minstens 34T is."""
     heaviest = limit.gear_m(setup.chainring, setup.smallest_sprocket)
-    lightest = limit.gear_m(setup.small_chainring or setup.chainring, setup.largest_sprocket)
+    lightest_chainring = setup.small_chainring or setup.chainring
+    lightest = limit.gear_m(lightest_chainring, setup.largest_sprocket)
+    lightest_with_34t = limit.gear_m(
+        lightest_chainring, max(setup.largest_sprocket, COMMON_LARGEST_SPROCKET)
+    )
     return SetupResult(
         setup=setup,
         heaviest_gear_m=round(heaviest, 2),
         lightest_gear_m=round(lightest, 2),
         range_percent=round(heaviest / lightest * 100),
+        range_percent_with_34t=round(heaviest / lightest_with_34t * 100),
         top_speed_kmh=round(heaviest * RPM_FOR_TOP_SPEED * 60 / 1000, 1),
         within_limit=limit.allows(setup.chainring, setup.smallest_sprocket),
     )
